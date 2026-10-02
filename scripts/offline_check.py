@@ -8,7 +8,8 @@ Checks: Python dependencies import; ffmpeg/ffprobe resolve; every manifest scena
 its camera media, ground-truth media, judge labels and fixture recording; the web app is
 installed and built and its source and bundle name no remote font/CDN host; the local
 profiles' models are present in Ollama. Then one fixture run goes through the harness with
-every non-loopback connection and DNS lookup refused, so a network call fails the check.
+every non-loopback socket connect and DNS lookup in this Python process refused, so a
+network call from the harness fails the check (see ``loopback_only`` for what is not covered).
 
 Writes ``artifacts/offline/OFFLINE_CHECK.json`` and ``OFFLINE_CHECK.md``. Exit status 1 if a
 required check fails.
@@ -17,6 +18,7 @@ required check fails.
 from __future__ import annotations
 
 import argparse
+import errno
 import importlib
 import json
 import socket
@@ -156,16 +158,30 @@ def local_models() -> str:
 
 @contextmanager
 def loopback_only() -> Iterator[list[str]]:
-    """Refuse every non-loopback connect and DNS lookup; yield the refused hosts."""
+    """Refuse non-loopback ``connect``/``connect_ex`` and DNS lookups made through Python's
+    ``socket`` module in this process; yield the refused hosts.
+
+    Not covered: subprocesses (ffmpeg reads local files only) and asyncio's Windows
+    Proactor, which connects through ConnectEx. The fixture path uses neither for network.
+    """
     refused: list[str] = []
-    real_connect, real_getaddrinfo = socket.socket.connect, socket.getaddrinfo
+    real_connect, real_connect_ex = socket.socket.connect, socket.socket.connect_ex
+    real_getaddrinfo = socket.getaddrinfo
+
+    def _remote(address: Any) -> str | None:
+        host = address[0] if isinstance(address, tuple) else str(address)
+        if host in LOOPBACK:
+            return None
+        refused.append(host)
+        return host
 
     def connect(sock: socket.socket, address: Any) -> Any:
-        host = address[0] if isinstance(address, tuple) else str(address)
-        if host not in LOOPBACK:
-            refused.append(host)
+        if (host := _remote(address)) is not None:
             raise OSError(f"offline check refused a connection to {host}")
         return real_connect(sock, address)
+
+    def connect_ex(sock: socket.socket, address: Any) -> int:
+        return errno.ECONNREFUSED if _remote(address) else real_connect_ex(sock, address)
 
     def getaddrinfo(host: Any, *args: Any, **kwargs: Any) -> Any:
         if host not in LOOPBACK and host is not None:
@@ -174,11 +190,13 @@ def loopback_only() -> Iterator[list[str]]:
         return real_getaddrinfo(host, *args, **kwargs)
 
     socket.socket.connect = connect  # type: ignore[method-assign]
+    socket.socket.connect_ex = connect_ex  # type: ignore[method-assign]
     socket.getaddrinfo = getaddrinfo  # type: ignore[assignment]
     try:
         yield refused
     finally:
         socket.socket.connect = real_connect  # type: ignore[method-assign]
+        socket.socket.connect_ex = real_connect_ex  # type: ignore[method-assign]
         socket.getaddrinfo = real_getaddrinfo
 
 

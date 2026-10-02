@@ -32,12 +32,21 @@ def test_a_remote_address_is_refused_without_dns():
     assert refused == ["192.0.2.1"]
 
 
+def test_connect_ex_is_refused_too():
+    with offline_check.loopback_only() as refused:
+        sock = socket.socket()
+        with sock:
+            assert sock.connect_ex(("192.0.2.1", 80)) != 0
+    assert refused == ["192.0.2.1"]
+
+
 def test_loopback_still_connects_and_the_guard_is_removed_afterwards():
+    real = (socket.socket.connect, socket.socket.connect_ex, socket.getaddrinfo)
     with socket.socket() as server:
         server.bind(("127.0.0.1", 0))
         server.listen(1)
         with offline_check.loopback_only() as refused, socket.socket() as client:
+            assert (socket.socket.connect, socket.getaddrinfo) != real[::2]  # guard is on
             client.connect(server.getsockname())
         assert refused == []
-    assert socket.socket.connect is not None
-    assert socket.getaddrinfo.__module__ == "socket"
+    assert (socket.socket.connect, socket.socket.connect_ex, socket.getaddrinfo) == real
