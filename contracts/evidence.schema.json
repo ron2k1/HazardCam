@@ -1,0 +1,260 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ambient-mirror.local/contracts/evidence.schema.json",
+  "title": "EvidenceBundle",
+  "description": "Deterministic fusion output (no LLM): observations aligned to scenario time, temporal clusters, and coarse region candidates. Only model-accessible cameras may appear. This is the ONLY input the reasoning model receives besides allowed scenario metadata.",
+  "type": "object",
+  "required": [
+    "scenario_id",
+    "status",
+    "cameras",
+    "evidence",
+    "clusters",
+    "region_candidates"
+  ],
+  "properties": {
+    "scenario_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "enum": [
+        "ok",
+        "insufficient"
+      ]
+    },
+    "cameras": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "model_access"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "model_access": {
+            "const": true
+          },
+          "position": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "number"
+            }
+          },
+          "heading_deg": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "fov_deg": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/evidence_item"
+      }
+    },
+    "clusters": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/cluster"
+      }
+    },
+    "region_candidates": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/region_candidate"
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "evidence_item": {
+      "type": "object",
+      "required": [
+        "id",
+        "camera_id",
+        "t_start",
+        "t_end",
+        "cue_type",
+        "description",
+        "confidence",
+        "supporting_frames"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "camera_id": {
+          "type": "string"
+        },
+        "t_start": {
+          "type": "number",
+          "description": "Scenario time (camera time_offset_s applied)."
+        },
+        "t_end": {
+          "type": "number"
+        },
+        "cue_type": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "direction": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "bearing_deg": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Deterministic world compass bearing of the cue, if derivable from direction + camera geometry."
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "supporting_frames": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "cluster": {
+      "type": "object",
+      "required": [
+        "id",
+        "t_start",
+        "t_end",
+        "evidence_ids",
+        "camera_ids",
+        "score"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "t_start": {
+          "type": "number"
+        },
+        "t_end": {
+          "type": "number"
+        },
+        "evidence_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "camera_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "region_candidate": {
+      "type": "object",
+      "required": [
+        "id",
+        "score",
+        "camera_ids",
+        "evidence_ids",
+        "method"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "center": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "number"
+          }
+        },
+        "radius_m": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "camera_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "method": {
+          "enum": [
+            "ray_intersection",
+            "single_ray",
+            "zone_prior",
+            "none"
+          ]
+        }
+      }
+    }
+  }
+}

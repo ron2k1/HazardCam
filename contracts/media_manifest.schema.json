@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ambient-mirror.local/contracts/media_manifest.schema.json",
+  "title": "MediaManifest",
+  "description": "Deterministic frame sample of one camera video. index = position in frames[] (what observations cite); frame_id = source video frame number; t = seconds on the camera media clock (UI seek target).",
+  "type": "object",
+  "required": [
+    "camera_id",
+    "source",
+    "duration_s",
+    "src_fps",
+    "width",
+    "height",
+    "sample_fps",
+    "frames"
+  ],
+  "properties": {
+    "camera_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_sha256": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "duration_s": {
+      "type": "number",
+      "minimum": 0
+    },
+    "src_fps": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "width": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "height": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "sample_fps": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "start_s": {
+      "type": "number",
+      "minimum": 0
+    },
+    "end_s": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "clip_path": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "frames": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "index",
+          "frame_id",
+          "t"
+        ],
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "frame_id": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "t": {
+            "type": "number",
+            "minimum": 0
+          },
+          "path": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

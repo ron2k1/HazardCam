@@ -1,5 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ambient-mirror.local/contracts/hypothesis.schema.json",
   "title": "Hypothesis",
   "type": "object",
   "required": [
@@ -26,7 +27,8 @@
     "evidence_ids": {
       "type": "array",
       "items": {
-        "type": "string"
+        "type": "string",
+        "minLength": 1
       }
     },
     "reason": {
@@ -58,5 +60,6 @@
         "type": "string"
       }
     }
-  }
+  },
+  "description": "Bounded final hypothesis. event_type 'unknown' (with region 'unknown' allowed) is the abstain path. evidence_ids must reference EvidenceBundle evidence ids."
 }

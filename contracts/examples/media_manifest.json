@@ -1,0 +1,33 @@
+{
+  "camera_id": "cam_01",
+  "source": "data/prepared/scenario_001/cam_a.mp4",
+  "source_sha256": null,
+  "duration_s": 15.0,
+  "src_fps": 30.0,
+  "width": 1280,
+  "height": 720,
+  "sample_fps": 1.0,
+  "start_s": 0.0,
+  "end_s": 15.0,
+  "clip_path": null,
+  "frames": [
+    {
+      "index": 0,
+      "frame_id": 0,
+      "t": 0.0,
+      "path": "data/runs/run_example/frames/cam_01/0000.jpg"
+    },
+    {
+      "index": 1,
+      "frame_id": 30,
+      "t": 1.0,
+      "path": "data/runs/run_example/frames/cam_01/0001.jpg"
+    },
+    {
+      "index": 2,
+      "frame_id": 60,
+      "t": 2.0,
+      "path": "data/runs/run_example/frames/cam_01/0002.jpg"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "camera_id": "cam_01",
+  "observations": [
+    {
+      "id": "obs_a_001",
+      "t_start": 8.0,
+      "t_end": 8.6,
+      "cue_type": "traffic_reaction",
+      "description": "Several visible vehicles brake abruptly",
+      "direction": "west",
+      "confidence": 0.84,
+      "supporting_frames": [
+        8
+      ]
+    }
+  ]
+}

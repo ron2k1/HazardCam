@@ -1,6 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ambient-mirror.local/contracts/scenario.schema.json",
   "title": "Scenario",
+  "description": "A prepared multi-camera scenario. Coordinates: local metric frame, position = [x_east_m, y_north_m(, z_up_m)]. heading_deg is a compass bearing: 0 = +y (north), 90 = +x (east), clockwise. The ground-truth camera is judge-only and must never reach a model.",
   "type": "object",
   "required": [
     "id",
@@ -9,20 +11,45 @@
   ],
   "properties": {
     "id": {
-      "type": "string"
+      "type": "string",
+      "minLength": 1
     },
     "title": {
-      "type": "string"
+      "type": [
+        "string",
+        "null"
+      ]
     },
     "duration_seconds": {
-      "type": "number",
+      "type": [
+        "number",
+        "null"
+      ],
       "minimum": 0
+    },
+    "coordinate_frame": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Human-readable note on how positions/headings were derived and their uncertainty."
     },
     "visible_cameras": {
       "type": "array",
       "minItems": 1,
       "items": {
-        "$ref": "#/$defs/camera"
+        "allOf": [
+          {
+            "$ref": "#/$defs/camera"
+          },
+          {
+            "properties": {
+              "model_access": {
+                "const": true
+              }
+            }
+          }
+        ]
       }
     },
     "ground_truth_camera": {
@@ -41,6 +68,20 @@
           ]
         }
       ]
+    },
+    "zones": {
+      "type": "array",
+      "description": "Optional named coarse regions used to label triangulated region candidates.",
+      "items": {
+        "$ref": "#/$defs/zone"
+      }
+    },
+    "provenance": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Source dataset, URL, license, original files, time offsets, attribution."
     }
   },
   "$defs": {
@@ -53,16 +94,27 @@
       ],
       "properties": {
         "id": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         },
         "file": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         },
         "model_access": {
           "type": "boolean"
         },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "position": {
-          "type": "array",
+          "type": [
+            "array",
+            "null"
+          ],
           "items": {
             "type": "number"
           },
@@ -70,10 +122,54 @@
           "maxItems": 3
         },
         "heading_deg": {
-          "type": "number"
+          "type": [
+            "number",
+            "null"
+          ]
         },
         "fov_deg": {
-          "type": "number"
+          "type": [
+            "number",
+            "null"
+          ],
+          "exclusiveMinimum": 0,
+          "maximum": 360
+        },
+        "time_offset_s": {
+          "type": "number",
+          "description": "Add to this camera's media time to get scenario time (synchronization offset)."
+        }
+      }
+    },
+    "zone": {
+      "type": "object",
+      "required": [
+        "id",
+        "center",
+        "radius_m"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "center": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "radius_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
         }
       }
     }

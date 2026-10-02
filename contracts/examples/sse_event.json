@@ -1,0 +1,21 @@
+{
+  "run_id": "run_example",
+  "seq": 5,
+  "ts": "2026-10-02T12:00:01.250Z",
+  "type": "camera.observation",
+  "payload": {
+    "camera_id": "cam_01",
+    "observation": {
+      "id": "obs_a_001",
+      "t_start": 8.0,
+      "t_end": 8.6,
+      "cue_type": "traffic_reaction",
+      "description": "Several visible vehicles brake abruptly",
+      "direction": "west",
+      "confidence": 0.84,
+      "supporting_frames": [
+        8
+      ]
+    }
+  }
+}

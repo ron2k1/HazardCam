@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ambient-mirror.local/contracts/run.schema.json",
+  "title": "RunRecord",
+  "type": "object",
+  "required": [
+    "run_id",
+    "scenario_id",
+    "profile",
+    "state",
+    "created_at",
+    "updated_at",
+    "last_seq"
+  ],
+  "properties": {
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scenario_id": {
+      "type": "string"
+    },
+    "profile": {
+      "type": "string"
+    },
+    "state": {
+      "enum": [
+        "queued",
+        "running",
+        "complete",
+        "failed"
+      ]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "finished_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "hypothesis": {
+      "anyOf": [
+        {
+          "$ref": "hypothesis.schema.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "error": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "last_seq": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ambient-mirror.local/contracts/sse_envelope.schema.json",
+  "title": "SseEnvelope",
+  "description": "One server-sent event. seq starts at 1 and increases by 1 per run. Payload shapes per type are documented in SSE_EVENTS.md.",
+  "type": "object",
+  "required": [
+    "run_id",
+    "seq",
+    "ts",
+    "type",
+    "payload"
+  ],
+  "properties": {
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "ts": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "type": {
+      "enum": [
+        "run.started",
+        "camera.started",
+        "camera.frames.sampled",
+        "camera.observation",
+        "camera.complete",
+        "fusion.started",
+        "evidence.linked",
+        "triangulation.updated",
+        "orchestrator.started",
+        "tool.started",
+        "tool.completed",
+        "hypothesis.updated",
+        "run.complete",
+        "run.failed"
+      ]
+    },
+    "payload": {
+      "type": "object"
+    }
+  }
+}

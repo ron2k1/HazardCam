@@ -12,7 +12,8 @@
         4
       ],
       "heading_deg": 95,
-      "fov_deg": 70
+      "fov_deg": 70,
+      "time_offset_s": 0.0
     },
     {
       "id": "cam_02",
@@ -23,7 +24,8 @@
         0
       ],
       "heading_deg": 185,
-      "fov_deg": 65
+      "fov_deg": 65,
+      "time_offset_s": 0.0
     },
     {
       "id": "cam_03",
@@ -34,7 +36,8 @@
         -5
       ],
       "heading_deg": 20,
-      "fov_deg": 80
+      "fov_deg": 80,
+      "time_offset_s": 0.0
     }
   ],
   "ground_truth_camera": {
@@ -47,5 +50,30 @@
     ],
     "heading_deg": 270,
     "fov_deg": 70
+  },
+  "coordinate_frame": "ILLUSTRATIVE example geometry (not measured). x_east_m, y_north_m; compass headings.",
+  "zones": [
+    {
+      "id": "blind_zone_01",
+      "label": "north approach",
+      "center": [
+        4.0,
+        6.0
+      ],
+      "radius_m": 3.0
+    },
+    {
+      "id": "blind_zone_02",
+      "label": "intersection core",
+      "center": [
+        4.0,
+        0.5
+      ],
+      "radius_m": 3.0
+    }
+  ],
+  "provenance": {
+    "kind": "illustrative_example",
+    "note": "Contract example only; real manifests live in data/manifests/."
   }
 }

@@ -1,0 +1,31 @@
+{
+  "run_id": "run_example",
+  "scenario_id": "scenario_001",
+  "profile": "fixture",
+  "state": "complete",
+  "created_at": "2026-10-02T12:00:00Z",
+  "updated_at": "2026-10-02T12:00:04Z",
+  "finished_at": "2026-10-02T12:00:04Z",
+  "hypothesis": {
+    "event_type": "traffic_obstruction_or_collision",
+    "region": "blind_zone_02",
+    "confidence": 0.74,
+    "evidence_ids": [
+      "obs_a_001",
+      "obs_b_001",
+      "obs_c_001"
+    ],
+    "reason": "Near-synchronous braking and attention shifts are followed by downstream queue formation in the same coarse region.",
+    "alternatives": [
+      {
+        "event_type": "stalled_vehicle",
+        "confidence": 0.39
+      }
+    ],
+    "limitations": [
+      "The incident itself is not directly visible to any model input camera."
+    ]
+  },
+  "error": null,
+  "last_seq": 21
+}

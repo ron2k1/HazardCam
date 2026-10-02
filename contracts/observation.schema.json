@@ -1,6 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ambient-mirror.local/contracts/observation.schema.json",
   "title": "ObservationBatch",
+  "description": "Observation-only output of the perception model for ONE camera. Times are seconds on that camera's media clock; supporting_frames are indices into that camera's MediaManifest.frames.",
   "type": "object",
   "required": [
     "camera_id",
@@ -8,54 +10,65 @@
   ],
   "properties": {
     "camera_id": {
-      "type": "string"
+      "type": "string",
+      "minLength": 1
     },
     "observations": {
       "type": "array",
       "items": {
-        "type": "object",
-        "required": [
-          "id",
-          "t_start",
-          "t_end",
-          "cue_type",
-          "description",
-          "confidence",
-          "supporting_frames"
-        ],
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "t_start": {
-            "type": "number"
-          },
-          "t_end": {
-            "type": "number"
-          },
-          "cue_type": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "direction": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "confidence": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 1
-          },
-          "supporting_frames": {
-            "type": "array",
-            "items": {
-              "type": "integer",
-              "minimum": 0
-            }
+        "$ref": "#/$defs/observation"
+      }
+    }
+  },
+  "$defs": {
+    "observation": {
+      "type": "object",
+      "required": [
+        "id",
+        "t_start",
+        "t_end",
+        "cue_type",
+        "description",
+        "confidence",
+        "supporting_frames"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "t_start": {
+          "type": "number",
+          "minimum": 0
+        },
+        "t_end": {
+          "type": "number",
+          "minimum": 0
+        },
+        "cue_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string"
+        },
+        "direction": {
+          "description": "Where the cue points/originates. Image-relative (left, center_left, center, center_right, right, toward_camera, away_from_camera) or compass (north, northeast, ... northwest), or null.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "supporting_frames": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
           }
         }
       }

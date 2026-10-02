@@ -1,0 +1,55 @@
+{
+  "cam_01": {
+    "camera_id": "cam_01",
+    "observations": [
+      {
+        "id": "obs_a_001",
+        "t_start": 8.0,
+        "t_end": 8.6,
+        "cue_type": "traffic_reaction",
+        "description": "Several visible vehicles brake abruptly",
+        "direction": "west",
+        "confidence": 0.84,
+        "supporting_frames": [
+          8
+        ]
+      }
+    ]
+  },
+  "cam_02": {
+    "camera_id": "cam_02",
+    "observations": [
+      {
+        "id": "obs_b_001",
+        "t_start": 8.2,
+        "t_end": 9.0,
+        "cue_type": "human_reaction",
+        "description": "Visible pedestrians rapidly orient toward the left side of frame",
+        "direction": "northwest",
+        "confidence": 0.76,
+        "supporting_frames": [
+          8,
+          9
+        ]
+      }
+    ]
+  },
+  "cam_03": {
+    "camera_id": "cam_03",
+    "observations": [
+      {
+        "id": "obs_c_001",
+        "t_start": 9.1,
+        "t_end": 10.5,
+        "cue_type": "traffic_flow_change",
+        "description": "A queue begins forming downstream",
+        "direction": null,
+        "confidence": 0.79,
+        "supporting_frames": [
+          9,
+          10
+        ]
+      }
+    ]
+  }
+}
