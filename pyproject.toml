@@ -1,0 +1,42 @@
+[project]
+name = "ambient-urban-mirror"
+version = "0.3.0"
+description = "Infer an unseen urban event from indirect multi-camera evidence (prebuild)."
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "sse-starlette>=2.1",
+    "pydantic>=2.8",
+    "pyyaml>=6.0",
+    "jsonschema>=4.23",
+    "httpx>=0.27",
+    "numpy>=1.26",
+    "opencv-python-headless>=4.10",
+    "pillow>=10.4",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",
+    "ruff>=0.6",
+]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+asyncio_mode = "auto"
+addopts = "-q --import-mode=importlib"
+markers = [
+    "live_model: needs a running local model endpoint (skipped unless MODEL_PROFILE is a live profile)",
+    "media: needs ffmpeg/ffprobe on PATH",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = ["apps/web", "agent", "reference"]

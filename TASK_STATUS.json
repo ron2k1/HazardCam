@@ -3,16 +3,16 @@
   "version": 3,
   "tasks": {
     "P00": {
-      "status": "todo",
+      "status": "done",
       "owner": "integrator",
       "phase": "prebuild",
-      "notes": ""
+      "notes": "artifacts/PREFLIGHT_REPORT.md; remote unconfigured (Tailscale down) -> optional"
     },
     "P01": {
-      "status": "todo",
+      "status": "done",
       "owner": "backend",
       "phase": "prebuild",
-      "notes": ""
+      "notes": "contracts/*.schema.json + apps/api/schemas mirrors; 29 tests incl. GT invariant"
     },
     "P02": {
       "status": "todo",
@@ -33,10 +33,10 @@
       "notes": ""
     },
     "P05": {
-      "status": "todo",
+      "status": "in_progress",
       "owner": "data",
       "phase": "prebuild",
-      "notes": ""
+      "notes": "data worker: research + MEVA-first acquisition"
     },
     "P06": {
       "status": "todo",

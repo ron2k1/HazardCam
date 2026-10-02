@@ -14,3 +14,5 @@ data/runs/
 models/
 *.log
 .DS_Store
+.ruff_cache/
+tmp/
