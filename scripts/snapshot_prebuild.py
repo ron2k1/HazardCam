@@ -45,11 +45,20 @@ def _row(rel: str) -> dict[str, object] | None:
     return {"path": rel, "bytes": path.stat().st_size, "sha256": _sha256(path)}
 
 
+def uncommitted(porcelain: str, out_rel: str) -> list[str]:
+    """``git status --porcelain`` lines other than the snapshot's own output file.
+
+    A rerun finds the previous snapshot untracked or modified; that alone must not mark
+    the tree dirty. Porcelain v1 puts the path after the two status columns and a space.
+    """
+    return [line for line in porcelain.splitlines() if line and line[3:] != out_rel]
+
+
 def main() -> int:
     out_rel = OUT.relative_to(ROOT).as_posix()
     tracked = [p for p in _git("ls-files", "-z").split("\0") if p and p != out_rel]
     media = sorted(p.relative_to(ROOT).as_posix() for p in ROOT.glob(MEDIA_GLOB))
-    status = [line for line in _git("status", "--porcelain").splitlines() if line]
+    status = uncommitted(_git("status", "--porcelain"), out_rel)
     files = [r for r in map(_row, tracked) if r]
     media_rows = [r for r in map(_row, media) if r]
     snapshot = {
