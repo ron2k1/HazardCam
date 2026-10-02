@@ -129,3 +129,12 @@ def test_event_day_delta_fails_when_event_day_code_imports_eval(tmp_path):
     report = (bad / "artifacts" / "event_day" / "DELTA_REPORT.txt").read_text("utf-8")
     assert "FORBIDDEN_EVAL_IMPORT runtime/policy.py:1:" in report
 
+
+def test_event_day_start_writes_into_the_repo_from_any_cwd(tmp_path):
+    root = _tree(tmp_path / "repo", "event_day_start.sh")
+    elsewhere = tmp_path / "elsewhere"
+    elsewhere.mkdir()
+    done = _run(root / "scripts" / "event_day_start.sh", elsewhere)
+    assert done.returncode == 0, done.stderr
+    assert (root / "artifacts" / "event_day" / "START.txt").is_file()
+    assert not (elsewhere / "artifacts").exists()
