@@ -109,3 +109,20 @@ decision accuracy and 2/3 balanced accuracy without looking at any video.
 
 There is no other verdict. With 22 scenarios a Wilson interval is roughly plus or
 minus 0.2, so a gap smaller than that is reported as a gap, not a finding.
+
+## Clarifications (2026-10-02, after the fixture and full-local runs)
+
+A code review of the scorer found places where the text above could be read two ways.
+Each reading below is the stricter one, so none can raise a score. Neither recorded run
+(fixture, full-local) had a failed run or a GT leak, so no recorded number changes.
+
+1. A run with any GT leak is invalid. It counts as incorrect in every rate, exactly like
+   a failed run, and it also fails `pipeline_ok`. Before this, a leaking run's answer
+   still counted toward accuracy.
+2. "Incorrect in every rate" includes the false-alarm rate: a failed or invalid run on a
+   negative counts as a false alarm, so a failure can never lower that rate.
+3. Region acceptance stays conditional on an event claim, as defined under Region; a
+   failed run makes no claim. Failures stay visible in `full_hit` and
+   `fusion_region_hit`, which keep them in their denominators.
+4. Two outcome labels join the seven listed under Event class: `run_failed` (a tool
+   error, or no hypothesis) and `gt_leak` (an invalid run).

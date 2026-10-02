@@ -9,12 +9,13 @@ from __future__ import annotations
 
 import json
 import math
+from collections.abc import Mapping
 from typing import Any
 
 import pytest
 
 from apps.api.schemas import REPO_ROOT, UNKNOWN, EvidenceBundle, Hypothesis
-from eval.scoring import CORRECT_OUTCOMES, class_ok, outcome, score_run, temporal_iou
+from eval.scoring import CORRECT_OUTCOMES, GT_LEAK, class_ok, outcome, score_run, temporal_iou
 from eval.summary import constant_baselines, summarize, wilson
 from harness.dev_sequence import DevSequenceResult
 from inference.vocab import HYPOTHESIS_EVENT_TYPES, NO_EVENT
@@ -234,7 +235,7 @@ def test_wilson_interval_matches_textbook_values():
     assert wilson(0, 0) is None
 
 
-def _scores(answer_for: dict[str, str | None]) -> list:
+def _scores(answer_for: Mapping[str, str | None]) -> list:
     out = []
     for sid, expected in EXPECTED.items():
         event_type = answer_for.get(sid, UNKNOWN)
@@ -254,11 +255,7 @@ def test_always_abstaining_ties_the_baseline_and_does_not_beat_it():
 
 
 def test_perfect_answers_beat_the_baseline():
-    answers = {
-        sid: e["event_type"] if e["category"] != "negative" else NO_EVENT
-        for sid, e in EXPECTED.items()
-    }
-    summary = summarize(_scores(answers), EXPECTED, meta={"profile": "test"})
+    summary = summarize(_scores(_perfect()), EXPECTED, meta={"profile": "test"})
     assert summary["decision"]["accuracy"]["rate"] == 1.0
     assert summary["verdict"]["beats_constant_baselines"] is True
     assert summary["failures"] == []
@@ -280,3 +277,37 @@ def test_false_alarms_are_counted_on_negatives():
     summary = summarize(_scores(dict.fromkeys(negatives, "vehicle_stop")), EXPECTED, meta={})
     assert summary["decision"]["false_alarm_rate"]["k"] == 7
     assert summary["decision"]["by_category"]["negative"]["k"] == 0
+
+
+def test_a_failed_run_on_a_negative_counts_as_a_false_alarm():
+    # SCORING clarification 2: a failure must not lower the false-alarm rate.
+    negatives = [s for s, e in EXPECTED.items() if e["category"] == "negative"]
+    summary = summarize(_scores(dict.fromkeys(negatives[:3])), EXPECTED, meta={})
+    assert summary["decision"]["false_alarm_rate"]["k"] == 3
+    assert summary["decision"]["by_category"]["negative"]["k"] == 4
+
+
+def _perfect() -> dict[str, str]:
+    return {
+        sid: e["event_type"] if e["category"] != "negative" else NO_EVENT
+        for sid, e in EXPECTED.items()
+    }
+
+
+def test_a_leaking_run_is_invalid_and_counts_as_incorrect():
+    # SCORING clarification 1: the right answer from a run that leaked GT does not count.
+    expected = EXPECTED["eval_001"]
+    result = _result("eval_001", expected["event_type"], "z_east_pocket")
+    assert score_run(expected, result).class_ok  # the same run without the leak is a hit
+    score = score_run(expected, result, gt_leaks=1)
+    assert score.outcome == GT_LEAK
+    assert not score.class_ok and not score.raw_class_ok
+    assert score.region_ok is False and score.full_hit is False
+
+
+def test_perfect_answers_that_leak_do_not_beat_the_baseline():
+    answers = _perfect()
+    leaking = [score_run(e, _result(sid, answers[sid]), gt_leaks=1) for sid, e in EXPECTED.items()]
+    summary = summarize(leaking, EXPECTED, meta={})
+    assert summary["decision"]["accuracy"]["k"] == 0
+    assert summary["verdict"] == {"pipeline_ok": False, "beats_constant_baselines": False}

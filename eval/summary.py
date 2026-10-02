@@ -104,7 +104,8 @@ def summarize(
             "accuracy": accuracy,
             "balanced_accuracy": balanced,
             "by_category": by_category,
-            "false_alarm_rate": proportion(s.outcome == "false_alarm" for s in negatives),
+            # Every miss on a negative: a failed or invalid run counts, so it cannot lower this.
+            "false_alarm_rate": proportion(not s.class_ok for s in negatives),
             "abstention_rate": proportion(s.event_type == UNKNOWN for s in scores),
             "raw_accuracy": proportion(s.raw_class_ok for s in scores),
             "outcomes": dict(sorted(Counter(s.outcome for s in scores).items())),
@@ -229,7 +230,7 @@ def render_markdown(summary: dict[str, Any]) -> str:
             f"{_baseline(best['balanced_accuracy'])} |"
         ),
         *[f"| {c} | {_pct(p)} | |" for c, p in d["by_category"].items()],
-        f"| false alarms on negatives | {_pct(d['false_alarm_rate'])} | |",
+        f"| false alarms on negatives (failed runs count) | {_pct(d['false_alarm_rate'])} | |",
         f"| abstention rate | {_pct(d['abstention_rate'])} | |",
         f"| raw (pre-gate) accuracy | {_pct(d['raw_accuracy'])} | |",
         "",

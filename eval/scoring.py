@@ -20,6 +20,7 @@ from inference.vocab import NO_EVENT
 
 NON_EVENTS = frozenset({UNKNOWN, NO_EVENT})
 RUN_FAILED = "run_failed"
+GT_LEAK = "gt_leak"  # an invalid run: incorrect in every rate, like a failed one
 # The outcome labels that count as correct, per scenario category.
 CORRECT_OUTCOMES: dict[str, frozenset[str]] = {
     "positive": frozenset({"hit"}),
@@ -166,8 +167,11 @@ def score_run(
     raw = result.raw_hypothesis if result else None
     bundle = result.bundle if result else None
     event_type = h.event_type if h else None
-    ok = class_ok(event_type, expected)
+    leaked = gt_leaks > 0  # the run is invalid, so none of its answers count
+    ok = class_ok(event_type, expected) and not leaked
     region = _region(expected, h, bundle)
+    if leaked and region["region_scored"]:
+        region["region_ok"] = False
     cited = set(h.evidence_ids) if h else set()
     calls = result.adapter_calls if result else []
     reasoning = [c.get("latency_s", 0.0) for c in calls if c.get("role") == "reasoning"]
@@ -183,8 +187,8 @@ def score_run(
         region=h.region if h else None,
         confidence=h.confidence if h else None,
         class_ok=ok,
-        raw_class_ok=class_ok(raw.event_type if raw else None, expected),
-        outcome=outcome(event_type, expected),
+        raw_class_ok=class_ok(raw.event_type if raw else None, expected) and not leaked,
+        outcome=GT_LEAK if leaked else outcome(event_type, expected),
         gate_changed=(
             (raw.event_type, raw.region, raw.confidence) != (h.event_type, h.region, h.confidence)
             if raw and h
