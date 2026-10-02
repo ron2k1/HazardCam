@@ -115,7 +115,8 @@ export function CameraTile({
             {camera.id.toUpperCase()}
             <span className="ml-2 text-muted">IN/{String(slot).padStart(2, "0")}</span>
           </span>
-          {camera.label ? <span className="micro">{camera.label}</span> : null}
+          {/* backed like the GT tile's caption: the gradient is gone by this line on bright footage */}
+          {camera.label ? <span className="micro -mx-1 mt-0.5 w-fit bg-bg/70 px-1">{camera.label}</span> : null}
         </span>
         <span className="micro flex items-center gap-1.5 text-fg/85" data-phase={phase}>
           <StatusDot tone={busy ? "fg" : phase === "complete" ? "muted" : "dim"} pulse={busy} />
