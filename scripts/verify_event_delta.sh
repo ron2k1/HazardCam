@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT"
+# shellcheck source=scripts/_python.sh
+. scripts/_python.sh
 mkdir -p artifacts/event_day
 BASE_COMMIT=""
 if [ -f artifacts/PREBUILD_SNAPSHOT.json ]; then
-  BASE_COMMIT="$(python3 - <<'PY'
+  BASE_COMMIT="$(py - <<'PY'
 import json
 try:
  print(json.load(open('artifacts/PREBUILD_SNAPSHOT.json')).get('git_commit') or '')
