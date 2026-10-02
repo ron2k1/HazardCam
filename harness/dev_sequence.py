@@ -65,15 +65,18 @@ class DevSequenceResult:
 def cited_frames(
     bundle: EvidenceBundle, hypothesis: Hypothesis, manifests: dict[str, MediaManifest]
 ) -> dict[str, list[int]]:
-    """Valid frame indices of the evidence ``hypothesis`` cites, grouped by camera."""
-    cited: dict[str, list[int]] = {}
+    """Valid frame indices of the evidence ``hypothesis`` cites, grouped by camera.
+
+    Each camera's indices are sorted and listed once, however many cited items share them.
+    """
+    cited: dict[str, set[int]] = {}
     for e in bundle.evidence:
         if e.id in hypothesis.evidence_ids and e.camera_id in manifests:
             frames = len(manifests[e.camera_id].frames)
-            indices = [i for i in e.supporting_frames if 0 <= i < frames]
+            indices = {i for i in e.supporting_frames if 0 <= i < frames}
             if indices:
-                cited.setdefault(e.camera_id, []).extend(indices)
-    return cited
+                cited.setdefault(e.camera_id, set()).update(indices)
+    return {camera_id: sorted(indices) for camera_id, indices in cited.items()}
 
 
 def _write_json(path: Path, payload: Any) -> None:
