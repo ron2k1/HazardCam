@@ -79,7 +79,10 @@ def summarize(
     expected_by_id: dict[str, dict[str, Any]],
     *,
     meta: dict[str, Any],
+    full_manifest: bool = True,
 ) -> dict[str, Any]:
+    """``full_manifest=False`` (a subset run) leaves ``beats_constant_baselines`` null:
+    headline verdicts are defined over the whole manifest."""
     by_category = {c: proportion(s.class_ok for s in scores if s.category == c) for c in CATEGORIES}
     negatives = [s for s in scores if s.category == "negative"]
     positives = [s for s in scores if s.category == "positive"]
@@ -150,10 +153,14 @@ def summarize(
             "pipeline_ok": completion["rate"] == 1.0
             and schema_valid["rate"] == 1.0
             and gt_leaks == 0,
-            "beats_constant_baselines": accuracy["rate"] is not None
-            and balanced is not None
-            and accuracy["rate"] > best["decision_accuracy"]["value"]
-            and balanced > best["balanced_accuracy"]["value"],
+            "beats_constant_baselines": (
+                accuracy["rate"] is not None
+                and balanced is not None
+                and accuracy["rate"] > best["decision_accuracy"]["value"]
+                and balanced > best["balanced_accuracy"]["value"]
+            )
+            if full_manifest
+            else None,
         },
         "failures": [
             {
@@ -219,6 +226,11 @@ def render_markdown(summary: dict[str, Any]) -> str:
         "",
         f"- Models: {models}",
         f"- Verdict: {flags}",
+        *(
+            [f"- Subset run ({summary['n']} scenarios): no baseline verdict; see eval/SCORING.md"]
+            if meta.get("subset_of_manifest")
+            else []
+        ),
         "",
         "## Decision",
         "",

@@ -7,12 +7,14 @@
 
 Writes ``<out>/<profile>/scenarios.json``, ``summary.json`` and ``SUMMARY.md``, then
 rebuilds ``<out>/summary.json`` and ``<out>/COMPARISON.md`` from every profile scored so
-far. A scenario's judge-only ``expected.json`` is read only after its run has returned.
+far. Headline verdicts are defined over the whole manifest, so a ``--scenario`` subset
+goes to ``<out>/subsets/<profile>/`` with no baseline verdict and never enters the index.
+A scenario's judge-only ``expected.json`` is read only after its run has returned.
 In fixture mode each scenario must have its own recording (``scripts/record_fixtures.py``);
 the shared example fixtures are never replayed onto a real scenario.
 
-Exit status is 0 when the pipeline held (every run completed, schema-valid, no GT leak),
-whatever the accuracy.
+Exit status is 0 when the pipeline held (every run completed, schema-valid, no GT leak)
+and, in fixture mode, every replay reproduced its recording, whatever the accuracy.
 """
 
 from __future__ import annotations
@@ -46,6 +48,7 @@ from tools.session import ToolCallError
 MANIFEST = REPO / "data" / "eval" / "manifest.json"
 OUT = REPO / "artifacts" / "eval"
 RUNS_DIR = REPO / "data" / "runs" / "eval"
+SUBSETS_DIR = "subsets"
 PROVENANCE_FILE = "provenance.json"
 SUMMARY_KEYS = ("event_type", "region", "confidence")
 
@@ -197,6 +200,7 @@ def main() -> int:
     manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
     manifest_ids: list[str] = manifest["scenarios"]
     ids = args.scenario or manifest_ids
+    subset = sorted(ids) != sorted(manifest_ids)
     store = ScenarioStore(REPO / "data" / "manifests", REPO, REPO / "data" / "prepared")
     loaded = {s.scenario.id: s for s in store.list()}
     unknown = [i for i in ids if i not in loaded or i not in manifest_ids]
@@ -231,16 +235,20 @@ def main() -> int:
         "scored_at": datetime.now(UTC).isoformat(timespec="seconds"),
         "manifest": manifest.get("name"),
         "scenarios": ids,
+        "subset_of_manifest": subset,
         "scoring_rules": "eval/SCORING.md",
     }
-    summary = summarize(scores, expected_by_id, meta=meta)
-    folder = args.out / profile.profile
+    summary = summarize(scores, expected_by_id, meta=meta, full_manifest=not subset)
+    folder = args.out / SUBSETS_DIR / profile.profile if subset else args.out / profile.profile
     _write(folder / "scenarios.json", _dump(scores_json(scores)))
     _write(folder / "summary.json", _dump(summary))
     _write(folder / "SUMMARY.md", render_markdown(summary))
-    rebuild_index(args.out, manifest_ids, store)
+    if not subset:
+        rebuild_index(args.out, manifest_ids, store)
     print(json.dumps({"summary": str(folder / "summary.json"), "verdict": summary["verdict"]}))
-    return 0 if summary["verdict"]["pipeline_ok"] else 1
+    # SCORING.md: a fixture replay mismatch is a bug. It fails the run, not a verdict flag.
+    mismatches = summary["system"]["replay_mismatches"] or 0
+    return 0 if summary["verdict"]["pipeline_ok"] and not mismatches else 1
 
 
 if __name__ == "__main__":

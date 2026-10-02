@@ -126,3 +126,10 @@ Each reading below is the stricter one, so none can raise a score. Neither recor
    `fusion_region_hit`, which keep them in their denominators.
 4. Two outcome labels join the seven listed under Event class: `run_failed` (a tool
    error, or no hypothesis) and `gt_leak` (an invalid run).
+5. Headline numbers and verdicts are over the whole manifest. A run over a subset
+   (`--scenario`) goes to `<out>/subsets/<profile>/` with `beats_constant_baselines`
+   null, and never replaces a full run or enters `summary.json` / `COMPARISON.md`.
+   Before this, a two-scenario subset overwrote the full fixture summary and "beat"
+   baselines computed from those two scenarios alone.
+6. A fixture replay mismatch is a bug: `run_eval.py` exits 1. It stays out of the
+   verdict flags.

@@ -11,6 +11,8 @@ __pycache__/
 data/raw/
 data/prepared/**/*.mp4
 data/runs/
+# --scenario subset evals: scratch, never a headline result (eval/SCORING.md)
+artifacts/eval/subsets/
 /models/
 *.log
 # curated, token-scrubbed evidence cited by artifacts/runtime/runtime_smoke.md
