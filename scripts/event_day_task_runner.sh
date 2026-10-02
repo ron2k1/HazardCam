@@ -5,7 +5,7 @@ ENGINE="${2:-claude}"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
-[ -f artifacts/event_day/EVENT_DAY_START.json ] || {
+[ -f artifacts/event_day/START.txt ] || {
   echo "Run ./scripts/event_day_start.sh first." >&2
   exit 2
 }
