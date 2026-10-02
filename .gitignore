@@ -1,0 +1,16 @@
+.env
+.env.*
+!*.example
+config/remote.env
+node_modules/
+.next/
+.venv/
+__pycache__/
+.pytest_cache/
+.worktrees/
+data/raw/
+data/prepared/**/*.mp4
+data/runs/
+models/
+*.log
+.DS_Store

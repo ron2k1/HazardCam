@@ -1,0 +1,138 @@
+{
+  "project": "ambient-urban-mirror",
+  "version": 3,
+  "tasks": {
+    "P00": {
+      "status": "todo",
+      "owner": "integrator",
+      "phase": "prebuild",
+      "notes": ""
+    },
+    "P01": {
+      "status": "todo",
+      "owner": "backend",
+      "phase": "prebuild",
+      "notes": ""
+    },
+    "P02": {
+      "status": "todo",
+      "owner": "frontend",
+      "phase": "prebuild",
+      "notes": ""
+    },
+    "P03": {
+      "status": "todo",
+      "owner": "backend",
+      "phase": "prebuild",
+      "notes": ""
+    },
+    "P04": {
+      "status": "todo",
+      "owner": "vision",
+      "phase": "prebuild",
+      "notes": ""
+    },
+    "P05": {
+      "status": "todo",
+      "owner": "data",
+      "phase": "prebuild",
+      "notes": ""
+    },
+    "P06": {
+      "status": "todo",
+      "owner": "inference",
+      "phase": "prebuild",
+      "notes": ""
+    },
+    "P07": {
+      "status": "todo",
+      "owner": "vision",
+      "phase": "prebuild",
+      "notes": ""
+    },
+    "P08": {
+      "status": "todo",
+      "owner": "fusion",
+      "phase": "prebuild",
+      "notes": ""
+    },
+    "P09": {
+      "status": "todo",
+      "owner": "reasoning",
+      "phase": "prebuild",
+      "notes": ""
+    },
+    "P10": {
+      "status": "todo",
+      "owner": "integrator",
+      "phase": "prebuild",
+      "notes": ""
+    },
+    "P11": {
+      "status": "todo",
+      "owner": "frontend",
+      "phase": "prebuild",
+      "notes": ""
+    },
+    "P12": {
+      "status": "todo",
+      "owner": "eval",
+      "phase": "prebuild",
+      "notes": ""
+    },
+    "P13": {
+      "status": "todo",
+      "owner": "verifier",
+      "phase": "prebuild",
+      "notes": ""
+    },
+    "P14": {
+      "status": "todo",
+      "owner": "verifier",
+      "phase": "prebuild",
+      "notes": ""
+    },
+    "P15": {
+      "status": "todo",
+      "owner": "inference",
+      "phase": "prebuild",
+      "notes": ""
+    },
+    "P16": {
+      "status": "todo",
+      "owner": "integrator",
+      "phase": "prebuild",
+      "notes": ""
+    },
+    "D00": {
+      "status": "todo",
+      "owner": "agent",
+      "phase": "event_day",
+      "notes": ""
+    },
+    "D01": {
+      "status": "todo",
+      "owner": "agent",
+      "phase": "event_day",
+      "notes": ""
+    },
+    "D02": {
+      "status": "todo",
+      "owner": "runtime",
+      "phase": "event_day",
+      "notes": ""
+    },
+    "D03": {
+      "status": "todo",
+      "owner": "verifier",
+      "phase": "event_day",
+      "notes": ""
+    },
+    "D04": {
+      "status": "todo",
+      "owner": "integrator",
+      "phase": "event_day",
+      "notes": ""
+    }
+  }
+}

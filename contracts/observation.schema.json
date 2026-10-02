@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ObservationBatch",
+  "type": "object",
+  "required": [
+    "camera_id",
+    "observations"
+  ],
+  "properties": {
+    "camera_id": {
+      "type": "string"
+    },
+    "observations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "t_start",
+          "t_end",
+          "cue_type",
+          "description",
+          "confidence",
+          "supporting_frames"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "t_start": {
+            "type": "number"
+          },
+          "t_end": {
+            "type": "number"
+          },
+          "cue_type": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "direction": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "supporting_frames": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    }
+  }
+}

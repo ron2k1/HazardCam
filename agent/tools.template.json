@@ -1,0 +1,9 @@
+{
+  "template_only": true,
+  "tools": [
+    "inspect_camera",
+    "correlate_timestamps",
+    "triangulate_region",
+    "emit_hypothesis"
+  ]
+}

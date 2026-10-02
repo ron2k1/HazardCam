@@ -1,0 +1,9 @@
+TEMPLATE ONLY — the actual OpenClaw agent/playbook must be created on hackathon day.
+
+Goal for the on-day reasoning stage:
+- consume only structured evidence, deterministic tool outputs, and allowed scenario metadata
+- propose a bounded event hypothesis or `unknown`
+- cite evidence IDs
+- include alternatives and limitations
+- never claim direct observation of the blind-zone incident
+- never access the withheld ground-truth camera

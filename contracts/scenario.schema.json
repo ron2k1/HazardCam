@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Scenario",
+  "type": "object",
+  "required": [
+    "id",
+    "visible_cameras",
+    "ground_truth_camera"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "duration_seconds": {
+      "type": "number",
+      "minimum": 0
+    },
+    "visible_cameras": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/camera"
+      }
+    },
+    "ground_truth_camera": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/camera"
+        },
+        {
+          "properties": {
+            "model_access": {
+              "const": false
+            }
+          },
+          "required": [
+            "model_access"
+          ]
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "camera": {
+      "type": "object",
+      "required": [
+        "id",
+        "file",
+        "model_access"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "file": {
+          "type": "string"
+        },
+        "model_access": {
+          "type": "boolean"
+        },
+        "position": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 3
+        },
+        "heading_deg": {
+          "type": "number"
+        },
+        "fov_deg": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}

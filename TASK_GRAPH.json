@@ -1,0 +1,553 @@
+{
+  "project": "ambient-urban-mirror",
+  "version": 3,
+  "max_parallel_code_workers": 5,
+  "remote_worker_policy": "probe-first; prefer data/media/build/test jobs on 16GB desktop; only serve small models if probe confirms practicality",
+  "tasks": [
+    {
+      "id": "P00",
+      "title": "Preflight, capability map, repo lock",
+      "phase": "prebuild",
+      "wave": 0,
+      "deps": [],
+      "owner": "integrator",
+      "remote_ok": true,
+      "allowed_paths": [
+        "artifacts/**",
+        "TASK_STATUS.json",
+        "config/**"
+      ],
+      "goal": "Inspect local and optional remote machines, freeze actual hardware/software plan, and identify fallbacks.",
+      "acceptance": [
+        "PREFLIGHT_REPORT.md exists",
+        "Remote probe recorded when configured",
+        "No secrets committed",
+        "Task status updated"
+      ]
+    },
+    {
+      "id": "P01",
+      "title": "Shared schemas and scenario access invariants",
+      "phase": "prebuild",
+      "wave": 1,
+      "deps": [
+        "P00"
+      ],
+      "owner": "backend",
+      "remote_ok": true,
+      "allowed_paths": [
+        "contracts/**",
+        "apps/api/schemas/**",
+        "tests/unit/contracts/**"
+      ],
+      "goal": "Finalize scenario, observation, evidence, hypothesis, run, and SSE contracts with strict ground-truth exclusion.",
+      "acceptance": [
+        "Schemas validate",
+        "model_access=false invariant tested",
+        "Examples exist",
+        "Unit tests pass"
+      ]
+    },
+    {
+      "id": "P02",
+      "title": "Frontend shell and visual system",
+      "phase": "prebuild",
+      "wave": 1,
+      "deps": [
+        "P00"
+      ],
+      "owner": "frontend",
+      "remote_ok": true,
+      "allowed_paths": [
+        "apps/web/**",
+        "design/**"
+      ],
+      "goal": "Build final monochrome scientific HUD shell using local/copy-in 21st.dev components and the supplied reference image.",
+      "acceptance": [
+        "Landing and /ops render",
+        "No CDN/runtime cloud dependency",
+        "Reduced motion supported",
+        "Camera/evidence/trace shells present"
+      ]
+    },
+    {
+      "id": "P03",
+      "title": "FastAPI run lifecycle and SSE event bus",
+      "phase": "prebuild",
+      "wave": 1,
+      "deps": [
+        "P00",
+        "P01"
+      ],
+      "owner": "backend",
+      "remote_ok": true,
+      "allowed_paths": [
+        "apps/api/**",
+        "tests/unit/api/**",
+        "tests/integration/api/**"
+      ],
+      "goal": "Implement health, scenario, run creation, run state, and SSE progress streaming.",
+      "acceptance": [
+        "POST /api/runs returns run_id",
+        "SSE fixture run completes",
+        "Health exposes dependencies",
+        "pytest passes"
+      ]
+    },
+    {
+      "id": "P04",
+      "title": "Deterministic media sampler and seek metadata",
+      "phase": "prebuild",
+      "wave": 1,
+      "deps": [
+        "P00",
+        "P01"
+      ],
+      "owner": "vision",
+      "remote_ok": true,
+      "allowed_paths": [
+        "tools/sample_video.py",
+        "tools/media/**",
+        "tests/unit/media/**"
+      ],
+      "goal": "Extract representative frames/clips deterministically with timestamps, frame IDs, and evidence seek metadata.",
+      "acceptance": [
+        "ffmpeg path works",
+        "Manifest deterministic",
+        "Timestamp/frame tests pass",
+        "Short clip mode supported"
+      ]
+    },
+    {
+      "id": "P05",
+      "title": "Real-data acquisition and candidate ranking",
+      "phase": "prebuild",
+      "wave": 1,
+      "deps": [
+        "P00"
+      ],
+      "owner": "data",
+      "remote_ok": true,
+      "allowed_paths": [
+        "scripts/data/**",
+        "data/manifests/**",
+        "docs/DATA_SOURCES.md",
+        "artifacts/data/**"
+      ],
+      "goal": "Acquire legally usable real footage, prepare compact scenarios, and rank candidate windows using cheap motion/correlation heuristics.",
+      "acceptance": [
+        "At least one real prepared scenario",
+        "Provenance/license metadata recorded",
+        "Candidate ranking report",
+        "No judged-path network dependency"
+      ]
+    },
+    {
+      "id": "P06",
+      "title": "Model profile loader and inference abstraction",
+      "phase": "prebuild",
+      "wave": 2,
+      "deps": [
+        "P00",
+        "P01"
+      ],
+      "owner": "inference",
+      "remote_ok": true,
+      "allowed_paths": [
+        "config/models/**",
+        "inference/**",
+        "tests/unit/inference/**"
+      ],
+      "goal": "Create stable model configuration/profile loading for fixture, lite-local, remote16gb, full-local, and gb10.",
+      "acceptance": [
+        "Profiles load/validate",
+        "Secrets excluded",
+        "Endpoint/checkpoint settings configurable",
+        "Unit tests pass"
+      ]
+    },
+    {
+      "id": "P07",
+      "title": "Qwen perception adapter and finalized observation prompt",
+      "phase": "prebuild",
+      "wave": 2,
+      "deps": [
+        "P01",
+        "P04",
+        "P06"
+      ],
+      "owner": "vision",
+      "remote_ok": false,
+      "allowed_paths": [
+        "inference/**",
+        "tools/inspect_camera.py",
+        "prompts/qwen_perception.txt",
+        "tests/integration/qwen/**"
+      ],
+      "goal": "Implement real local multimodal perception adapter plus fixture adapter; force observation-only structured output.",
+      "acceptance": [
+        "Schema-valid ObservationBatch",
+        "No final event conclusion in perception prompt",
+        "Retries/timeouts",
+        "Same interface in fixture and local modes"
+      ]
+    },
+    {
+      "id": "P08",
+      "title": "Deterministic temporal correlation and coarse triangulation",
+      "phase": "prebuild",
+      "wave": 2,
+      "deps": [
+        "P01",
+        "P04"
+      ],
+      "owner": "fusion",
+      "remote_ok": true,
+      "allowed_paths": [
+        "tools/correlate.py",
+        "tools/triangulate.py",
+        "tests/unit/fusion/**"
+      ],
+      "goal": "Fuse time-aligned cues and camera metadata into evidence clusters and coarse region candidates without LLMs.",
+      "acceptance": [
+        "No LLM dependency",
+        "Offset tests pass",
+        "Unknown/insufficient path",
+        "Evidence IDs preserved"
+      ]
+    },
+    {
+      "id": "P09",
+      "title": "Mistral reasoning adapter and finalized hypothesis prompt",
+      "phase": "prebuild",
+      "wave": 2,
+      "deps": [
+        "P01",
+        "P06",
+        "P08"
+      ],
+      "owner": "reasoning",
+      "remote_ok": true,
+      "allowed_paths": [
+        "inference/**",
+        "tools/reason_hypothesis.py",
+        "prompts/mistral_fusion.txt",
+        "tests/integration/mistral/**"
+      ],
+      "goal": "Implement reasoning adapter that consumes evidence bundles and returns bounded structured hypotheses with alternatives/limitations/abstention.",
+      "acceptance": [
+        "Schema-valid Hypothesis",
+        "Alternatives supported",
+        "Unknown/abstain supported",
+        "Fixture/local adapters share interface"
+      ]
+    },
+    {
+      "id": "P10",
+      "title": "Non-agent development orchestrator and tool surface",
+      "phase": "prebuild",
+      "wave": 3,
+      "deps": [
+        "P03",
+        "P07",
+        "P08",
+        "P09"
+      ],
+      "owner": "integrator",
+      "remote_ok": true,
+      "allowed_paths": [
+        "harness/**",
+        "apps/api/services/**",
+        "tools/**",
+        "tests/integration/harness/**"
+      ],
+      "goal": "Implement a direct-call development harness that exercises the exact future tool functions without creating an OpenClaw agent.",
+      "acceptance": [
+        "Complete tool sequence runs",
+        "Tool interfaces documented",
+        "Ground-truth camera blocked",
+        "Harness clearly identified as non-agent"
+      ]
+    },
+    {
+      "id": "P11",
+      "title": "Ops dashboard integration",
+      "phase": "prebuild",
+      "wave": 3,
+      "deps": [
+        "P02",
+        "P03",
+        "P10"
+      ],
+      "owner": "frontend",
+      "remote_ok": true,
+      "allowed_paths": [
+        "apps/web/**",
+        "tests/e2e/**"
+      ],
+      "goal": "Bind synchronized video, SSE trace, evidence graph/timeline, blind-zone visualization, final hypothesis, and evidence seek.",
+      "acceptance": [
+        "Evidence click seeks media",
+        "Trace animates from SSE",
+        "Ground truth marked withheld",
+        "Model/runtime status panel works"
+      ]
+    },
+    {
+      "id": "P12",
+      "title": "Evaluation dataset manifest and scoring harness",
+      "phase": "prebuild",
+      "wave": 3,
+      "deps": [
+        "P05",
+        "P07",
+        "P08",
+        "P09",
+        "P10"
+      ],
+      "owner": "eval",
+      "remote_ok": true,
+      "allowed_paths": [
+        "eval/**",
+        "scripts/eval/**",
+        "data/eval/**",
+        "artifacts/eval/**",
+        "tests/unit/eval/**"
+      ],
+      "goal": "Create repeatable scenario evaluation, structural metrics, failure capture, and model-profile comparison.",
+      "acceptance": [
+        "Eval command runs",
+        "Negative/ambiguous cases supported",
+        "summary.json generated",
+        "No exact-string scoring"
+      ]
+    },
+    {
+      "id": "P13",
+      "title": "Fixture browser E2E gate",
+      "phase": "prebuild",
+      "wave": 4,
+      "deps": [
+        "P10",
+        "P11"
+      ],
+      "owner": "verifier",
+      "remote_ok": true,
+      "allowed_paths": [
+        "tests/e2e/**",
+        "artifacts/e2e/**"
+      ],
+      "goal": "Prove the entire browser path in fixture mode.",
+      "acceptance": [
+        "Playwright passes",
+        "Screenshot captured",
+        "Evidence seeking verified",
+        "Run finishes under target time"
+      ]
+    },
+    {
+      "id": "P14",
+      "title": "Lite/free local model E2E gate",
+      "phase": "prebuild",
+      "wave": 4,
+      "deps": [
+        "P07",
+        "P09",
+        "P10",
+        "P11",
+        "P13"
+      ],
+      "owner": "verifier",
+      "remote_ok": true,
+      "allowed_paths": [
+        "tests/e2e/**",
+        "artifacts/model/**",
+        "config/models/**"
+      ],
+      "goal": "Run the full application with small/free local models on available development hardware or compatible remote worker.",
+      "acceptance": [
+        "Real model calls occur",
+        "Observation/hypothesis schemas valid",
+        "Latency recorded",
+        "Limitations documented"
+      ]
+    },
+    {
+      "id": "P15",
+      "title": "Full/intended model benchmark where hardware permits",
+      "phase": "prebuild",
+      "wave": 4,
+      "deps": [
+        "P12",
+        "P14"
+      ],
+      "owner": "inference",
+      "remote_ok": false,
+      "allowed_paths": [
+        "artifacts/model/**",
+        "artifacts/eval/**",
+        "config/models/**",
+        "scripts/eval/**"
+      ],
+      "goal": "Benchmark intended or closest practical Qwen/Mistral models and preserve reproducible serving/preprocessing settings.",
+      "acceptance": [
+        "Exact configuration recorded",
+        "At least one representative scenario run if hardware permits",
+        "Fallback documented if not possible",
+        "No app contract changes"
+      ]
+    },
+    {
+      "id": "P16",
+      "title": "Offline bundle, startup scripts, and prebuild freeze",
+      "phase": "prebuild",
+      "wave": 5,
+      "deps": [
+        "P12",
+        "P13",
+        "P14"
+      ],
+      "owner": "integrator",
+      "remote_ok": true,
+      "allowed_paths": [
+        "scripts/**",
+        "Makefile",
+        "docs/**",
+        "artifacts/**",
+        "config/**",
+        "package-lock.json",
+        "pnpm-lock.yaml",
+        "requirements*.txt",
+        "uv.lock"
+      ],
+      "goal": "Make the project reproducible offline and snapshot the exact pre-event state.",
+      "acceptance": [
+        "Offline dependency/model/data check",
+        "One-command fixture start",
+        "Real-model startup documented",
+        "snapshot_prebuild.sh succeeds",
+        "PREBUILD_VERIFICATION.md exists"
+      ]
+    },
+    {
+      "id": "D00",
+      "title": "Create OpenClaw agent definition and playbook",
+      "phase": "event_day",
+      "wave": 10,
+      "deps": [
+        "P16"
+      ],
+      "owner": "agent",
+      "remote_ok": false,
+      "allowed_paths": [
+        "agent/**",
+        "artifacts/event_day/**"
+      ],
+      "goal": "EVENT DAY: create the actual OpenClaw agent definition, system prompt/playbook, bounded policy, and abstention behavior.",
+      "acceptance": [
+        "Files created/changed after event-day start",
+        "Agent policy documented",
+        "No ground-truth access",
+        "Alternatives/limitations/abstention"
+      ]
+    },
+    {
+      "id": "D01",
+      "title": "Register tested tools into OpenClaw",
+      "phase": "event_day",
+      "wave": 11,
+      "deps": [
+        "D00"
+      ],
+      "owner": "agent",
+      "remote_ok": false,
+      "allowed_paths": [
+        "agent/**",
+        "runtime/**",
+        "tests/integration/agent/**",
+        "artifacts/event_day/**"
+      ],
+      "goal": "EVENT DAY: register the existing tested tool implementations into the newly created agent with least privilege.",
+      "acceptance": [
+        "Only allowed cameras accessible",
+        "Tool schemas match prebuild contracts",
+        "Agent integration test passes",
+        "Generic ground-truth filesystem path inaccessible"
+      ]
+    },
+    {
+      "id": "D02",
+      "title": "Wire NemoClaw/OpenShell and local model routes",
+      "phase": "event_day",
+      "wave": 12,
+      "deps": [
+        "D01"
+      ],
+      "owner": "runtime",
+      "remote_ok": false,
+      "allowed_paths": [
+        "runtime/**",
+        "scripts/runtime/**",
+        "config/models/gb10.yaml",
+        "artifacts/event_day/**",
+        "tests/integration/runtime/**"
+      ],
+      "goal": "EVENT DAY: run the OpenClaw agent through the required NemoClaw/OpenShell stack and connect local inference routes.",
+      "acceptance": [
+        "Required stack status captured",
+        "No cloud model route",
+        "Failure surfaced to UI",
+        "Runtime command documented"
+      ]
+    },
+    {
+      "id": "D03",
+      "title": "GB10 calibration and judged-path E2E",
+      "phase": "event_day",
+      "wave": 13,
+      "deps": [
+        "D02"
+      ],
+      "owner": "verifier",
+      "remote_ok": false,
+      "allowed_paths": [
+        "config/models/gb10.yaml",
+        "tests/e2e/**",
+        "artifacts/**",
+        "scripts/**"
+      ],
+      "goal": "EVENT DAY: calibrate deployment-only parameters, run real judged scenario, measure latency, verify ground-truth exclusion.",
+      "acceptance": [
+        "Real Qwen+Mistral+OpenClaw path completes",
+        "Latency recorded",
+        "Ground-truth exclusion proof",
+        "Playwright screenshot"
+      ]
+    },
+    {
+      "id": "D04",
+      "title": "Final hardening, rehearsal, and backup recording",
+      "phase": "event_day",
+      "wave": 14,
+      "deps": [
+        "D03"
+      ],
+      "owner": "integrator",
+      "remote_ok": true,
+      "allowed_paths": [
+        "apps/**",
+        "scripts/**",
+        "docs/**",
+        "artifacts/**"
+      ],
+      "goal": "EVENT DAY: eliminate fragile dependencies, warm models, rehearse 3-minute story, and record fallback demo.",
+      "acceptance": [
+        "demo-check passes 3x",
+        "Backup recording exists",
+        "3-minute script rehearsed",
+        "verify_event_delta.sh succeeds",
+        "FINAL_VERIFICATION.md exists"
+      ]
+    }
+  ]
+}
