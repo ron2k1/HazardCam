@@ -89,8 +89,10 @@ def test_default_adapter_comes_from_model_profile(manifest, monkeypatch):
     assert batch.camera_id == "cam_01" and batch.observations  # shared fixture has cam_01
 
 
-def test_reason_hypothesis_accepts_plain_json_and_uses_the_profile(bundle, monkeypatch):
-    monkeypatch.setenv("MODEL_PROFILE", "fixture")
+def test_reason_hypothesis_accepts_plain_json_and_uses_the_profile(
+    bundle, monkeypatch, example_fixture_profile
+):
+    monkeypatch.setattr("tools.reason_hypothesis.load_profile", lambda: example_fixture_profile)
     hyp = reason_hypothesis(bundle.model_dump(mode="json"), ReasoningOptions())
     assert isinstance(hyp, Hypothesis) and set(hyp.evidence_ids) <= bundle.evidence_ids()
 

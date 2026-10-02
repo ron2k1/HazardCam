@@ -20,8 +20,10 @@ import pytest
 
 from apps.api.main import create_app
 from apps.api.schemas import REPO_ROOT
+from apps.api.services import pipeline
 from apps.api.services.pipeline import DevSequenceExecutor
 from apps.api.settings import Settings
+from inference.profiles import ModelProfile
 
 EXAMPLE_SCENARIO = REPO_ROOT / "contracts" / "examples" / "scenario_001.json"
 FFMPEG = shutil.which("ffmpeg")
@@ -107,7 +109,14 @@ def settings(tmp_path: Path, media_root: Path, scenario_doc: dict[str, Any]) -> 
 
 
 @pytest.fixture
-def app(settings: Settings):
+def app(settings: Settings, example_fixture_profile: ModelProfile, monkeypatch):
+    """The app with the fixture profile limited to the example's shared fixtures."""
+    real = pipeline.load_profile
+    monkeypatch.setattr(
+        pipeline,
+        "load_profile",
+        lambda name: example_fixture_profile if name == "fixture" else real(name),
+    )
     return create_app(settings)
 
 

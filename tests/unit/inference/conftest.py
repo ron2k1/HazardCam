@@ -52,8 +52,8 @@ def lite_profile() -> ModelProfile:
 
 
 @pytest.fixture
-def fixture_profile() -> ModelProfile:
-    return load_profile("fixture", env={})
+def fixture_profile(example_fixture_profile: ModelProfile) -> ModelProfile:
+    return example_fixture_profile
 
 
 @pytest.fixture
