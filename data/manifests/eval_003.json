@@ -1,0 +1,245 @@
+{
+  "id": "eval_003",
+  "title": "MEVA KF1 bus station, 2018-03-07 17:02:48",
+  "duration_seconds": 28.0,
+  "coordinate_frame": "Local metric frame: x = east m, y = north m, origin = MEVA ENU [-5.0, -101.0] (ENU origin lat 39.04977294, lon -85.52924953). Positions/headings/FOV from MEVA KRTD calibrations (K,R,T,D); heading = compass bearing of the optical axis, fov = horizontal FOV at 1920 px. Uncertainty: calibration registered to the MEVA 3-D site model, expect ~1-3 m position and ~1-2 deg heading error; event points mapped to the coarse ground mesh, expect ~2-5 m at 30-60 m range.",
+  "visible_cameras": [
+    {
+      "id": "cam_a",
+      "file": "data/prepared/eval_003/cam_a.mp4",
+      "model_access": true,
+      "label": "Bus station, north-facing (MEVA G506)",
+      "position": [
+        -14.6,
+        7.8
+      ],
+      "heading_deg": 353.3,
+      "fov_deg": 65.2,
+      "time_offset_s": 0.0
+    },
+    {
+      "id": "cam_b",
+      "file": "data/prepared/eval_003/cam_b.mp4",
+      "model_access": true,
+      "label": "Hospital, north-facing long view (MEVA G436)",
+      "position": [
+        25.9,
+        -29.1
+      ],
+      "heading_deg": 350.3,
+      "fov_deg": 28.7,
+      "time_offset_s": 0.0
+    },
+    {
+      "id": "cam_c",
+      "file": "data/prepared/eval_003/cam_c.mp4",
+      "model_access": true,
+      "label": "Bus station, north-east-facing (MEVA G340)",
+      "position": [
+        -11.2,
+        20.5
+      ],
+      "heading_deg": 58.0,
+      "fov_deg": 34.0,
+      "time_offset_s": 0.0
+    }
+  ],
+  "ground_truth_camera": {
+    "id": "cam_gt",
+    "file": "data/prepared/eval_003/hidden_ground_truth.mp4",
+    "model_access": false,
+    "label": "Hospital rooftop, west-north-west-facing (MEVA G341)",
+    "position": [
+      36.0,
+      -11.6
+    ],
+    "heading_deg": 299.7,
+    "fov_deg": 31.8,
+    "time_offset_s": 0.0
+  },
+  "zones": [
+    {
+      "id": "z_east_pocket",
+      "label": "Curb and lot east of the bus-station building",
+      "center": [
+        -2.0,
+        15.0
+      ],
+      "radius_m": 10.0
+    },
+    {
+      "id": "z_west_plaza",
+      "label": "Plaza and sidewalk north-west of the bus station",
+      "center": [
+        -16.0,
+        21.0
+      ],
+      "radius_m": 8.0
+    },
+    {
+      "id": "z_north_lot",
+      "label": "Parking lot north of the bus station",
+      "center": [
+        5.0,
+        33.0
+      ],
+      "radius_m": 9.0
+    },
+    {
+      "id": "z_south_drive",
+      "label": "Drive south of the bus station",
+      "center": [
+        -12.0,
+        1.0
+      ],
+      "radius_m": 6.0
+    },
+    {
+      "id": "z_hospital_drive",
+      "label": "Access drive between the bus station and the hospital",
+      "center": [
+        12.0,
+        6.0
+      ],
+      "radius_m": 7.0
+    },
+    {
+      "id": "z_north_road",
+      "label": "Road running north-east toward the school",
+      "center": [
+        23.0,
+        41.0
+      ],
+      "radius_m": 12.0
+    }
+  ],
+  "provenance": {
+    "dataset": "MEVA (Multiview Extended Video with Activities), KF1 release drops-123-r13",
+    "dataset_url": "https://mevadata.org/",
+    "video_source": "https://mevadata-public-01.s3.amazonaws.com/drops-123-r13/ (public, no registration)",
+    "annotation_source": "https://gitlab.kitware.com/meva/meva-data-repo (annotation/DIVA-phase-2/MEVA/kitware*)",
+    "calibration_source": "meva-data-repo metadata/camera-models/krtd + metadata/meva-clip-camera-and-time-table.txt",
+    "ground_model_source": "https://mevadata-public-01.s3.amazonaws.com/mutc-3d-model/model_segmentations/coarse/background.ply",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "'Multiview Extended Video with Activities' (MEVA) dataset by Kitware Inc. and the Intelligence Advanced Research Projects Activity (IARPA) is licensed under a Creative Commons Attribution 4.0 International License.",
+    "modifications": "Trimmed to a short window, scaled to 1280 px wide, re-encoded H.264, audio removed.",
+    "slot": "2018-03-07.17-00-00",
+    "window_scenario_s": [
+      168.0,
+      196.0
+    ],
+    "scenario_time_zero_wallclock": "2018-03-07T17:02:48",
+    "files": [
+      {
+        "camera_id": "cam_gt",
+        "meva_camera": "G341",
+        "source_clip": "2018-03-07.17-00-05.17-05-05.hospital.G341.r13.avi",
+        "source_url": "https://mevadata-public-01.s3.amazonaws.com/drops-123-r13/2018-03-07/17/2018-03-07.17-00-05.17-05-05.hospital.G341.r13.avi",
+        "clip_t0_scenario_s": 5.0,
+        "trim_start_in_source_s": 163.0,
+        "trim_duration_s": 28.0,
+        "sync_method": "filename wall-clock start (1 s resolution)",
+        "sync_uncertainty_s": 1.0,
+        "camera_height_above_ground_m": 13.02,
+        "pitch_deg": -13.2,
+        "position_enu_m": [
+          31.04,
+          -112.64,
+          14.98
+        ],
+        "prepared_media": {
+          "width": 1280,
+          "height": 720,
+          "fps": 30.0,
+          "codec": "h264",
+          "pix_fmt": "yuv420p",
+          "duration_s": 28.0,
+          "bytes": 2820164
+        }
+      },
+      {
+        "camera_id": "cam_a",
+        "meva_camera": "G506",
+        "source_clip": "2018-03-07.17-00-00.17-05-00.bus.G506.r13.avi",
+        "source_url": "https://mevadata-public-01.s3.amazonaws.com/drops-123-r13/2018-03-07/17/2018-03-07.17-00-00.17-05-00.bus.G506.r13.avi",
+        "clip_t0_scenario_s": 0.0,
+        "trim_start_in_source_s": 168.0,
+        "trim_duration_s": 28.0,
+        "sync_method": "filename wall-clock start (1 s resolution)",
+        "sync_uncertainty_s": 1.0,
+        "camera_height_above_ground_m": 5.26,
+        "pitch_deg": -30.3,
+        "position_enu_m": [
+          -19.55,
+          -93.21,
+          6.78
+        ],
+        "prepared_media": {
+          "width": 1280,
+          "height": 714,
+          "fps": 30.0,
+          "codec": "h264",
+          "pix_fmt": "yuv420p",
+          "duration_s": 28.0,
+          "bytes": 2103718
+        }
+      },
+      {
+        "camera_id": "cam_b",
+        "meva_camera": "G436",
+        "source_clip": "2018-03-07.17-00-01.17-05-01.hospital.G436.r13.avi",
+        "source_url": "https://mevadata-public-01.s3.amazonaws.com/drops-123-r13/2018-03-07/17/2018-03-07.17-00-01.17-05-01.hospital.G436.r13.avi",
+        "clip_t0_scenario_s": 1.0,
+        "trim_start_in_source_s": 167.0,
+        "trim_duration_s": 28.0,
+        "sync_method": "filename wall-clock start (1 s resolution)",
+        "sync_uncertainty_s": 1.0,
+        "camera_height_above_ground_m": 12.85,
+        "pitch_deg": -8.9,
+        "position_enu_m": [
+          20.86,
+          -130.1,
+          13.25
+        ],
+        "prepared_media": {
+          "width": 1280,
+          "height": 720,
+          "fps": 30.0,
+          "codec": "h264",
+          "pix_fmt": "yuv420p",
+          "duration_s": 28.0,
+          "bytes": 3985896
+        }
+      },
+      {
+        "camera_id": "cam_c",
+        "meva_camera": "G340",
+        "source_clip": "2018-03-07.17-00-00.17-05-00.bus.G340.r13.avi",
+        "source_url": "https://mevadata-public-01.s3.amazonaws.com/drops-123-r13/2018-03-07/17/2018-03-07.17-00-00.17-05-00.bus.G340.r13.avi",
+        "clip_t0_scenario_s": 0.0,
+        "trim_start_in_source_s": 168.0,
+        "trim_duration_s": 28.0,
+        "sync_method": "filename wall-clock start (1 s resolution)",
+        "sync_uncertainty_s": 1.0,
+        "camera_height_above_ground_m": 4.12,
+        "pitch_deg": -10.2,
+        "position_enu_m": [
+          -16.21,
+          -80.52,
+          5.54
+        ],
+        "prepared_media": {
+          "width": 1280,
+          "height": 720,
+          "fps": 30.0,
+          "codec": "h264",
+          "pix_fmt": "yuv420p",
+          "duration_s": 28.0,
+          "bytes": 3997363
+        }
+      }
+    ],
+    "selection": "Window chosen from scripts/data/find_candidates.py output using MEVA annotations; category and label are judge-only (data/prepared/<id>/expected.json)."
+  }
+}

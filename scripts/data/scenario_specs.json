@@ -1,0 +1,188 @@
+{
+  "_comment": "Inputs for prepare_scenario.py. Titles, zone labels and camera labels reach the models, so they stay neutral; everything that names the event lives in the judge-only label/notes/inspection fields, which only land in data/prepared/<id>/expected.json. Times are seconds from the MEVA reference slot start. gt_act_ids are activity ids in the GT camera's kitware annotation (annotation/DIVA-phase-2/MEVA/kitware*/<date>/<hour>/<clip>.activities.yml).",
+  "sites": {
+    "meva_kf1_bus_pocket": {
+      "origin_enu": [-5.0, -101.0],
+      "camera_labels": {
+        "G506": "Bus station, north-facing (MEVA G506)",
+        "G436": "Hospital, north-facing long view (MEVA G436)",
+        "G340": "Bus station, north-east-facing (MEVA G340)",
+        "G341": "Hospital rooftop, west-north-west-facing (MEVA G341)"
+      },
+      "zones": [
+        {"id": "z_east_pocket", "label": "Curb and lot east of the bus-station building", "center": [-2.0, 15.0], "radius_m": 10.0},
+        {"id": "z_west_plaza", "label": "Plaza and sidewalk north-west of the bus station", "center": [-16.0, 21.0], "radius_m": 8.0},
+        {"id": "z_north_lot", "label": "Parking lot north of the bus station", "center": [5.0, 33.0], "radius_m": 9.0},
+        {"id": "z_south_drive", "label": "Drive south of the bus station", "center": [-12.0, 1.0], "radius_m": 6.0},
+        {"id": "z_hospital_drive", "label": "Access drive between the bus station and the hospital", "center": [12.0, 6.0], "radius_m": 7.0},
+        {"id": "z_north_road", "label": "Road running north-east toward the school", "center": [23.0, 41.0], "radius_m": 12.0}
+      ]
+    }
+  },
+  "scenarios": [
+    {
+      "id": "scenario_001", "title": "MEVA KF1 bus station, 2018-03-07 17:01:24", "site": "meva_kf1_bus_pocket",
+      "slot": "2018-03-07.17-00-00", "start_s": 84, "duration_s": 28,
+      "gt": "G341", "visible": ["G506", "G436", "G340"], "category": "positive",
+      "label": {"method": "annotation-derived", "gt_act_ids": [128, 96, 132, 106], "event_type": "passenger_dropoff_pickup"},
+      "notes": "Flagship. A grey sedan turns into the curb east of the bus-station building, stops, and a passenger gets out. None of the three visible cameras covers that curb. Dataset labels: vehicle_turns_left, vehicle_stops, vehicle_drops_off_person, person_exits_vehicle (G341). Distractor: cam_b (G436) also shows an unrelated, directly visible drop-off far up its road (white van, people in hi-vis vests; G436 annotation vehicle_drops_off_person about 2-12 s), outside the pocket.",
+      "inspection": {
+        "status": "inspection-labeled cue descriptions; the event label itself is annotation-derived",
+        "observed": [
+          {"camera_id": "cam_b", "t_s": [4, 11], "what": "grey sedan enters at the bottom of the frame, drives left (west) and leaves the frame"},
+          {"camera_id": "cam_gt", "t_s": [12, 28], "what": "same sedan arrives at the curb east of the bus station and stays stopped to the end of the window; passenger exits from about 19 s"},
+          {"camera_id": "cam_a", "t_s": [12, 24], "what": "people leave the station door and walk east toward the curb, one carrying a backpack"},
+          {"camera_id": "cam_c", "t_s": [0, 28], "what": "pedestrians crossing the lot; no view of the curb"}
+        ],
+        "evidence": "scratch contact sheets checked frame by frame: sedan last seen in cam_b at about 10 s and first seen in cam_gt at about 12 s; see evidence/contact_sheet.jpg"
+      }
+    },
+    {
+      "id": "eval_001", "title": "MEVA KF1 bus station, 2018-03-07 10:58:26", "site": "meva_kf1_bus_pocket",
+      "slot": "2018-03-07.10-55-00", "start_s": 206, "duration_s": 28,
+      "gt": "G341", "visible": ["G506", "G436", "G340"], "category": "positive",
+      "label": {"method": "annotation-derived", "gt_act_ids": [52, 96, 56], "event_type": "passenger_dropoff_pickup"},
+      "notes": "Vehicle stops at the curb east of the bus station; three people exit and unload. Blind to all visible cameras by the geometry test."
+    },
+    {
+      "id": "eval_002", "title": "MEVA KF1 bus station, 2018-03-07 17:02:20", "site": "meva_kf1_bus_pocket",
+      "slot": "2018-03-07.17-00-00", "start_s": 140, "duration_s": 28,
+      "gt": "G341", "visible": ["G506", "G436", "G340"], "category": "positive",
+      "label": {"method": "annotation-derived", "gt_act_ids": [98, 102], "event_type": "passenger_dropoff_pickup"},
+      "notes": "A white SUV stops in the pocket and picks a person up (vehicle_stops, vehicle_picks_up_person). Blind to all visible cameras."
+    },
+    {
+      "id": "eval_003", "title": "MEVA KF1 bus station, 2018-03-07 17:02:48", "site": "meva_kf1_bus_pocket",
+      "slot": "2018-03-07.17-00-00", "start_s": 168, "duration_s": 28,
+      "gt": "G341", "visible": ["G506", "G436", "G340"], "category": "ambiguous",
+      "label": {"method": "annotation-derived", "gt_act_ids": [100], "event_type": "vehicle_turnaround"},
+      "notes": "Vehicle reverses (vehicle_reverses), but the event point projects into cam_b (G436), so it is not hidden. A model that reports it from direct visible evidence is right, and abstaining is acceptable."
+    },
+    {
+      "id": "eval_004", "title": "MEVA KF1 bus station, 2018-03-07 17:04:25", "site": "meva_kf1_bus_pocket",
+      "slot": "2018-03-07.17-00-00", "start_s": 265, "duration_s": 26,
+      "gt": "G341", "visible": ["G506", "G436", "G340"], "category": "negative",
+      "label": {"method": "annotation-derived", "why": "No MEVA-annotated activity of any type in the GT camera (G341) during this window. The other cameras show ordinary pedestrian and vehicle flow."},
+      "notes": "Quiet window."
+    },
+    {
+      "id": "eval_005", "title": "MEVA KF1 bus station, 2018-03-12 10:55:08", "site": "meva_kf1_bus_pocket",
+      "slot": "2018-03-12.10-55-00", "start_s": 8, "duration_s": 28,
+      "gt": "G341", "visible": ["G506", "G436", "G340"], "category": "negative",
+      "label": {"method": "annotation-derived", "why": "No MEVA-annotated activity of any type in the GT camera (G341) during this window."},
+      "notes": "Quiet window."
+    },
+    {
+      "id": "eval_006", "title": "MEVA KF1 bus station, 2018-03-12 10:56:00", "site": "meva_kf1_bus_pocket",
+      "slot": "2018-03-12.10-55-00", "start_s": 60, "duration_s": 28,
+      "gt": "G341", "visible": ["G506", "G436", "G340"], "category": "negative",
+      "label": {"method": "annotation-derived", "why": "No MEVA-annotated activity of any type in the GT camera (G341) during this window."},
+      "notes": "Quiet window."
+    },
+    {
+      "id": "eval_007", "title": "MEVA KF1 bus station, 2018-03-12 10:56:44", "site": "meva_kf1_bus_pocket",
+      "slot": "2018-03-12.10-55-00", "start_s": 104, "duration_s": 30,
+      "gt": "G341", "visible": ["G506", "G436", "G340"], "category": "positive",
+      "label": {"method": "annotation-derived", "gt_act_ids": [10, 1, 2], "event_type": "vehicle_turnaround"},
+      "notes": "A vehicle turns into the pocket, stops, and reverses for about 20 s (vehicle_turns_left, vehicle_stops, vehicle_reverses). Blind to all visible cameras while it maneuvers. The same silver SUV comes into cam_c (G340) at the bottom right in the last second of the window (inspection, contact sheet row 3), and its next reverse after the window is annotated in G340."
+    },
+    {
+      "id": "eval_008", "title": "MEVA KF1 bus station, 2018-03-12 11:01:00", "site": "meva_kf1_bus_pocket",
+      "slot": "2018-03-12.11-00-00", "start_s": 60, "duration_s": 28,
+      "gt": "G341", "visible": ["G506", "G436", "G340"], "category": "positive",
+      "label": {"method": "annotation-derived", "gt_act_ids": [0, 1, 10], "event_type": "vehicle_turnaround"},
+      "notes": "A vehicle stops and reverses into the pocket, then a person exits (vehicle_stops, vehicle_reverses, person_exits_vehicle). The approach turn (act 37) projects into cam_b, so cam_b sees the car arrive but not the maneuver."
+    },
+    {
+      "id": "eval_009", "title": "MEVA KF1 bus station, 2018-03-12 11:01:29", "site": "meva_kf1_bus_pocket",
+      "slot": "2018-03-12.11-00-00", "start_s": 89, "duration_s": 28,
+      "gt": "G341", "visible": ["G506", "G436", "G340"], "category": "ambiguous",
+      "label": {"method": "annotation-derived", "gt_act_ids": [4, 6, 38], "event_type": "vehicle_loading_unloading"},
+      "notes": "Trunk opened, unloaded and closed in the pocket (person_opens_trunk, person_closes_trunk, person_unloads_vehicle) where no visible camera sees it. A second car about 3 m east is loading at the same time inside cam_b's view (G436). The event sits on the edge of cam_b's footprint, which is why this is ambiguous."
+    },
+    {
+      "id": "eval_010", "title": "MEVA KF1 bus station, 2018-03-12 11:03:46", "site": "meva_kf1_bus_pocket",
+      "slot": "2018-03-12.11-00-00", "start_s": 226, "duration_s": 28,
+      "gt": "G341", "visible": ["G506", "G436", "G340"], "category": "negative",
+      "label": {"method": "annotation-derived", "why": "No MEVA-annotated activity of any type in the GT camera (G341) during this window."},
+      "notes": "Quiet window."
+    },
+    {
+      "id": "eval_011", "title": "MEVA KF1 bus station, 2018-03-12 11:04:22", "site": "meva_kf1_bus_pocket",
+      "slot": "2018-03-12.11-00-00", "start_s": 262, "duration_s": 28,
+      "gt": "G341", "visible": ["G506", "G436", "G340"], "category": "negative",
+      "label": {"method": "annotation-derived", "why": "No MEVA-annotated activity of any type in the GT camera (G341) during this window."},
+      "notes": "Quiet window."
+    },
+    {
+      "id": "eval_012", "title": "MEVA KF1 bus station, 2018-03-13 16:05:48", "site": "meva_kf1_bus_pocket",
+      "slot": "2018-03-13.16-05-00", "start_s": 48, "duration_s": 30,
+      "gt": "G341", "visible": ["G506", "G436", "G340"], "category": "ambiguous",
+      "label": {"method": "annotation-derived", "gt_act_ids": [2], "event_type": "vehicle_turnaround"},
+      "notes": "A vehicle reverses far out in the GT camera's view, 115-175 m from the visible cameras and outside every configured zone, with no annotated cue in any visible camera. Correct answers are abstention or 'no event in the instrumented region'; naming a pocket event would be a false positive. A large group of pedestrians walking through cam_b is a visible distractor (inspection)."
+    },
+    {
+      "id": "eval_013", "title": "MEVA KF1 bus station, 2018-03-13 16:06:40", "site": "meva_kf1_bus_pocket",
+      "slot": "2018-03-13.16-05-00", "start_s": 100, "duration_s": 28,
+      "gt": "G341", "visible": ["G506", "G436", "G340"], "category": "negative",
+      "label": {"method": "annotation-derived", "why": "No MEVA-annotated activity of any type in the GT camera (G341) during this window."},
+      "notes": "Quiet window."
+    },
+    {
+      "id": "eval_014", "title": "MEVA KF1 bus station, 2018-03-13 16:08:40", "site": "meva_kf1_bus_pocket",
+      "slot": "2018-03-13.16-05-00", "start_s": 220, "duration_s": 28,
+      "gt": "G341", "visible": ["G506", "G436", "G340"], "category": "negative",
+      "label": {"method": "annotation-derived", "why": "No MEVA-annotated activity of any type in the GT camera (G341) during this window."},
+      "notes": "Quiet window."
+    },
+    {
+      "id": "eval_015", "title": "MEVA KF1 bus station, 2018-03-15 14:57:20", "site": "meva_kf1_bus_pocket",
+      "slot": "2018-03-15.14-55-00", "start_s": 140, "duration_s": 24,
+      "gt": "G341", "visible": ["G506", "G436", "G340"], "category": "ambiguous",
+      "label": {"method": "annotation-derived", "gt_act_ids": [2, 3], "event_type": "passenger_dropoff_pickup"},
+      "notes": "A vehicle turns right and stops (vehicle_turns_right, vehicle_stops) near the pocket. The pick-up that follows (act 9, vehicle_picks_up_person) projects into cam_c (G340), so the visible cameras show part of it."
+    },
+    {
+      "id": "eval_016", "title": "MEVA KF1 bus station, 2018-03-15 14:57:43", "site": "meva_kf1_bus_pocket",
+      "slot": "2018-03-15.14-55-00", "start_s": 163, "duration_s": 26,
+      "gt": "G341", "visible": ["G506", "G436", "G340"], "category": "positive",
+      "label": {"method": "annotation-derived", "gt_act_ids": [4, 5], "event_type": "vehicle_turnaround"},
+      "notes": "A vehicle reverses for about 12 s in the pocket and then drives off (vehicle_reverses, vehicle_starts). Blind to all visible cameras."
+    },
+    {
+      "id": "eval_017", "title": "MEVA KF1 bus station, 2018-03-15 15:03:26", "site": "meva_kf1_bus_pocket",
+      "slot": "2018-03-15.15-00-00", "start_s": 206, "duration_s": 28,
+      "gt": "G341", "visible": ["G506", "G436", "G340"], "category": "ambiguous",
+      "label": {"method": "annotation-derived", "gt_act_ids": [54, 48], "event_type": "passenger_dropoff_pickup"},
+      "notes": "Drop-off at the west end of the pocket (vehicle_drops_off_person, person_exits_vehicle), which is blind by geometry. The stop just before it (act 16) and the reverse after it (act 51) test as visible from cam_a (G506), so this sits on the edge of cam_a's coverage."
+    },
+    {
+      "id": "eval_018", "title": "MEVA KF1 bus station, 2018-03-15 15:35:08", "site": "meva_kf1_bus_pocket",
+      "slot": "2018-03-15.15-35-00", "start_s": 8, "duration_s": 26,
+      "gt": "G341", "visible": ["G506", "G436", "G340"], "category": "ambiguous",
+      "label": {"method": "annotation-derived", "gt_act_ids": [9], "event_type": "vehicle_turnaround"},
+      "notes": "A U-turn in the pocket (vehicle_makes_u_turn) that no visible camera sees. A concurrent pick-up and reverse at the pocket edge are directly visible in cam_a (G506), and a drop-off is visible in cam_b (G436). Several overlapping events make a single answer ambiguous."
+    },
+    {
+      "id": "eval_019", "title": "MEVA KF1 bus station, 2018-03-15 15:41:02", "site": "meva_kf1_bus_pocket",
+      "slot": "2018-03-15.15-40-00", "start_s": 62, "duration_s": 26,
+      "gt": "G341", "visible": ["G506", "G436", "G340"], "category": "positive",
+      "label": {"method": "annotation-derived", "gt_act_ids": [3, 4, 7, 6], "event_type": "passenger_dropoff_pickup"},
+      "notes": "A vehicle turns into the pocket, stops, and drops off a passenger (vehicle_turns_left, vehicle_stops, vehicle_drops_off_person, person_exits_vehicle). Blind to all visible cameras."
+    },
+    {
+      "id": "eval_020", "title": "MEVA KF1 bus station, 2018-03-15 15:41:28", "site": "meva_kf1_bus_pocket",
+      "slot": "2018-03-15.15-40-00", "start_s": 88, "duration_s": 24,
+      "gt": "G341", "visible": ["G506", "G436", "G340"], "category": "positive",
+      "label": {"method": "annotation-derived", "gt_act_ids": [9, 8], "event_type": "vehicle_turnaround"},
+      "notes": "The vehicle that just dropped off a passenger pulls out and makes a U-turn in the pocket (vehicle_starts, vehicle_makes_u_turn). Blind to all visible cameras."
+    },
+    {
+      "id": "eval_021", "title": "MEVA KF1 bus station, 2018-03-15 15:43:06", "site": "meva_kf1_bus_pocket",
+      "slot": "2018-03-15.15-40-00", "start_s": 186, "duration_s": 26,
+      "gt": "G341", "visible": ["G506", "G436", "G340"], "category": "ambiguous",
+      "label": {"method": "annotation-derived", "gt_act_ids": [34, 35], "event_type": "vehicle_departure"},
+      "notes": "A vehicle starts and turns right out of the pocket (vehicle_turns_right, vehicle_starts), blind by geometry. The same vehicle's reverse just before it (act 33) is directly visible in cam_a and cam_c."
+    }
+  ]
+}

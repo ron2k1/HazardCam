@@ -1,0 +1,160 @@
+{
+  "scenario_id": "eval_007",
+  "judge_only": true,
+  "category": "positive",
+  "label_method": "annotation-derived",
+  "notes": "A vehicle turns into the pocket, stops, and reverses for about 20 s (vehicle_turns_left, vehicle_stops, vehicle_reverses). Blind to all visible cameras while it maneuvers. The same silver SUV comes into cam_c (G340) at the bottom right in the last second of the window (inspection, contact sheet row 3), and its next reverse after the window is annotated in G340.",
+  "event_type": "vehicle_turnaround",
+  "accepted_event_types": [
+    "vehicle_turnaround",
+    "vehicle_reversing",
+    "u_turn",
+    "vehicle_maneuver",
+    "traffic_obstruction",
+    "vehicle_activity"
+  ],
+  "dataset_event_labels": [
+    "vehicle_reverses",
+    "vehicle_stops",
+    "vehicle_turns_left"
+  ],
+  "abstention_acceptable": false,
+  "time_window": {
+    "start_s": 3.8,
+    "end_s": 30.0,
+    "clamped_to_clip": true
+  },
+  "region": {
+    "zone_id": "z_east_pocket",
+    "accepted_zone_ids": [
+      "z_east_pocket"
+    ],
+    "event_point_local_m": [
+      -0.4,
+      16.2
+    ],
+    "uncertainty_m": 5.0
+  },
+  "direct_visibility": {
+    "cam_a": {
+      "visible": false,
+      "why": "outside image and no co-annotation; outside image and no co-annotation; outside image and no co-annotation"
+    },
+    "cam_b": {
+      "visible": false,
+      "why": "outside image and no co-annotation; outside image and no co-annotation; outside image and no co-annotation"
+    },
+    "cam_c": {
+      "visible": false,
+      "why": "outside image and no co-annotation; outside image and no co-annotation; outside image and no co-annotation"
+    }
+  },
+  "indirect_cues": [
+    {
+      "camera_id": "cam_c",
+      "dataset_label": "vehicle_reverses",
+      "t_start": 22.5,
+      "t_end": 31.0,
+      "distance_to_event_m": 5.8,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_b",
+      "dataset_label": "vehicle_reverses",
+      "t_start": 28.57,
+      "t_end": 38.6,
+      "distance_to_event_m": 7.0,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_a",
+      "dataset_label": "person_talks_to_person",
+      "t_start": 28.63,
+      "t_end": 54.93,
+      "distance_to_event_m": 21.2,
+      "source": "MEVA annotation (visible camera)"
+    }
+  ],
+  "indirect_cues_note": "Every MEVA-annotated activity in a visible camera that overlaps the window and maps within 30 m of the event point. Concurrency only: not a claim that the activity was caused by the event.",
+  "derivation": {
+    "method": "MEVA kitware activity annotations in the GT camera clip; event point = bottom-center of the first actor's box at mid-activity, ray-cast onto the MEVA coarse ground mesh",
+    "gt_clip": "2018-03-12.10-55-00.11-00-00.hospital.G341",
+    "gt_activities": [
+      {
+        "act_id": 10,
+        "label": "vehicle_turns_left",
+        "actor_ids": [
+          12
+        ],
+        "actor_kind": "vehicle",
+        "frames": [
+          3234,
+          3355
+        ],
+        "t_scenario_s": [
+          3.8,
+          7.83
+        ],
+        "ground_xy_local_m": [
+          1.2,
+          15.7
+        ]
+      },
+      {
+        "act_id": 1,
+        "label": "vehicle_stops",
+        "actor_ids": [
+          3
+        ],
+        "actor_kind": "vehicle",
+        "frames": [
+          3333,
+          3378
+        ],
+        "t_scenario_s": [
+          7.1,
+          8.6
+        ],
+        "ground_xy_local_m": [
+          -2.9,
+          14.4
+        ]
+      },
+      {
+        "act_id": 2,
+        "label": "vehicle_reverses",
+        "actor_ids": [
+          4
+        ],
+        "actor_kind": "vehicle",
+        "frames": [
+          3443,
+          4037
+        ],
+        "t_scenario_s": [
+          10.77,
+          30.57
+        ],
+        "ground_xy_local_m": [
+          0.4,
+          18.6
+        ]
+      }
+    ],
+    "visibility_test": "projection of the event point (+0/1/1.6 m) into each visible camera's KRTD model, plus same-kind co-annotation within 3 s / 10 m"
+  },
+  "evidence_frames": {
+    "contact_sheet": "data/prepared/eval_007/evidence/contact_sheet.jpg",
+    "rows_t_s": [
+      3.8,
+      16.9,
+      29.9
+    ],
+    "columns": [
+      "cam_a",
+      "cam_b",
+      "cam_c",
+      "cam_gt"
+    ]
+  }
+}

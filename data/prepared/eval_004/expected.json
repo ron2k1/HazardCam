@@ -1,0 +1,42 @@
+{
+  "scenario_id": "eval_004",
+  "judge_only": true,
+  "category": "negative",
+  "label_method": "annotation-derived",
+  "notes": "Quiet window.",
+  "event_type": "none",
+  "accepted_event_types": [
+    "unknown",
+    "none",
+    "no_event"
+  ],
+  "dataset_event_labels": [],
+  "abstention_acceptable": true,
+  "time_window": null,
+  "region": {
+    "zone_id": null,
+    "accepted_zone_ids": [],
+    "event_point_local_m": null
+  },
+  "direct_visibility": {},
+  "indirect_cues": [],
+  "derivation": {
+    "method": "No MEVA-annotated activity of any type in the GT camera (G341) during this window. The other cameras show ordinary pedestrian and vehicle flow.",
+    "gt_clip": "2018-03-07.17-00-05.17-05-05.hospital.G341",
+    "gt_activities_in_window": []
+  },
+  "evidence_frames": {
+    "contact_sheet": "data/prepared/eval_004/evidence/contact_sheet.jpg",
+    "rows_t_s": [
+      5.2,
+      13.0,
+      20.8
+    ],
+    "columns": [
+      "cam_a",
+      "cam_b",
+      "cam_c",
+      "cam_gt"
+    ]
+  }
+}

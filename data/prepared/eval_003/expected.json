@@ -1,0 +1,270 @@
+{
+  "scenario_id": "eval_003",
+  "judge_only": true,
+  "category": "ambiguous",
+  "label_method": "annotation-derived",
+  "notes": "Vehicle reverses (vehicle_reverses), but the event point projects into cam_b (G436), so it is not hidden. A model that reports it from direct visible evidence is right, and abstaining is acceptable.",
+  "event_type": "vehicle_turnaround",
+  "accepted_event_types": [
+    "vehicle_turnaround",
+    "vehicle_reversing",
+    "u_turn",
+    "vehicle_maneuver",
+    "traffic_obstruction",
+    "vehicle_activity"
+  ],
+  "dataset_event_labels": [
+    "vehicle_reverses"
+  ],
+  "abstention_acceptable": true,
+  "time_window": {
+    "start_s": 3.67,
+    "end_s": 17.87,
+    "clamped_to_clip": false
+  },
+  "region": {
+    "zone_id": "z_east_pocket",
+    "accepted_zone_ids": [
+      "z_east_pocket"
+    ],
+    "event_point_local_m": [
+      0.6,
+      23.2
+    ],
+    "uncertainty_m": 5.0
+  },
+  "direct_visibility": {
+    "cam_a": {
+      "visible": false,
+      "why": "outside image and no co-annotation"
+    },
+    "cam_b": {
+      "visible": true,
+      "why": "co-annotated vehicle_reverses at 170.5s"
+    },
+    "cam_c": {
+      "visible": false,
+      "why": "outside image and no co-annotation"
+    }
+  },
+  "indirect_cues": [
+    {
+      "camera_id": "cam_b",
+      "dataset_label": "person_talks_to_person",
+      "t_start": -167.0,
+      "t_end": 132.97,
+      "distance_to_event_m": 29.2,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_a",
+      "dataset_label": "person_enters_vehicle",
+      "t_start": -5.23,
+      "t_end": 0.03,
+      "distance_to_event_m": 27.6,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_a",
+      "dataset_label": "vehicle_reverses",
+      "t_start": -3.23,
+      "t_end": 8.6,
+      "distance_to_event_m": 5.7,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_b",
+      "dataset_label": "vehicle_reverses",
+      "t_start": -3.23,
+      "t_end": 2.3,
+      "distance_to_event_m": 6.2,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_c",
+      "dataset_label": "vehicle_reverses",
+      "t_start": -3.07,
+      "t_end": 18.2,
+      "distance_to_event_m": 4.8,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_a",
+      "dataset_label": "person_texts_on_phone",
+      "t_start": 2.3,
+      "t_end": 6.7,
+      "distance_to_event_m": 11.5,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_b",
+      "dataset_label": "vehicle_reverses",
+      "t_start": 2.5,
+      "t_end": 10.93,
+      "distance_to_event_m": 5.0,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_b",
+      "dataset_label": "vehicle_starts",
+      "t_start": 4.1,
+      "t_end": 8.77,
+      "distance_to_event_m": 25.2,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_a",
+      "dataset_label": "vehicle_starts",
+      "t_start": 4.37,
+      "t_end": 8.53,
+      "distance_to_event_m": 24.3,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_a",
+      "dataset_label": "person_talks_on_phone",
+      "t_start": 7.13,
+      "t_end": 30.97,
+      "distance_to_event_m": 11.9,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_b",
+      "dataset_label": "vehicle_stops",
+      "t_start": 7.83,
+      "t_end": 11.37,
+      "distance_to_event_m": 17.4,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_b",
+      "dataset_label": "vehicle_turns_right",
+      "t_start": 12.07,
+      "t_end": 15.53,
+      "distance_to_event_m": 17.6,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_b",
+      "dataset_label": "vehicle_stops",
+      "t_start": 15.83,
+      "t_end": 20.1,
+      "distance_to_event_m": 28.8,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_a",
+      "dataset_label": "vehicle_stops",
+      "t_start": 16.37,
+      "t_end": 20.3,
+      "distance_to_event_m": 26.1,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_a",
+      "dataset_label": "person_stands_up",
+      "t_start": 16.7,
+      "t_end": 17.7,
+      "distance_to_event_m": 14.9,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_b",
+      "dataset_label": "vehicle_starts",
+      "t_start": 18.13,
+      "t_end": 22.77,
+      "distance_to_event_m": 18.9,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_a",
+      "dataset_label": "person_opens_facility_door",
+      "t_start": 18.73,
+      "t_end": 19.63,
+      "distance_to_event_m": 17.6,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_b",
+      "dataset_label": "vehicle_stops",
+      "t_start": 19.7,
+      "t_end": 22.9,
+      "distance_to_event_m": 16.7,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_b",
+      "dataset_label": "vehicle_starts",
+      "t_start": 22.93,
+      "t_end": 25.6,
+      "distance_to_event_m": 18.3,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_b",
+      "dataset_label": "vehicle_turns_left",
+      "t_start": 25.17,
+      "t_end": 29.87,
+      "distance_to_event_m": 23.6,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_a",
+      "dataset_label": "vehicle_starts",
+      "t_start": 26.97,
+      "t_end": 28.6,
+      "distance_to_event_m": 25.3,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_b",
+      "dataset_label": "vehicle_starts",
+      "t_start": 27.6,
+      "t_end": 28.87,
+      "distance_to_event_m": 26.9,
+      "source": "MEVA annotation (visible camera)"
+    }
+  ],
+  "indirect_cues_note": "Every MEVA-annotated activity in a visible camera that overlaps the window and maps within 30 m of the event point. Concurrency only: not a claim that the activity was caused by the event.",
+  "derivation": {
+    "method": "MEVA kitware activity annotations in the GT camera clip; event point = bottom-center of the first actor's box at mid-activity, ray-cast onto the MEVA coarse ground mesh",
+    "gt_clip": "2018-03-07.17-00-05.17-05-05.hospital.G341",
+    "gt_activities": [
+      {
+        "act_id": 100,
+        "label": "vehicle_reverses",
+        "actor_ids": [
+          131
+        ],
+        "actor_kind": "vehicle",
+        "frames": [
+          5000,
+          5426
+        ],
+        "t_scenario_s": [
+          3.67,
+          17.87
+        ],
+        "ground_xy_local_m": [
+          0.6,
+          23.2
+        ]
+      }
+    ],
+    "visibility_test": "projection of the event point (+0/1/1.6 m) into each visible camera's KRTD model, plus same-kind co-annotation within 3 s / 10 m"
+  },
+  "evidence_frames": {
+    "contact_sheet": "data/prepared/eval_003/evidence/contact_sheet.jpg",
+    "rows_t_s": [
+      3.67,
+      10.77,
+      17.87
+    ],
+    "columns": [
+      "cam_a",
+      "cam_b",
+      "cam_c",
+      "cam_gt"
+    ]
+  }
+}

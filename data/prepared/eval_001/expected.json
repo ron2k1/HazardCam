@@ -1,0 +1,171 @@
+{
+  "scenario_id": "eval_001",
+  "judge_only": true,
+  "category": "positive",
+  "label_method": "annotation-derived",
+  "notes": "Vehicle stops at the curb east of the bus station; three people exit and unload. Blind to all visible cameras by the geometry test.",
+  "event_type": "passenger_dropoff_pickup",
+  "accepted_event_types": [
+    "passenger_dropoff_pickup",
+    "vehicle_stop",
+    "stopped_vehicle",
+    "vehicle_activity",
+    "traffic_obstruction",
+    "pedestrian_activity"
+  ],
+  "dataset_event_labels": [
+    "person_exits_vehicle",
+    "vehicle_drops_off_person",
+    "vehicle_stops"
+  ],
+  "abstention_acceptable": false,
+  "time_window": {
+    "start_s": 6.03,
+    "end_s": 28.0,
+    "clamped_to_clip": true
+  },
+  "region": {
+    "zone_id": "z_east_pocket",
+    "accepted_zone_ids": [
+      "z_east_pocket"
+    ],
+    "event_point_local_m": [
+      -6.6,
+      11.9
+    ],
+    "uncertainty_m": 5.0
+  },
+  "direct_visibility": {
+    "cam_a": {
+      "visible": false,
+      "why": "outside image and no co-annotation; outside image and no co-annotation; outside image and no co-annotation"
+    },
+    "cam_b": {
+      "visible": false,
+      "why": "outside image and no co-annotation; outside image and no co-annotation; outside image and no co-annotation"
+    },
+    "cam_c": {
+      "visible": false,
+      "why": "outside image and no co-annotation; outside image and no co-annotation; outside image and no co-annotation"
+    }
+  },
+  "indirect_cues": [
+    {
+      "camera_id": "cam_a",
+      "dataset_label": "person_talks_to_person",
+      "t_start": -21.57,
+      "t_end": 21.37,
+      "distance_to_event_m": 9.9,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_b",
+      "dataset_label": "person_carries_heavy_object",
+      "t_start": 6.7,
+      "t_end": 20.37,
+      "distance_to_event_m": 17.9,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_a",
+      "dataset_label": "person_talks_to_person",
+      "t_start": 21.17,
+      "t_end": 25.8,
+      "distance_to_event_m": 8.4,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_a",
+      "dataset_label": "hand_interacts_with_person",
+      "t_start": 21.53,
+      "t_end": 25.8,
+      "distance_to_event_m": 8.3,
+      "source": "MEVA annotation (visible camera)"
+    }
+  ],
+  "indirect_cues_note": "Every MEVA-annotated activity in a visible camera that overlaps the window and maps within 30 m of the event point. Concurrency only: not a claim that the activity was caused by the event.",
+  "derivation": {
+    "method": "MEVA kitware activity annotations in the GT camera clip; event point = bottom-center of the first actor's box at mid-activity, ray-cast onto the MEVA coarse ground mesh",
+    "gt_clip": "2018-03-07.10-55-04.11-00-04.hospital.G341",
+    "gt_activities": [
+      {
+        "act_id": 52,
+        "label": "vehicle_stops",
+        "actor_ids": [
+          68
+        ],
+        "actor_kind": "vehicle",
+        "frames": [
+          6241,
+          6300
+        ],
+        "t_scenario_s": [
+          6.03,
+          8.0
+        ],
+        "ground_xy_local_m": [
+          -6.6,
+          12.2
+        ]
+      },
+      {
+        "act_id": 96,
+        "label": "vehicle_drops_off_person",
+        "actor_ids": [
+          144,
+          143,
+          145
+        ],
+        "actor_kind": "person",
+        "frames": [
+          6270,
+          7512
+        ],
+        "t_scenario_s": [
+          7.0,
+          48.4
+        ],
+        "ground_xy_local_m": [
+          -6.4,
+          12.2
+        ]
+      },
+      {
+        "act_id": 56,
+        "label": "person_exits_vehicle",
+        "actor_ids": [
+          74,
+          75
+        ],
+        "actor_kind": "vehicle",
+        "frames": [
+          6304,
+          6490
+        ],
+        "t_scenario_s": [
+          8.13,
+          14.33
+        ],
+        "ground_xy_local_m": [
+          -6.8,
+          11.4
+        ]
+      }
+    ],
+    "visibility_test": "projection of the event point (+0/1/1.6 m) into each visible camera's KRTD model, plus same-kind co-annotation within 3 s / 10 m"
+  },
+  "evidence_frames": {
+    "contact_sheet": "data/prepared/eval_001/evidence/contact_sheet.jpg",
+    "rows_t_s": [
+      6.03,
+      17.02,
+      27.9
+    ],
+    "columns": [
+      "cam_a",
+      "cam_b",
+      "cam_c",
+      "cam_gt"
+    ]
+  }
+}

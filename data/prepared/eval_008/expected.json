@@ -1,0 +1,161 @@
+{
+  "scenario_id": "eval_008",
+  "judge_only": true,
+  "category": "positive",
+  "label_method": "annotation-derived",
+  "notes": "A vehicle stops and reverses into the pocket, then a person exits (vehicle_stops, vehicle_reverses, person_exits_vehicle). The approach turn (act 37) projects into cam_b, so cam_b sees the car arrive but not the maneuver.",
+  "event_type": "vehicle_turnaround",
+  "accepted_event_types": [
+    "vehicle_turnaround",
+    "vehicle_reversing",
+    "u_turn",
+    "vehicle_maneuver",
+    "traffic_obstruction",
+    "vehicle_activity"
+  ],
+  "dataset_event_labels": [
+    "person_exits_vehicle",
+    "vehicle_reverses",
+    "vehicle_stops"
+  ],
+  "abstention_acceptable": false,
+  "time_window": {
+    "start_s": 6.3,
+    "end_s": 26.07,
+    "clamped_to_clip": false
+  },
+  "region": {
+    "zone_id": "z_east_pocket",
+    "accepted_zone_ids": [
+      "z_east_pocket"
+    ],
+    "event_point_local_m": [
+      3.5,
+      12.2
+    ],
+    "uncertainty_m": 5.0
+  },
+  "direct_visibility": {
+    "cam_a": {
+      "visible": false,
+      "why": "outside image and no co-annotation; outside image and no co-annotation; outside image and no co-annotation"
+    },
+    "cam_b": {
+      "visible": false,
+      "why": "outside image and no co-annotation; outside image and no co-annotation; outside image and no co-annotation"
+    },
+    "cam_c": {
+      "visible": false,
+      "why": "outside image and no co-annotation; outside image and no co-annotation; outside image and no co-annotation"
+    }
+  },
+  "indirect_cues": [
+    {
+      "camera_id": "cam_a",
+      "dataset_label": "person_talks_to_person",
+      "t_start": -60.0,
+      "t_end": 144.07,
+      "distance_to_event_m": 11.7,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_b",
+      "dataset_label": "vehicle_turns_left",
+      "t_start": 2.13,
+      "t_end": 5.37,
+      "distance_to_event_m": 8.7,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_c",
+      "dataset_label": "vehicle_reverses",
+      "t_start": 19.13,
+      "t_end": 19.83,
+      "distance_to_event_m": 3.3,
+      "source": "MEVA annotation (visible camera)"
+    }
+  ],
+  "indirect_cues_note": "Every MEVA-annotated activity in a visible camera that overlaps the window and maps within 30 m of the event point. Concurrency only: not a claim that the activity was caused by the event.",
+  "derivation": {
+    "method": "MEVA kitware activity annotations in the GT camera clip; event point = bottom-center of the first actor's box at mid-activity, ray-cast onto the MEVA coarse ground mesh",
+    "gt_clip": "2018-03-12.11-00-00.11-05-00.hospital.G341",
+    "gt_activities": [
+      {
+        "act_id": 0,
+        "label": "vehicle_stops",
+        "actor_ids": [
+          1
+        ],
+        "actor_kind": "vehicle",
+        "frames": [
+          1989,
+          2038
+        ],
+        "t_scenario_s": [
+          6.3,
+          7.93
+        ],
+        "ground_xy_local_m": [
+          5.8,
+          4.7
+        ]
+      },
+      {
+        "act_id": 1,
+        "label": "vehicle_reverses",
+        "actor_ids": [
+          2
+        ],
+        "actor_kind": "vehicle",
+        "frames": [
+          2071,
+          2387
+        ],
+        "t_scenario_s": [
+          9.03,
+          19.57
+        ],
+        "ground_xy_local_m": [
+          3.8,
+          11.5
+        ]
+      },
+      {
+        "act_id": 10,
+        "label": "person_exits_vehicle",
+        "actor_ids": [
+          20,
+          19
+        ],
+        "actor_kind": "person",
+        "frames": [
+          2402,
+          2582
+        ],
+        "t_scenario_s": [
+          20.07,
+          26.07
+        ],
+        "ground_xy_local_m": [
+          1.0,
+          20.3
+        ]
+      }
+    ],
+    "visibility_test": "projection of the event point (+0/1/1.6 m) into each visible camera's KRTD model, plus same-kind co-annotation within 3 s / 10 m"
+  },
+  "evidence_frames": {
+    "contact_sheet": "data/prepared/eval_008/evidence/contact_sheet.jpg",
+    "rows_t_s": [
+      6.3,
+      16.18,
+      26.07
+    ],
+    "columns": [
+      "cam_a",
+      "cam_b",
+      "cam_c",
+      "cam_gt"
+    ]
+  }
+}

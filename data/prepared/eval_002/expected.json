@@ -1,0 +1,268 @@
+{
+  "scenario_id": "eval_002",
+  "judge_only": true,
+  "category": "positive",
+  "label_method": "annotation-derived",
+  "notes": "A white SUV stops in the pocket and picks a person up (vehicle_stops, vehicle_picks_up_person). Blind to all visible cameras.",
+  "event_type": "passenger_dropoff_pickup",
+  "accepted_event_types": [
+    "passenger_dropoff_pickup",
+    "vehicle_stop",
+    "stopped_vehicle",
+    "vehicle_activity",
+    "traffic_obstruction",
+    "pedestrian_activity"
+  ],
+  "dataset_event_labels": [
+    "vehicle_picks_up_person",
+    "vehicle_stops"
+  ],
+  "abstention_acceptable": false,
+  "time_window": {
+    "start_s": 5.87,
+    "end_s": 26.8,
+    "clamped_to_clip": false
+  },
+  "region": {
+    "zone_id": "z_east_pocket",
+    "accepted_zone_ids": [
+      "z_east_pocket"
+    ],
+    "event_point_local_m": [
+      -3.9,
+      17.9
+    ],
+    "uncertainty_m": 5.0
+  },
+  "direct_visibility": {
+    "cam_a": {
+      "visible": false,
+      "why": "outside image and no co-annotation; outside image and no co-annotation"
+    },
+    "cam_b": {
+      "visible": false,
+      "why": "outside image and no co-annotation; outside image and no co-annotation"
+    },
+    "cam_c": {
+      "visible": false,
+      "why": "outside image and no co-annotation; outside image and no co-annotation"
+    }
+  },
+  "indirect_cues": [
+    {
+      "camera_id": "cam_a",
+      "dataset_label": "person_talks_on_phone",
+      "t_start": -8.63,
+      "t_end": 4.0,
+      "distance_to_event_m": 7.5,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_a",
+      "dataset_label": "person_talks_to_person",
+      "t_start": -0.23,
+      "t_end": 7.87,
+      "distance_to_event_m": 8.6,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_b",
+      "dataset_label": "vehicle_stops",
+      "t_start": 5.97,
+      "t_end": 7.77,
+      "distance_to_event_m": 17.0,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_b",
+      "dataset_label": "vehicle_starts",
+      "t_start": 7.8,
+      "t_end": 9.67,
+      "distance_to_event_m": 18.3,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_a",
+      "dataset_label": "person_enters_vehicle",
+      "t_start": 8.37,
+      "t_end": 17.0,
+      "distance_to_event_m": 12.1,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_a",
+      "dataset_label": "person_opens_vehicle_door",
+      "t_start": 8.37,
+      "t_end": 14.1,
+      "distance_to_event_m": 12.1,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_a",
+      "dataset_label": "person_texts_on_phone",
+      "t_start": 10.27,
+      "t_end": 15.1,
+      "distance_to_event_m": 7.3,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_b",
+      "dataset_label": "person_talks_to_person",
+      "t_start": 10.3,
+      "t_end": 19.93,
+      "distance_to_event_m": 22.7,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_b",
+      "dataset_label": "vehicle_turns_left",
+      "t_start": 10.3,
+      "t_end": 15.37,
+      "distance_to_event_m": 23.4,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_a",
+      "dataset_label": "person_talks_to_person",
+      "t_start": 12.33,
+      "t_end": 19.83,
+      "distance_to_event_m": 25.3,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_a",
+      "dataset_label": "person_enters_scene_through_structure",
+      "t_start": 12.47,
+      "t_end": 14.4,
+      "distance_to_event_m": 12.3,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_a",
+      "dataset_label": "person_opens_facility_door",
+      "t_start": 12.47,
+      "t_end": 13.7,
+      "distance_to_event_m": 12.2,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_a",
+      "dataset_label": "person_enters_scene_through_structure",
+      "t_start": 12.97,
+      "t_end": 15.23,
+      "distance_to_event_m": 12.3,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_a",
+      "dataset_label": "person_closes_vehicle_door",
+      "t_start": 14.8,
+      "t_end": 17.0,
+      "distance_to_event_m": 11.5,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_a",
+      "dataset_label": "person_talks_on_phone",
+      "t_start": 15.5,
+      "t_end": 27.1,
+      "distance_to_event_m": 7.2,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_a",
+      "dataset_label": "person_sits_down",
+      "t_start": 20.3,
+      "t_end": 21.9,
+      "distance_to_event_m": 9.4,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_a",
+      "dataset_label": "vehicle_reverses",
+      "t_start": 24.77,
+      "t_end": 36.6,
+      "distance_to_event_m": 9.3,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_b",
+      "dataset_label": "vehicle_reverses",
+      "t_start": 24.77,
+      "t_end": 30.3,
+      "distance_to_event_m": 11.6,
+      "source": "MEVA annotation (visible camera)"
+    },
+    {
+      "camera_id": "cam_c",
+      "dataset_label": "vehicle_reverses",
+      "t_start": 24.93,
+      "t_end": 46.2,
+      "distance_to_event_m": 9.2,
+      "source": "MEVA annotation (visible camera)"
+    }
+  ],
+  "indirect_cues_note": "Every MEVA-annotated activity in a visible camera that overlaps the window and maps within 30 m of the event point. Concurrency only: not a claim that the activity was caused by the event.",
+  "derivation": {
+    "method": "MEVA kitware activity annotations in the GT camera clip; event point = bottom-center of the first actor's box at mid-activity, ray-cast onto the MEVA coarse ground mesh",
+    "gt_clip": "2018-03-07.17-00-05.17-05-05.hospital.G341",
+    "gt_activities": [
+      {
+        "act_id": 98,
+        "label": "vehicle_stops",
+        "actor_ids": [
+          129
+        ],
+        "actor_kind": "vehicle",
+        "frames": [
+          4226,
+          4365
+        ],
+        "t_scenario_s": [
+          5.87,
+          10.5
+        ],
+        "ground_xy_local_m": [
+          -4.0,
+          18.5
+        ]
+      },
+      {
+        "act_id": 102,
+        "label": "vehicle_picks_up_person",
+        "actor_ids": [
+          133,
+          134
+        ],
+        "actor_kind": "vehicle",
+        "frames": [
+          4335,
+          4854
+        ],
+        "t_scenario_s": [
+          9.5,
+          26.8
+        ],
+        "ground_xy_local_m": [
+          -3.8,
+          17.3
+        ]
+      }
+    ],
+    "visibility_test": "projection of the event point (+0/1/1.6 m) into each visible camera's KRTD model, plus same-kind co-annotation within 3 s / 10 m"
+  },
+  "evidence_frames": {
+    "contact_sheet": "data/prepared/eval_002/evidence/contact_sheet.jpg",
+    "rows_t_s": [
+      5.87,
+      16.34,
+      26.8
+    ],
+    "columns": [
+      "cam_a",
+      "cam_b",
+      "cam_c",
+      "cam_gt"
+    ]
+  }
+}
