@@ -1,0 +1,30 @@
+{
+  "name": "meva-kf1-22",
+  "description": "Every prepared MEVA KF1 scenario: 8 positive, 7 negative, 7 ambiguous. Labels are judge-only, in data/prepared/<id>/expected.json; the harness never reads them.",
+  "source": "MEVA KF1 (Kitware/IARPA), CC BY 4.0. See docs/DATA_SOURCES.md.",
+  "scoring": "eval/SCORING.md",
+  "scenarios": [
+    "eval_001",
+    "eval_002",
+    "eval_003",
+    "eval_004",
+    "eval_005",
+    "eval_006",
+    "eval_007",
+    "eval_008",
+    "eval_009",
+    "eval_010",
+    "eval_011",
+    "eval_012",
+    "eval_013",
+    "eval_014",
+    "eval_015",
+    "eval_016",
+    "eval_017",
+    "eval_018",
+    "eval_019",
+    "eval_020",
+    "eval_021",
+    "scenario_001"
+  ]
+}
