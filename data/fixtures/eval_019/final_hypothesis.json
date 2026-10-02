@@ -1,0 +1,31 @@
+{
+  "event_type": "vehicle_turnaround",
+  "region": "region_01",
+  "confidence": 0.77,
+  "evidence_ids": [
+    "cam_b.o1",
+    "cam_b.o2",
+    "cam_b.o3",
+    "cam_b.o4",
+    "cam_b.o5",
+    "cam_c.o1",
+    "cam_a.o1",
+    "cam_b.o6",
+    "cam_b.o7"
+  ],
+  "reason": "Cues cam_b.o1, cam_b.o2, cam_b.o3, cam_b.o4, cam_b.o5 show a vehicle slowing, turning left, and reversing near the blind zone’s center (bearing 350.3°), while cam_c.o1 and cam_a.o1 depict a parked silver SUV and a person walking rightward (toward the blind zone) after 7s. cam_b.o6 and cam_b.o7 confirm a leftward vehicle and pedestrian exiting rightward (consistent with a turnaround or pickup/dropoff). The clustering score (0.7656) and region candidate (region_01) align these movements toward the blind zone’s center.",
+  "alternatives": [
+    {
+      "event_type": "vehicle_stop",
+      "confidence": 0.65
+    },
+    {
+      "event_type": "passenger_dropoff_pickup",
+      "confidence": 0.6
+    }
+  ],
+  "limitations": [
+    "Weak cues from cam_b.o8 and cam_c.o2 (confidence 0.75/0.85) do not confirm a full turnaround, and cam_a.o1’s direction (rightward) could reflect ordinary transit.",
+    "The event itself is not directly visible to any model input camera."
+  ]
+}

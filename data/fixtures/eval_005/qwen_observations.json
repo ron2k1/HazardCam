@@ -1,0 +1,14 @@
+{
+  "cam_a": {
+    "camera_id": "cam_a",
+    "observations": []
+  },
+  "cam_b": {
+    "camera_id": "cam_b",
+    "observations": []
+  },
+  "cam_c": {
+    "camera_id": "cam_c",
+    "observations": []
+  }
+}

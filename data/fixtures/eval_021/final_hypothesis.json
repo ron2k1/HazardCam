@@ -1,0 +1,30 @@
+{
+  "event_type": "vehicle_turn",
+  "region": "region_01",
+  "confidence": 0.75,
+  "evidence_ids": [
+    "cam_b.o1",
+    "cam_b.o2",
+    "cam_b.o3",
+    "cam_b.o4",
+    "cam_b.o5",
+    "cam_a.o1",
+    "cam_b.o6"
+  ],
+  "reason": "Cues cam_b.o1 and cam_b.o5 (red car entering/exiting from the left) and cam_b.o6 (red car exiting to the right) align temporally with cam_a.o1 (person walking right-to-left) and cam_b.o4 (red car exiting right), suggesting coordinated movement of a vehicle and pedestrian near the blind zone. The cam_b.o2 (people looking toward the same direction) and cam_b.o3 (stationary white car) support a shared activity in region_01 by indicating focused attention and potential interaction.",
+  "alternatives": [
+    {
+      "event_type": "vehicle_stop",
+      "confidence": 0.65
+    },
+    {
+      "event_type": "passenger_dropoff_pickup",
+      "confidence": 0.55
+    }
+  ],
+  "limitations": [
+    "The evidence does not confirm a full turnaround or passenger activity; only vehicle movement and pedestrian transit are visible.",
+    "Camera cam_c provides no observations, limiting spatial context for the blind zone’s full activity.",
+    "The event itself is not directly visible to any model input camera."
+  ]
+}

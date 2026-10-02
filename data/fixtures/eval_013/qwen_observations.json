@@ -1,0 +1,68 @@
+{
+  "cam_a": {
+    "camera_id": "cam_a",
+    "observations": []
+  },
+  "cam_b": {
+    "camera_id": "cam_b",
+    "observations": [
+      {
+        "id": "cam_b.o1",
+        "t_start": 0.0,
+        "t_end": 27.0,
+        "cue_type": "human_reaction",
+        "description": "Several people in a line on the left side of the road turn their heads and look toward the right side of the frame",
+        "direction": "right",
+        "confidence": 0.95,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_b.o2",
+        "t_start": 0.0,
+        "t_end": 27.0,
+        "cue_type": "other",
+        "description": "A white vehicle is parked on the right side of the frame, stationary throughout the sequence",
+        "direction": "right",
+        "confidence": 0.98,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      }
+    ]
+  },
+  "cam_c": {
+    "camera_id": "cam_c",
+    "observations": [
+      {
+        "id": "cam_c.o1",
+        "t_start": 12.0,
+        "t_end": 19.0,
+        "cue_type": "person_edge_transit",
+        "description": "A person in dark clothing runs across the grassy area from the left edge of the frame to the right.",
+        "direction": "right",
+        "confidence": 0.95,
+        "supporting_frames": [
+          3,
+          4,
+          5
+        ]
+      }
+    ]
+  }
+}

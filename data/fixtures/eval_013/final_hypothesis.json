@@ -1,0 +1,25 @@
+{
+  "event_type": "vehicle_stop",
+  "region": "z_north_road",
+  "confidence": 0.75,
+  "evidence_ids": [
+    "cam_b.o1",
+    "cam_b.o2",
+    "cam_c.o1"
+  ],
+  "reason": "Cues cam_b.o1 and cam_b.o2 show a stationary vehicle and people facing toward the blind zone’s direction, while cam_c.o1 depicts a person moving directly into it. The clusters and region candidate z_north_road align these cues in time and space, suggesting coordinated activity.",
+  "alternatives": [
+    {
+      "event_type": "passenger_dropoff_pickup",
+      "confidence": 0.65
+    },
+    {
+      "event_type": "vehicle_turn",
+      "confidence": 0.5
+    }
+  ],
+  "limitations": [
+    "Camera cam_a lacks observations, and the person’s motion in cam_c.o1 is brief, leaving ambiguity about whether they were part of a larger group.",
+    "The event itself is not directly visible to any model input camera."
+  ]
+}

@@ -1,0 +1,204 @@
+{
+  "cam_a": {
+    "camera_id": "cam_a",
+    "observations": [
+      {
+        "id": "cam_a.o1",
+        "t_start": 0.0,
+        "t_end": 27.0,
+        "cue_type": "person_edge_transit",
+        "description": "A person in a dark jacket walks from the left side of the frame toward the building entrance and exits the frame to the right.",
+        "direction": "right",
+        "confidence": 0.95,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_a.o2",
+        "t_start": 15.0,
+        "t_end": 27.0,
+        "cue_type": "person_edge_transit",
+        "description": "A person in a red jacket walks from the right side of the frame toward the building entrance and exits the frame to the left.",
+        "direction": "left",
+        "confidence": 0.95,
+        "supporting_frames": [
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_a.o3",
+        "t_start": 19.0,
+        "t_end": 27.0,
+        "cue_type": "person_vehicle_interaction",
+        "description": "A person in a dark jacket opens the door of a parked vehicle on the right side of the frame.",
+        "direction": "right",
+        "confidence": 0.85,
+        "supporting_frames": [
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_a.o4",
+        "t_start": 23.0,
+        "t_end": 27.0,
+        "cue_type": "person_edge_transit",
+        "description": "A person in a dark jacket walks from the right side of the frame toward the building entrance and exits the frame to the left.",
+        "direction": "left",
+        "confidence": 0.95,
+        "supporting_frames": [
+          6,
+          7
+        ]
+      }
+    ]
+  },
+  "cam_b": {
+    "camera_id": "cam_b",
+    "observations": [
+      {
+        "id": "cam_b.o1",
+        "t_start": 0.0,
+        "t_end": 27.0,
+        "cue_type": "vehicle_edge_transit",
+        "description": "A dark red pickup truck enters the frame from the left and stops near the center",
+        "direction": "left",
+        "confidence": 0.9,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_b.o2",
+        "t_start": 12.0,
+        "t_end": 27.0,
+        "cue_type": "vehicle_slowing_or_stopping",
+        "description": "A red car slows and stops near the center of the road where a group of people in yellow vests are standing",
+        "direction": "center",
+        "confidence": 0.95,
+        "supporting_frames": [
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      }
+    ]
+  },
+  "cam_c": {
+    "camera_id": "cam_c",
+    "observations": [
+      {
+        "id": "cam_c.o1",
+        "t_start": 0.0,
+        "t_end": 4.0,
+        "cue_type": "person_edge_transit",
+        "description": "A person in dark clothing walks into the frame from the right edge and moves toward the center.",
+        "direction": "right",
+        "confidence": 0.85,
+        "supporting_frames": [
+          0,
+          1
+        ]
+      },
+      {
+        "id": "cam_c.o2",
+        "t_start": 0.0,
+        "t_end": 4.0,
+        "cue_type": "person_vehicle_interaction",
+        "description": "A person in a green jacket gets out of a vehicle on the left edge of the frame.",
+        "direction": "left",
+        "confidence": 0.8,
+        "supporting_frames": [
+          0,
+          1
+        ]
+      },
+      {
+        "id": "cam_c.o3",
+        "t_start": 0.0,
+        "t_end": 4.0,
+        "cue_type": "vehicle_slowing_or_stopping",
+        "description": "A white SUV is stationary in the center of the frame, not moving between frames.",
+        "direction": "center",
+        "confidence": 0.9,
+        "supporting_frames": [
+          0,
+          1
+        ]
+      },
+      {
+        "id": "cam_c.o4",
+        "t_start": 0.0,
+        "t_end": 4.0,
+        "cue_type": "vehicle_slowing_or_stopping",
+        "description": "A red pickup truck is stationary in the left foreground, not moving between frames.",
+        "direction": "left",
+        "confidence": 0.9,
+        "supporting_frames": [
+          0,
+          1
+        ]
+      },
+      {
+        "id": "cam_c.o5",
+        "t_start": 8.0,
+        "t_end": 12.0,
+        "cue_type": "vehicle_edge_transit",
+        "description": "A red sedan enters the frame from the right edge and moves leftward across the scene.",
+        "direction": "right",
+        "confidence": 0.95,
+        "supporting_frames": [
+          2,
+          3
+        ]
+      },
+      {
+        "id": "cam_c.o6",
+        "t_start": 15.0,
+        "t_end": 19.0,
+        "cue_type": "person_edge_transit",
+        "description": "A person in dark clothing walks out of the frame from the right edge.",
+        "direction": "right",
+        "confidence": 0.85,
+        "supporting_frames": [
+          4,
+          5
+        ]
+      },
+      {
+        "id": "cam_c.o7",
+        "t_start": 19.0,
+        "t_end": 23.0,
+        "cue_type": "vehicle_edge_transit",
+        "description": "A gray sedan exits the frame from the left edge, having moved across the scene.",
+        "direction": "left",
+        "confidence": 0.95,
+        "supporting_frames": [
+          5,
+          6
+        ]
+      }
+    ]
+  }
+}

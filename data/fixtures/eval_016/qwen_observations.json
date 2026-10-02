@@ -1,0 +1,127 @@
+{
+  "cam_a": {
+    "camera_id": "cam_a",
+    "observations": []
+  },
+  "cam_b": {
+    "camera_id": "cam_b",
+    "observations": [
+      {
+        "id": "cam_b.o1",
+        "t_start": 0.0,
+        "t_end": 7.0,
+        "cue_type": "vehicle_edge_transit",
+        "description": "A dark-colored SUV enters the frame from the bottom left edge",
+        "direction": "away_from_camera",
+        "confidence": 0.8,
+        "supporting_frames": [
+          0,
+          1,
+          2
+        ]
+      },
+      {
+        "id": "cam_b.o2",
+        "t_start": 0.0,
+        "t_end": 25.0,
+        "cue_type": "human_reaction",
+        "description": "Several people on the sidewalk turn their heads toward the silver sedan",
+        "direction": "center_left",
+        "confidence": 0.7,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_b.o3",
+        "t_start": 0.0,
+        "t_end": 25.0,
+        "cue_type": "traffic_reaction",
+        "description": "A silver sedan stops and waits as a person approaches it",
+        "direction": "center_left",
+        "confidence": 0.8,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_b.o4",
+        "t_start": 0.0,
+        "t_end": 25.0,
+        "cue_type": "other",
+        "description": "A person walks along the sidewalk toward the silver sedan",
+        "direction": "center_left",
+        "confidence": 0.7,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_b.o5",
+        "t_start": 11.0,
+        "t_end": 18.0,
+        "cue_type": "vehicle_slowing_or_stopping",
+        "description": "A silver sedan slows and stops at the curve of the road near the sidewalk",
+        "direction": "center_left",
+        "confidence": 0.9,
+        "supporting_frames": [
+          3,
+          4,
+          5
+        ]
+      },
+      {
+        "id": "cam_b.o6",
+        "t_start": 18.0,
+        "t_end": 25.0,
+        "cue_type": "person_vehicle_interaction",
+        "description": "A person opens the driver's side door of a silver sedan parked on the sidewalk",
+        "direction": "left",
+        "confidence": 0.95,
+        "supporting_frames": [
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_b.o7",
+        "t_start": 21.0,
+        "t_end": 25.0,
+        "cue_type": "vehicle_edge_transit",
+        "description": "A red SUV enters the frame from the bottom edge",
+        "direction": "away_from_camera",
+        "confidence": 0.8,
+        "supporting_frames": [
+          6,
+          7
+        ]
+      }
+    ]
+  },
+  "cam_c": {
+    "camera_id": "cam_c",
+    "observations": []
+  }
+}

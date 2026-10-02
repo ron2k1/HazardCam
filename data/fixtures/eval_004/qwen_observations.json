@@ -1,0 +1,90 @@
+{
+  "cam_a": {
+    "camera_id": "cam_a",
+    "observations": [
+      {
+        "id": "cam_a.o1",
+        "t_start": 0.0,
+        "t_end": 25.0,
+        "cue_type": "vehicle_edge_transit",
+        "description": "A dark-colored SUV and a black SUV are parked in the background, with the dark SUV appearing to leave the frame on the right.",
+        "direction": "right",
+        "confidence": 0.85,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_a.o2",
+        "t_start": 18.0,
+        "t_end": 25.0,
+        "cue_type": "person_edge_transit",
+        "description": "A person walks into the frame from the right side and moves toward the parked vehicles.",
+        "direction": "right",
+        "confidence": 0.95,
+        "supporting_frames": [
+          5,
+          6,
+          7
+        ]
+      }
+    ]
+  },
+  "cam_b": {
+    "camera_id": "cam_b",
+    "observations": [
+      {
+        "id": "cam_b.o1",
+        "t_start": 18.0,
+        "t_end": 25.0,
+        "cue_type": "person_edge_transit",
+        "description": "A person in red walks onto the sidewalk from the left edge of the frame and continues walking away from the camera.",
+        "direction": "left",
+        "confidence": 0.95,
+        "supporting_frames": [
+          5,
+          6,
+          7
+        ]
+      }
+    ]
+  },
+  "cam_c": {
+    "camera_id": "cam_c",
+    "observations": [
+      {
+        "id": "cam_c.o1",
+        "t_start": 14.0,
+        "t_end": 18.0,
+        "cue_type": "person_edge_transit",
+        "description": "A person in a dark jacket walks into the frame from the left edge.",
+        "direction": "left",
+        "confidence": 0.95,
+        "supporting_frames": [
+          4,
+          5
+        ]
+      },
+      {
+        "id": "cam_c.o2",
+        "t_start": 18.0,
+        "t_end": 21.0,
+        "cue_type": "person_edge_transit",
+        "description": "A person in a dark jacket exits the frame to the left edge.",
+        "direction": "left",
+        "confidence": 0.95,
+        "supporting_frames": [
+          5,
+          6
+        ]
+      }
+    ]
+  }
+}

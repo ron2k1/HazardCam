@@ -1,0 +1,17 @@
+{
+  "event_type": "unknown",
+  "region": "unknown",
+  "confidence": 0.0,
+  "evidence_ids": [
+    "cam_b.o1",
+    "cam_b.o2"
+  ],
+  "reason": "Cues from cam_b.o1 (stationary vehicle) and cam_b.o2 (two people walking toward the center-left) align temporally (8–27s) and spatially toward the hospital’s access drive, though only one camera corroborates them. The vehicle’s parked state and people’s transit suggest potential loading/unloading activity, but the lack of corroboration from other cameras and weak temporal clustering limits confidence.",
+  "alternatives": [],
+  "limitations": [
+    "Only cam_b provides evidence, with no corroboration from cam_a or cam_c",
+    "The region candidate’s score (0.23) reflects a single-ray method, not multi-camera intersection",
+    "No direct cues of vehicle movement or people interacting with parked vehicles",
+    "The event itself is not directly visible to any model input camera."
+  ]
+}

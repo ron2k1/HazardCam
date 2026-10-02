@@ -1,0 +1,26 @@
+{
+  "event_type": "passenger_dropoff_pickup",
+  "region": "region_01",
+  "confidence": 0.85,
+  "evidence_ids": [
+    "cam_a.o1",
+    "cam_b.o1",
+    "cam_c.o1",
+    "cam_a.o2"
+  ],
+  "reason": "Cues cam_a.o1, cam_b.o1, and cam_c.o1 show vehicles entering the blind zone (silver sedan and dark red SUV) with high confidence, while cam_a.o2 depicts a person carrying a bag walking toward the same area, aligning with passenger pickup/dropoff timing. The cluster score (0.80) and region candidate (region_01) confirm spatial overlap.",
+  "alternatives": [
+    {
+      "event_type": "vehicle_turnaround",
+      "confidence": 0.7
+    },
+    {
+      "event_type": "vehicle_stop",
+      "confidence": 0.65
+    }
+  ],
+  "limitations": [
+    "Weaknesses include the person cue (cam_a.o2) being secondary to vehicle entries and no direct observation of people exiting the blind zone.",
+    "The event itself is not directly visible to any model input camera."
+  ]
+}

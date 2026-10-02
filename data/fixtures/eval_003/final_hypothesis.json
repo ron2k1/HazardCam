@@ -1,0 +1,29 @@
+{
+  "event_type": "vehicle_stop",
+  "region": "z_north_road",
+  "confidence": 0.85,
+  "evidence_ids": [
+    "cam_b.o1",
+    "cam_b.o2",
+    "cam_a.o1",
+    "cam_c.o1",
+    "cam_b.o3",
+    "cam_a.o2",
+    "cam_c.o2"
+  ],
+  "reason": "Cues cam_b.o1 and cam_c.o1 show multiple dark grey sedans entering the blind zone from the left, while cam_b.o2 and cam_c.o2 show vehicles exiting from the right, indicating bidirectional traffic. cam_a.o1 and cam_a.o2 confirm pedestrian movement toward and away from the left edge, consistent with a vehicle stop near the blind zone. cam_b.o3 corroborates a vehicle slowing and stopping near people in yellow vests, suggesting a temporary stop.",
+  "alternatives": [
+    {
+      "event_type": "vehicle_turn",
+      "confidence": 0.75
+    },
+    {
+      "event_type": "vehicle_turnaround",
+      "confidence": 0.65
+    }
+  ],
+  "limitations": [
+    "The evidence does not confirm whether people were boarding or alighting, nor does it rule out a brief stop unrelated to passenger activity.",
+    "The event itself is not directly visible to any model input camera."
+  ]
+}

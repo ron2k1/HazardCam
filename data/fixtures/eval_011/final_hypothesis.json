@@ -1,0 +1,12 @@
+{
+  "event_type": "unknown",
+  "region": "unknown",
+  "confidence": 0.0,
+  "evidence_ids": [],
+  "reason": "Fusion produced no evidence items; abstaining without a model call.",
+  "alternatives": [],
+  "limitations": [
+    "No evidence from any model input camera.",
+    "The event itself is not directly visible to any model input camera."
+  ]
+}

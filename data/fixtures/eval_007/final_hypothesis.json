@@ -1,0 +1,24 @@
+{
+  "event_type": "passenger_dropoff_pickup",
+  "region": "z_north_lot",
+  "confidence": 0.65,
+  "evidence_ids": [
+    "cam_b.o1",
+    "cam_c.o1"
+  ],
+  "reason": "Cues cam_b.o1 and cam_c.o1 show people walking toward the center of the frame (leftward) and a vehicle entering from the right, respectively, both pointing toward the z_north_lot region. The cluster score (0.6387) and high confidence (0.98 each) align these cues in time and direction.",
+  "alternatives": [
+    {
+      "event_type": "vehicle_turn",
+      "confidence": 0.55
+    },
+    {
+      "event_type": "object_transport",
+      "confidence": 0.4
+    }
+  ],
+  "limitations": [
+    "Camera cam_a provides no observations, and the vehicle cue lacks explicit stopping behavior.",
+    "The event itself is not directly visible to any model input camera."
+  ]
+}

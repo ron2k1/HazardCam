@@ -1,0 +1,30 @@
+{
+  "event_type": "vehicle_turnaround",
+  "region": "z_north_road",
+  "confidence": 0.75,
+  "evidence_ids": [
+    "cam_b.o1",
+    "cam_b.o2",
+    "cam_b.o6",
+    "cam_c.o3",
+    "cam_c.o2",
+    "cam_b.o7",
+    "cam_c.o4"
+  ],
+  "reason": "Cues cam_b.o1 and cam_b.o2 show opposing vehicle movements (entering from left, exiting to right) at the same time, indicating a vehicle traversing the blind zone’s roadway. cam_b.o6 and cam_c.o3 confirm a left turn toward the blind zone’s interior, while cam_c.o2 and cam_b.o7 suggest a stopped vehicle near the center. cam_c.o4 completes the loop by showing a vehicle exiting from the left, reinforcing a full cycle.",
+  "alternatives": [
+    {
+      "event_type": "vehicle_departure",
+      "confidence": 0.65
+    },
+    {
+      "event_type": "vehicle_stop",
+      "confidence": 0.55
+    }
+  ],
+  "limitations": [
+    "Cameras cam_a and cam_b.o3 (human reaction) lack direct confirmation of passenger activity, and cam_b.o5 (pedestrian crossing) does not align with vehicle maneuvers.",
+    "Confidence drops for cam_b.o8 (backing maneuver) due to lower confidence (0.75) and partial overlap with other cues.",
+    "The event itself is not directly visible to any model input camera."
+  ]
+}

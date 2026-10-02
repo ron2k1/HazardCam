@@ -1,0 +1,28 @@
+{
+  "event_type": "vehicle_turnaround",
+  "region": "z_hospital_drive",
+  "confidence": 0.65,
+  "evidence_ids": [
+    "cam_b.o1",
+    "cam_b.o2",
+    "cam_b.o3",
+    "cam_b.o4",
+    "cam_b.o5",
+    "cam_b.o6"
+  ],
+  "reason": "Cues cam_b.o1 and cam_b.o4 show a white van entering and exiting the frame from the left, while cam_b.o2, cam_b.o3, cam_b.o5, and cam_b.o6 document repeated stops and slowdowns at the intersection, all within the same timeframe and aligned with the region z_hospital_drive. The vehicle’s repeated transit and stops are consistent with a vehicle-turnaround or vehicle-loading/unloading activity.",
+  "alternatives": [
+    {
+      "event_type": "vehicle_stop",
+      "confidence": 0.55
+    },
+    {
+      "event_type": "vehicle_loading_unloading",
+      "confidence": 0.5
+    }
+  ],
+  "limitations": [
+    "Evidence comes exclusively from cam_b, with no corroboration from other cameras, and the region candidate’s confidence is low due to reliance on a single ray method.",
+    "The event itself is not directly visible to any model input camera."
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "event_type": "passenger_dropoff_pickup",
+  "region": "region_01",
+  "confidence": 0.75,
+  "evidence_ids": [
+    "cam_b.o1",
+    "cam_b.o2",
+    "cam_b.o3",
+    "cam_b.o5",
+    "cam_b.o6",
+    "cam_a.o1",
+    "cam_a.o2",
+    "cam_a.o3",
+    "cam_b.o7"
+  ],
+  "reason": "Cues cam_b.o1 and cam_b.o2 show a person interacting with a parked white pickup truck, while cam_a.o1 and cam_a.o2 depict people carrying bags toward/from the blind zone, suggesting movement of people and vehicles. cam_b.o3, cam_b.o5, and cam_b.o6 confirm the truck’s stopping and backing behavior, reinforcing a coordinated activity. cam_a.o3 and cam_b.o7 extend the timeline with additional transit cues.",
+  "alternatives": [
+    {
+      "event_type": "vehicle_turnaround",
+      "confidence": 0.65
+    },
+    {
+      "event_type": "vehicle_stop",
+      "confidence": 0.55
+    }
+  ],
+  "limitations": [
+    "Camera cam_c provides no observations, and cam_a.o2’s direction (right) is ambiguous relative to the blind zone’s spatial context.",
+    "The event itself is not directly visible to any model input camera."
+  ]
+}

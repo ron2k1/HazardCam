@@ -1,0 +1,215 @@
+{
+  "cam_a": {
+    "camera_id": "cam_a",
+    "observations": []
+  },
+  "cam_b": {
+    "camera_id": "cam_b",
+    "observations": [
+      {
+        "id": "cam_b.o1",
+        "t_start": 0.0,
+        "t_end": 23.0,
+        "cue_type": "vehicle_edge_transit",
+        "description": "A dark SUV enters the frame from the left edge",
+        "direction": "left",
+        "confidence": 0.9,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_b.o2",
+        "t_start": 0.0,
+        "t_end": 23.0,
+        "cue_type": "vehicle_edge_transit",
+        "description": "A silver SUV exits the frame from the right edge",
+        "direction": "right",
+        "confidence": 0.85,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_b.o3",
+        "t_start": 0.0,
+        "t_end": 23.0,
+        "cue_type": "human_reaction",
+        "description": "Two people on the sidewalk turn their heads toward the center of the road",
+        "direction": "center",
+        "confidence": 0.8,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_b.o4",
+        "t_start": 0.0,
+        "t_end": 23.0,
+        "cue_type": "traffic_reaction",
+        "description": "Vehicles slow and wait as a dark SUV turns left",
+        "direction": "left",
+        "confidence": 0.8,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_b.o5",
+        "t_start": 0.0,
+        "t_end": 23.0,
+        "cue_type": "other",
+        "description": "A person walks across the road from left to right",
+        "direction": "right",
+        "confidence": 0.7,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_b.o6",
+        "t_start": 7.0,
+        "t_end": 23.0,
+        "cue_type": "vehicle_heading_change",
+        "description": "A dark SUV turns left from the main road onto a side path",
+        "direction": "left",
+        "confidence": 0.95,
+        "supporting_frames": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_b.o7",
+        "t_start": 13.0,
+        "t_end": 23.0,
+        "cue_type": "vehicle_slowing_or_stopping",
+        "description": "A silver SUV slows and stops near the center of the road",
+        "direction": "center",
+        "confidence": 0.85,
+        "supporting_frames": [
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_b.o8",
+        "t_start": 16.0,
+        "t_end": 23.0,
+        "cue_type": "vehicle_backing_or_maneuvering",
+        "description": "A dark SUV reverses slightly on the road",
+        "direction": "center",
+        "confidence": 0.75,
+        "supporting_frames": [
+          5,
+          6,
+          7
+        ]
+      }
+    ]
+  },
+  "cam_c": {
+    "camera_id": "cam_c",
+    "observations": [
+      {
+        "id": "cam_c.o1",
+        "t_start": 0.0,
+        "t_end": 23.0,
+        "cue_type": "other",
+        "description": "A red SUV remains stationary in the foreground throughout the sequence.",
+        "direction": null,
+        "confidence": 0.99,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_c.o2",
+        "t_start": 13.0,
+        "t_end": 16.0,
+        "cue_type": "vehicle_edge_transit",
+        "description": "A red SUV enters the frame from the right edge and stops in the foreground.",
+        "direction": "right",
+        "confidence": 0.98,
+        "supporting_frames": [
+          4,
+          5
+        ]
+      },
+      {
+        "id": "cam_c.o3",
+        "t_start": 16.0,
+        "t_end": 20.0,
+        "cue_type": "vehicle_heading_change",
+        "description": "A black SUV turns left from the center of the frame and moves toward the left edge.",
+        "direction": "left",
+        "confidence": 0.95,
+        "supporting_frames": [
+          5,
+          6
+        ]
+      },
+      {
+        "id": "cam_c.o4",
+        "t_start": 20.0,
+        "t_end": 23.0,
+        "cue_type": "vehicle_edge_transit",
+        "description": "A silver SUV exits the frame from the left edge.",
+        "direction": "left",
+        "confidence": 0.98,
+        "supporting_frames": [
+          6,
+          7
+        ]
+      }
+    ]
+  }
+}

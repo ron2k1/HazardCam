@@ -1,0 +1,51 @@
+{
+  "cam_a": {
+    "camera_id": "cam_a",
+    "observations": []
+  },
+  "cam_b": {
+    "camera_id": "cam_b",
+    "observations": [
+      {
+        "id": "cam_b.o1",
+        "t_start": 0.0,
+        "t_end": 27.0,
+        "cue_type": "other",
+        "description": "A dark-colored vehicle is parked in the background on the right side of the frame, stationary throughout the sequence",
+        "direction": null,
+        "confidence": 0.8,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_b.o2",
+        "t_start": 8.0,
+        "t_end": 27.0,
+        "cue_type": "person_edge_transit",
+        "description": "Two people walking together on a paved path enter the frame from the left and continue walking toward the center-left",
+        "direction": "left",
+        "confidence": 0.95,
+        "supporting_frames": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      }
+    ]
+  },
+  "cam_c": {
+    "camera_id": "cam_c",
+    "observations": []
+  }
+}

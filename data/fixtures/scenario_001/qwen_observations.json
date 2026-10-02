@@ -1,0 +1,332 @@
+{
+  "cam_a": {
+    "camera_id": "cam_a",
+    "observations": [
+      {
+        "id": "cam_a.o1",
+        "t_start": 0.0,
+        "t_end": 27.0,
+        "cue_type": "human_reaction",
+        "description": "Several people turn and look toward the right side of the frame as a group of individuals walk into view from the right.",
+        "direction": "right",
+        "confidence": 0.95,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_a.o2",
+        "t_start": 0.0,
+        "t_end": 27.0,
+        "cue_type": "person_edge_transit",
+        "description": "A person carrying a backpack enters the frame from the right edge and walks toward the center.",
+        "direction": "right",
+        "confidence": 0.9,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_a.o3",
+        "t_start": 0.0,
+        "t_end": 27.0,
+        "cue_type": "person_edge_transit",
+        "description": "A person exits the frame from the left edge while walking toward the center.",
+        "direction": "left",
+        "confidence": 0.85,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      }
+    ]
+  },
+  "cam_b": {
+    "camera_id": "cam_b",
+    "observations": [
+      {
+        "id": "cam_b.o1",
+        "t_start": 0.0,
+        "t_end": 27.0,
+        "cue_type": "person_edge_transit",
+        "description": "Two people walk into the frame from the left side and proceed toward the center",
+        "direction": "left",
+        "confidence": 0.9,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_b.o2",
+        "t_start": 0.0,
+        "t_end": 27.0,
+        "cue_type": "person_vehicle_interaction",
+        "description": "A person in a yellow vest opens the rear door of a dark van parked in the center",
+        "direction": "center",
+        "confidence": 0.85,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_b.o3",
+        "t_start": 0.0,
+        "t_end": 27.0,
+        "cue_type": "vehicle_slowing_or_stopping",
+        "description": "A dark van parked in the center slows down and comes to a stop as people approach it",
+        "direction": "center",
+        "confidence": 0.9,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_b.o4",
+        "t_start": 0.0,
+        "t_end": 27.0,
+        "cue_type": "traffic_reaction",
+        "description": "A silver sedan on the left side of the road slows down as people approach the van",
+        "direction": "left",
+        "confidence": 0.8,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_b.o5",
+        "t_start": 0.0,
+        "t_end": 27.0,
+        "cue_type": "human_reaction",
+        "description": "Several people in the scene turn their heads toward the center where the van is parked",
+        "direction": "center",
+        "confidence": 0.85,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_b.o6",
+        "t_start": 0.0,
+        "t_end": 27.0,
+        "cue_type": "vehicle_backing_or_maneuvering",
+        "description": "A dark van in the center makes a slight backward movement as people approach it",
+        "direction": "center",
+        "confidence": 0.75,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_b.o7",
+        "t_start": 0.0,
+        "t_end": 27.0,
+        "cue_type": "vehicle_heading_change",
+        "description": "A dark van in the center turns slightly to the left as people approach it",
+        "direction": "left",
+        "confidence": 0.7,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_b.o8",
+        "t_start": 19.0,
+        "t_end": 27.0,
+        "cue_type": "vehicle_edge_transit",
+        "description": "A white SUV enters the frame from the right side of the scene and stops near the center-right",
+        "direction": "right",
+        "confidence": 0.95,
+        "supporting_frames": [
+          5,
+          6,
+          7
+        ]
+      }
+    ]
+  },
+  "cam_c": {
+    "camera_id": "cam_c",
+    "observations": [
+      {
+        "id": "cam_c.o1",
+        "t_start": 0.0,
+        "t_end": 8.0,
+        "cue_type": "vehicle_edge_transit",
+        "description": "A silver SUV enters the frame from the left edge",
+        "direction": "left",
+        "confidence": 0.95,
+        "supporting_frames": [
+          0,
+          1,
+          2
+        ]
+      },
+      {
+        "id": "cam_c.o2",
+        "t_start": 0.0,
+        "t_end": 8.0,
+        "cue_type": "vehicle_slowing_or_stopping",
+        "description": "A white SUV in the background slows and stops near the center of the frame",
+        "direction": "center",
+        "confidence": 0.8,
+        "supporting_frames": [
+          0,
+          1,
+          2
+        ]
+      },
+      {
+        "id": "cam_c.o3",
+        "t_start": 0.0,
+        "t_end": 8.0,
+        "cue_type": "vehicle_backing_or_maneuvering",
+        "description": "A white SUV in the background reverses slightly and moves backward",
+        "direction": "center",
+        "confidence": 0.75,
+        "supporting_frames": [
+          0,
+          1,
+          2
+        ]
+      },
+      {
+        "id": "cam_c.o4",
+        "t_start": 8.0,
+        "t_end": 15.0,
+        "cue_type": "human_reaction",
+        "description": "Two people in the frame look toward the left side of the scene",
+        "direction": "left",
+        "confidence": 0.85,
+        "supporting_frames": [
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "id": "cam_c.o5",
+        "t_start": 12.0,
+        "t_end": 19.0,
+        "cue_type": "person_vehicle_interaction",
+        "description": "A man in a dark jacket approaches the rear of a silver SUV and opens its door",
+        "direction": "left",
+        "confidence": 0.95,
+        "supporting_frames": [
+          3,
+          4,
+          5
+        ]
+      },
+      {
+        "id": "cam_c.o6",
+        "t_start": 19.0,
+        "t_end": 27.0,
+        "cue_type": "person_edge_transit",
+        "description": "Two people walking with a suitcase enter the frame from the left edge",
+        "direction": "left",
+        "confidence": 0.9,
+        "supporting_frames": [
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_c.o7",
+        "t_start": 19.0,
+        "t_end": 27.0,
+        "cue_type": "vehicle_slowing_or_stopping",
+        "description": "A white SUV in the background slows and stops near the center of the frame",
+        "direction": "center",
+        "confidence": 0.8,
+        "supporting_frames": [
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_c.o8",
+        "t_start": 23.0,
+        "t_end": 27.0,
+        "cue_type": "person_edge_transit",
+        "description": "Two people with a suitcase exit the frame to the left",
+        "direction": "left",
+        "confidence": 0.85,
+        "supporting_frames": [
+          6,
+          7
+        ]
+      }
+    ]
+  }
+}

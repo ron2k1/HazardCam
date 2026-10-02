@@ -1,0 +1,44 @@
+{
+  "cam_a": {
+    "camera_id": "cam_a",
+    "observations": [
+      {
+        "id": "cam_a.o1",
+        "t_start": 3.0,
+        "t_end": 10.0,
+        "cue_type": "person_edge_transit",
+        "description": "A person walks from the right side of the frame toward the building's entrance, then enters through the doors",
+        "direction": "left",
+        "confidence": 0.95,
+        "supporting_frames": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "id": "cam_a.o2",
+        "t_start": 13.0,
+        "t_end": 23.0,
+        "cue_type": "person_edge_transit",
+        "description": "A person exits the building on the right side and walks away from the camera toward the parking lot",
+        "direction": "right",
+        "confidence": 0.95,
+        "supporting_frames": [
+          4,
+          5,
+          6,
+          7
+        ]
+      }
+    ]
+  },
+  "cam_b": {
+    "camera_id": "cam_b",
+    "observations": []
+  },
+  "cam_c": {
+    "camera_id": "cam_c",
+    "observations": []
+  }
+}

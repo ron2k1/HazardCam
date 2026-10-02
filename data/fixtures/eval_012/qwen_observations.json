@@ -1,0 +1,99 @@
+{
+  "cam_a": {
+    "camera_id": "cam_a",
+    "observations": []
+  },
+  "cam_b": {
+    "camera_id": "cam_b",
+    "observations": [
+      {
+        "id": "cam_b.o1",
+        "t_start": 0.0,
+        "t_end": 29.0,
+        "cue_type": "human_reaction",
+        "description": "Several people in the group on the left side of the road turn their heads and look toward the right side of the frame simultaneously.",
+        "direction": "right",
+        "confidence": 0.95,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_b.o2",
+        "t_start": 0.0,
+        "t_end": 29.0,
+        "cue_type": "person_edge_transit",
+        "description": "A person in a dark jacket walks into the frame from the left edge and moves toward the center.",
+        "direction": "left",
+        "confidence": 0.85,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_b.o3",
+        "t_start": 0.0,
+        "t_end": 29.0,
+        "cue_type": "person_edge_transit",
+        "description": "A person in a red jacket walks out of the frame from the right edge.",
+        "direction": "right",
+        "confidence": 0.85,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      }
+    ]
+  },
+  "cam_c": {
+    "camera_id": "cam_c",
+    "observations": [
+      {
+        "id": "cam_c.o1",
+        "t_start": 8.0,
+        "t_end": 12.0,
+        "cue_type": "person_edge_transit",
+        "description": "A person in dark clothing runs across the grassy area from left to right, exiting the frame on the right side.",
+        "direction": "right",
+        "confidence": 0.95,
+        "supporting_frames": [
+          2,
+          3
+        ]
+      },
+      {
+        "id": "cam_c.o2",
+        "t_start": 25.0,
+        "t_end": 29.0,
+        "cue_type": "person_edge_transit",
+        "description": "A person in light-colored top and dark pants walks across the grassy area from right to left, exiting the frame on the left side.",
+        "direction": "left",
+        "confidence": 0.95,
+        "supporting_frames": [
+          6,
+          7
+        ]
+      }
+    ]
+  }
+}

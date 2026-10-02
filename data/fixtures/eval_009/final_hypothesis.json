@@ -1,0 +1,16 @@
+{
+  "event_type": "unknown",
+  "region": "unknown",
+  "confidence": 0.0,
+  "evidence_ids": [
+    "cam_c.o1",
+    "cam_c.o2",
+    "cam_c.o3"
+  ],
+  "reason": "Cues cam_c.o1, cam_c.o2, and cam_c.o3 show a person interacting with a vehicle on the right side of the frame, then exiting, followed by the vehicle itself exiting—all aligned toward the z_north_lot region. While the evidence is strong within a single camera, the lack of corroboration from other cameras and the status ‘insufficient’ prevents a confident conclusion.",
+  "alternatives": [],
+  "limitations": [
+    "Single-camera cues lack cross-validation from other cameras, and the blind zone’s activity cannot be confirmed due to insufficient corroboration.",
+    "The event itself is not directly visible to any model input camera."
+  ]
+}

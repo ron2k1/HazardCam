@@ -1,0 +1,128 @@
+{
+  "cam_a": {
+    "camera_id": "cam_a",
+    "observations": [
+      {
+        "id": "cam_a.o1",
+        "t_start": 4.0,
+        "t_end": 15.0,
+        "cue_type": "person_edge_transit",
+        "description": "A person in dark clothing walks into the frame from the left side of the scene.",
+        "direction": "left",
+        "confidence": 0.95,
+        "supporting_frames": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "id": "cam_a.o2",
+        "t_start": 19.0,
+        "t_end": 27.0,
+        "cue_type": "person_edge_transit",
+        "description": "A person in dark clothing walks out of the frame to the left side of the scene.",
+        "direction": "left",
+        "confidence": 0.95,
+        "supporting_frames": [
+          5,
+          6,
+          7
+        ]
+      }
+    ]
+  },
+  "cam_b": {
+    "camera_id": "cam_b",
+    "observations": [
+      {
+        "id": "cam_b.o1",
+        "t_start": 0.0,
+        "t_end": 27.0,
+        "cue_type": "vehicle_edge_transit",
+        "description": "A dark grey sedan enters the frame from the left edge and moves toward the center",
+        "direction": "left",
+        "confidence": 0.9,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_b.o2",
+        "t_start": 0.0,
+        "t_end": 27.0,
+        "cue_type": "vehicle_edge_transit",
+        "description": "A white SUV exits the frame from the bottom right edge",
+        "direction": "right",
+        "confidence": 0.85,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_b.o3",
+        "t_start": 12.0,
+        "t_end": 27.0,
+        "cue_type": "vehicle_slowing_or_stopping",
+        "description": "A dark grey sedan slows and stops on the road, positioned near a group of people in yellow vests",
+        "direction": "center",
+        "confidence": 0.95,
+        "supporting_frames": [
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      }
+    ]
+  },
+  "cam_c": {
+    "camera_id": "cam_c",
+    "observations": [
+      {
+        "id": "cam_c.o1",
+        "t_start": 12.0,
+        "t_end": 19.0,
+        "cue_type": "vehicle_edge_transit",
+        "description": "A dark grey sedan enters the frame from the left and moves across the parking lot",
+        "direction": "left",
+        "confidence": 0.95,
+        "supporting_frames": [
+          3,
+          4,
+          5
+        ]
+      },
+      {
+        "id": "cam_c.o2",
+        "t_start": 19.0,
+        "t_end": 27.0,
+        "cue_type": "vehicle_edge_transit",
+        "description": "A dark vehicle exits the frame from the right edge",
+        "direction": "right",
+        "confidence": 0.95,
+        "supporting_frames": [
+          5,
+          6,
+          7
+        ]
+      }
+    ]
+  }
+}

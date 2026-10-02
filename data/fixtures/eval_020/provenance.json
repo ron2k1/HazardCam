@@ -1,0 +1,147 @@
+{
+  "source": "Real model outputs on real MEVA KF1 video (CC BY 4.0). Not hand-written.",
+  "recorded_at": "2026-10-02T14:47:54+00:00",
+  "git_commit": "c2087c243ad77adf9a7a0ada2846b3102516ba4e",
+  "profile": "lite-local",
+  "perception_model": "qwen3-vl:4b-instruct",
+  "reasoning_model": "ministral-3:3b",
+  "media": {
+    "sample_fps": 1.0,
+    "max_frames_per_camera": 8,
+    "max_width": 768,
+    "concurrency": 1
+  },
+  "duration_ms": 18382.6,
+  "bundle_status": "insufficient",
+  "raw_hypothesis": {
+    "event_type": "unknown",
+    "region": "unknown",
+    "confidence": 0.0
+  },
+  "submitted_hypothesis": {
+    "event_type": "unknown",
+    "region": "unknown",
+    "confidence": 0.0
+  },
+  "adapter_calls": [
+    {
+      "role": "perception",
+      "adapter": "openai_compatible/qwen3-vl:4b-instruct",
+      "model": "qwen3-vl:4b-instruct",
+      "ok": true,
+      "error": null,
+      "latency_s": 7.6098173999998835,
+      "attempts": 1,
+      "repaired": false,
+      "camera_id": "cam_a",
+      "scenario_id": "eval_020",
+      "frames_sent": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "frames_skipped": [],
+      "dropped_items": 0,
+      "warnings": [],
+      "usage": {
+        "prompt_tokens": 2251,
+        "completion_tokens": 136,
+        "total_tokens": 2387
+      },
+      "finish_reason": "stop",
+      "prompt_version": "9ee33603775a"
+    },
+    {
+      "role": "perception",
+      "adapter": "openai_compatible/qwen3-vl:4b-instruct",
+      "model": "qwen3-vl:4b-instruct",
+      "ok": true,
+      "error": null,
+      "latency_s": 1.43306080000184,
+      "attempts": 1,
+      "repaired": false,
+      "camera_id": "cam_b",
+      "scenario_id": "eval_020",
+      "frames_sent": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "frames_skipped": [],
+      "dropped_items": 0,
+      "warnings": [],
+      "usage": {
+        "prompt_tokens": 2251,
+        "completion_tokens": 6,
+        "total_tokens": 2257
+      },
+      "finish_reason": "stop",
+      "prompt_version": "9ee33603775a"
+    },
+    {
+      "role": "perception",
+      "adapter": "openai_compatible/qwen3-vl:4b-instruct",
+      "model": "qwen3-vl:4b-instruct",
+      "ok": true,
+      "error": null,
+      "latency_s": 1.4854101000019,
+      "attempts": 1,
+      "repaired": false,
+      "camera_id": "cam_c",
+      "scenario_id": "eval_020",
+      "frames_sent": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "frames_skipped": [],
+      "dropped_items": 0,
+      "warnings": [],
+      "usage": {
+        "prompt_tokens": 2251,
+        "completion_tokens": 6,
+        "total_tokens": 2257
+      },
+      "finish_reason": "stop",
+      "prompt_version": "9ee33603775a"
+    },
+    {
+      "role": "reasoning",
+      "adapter": "openai_compatible/ministral-3:3b",
+      "model": "ministral-3:3b",
+      "ok": true,
+      "error": null,
+      "latency_s": 6.717952200000582,
+      "attempts": 1,
+      "repaired": false,
+      "camera_id": null,
+      "scenario_id": "eval_020",
+      "frames_sent": [],
+      "frames_skipped": [],
+      "dropped_items": 0,
+      "warnings": [],
+      "usage": {
+        "prompt_tokens": 1750,
+        "completion_tokens": 196,
+        "total_tokens": 1946
+      },
+      "finish_reason": "stop",
+      "prompt_version": "b310a81211cf"
+    }
+  ]
+}

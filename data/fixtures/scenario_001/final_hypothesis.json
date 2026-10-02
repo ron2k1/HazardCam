@@ -1,0 +1,31 @@
+{
+  "event_type": "vehicle_loading_unloading",
+  "region": "region_01",
+  "confidence": 0.75,
+  "evidence_ids": [
+    "cam_a.o1",
+    "cam_a.o2",
+    "cam_b.o2",
+    "cam_b.o5",
+    "cam_b.o8",
+    "cam_c.o6",
+    "cam_c.o5",
+    "cam_c.o8"
+  ],
+  "reason": "Cues cam_a.o1, cam_a.o2, cam_b.o2, cam_b.o5, cam_b.o8, and cam_c.o6 show people carrying luggage (backpacks/suitcases) toward or exiting a vehicle near the blind zone, while cam_c.o5 and cam_c.o8 depict a person opening/closing a vehicle door with suitcases. The clustering (clu_01) and region_01 align these cues spatially and temporally, suggesting coordinated activity around a stopped vehicle.",
+  "alternatives": [
+    {
+      "event_type": "passenger_dropoff_pickup",
+      "confidence": 0.65
+    },
+    {
+      "event_type": "vehicle_stop",
+      "confidence": 0.55
+    }
+  ],
+  "limitations": [
+    "No direct confirmation of people disembarking or boarding the vehicle, and weak cues from cam_c.o3 (backing maneuver) may mislead toward turnaround.",
+    "The event itself is not directly visible to any model input camera.",
+    "The evidence bundle may have exceeded the reasoning model's context window."
+  ]
+}

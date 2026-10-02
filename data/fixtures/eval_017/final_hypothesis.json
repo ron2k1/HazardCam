@@ -1,0 +1,27 @@
+{
+  "event_type": "vehicle_stop",
+  "region": "region_01",
+  "confidence": 0.65,
+  "evidence_ids": [
+    "cam_b.o1",
+    "cam_b.o3",
+    "cam_b.o7",
+    "cam_a.o1"
+  ],
+  "reason": "Cues cam_b.o1 and cam_b.o3 (person boarding a stationary bus) align with cam_b.o7 (people reacting to bus arrival) and cam_a.o1 (SUV parked nearby), suggesting a passenger boarding sequence. cam_b.o2 (dark car entering) and cam_b.o4/o5/o6 (vehicle maneuvers) imply nearby traffic activity, but lack direct ties to the blind zone. cam_c.o1 (cyclist transit) and cam_a.o2 (person moving right) are peripheral and do not corroborate a focal event.",
+  "alternatives": [
+    {
+      "event_type": "vehicle_turn",
+      "confidence": 0.55
+    },
+    {
+      "event_type": "no_event",
+      "confidence": 0.4
+    }
+  ],
+  "limitations": [
+    "Cues from cam_b.o2 and cam_b.o4–o6 do not directly link to the blind zone’s activity, and cam_c.o1/cam_a.o2 lack strong directional alignment.",
+    "The SUV (cam_a.o1) is stationary but not interacting with the blind zone’s inferred activity.",
+    "The event itself is not directly visible to any model input camera."
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "cam_a": {
+    "camera_id": "cam_a",
+    "observations": []
+  },
+  "cam_b": {
+    "camera_id": "cam_b",
+    "observations": []
+  },
+  "cam_c": {
+    "camera_id": "cam_c",
+    "observations": [
+      {
+        "id": "cam_c.o1",
+        "t_start": 4.0,
+        "t_end": 12.0,
+        "cue_type": "person_vehicle_interaction",
+        "description": "A person in a grey jacket approaches and interacts with a red vehicle on the right side of the frame",
+        "direction": "right",
+        "confidence": 0.95,
+        "supporting_frames": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "id": "cam_c.o2",
+        "t_start": 12.0,
+        "t_end": 19.0,
+        "cue_type": "person_edge_transit",
+        "description": "A person in a grey jacket exits the frame from the right edge",
+        "direction": "right",
+        "confidence": 0.95,
+        "supporting_frames": [
+          3,
+          4,
+          5
+        ]
+      },
+      {
+        "id": "cam_c.o3",
+        "t_start": 19.0,
+        "t_end": 27.0,
+        "cue_type": "vehicle_edge_transit",
+        "description": "A red vehicle exits the frame from the right edge",
+        "direction": "right",
+        "confidence": 0.95,
+        "supporting_frames": [
+          5,
+          6,
+          7
+        ]
+      }
+    ]
+  }
+}

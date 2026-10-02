@@ -1,0 +1,18 @@
+{
+  "event_type": "unknown",
+  "region": "unknown",
+  "confidence": 0.25,
+  "evidence_ids": [
+    "cam_b.o1",
+    "cam_b.o6",
+    "cam_b.o5",
+    "cam_b.o7"
+  ],
+  "reason": "Cues cam_b.o1 and cam_b.o7 show vehicles entering the frame from opposite directions (away_from_camera and bottom edge), while cam_b.o6 (direction: left) and cam_b.o5 (center_left) indicate a parked silver sedan with a person opening the door, suggesting a brief stop. cam_b.o2, cam_b.o3, and cam_b.o4 reinforce human activity toward the sedan, though all evidence originates from cam_b alone.",
+  "alternatives": [],
+  "limitations": [
+    "All cues stem from cam_b, and no corroboration exists across cameras. Weak temporal clusters and single-ray region scoring reduce confidence.",
+    "The blind zone’s blind spot prevents confirming whether the activity occurred inside the candidate region.",
+    "The event itself is not directly visible to any model input camera."
+  ]
+}

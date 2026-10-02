@@ -1,0 +1,27 @@
+{
+  "event_type": "vehicle_departure",
+  "region": "region_01",
+  "confidence": 0.79,
+  "evidence_ids": [
+    "cam_a.o1",
+    "cam_c.o1",
+    "cam_c.o2",
+    "cam_a.o2",
+    "cam_b.o1"
+  ],
+  "reason": "Cues cam_a.o1 (SUV leaving right) and cam_c.o1/o2 (person entering/exiting left) align with cam_a.o2 (person moving toward parked vehicles) and cam_b.o1 (person walking left) in time and direction toward region_01, suggesting coordinated movement consistent with a vehicle departure.",
+  "alternatives": [
+    {
+      "event_type": "vehicle_turn",
+      "confidence": 0.65
+    },
+    {
+      "event_type": "passenger_dropoff_pickup",
+      "confidence": 0.58
+    }
+  ],
+  "limitations": [
+    "Weak cues from cam_a.o1 (SUV leaving) lack direct confirmation of vehicle motion in the blind zone, and cam_b.o1’s direction is ambiguous relative to the blind zone’s center.",
+    "The event itself is not directly visible to any model input camera."
+  ]
+}

@@ -1,0 +1,106 @@
+{
+  "cam_a": {
+    "camera_id": "cam_a",
+    "observations": []
+  },
+  "cam_b": {
+    "camera_id": "cam_b",
+    "observations": [
+      {
+        "id": "cam_b.o1",
+        "t_start": 0.0,
+        "t_end": 4.0,
+        "cue_type": "vehicle_edge_transit",
+        "description": "A white van enters the frame from the left",
+        "direction": "left",
+        "confidence": 0.95,
+        "supporting_frames": [
+          0,
+          1
+        ]
+      },
+      {
+        "id": "cam_b.o2",
+        "t_start": 4.0,
+        "t_end": 8.0,
+        "cue_type": "vehicle_edge_transit",
+        "description": "A red car enters the frame from the left and stops at the intersection",
+        "direction": "left",
+        "confidence": 0.95,
+        "supporting_frames": [
+          1,
+          2
+        ]
+      },
+      {
+        "id": "cam_b.o3",
+        "t_start": 8.0,
+        "t_end": 12.0,
+        "cue_type": "vehicle_slowing_or_stopping",
+        "description": "The red car slows down and comes to a stop at the intersection",
+        "direction": "center",
+        "confidence": 0.95,
+        "supporting_frames": [
+          2,
+          3
+        ]
+      },
+      {
+        "id": "cam_b.o4",
+        "t_start": 12.0,
+        "t_end": 15.0,
+        "cue_type": "vehicle_edge_transit",
+        "description": "A white van exits the frame from the left",
+        "direction": "left",
+        "confidence": 0.95,
+        "supporting_frames": [
+          3,
+          4
+        ]
+      },
+      {
+        "id": "cam_b.o5",
+        "t_start": 15.0,
+        "t_end": 19.0,
+        "cue_type": "vehicle_slowing_or_stopping",
+        "description": "A white van slows down and comes to a stop at the intersection",
+        "direction": "center",
+        "confidence": 0.95,
+        "supporting_frames": [
+          4,
+          5
+        ]
+      },
+      {
+        "id": "cam_b.o6",
+        "t_start": 19.0,
+        "t_end": 23.0,
+        "cue_type": "vehicle_edge_transit",
+        "description": "A white van exits the frame from the left",
+        "direction": "left",
+        "confidence": 0.95,
+        "supporting_frames": [
+          5,
+          6
+        ]
+      },
+      {
+        "id": "cam_b.o7",
+        "t_start": 23.0,
+        "t_end": 27.0,
+        "cue_type": "vehicle_slowing_or_stopping",
+        "description": "A white van slows down and comes to a stop at the intersection",
+        "direction": "center",
+        "confidence": 0.95,
+        "supporting_frames": [
+          6,
+          7
+        ]
+      }
+    ]
+  },
+  "cam_c": {
+    "camera_id": "cam_c",
+    "observations": []
+  }
+}

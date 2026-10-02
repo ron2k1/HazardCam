@@ -1,0 +1,15 @@
+{
+  "event_type": "unknown",
+  "region": "unknown",
+  "confidence": 0.0,
+  "evidence_ids": [
+    "cam_b.o1",
+    "cam_b.o4"
+  ],
+  "reason": "Cues cam_b.o1 and cam_b.o4 show a stationary vehicle on the right side of the frame aligned with the region z_north_road, while cam_b.o2 and cam_b.o5 (leftward movements) partially contradict the vehicle’s stationary nature. The cluster clu_01 includes conflicting directions (left/right) and lacks corroboration from other cameras.",
+  "alternatives": [],
+  "limitations": [
+    "All cues stem from a single camera (cam_b), and their conflicting directions (left/right) and stationary vehicle cues do not align with a shared blind-zone activity.",
+    "The event itself is not directly visible to any model input camera."
+  ]
+}

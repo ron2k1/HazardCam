@@ -1,0 +1,33 @@
+{
+  "event_type": "vehicle_turnaround",
+  "region": "z_north_lot",
+  "confidence": 0.78,
+  "evidence_ids": [
+    "cam_c.o1",
+    "cam_c.o6",
+    "cam_a.o2",
+    "cam_a.o4",
+    "cam_c.o2",
+    "cam_a.o3",
+    "cam_b.o1",
+    "cam_c.o3",
+    "cam_c.o4",
+    "cam_b.o2",
+    "cam_c.o7"
+  ],
+  "reason": "Cues cam_c.o1 and cam_c.o6 show a person moving toward and then exiting the blind zone’s right boundary, while cam_a.o2 and cam_a.o4 depict people walking toward the entrance and exiting from the left side, suggesting bidirectional pedestrian movement. cam_c.o2 and cam_a.o3 indicate a person getting out of a vehicle near the blind zone, and cam_b.o1 shows a vehicle entering it, reinforcing activity inside. cam_c.o3 and cam_c.o4 confirm stationary vehicles, while cam_b.o2 and cam_c.o7 depict a car stopping and then departing, supporting dynamic traffic flow.",
+  "alternatives": [
+    {
+      "event_type": "vehicle_stop",
+      "confidence": 0.65
+    },
+    {
+      "event_type": "passenger_dropoff_pickup",
+      "confidence": 0.6
+    }
+  ],
+  "limitations": [
+    "Cues from cam_c.o5 (vehicle entry) and cam_b.o2 (stopping) lack direct confirmation of bidirectional vehicle movement, and the blind zone’s exact boundaries are inferred from ray intersections rather than direct observation.",
+    "The event itself is not directly visible to any model input camera."
+  ]
+}

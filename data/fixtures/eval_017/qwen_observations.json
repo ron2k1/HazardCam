@@ -1,0 +1,201 @@
+{
+  "cam_a": {
+    "camera_id": "cam_a",
+    "observations": [
+      {
+        "id": "cam_a.o1",
+        "t_start": 0.0,
+        "t_end": 27.0,
+        "cue_type": "other",
+        "description": "A silver SUV is parked in the bottom right corner of the frame throughout all frames.",
+        "direction": null,
+        "confidence": 0.98,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_a.o2",
+        "t_start": 23.0,
+        "t_end": 27.0,
+        "cue_type": "person_edge_transit",
+        "description": "A person in dark clothing walks into the frame from the right edge and moves toward the center-right area.",
+        "direction": "right",
+        "confidence": 0.95,
+        "supporting_frames": [
+          6,
+          7
+        ]
+      }
+    ]
+  },
+  "cam_b": {
+    "camera_id": "cam_b",
+    "observations": [
+      {
+        "id": "cam_b.o1",
+        "t_start": 0.0,
+        "t_end": 27.0,
+        "cue_type": "person_vehicle_interaction",
+        "description": "A person walks toward the front of a white bus parked at the curb, then steps onto the bus's step",
+        "direction": "left",
+        "confidence": 0.95,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_b.o2",
+        "t_start": 0.0,
+        "t_end": 27.0,
+        "cue_type": "vehicle_edge_transit",
+        "description": "A dark-colored car enters the frame from the right and drives onto the road",
+        "direction": "right",
+        "confidence": 0.9,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_b.o3",
+        "t_start": 0.0,
+        "t_end": 27.0,
+        "cue_type": "vehicle_slowing_or_stopping",
+        "description": "A white bus is stationary at the curb, with people approaching it",
+        "direction": "left",
+        "confidence": 0.95,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_b.o4",
+        "t_start": 0.0,
+        "t_end": 27.0,
+        "cue_type": "vehicle_heading_change",
+        "description": "A dark-colored car turns left at the intersection",
+        "direction": "center_left",
+        "confidence": 0.85,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_b.o5",
+        "t_start": 0.0,
+        "t_end": 27.0,
+        "cue_type": "vehicle_backing_or_maneuvering",
+        "description": "A dark-colored car reverses slightly on the road",
+        "direction": "center",
+        "confidence": 0.75,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_b.o6",
+        "t_start": 0.0,
+        "t_end": 27.0,
+        "cue_type": "traffic_reaction",
+        "description": "A dark-colored car slows down and waits for the bus to move",
+        "direction": "center",
+        "confidence": 0.8,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "cam_b.o7",
+        "t_start": 0.0,
+        "t_end": 27.0,
+        "cue_type": "human_reaction",
+        "description": "Several people look toward the left side of the frame as the bus approaches",
+        "direction": "left",
+        "confidence": 0.85,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      }
+    ]
+  },
+  "cam_c": {
+    "camera_id": "cam_c",
+    "observations": [
+      {
+        "id": "cam_c.o1",
+        "t_start": 0.0,
+        "t_end": 27.0,
+        "cue_type": "person_edge_transit",
+        "description": "A person on a bicycle enters the frame from the right and exits to the right after passing through the grassy area.",
+        "direction": "right",
+        "confidence": 0.95,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      }
+    ]
+  }
+}

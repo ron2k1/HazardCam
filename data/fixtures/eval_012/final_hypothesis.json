@@ -1,0 +1,23 @@
+{
+  "event_type": "no_event",
+  "region": "z_north_road",
+  "confidence": 0.61,
+  "evidence_ids": [
+    "cam_b.o1",
+    "cam_b.o2",
+    "cam_b.o3",
+    "cam_c.o1",
+    "cam_c.o2"
+  ],
+  "reason": "Cues cam_b.o1, cam_b.o3, and cam_c.o1 show people moving toward or away from the blind zone’s general direction (right/left alignment with north-east road), while cam_b.o2 and cam_c.o2 describe transit across the area, suggesting coordinated movement. The cluster score (0.6177) and region candidate z_north_road align with pedestrian activity consistent with a shared event.",
+  "alternatives": [
+    {
+      "event_type": "object_transport",
+      "confidence": 0.55
+    }
+  ],
+  "limitations": [
+    "Cues lack explicit vehicle cues or stopping behavior, so vehicle-related events cannot be ruled out. Weaknesses include no direct vehicle observations and ambiguous directionality in some frames.",
+    "The event itself is not directly visible to any model input camera."
+  ]
+}

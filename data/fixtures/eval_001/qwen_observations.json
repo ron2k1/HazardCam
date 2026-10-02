@@ -1,0 +1,177 @@
+{
+  "cam_a": {
+    "camera_id": "cam_a",
+    "observations": [
+      {
+        "id": "cam_a.o1",
+        "t_start": 12.0,
+        "t_end": 19.0,
+        "cue_type": "person_edge_transit",
+        "description": "A person in a green jacket and another in a brown jacket walk from the right side of the frame toward the left, carrying a bag.",
+        "direction": "left",
+        "confidence": 0.95,
+        "supporting_frames": [
+          3,
+          4,
+          5
+        ]
+      },
+      {
+        "id": "cam_a.o2",
+        "t_start": 19.0,
+        "t_end": 23.0,
+        "cue_type": "person_edge_transit",
+        "description": "A person in a brown jacket pulls a suitcase and walks out of the frame on the right side.",
+        "direction": "right",
+        "confidence": 0.95,
+        "supporting_frames": [
+          5,
+          6
+        ]
+      },
+      {
+        "id": "cam_a.o3",
+        "t_start": 23.0,
+        "t_end": 27.0,
+        "cue_type": "person_edge_transit",
+        "description": "A person in a dark jacket walks into the frame from the right side.",
+        "direction": "left",
+        "confidence": 0.85,
+        "supporting_frames": [
+          6,
+          7
+        ]
+      }
+    ]
+  },
+  "cam_b": {
+    "camera_id": "cam_b",
+    "observations": [
+      {
+        "id": "cam_b.o1",
+        "t_start": 0.0,
+        "t_end": 23.0,
+        "cue_type": "person_edge_transit",
+        "description": "A person walks into the frame from the left edge, crossing the paved area",
+        "direction": "left",
+        "confidence": 0.9,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      {
+        "id": "cam_b.o2",
+        "t_start": 0.0,
+        "t_end": 23.0,
+        "cue_type": "person_vehicle_interaction",
+        "description": "A person approaches and opens the driver's side door of a white pickup truck parked on the left",
+        "direction": "left",
+        "confidence": 0.8,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      {
+        "id": "cam_b.o3",
+        "t_start": 0.0,
+        "t_end": 23.0,
+        "cue_type": "vehicle_slowing_or_stopping",
+        "description": "A white pickup truck slows and stops near the center-left edge of the frame",
+        "direction": "center_left",
+        "confidence": 0.9,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      {
+        "id": "cam_b.o4",
+        "t_start": 0.0,
+        "t_end": 23.0,
+        "cue_type": "traffic_reaction",
+        "description": "A red car in the background slows and stops as a white pickup truck approaches",
+        "direction": "center_right",
+        "confidence": 0.75,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      {
+        "id": "cam_b.o5",
+        "t_start": 0.0,
+        "t_end": 23.0,
+        "cue_type": "human_reaction",
+        "description": "Several people look toward the center-left where the white pickup truck is parked",
+        "direction": "center_left",
+        "confidence": 0.8,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      {
+        "id": "cam_b.o6",
+        "t_start": 0.0,
+        "t_end": 23.0,
+        "cue_type": "vehicle_backing_or_maneuvering",
+        "description": "A white pickup truck reverses slightly and moves backward on the paved area",
+        "direction": "center_left",
+        "confidence": 0.85,
+        "supporting_frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      {
+        "id": "cam_b.o7",
+        "t_start": 23.0,
+        "t_end": 27.0,
+        "cue_type": "vehicle_edge_transit",
+        "description": "A black SUV enters the frame from the bottom edge, moving along the road",
+        "direction": "toward_camera",
+        "confidence": 0.95,
+        "supporting_frames": [
+          6,
+          7
+        ]
+      }
+    ]
+  },
+  "cam_c": {
+    "camera_id": "cam_c",
+    "observations": []
+  }
+}

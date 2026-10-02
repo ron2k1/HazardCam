@@ -1,0 +1,17 @@
+{
+  "event_type": "unknown",
+  "region": "unknown",
+  "confidence": 0.0,
+  "evidence_ids": [
+    "cam_a.o1",
+    "cam_a.o2"
+  ],
+  "reason": "Cues cam_a.o1 and cam_a.o2 show sequential transit of a person entering and exiting the bus station, with high confidence (0.95) and supporting frames, but no corroboration from other cameras. The region z_west_plaza is inferred from a single camera’s zone prior, reducing confidence in spatial alignment.",
+  "alternatives": [],
+  "limitations": [
+    "Lack of corroboration from cameras cam_b or cam_c prevents confirming a shared activity in the blind zone.",
+    "Single-camera region candidate (z_west_plaza) lacks temporal or spatial corroboration across cameras.",
+    "Weak temporal clusters (only one camera) and no ray intersection rule exclude strong inference.",
+    "The event itself is not directly visible to any model input camera."
+  ]
+}
