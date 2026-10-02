@@ -6,15 +6,24 @@
 #   MODEL_PROFILE=lite-local scripts/start_app.sh # real local models (Ollama must be up)
 #   scripts/start_app.sh --smoke                  # start, check both answer, stop, exit 0
 #
-# Runs in the foreground; Ctrl+C stops both servers. Env: API_PORT (8080), WEB_PORT (3000),
-# MODEL_PROFILE (fixture), SKIP_BUILD=1 to reuse apps/web/.next (it must have been built
-# for the same API_PORT, since NEXT_PUBLIC_API_BASE_URL is inlined at build time),
-# READY_TIMEOUT_S (120).
+# Runs in the foreground; Ctrl+C (or a TERM) stops both servers. Env: API_PORT (8080),
+# WEB_PORT (3000), MODEL_PROFILE (fixture), READY_TIMEOUT_S (120), STOP_GRACE_S (10: how long
+# a server gets to exit after TERM before KILL), SKIP_BUILD=1 to reuse apps/web/.next (only a
+# build this script made for the same API_PORT, since NEXT_PUBLIC_API_BASE_URL is inlined at
+# build time).
 set -euo pipefail
+# wait -n needs bash 4.3 and "${pids[@]}" on an empty array under set -u needs 4.4 (macOS
+# ships 3.2 as /bin/bash)
+if ((BASH_VERSINFO[0] * 100 + BASH_VERSINFO[1] < 404)); then
+  echo "scripts/start_app.sh needs bash 4.4 or newer; this is $BASH_VERSION" >&2
+  exit 1
+fi
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 # shellcheck source=scripts/_python.sh
 . scripts/_python.sh
+# shellcheck source=scripts/_proc.sh
+. scripts/_proc.sh
 
 smoke=0
 case "${1:-}" in
@@ -34,7 +43,9 @@ READY_TIMEOUT_S="${READY_TIMEOUT_S:-120}"
 export MODEL_PROFILE="${MODEL_PROFILE:-fixture}"
 NEXT=(node node_modules/next/dist/bin/next)
 
-answers() { curl -fsS --max-time 2 -o /dev/null "$1"; }
+# Silent: a refusal is often expected. bash does the redirect: curl is a native Windows binary
+# in Git Bash, and -o /dev/null reaches it unconverted under MSYS_NO_PATHCONV=1.
+answers() { curl -fs --max-time 2 "$1" >/dev/null; }
 
 # A server already on the port would pass the readiness check without being ours.
 for url in "$API_URL/healthz" "$WEB_URL/ops"; do
@@ -47,6 +58,13 @@ done
   echo "apps/web/node_modules missing; run: pnpm --dir apps/web install" >&2
   exit 1
 }
+# The API URL the build in apps/web/.next inlined. `next build` empties .next first, so a
+# build made any other way (the e2e suite's, a manual one) leaves no stamp.
+BUILD_STAMP=apps/web/.next/api-base-url.txt
+if [ "${SKIP_BUILD:-0}" = 1 ] && [ "$(cat "$BUILD_STAMP" 2>/dev/null)" != "$API_URL" ]; then
+  echo "SKIP_BUILD=1, but apps/web/.next was not built by this script for $API_URL; run without SKIP_BUILD" >&2
+  exit 1
+fi
 
 set -m # each background job gets its own process group, so a kill reaches its children
 pids=()
@@ -54,16 +72,13 @@ stop() {
   trap - EXIT INT TERM
   local pid
   for pid in "${pids[@]}"; do
-    if [ -r "/proc/$pid/winpid" ]; then # Git Bash: end the Windows process tree by PID
-      taskkill //F //T //PID "$(cat "/proc/$pid/winpid")" >/dev/null 2>&1 || true
-    else
-      kill -TERM -- "-$pid" 2>/dev/null || kill -TERM "$pid" 2>/dev/null || true
-    fi
+    stop_job "$pid" || true
   done
   wait 2>/dev/null || true
 }
 trap stop EXIT
-trap 'exit 130' INT TERM
+trap 'exit 130' INT
+trap 'exit 143' TERM
 
 wait_for() { # name url pid
   local deadline=$((SECONDS + READY_TIMEOUT_S))
@@ -90,12 +105,19 @@ wait_for api "$API_URL/healthz" "${pids[0]}"
 if [ "${SKIP_BUILD:-0}" != 1 ]; then
   echo "web: building for $API_URL"
   (cd apps/web && NEXT_PUBLIC_API_BASE_URL="$API_URL" NEXT_TELEMETRY_DISABLED=1 "${NEXT[@]}" build)
+  printf '%s
+' "$API_URL" >"$BUILD_STAMP"
 fi
 (cd apps/web && NEXT_TELEMETRY_DISABLED=1 exec "${NEXT[@]}" start -H 127.0.0.1 -p "$WEB_PORT") &
 pids+=("$!")
 wait_for web "$WEB_URL/ops" "${pids[1]}"
 
 if ((smoke)); then
+  # The build takes minutes; the API that answered before it must still be up.
+  if ! kill -0 "${pids[0]}" 2>/dev/null || ! answers "$API_URL/healthz"; then
+    echo "smoke: api no longer answers $API_URL/healthz" >&2
+    exit 1
+  fi
   echo "smoke: api and web answer; stopping"
   exit 0
 fi
