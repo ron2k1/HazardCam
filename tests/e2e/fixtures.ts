@@ -291,17 +291,23 @@ export function missingRevealTokens(html: string, gt: GroundTruthTokens): string
  * ground-truth tokens; returns a stop() that disconnects and yields the hits. Scanning only
  * what changed keeps it cheap through a minutes-long real-model run. Values written after
  * arming and overwritten before the callback runs are seen through the records' old values;
- * the value a node held when the watch began is not (the page check at arming covers it, and a
- * reveal before arming legitimately shows the camera). One watcher at a time per page.
+ * the value a node held when the watch began is not, since a reveal before arming legitimately
+ * shows the camera. Where nothing may show it yet, `checkPage` scans the page in the same task
+ * that starts the watch, so no change falls between the two. One watcher at a time per page.
  */
-export async function watchGroundTruth(page: Page, gt: GroundTruthTokens): Promise<() => Promise<string[]>> {
-  await page.evaluate((pattern) => {
+export async function watchGroundTruth(
+  page: Page,
+  gt: GroundTruthTokens,
+  { checkPage = false } = {},
+): Promise<() => Promise<string[]>> {
+  await page.evaluate(({ pattern, checkPage }) => {
     const re = new RegExp(pattern, "i");
     const hits: string[] = [];
     const scan = (text: string | null, where: string) => {
       const m = text ? re.exec(text) : null;
       if (m && text && hits.length < 10) hits.push(`${where}: …${text.slice(Math.max(0, m.index - 60), m.index + 60)}…`);
     };
+    if (checkPage) scan(document.documentElement.outerHTML, "page at arming");
     // The first record for a node and key carries the value from before arming; every later one
     // carries a value written since. A node inserted after arming has no value from before.
     const seen = new WeakMap<Node, Set<string>>();
@@ -343,7 +349,7 @@ export async function watchGroundTruth(page: Page, gt: GroundTruthTokens): Promi
       observer.disconnect();
       return hits;
     };
-  }, gt.pattern);
+  }, { pattern: gt.pattern, checkPage });
   return () => page.evaluate(() => (window as unknown as { __gtWatch: () => string[] }).__gtWatch());
 }
 

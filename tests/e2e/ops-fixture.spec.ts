@@ -117,8 +117,8 @@ test(`eval_001 [${PROFILE}]: live trace in tool order, evidence seeks media, GT 
   await expect(revealBtn).toHaveText("REVEAL AFTER RUN");
   await expect(revealBtn).toBeDisabled();
   const gtTokens = groundTruthTokens("eval_001");
-  // armed first, so nothing slips in between the snapshot and the watch
-  const stopGtWatch = await watchGroundTruth(page, gtTokens);
+  // the page is scanned in the task that starts the watch, so no change falls between the two
+  const stopGtWatch = await watchGroundTruth(page, gtTokens, { checkPage: true });
   expect(containsGroundTruth(await page.content(), gtTokens), "ground-truth tokens on the page before the run").toBe(false);
 
   const trace = await watchTrace(page);
@@ -342,14 +342,20 @@ test("eval_005 [fixture]: a real abstention renders as ABSTAIN / unknown with no
   await page.screenshot({ path: shot("ops-fixture-eval_005-abstain.png"), animations: "disabled" });
 });
 
-test("ground-truth watcher (blank page, no API): sees a token written and overwritten in one task, not one already there", async ({
+test("ground-truth watcher (blank page, no API): sees a token written and overwritten in one task; one already there only with checkPage", async ({
   page,
 }) => {
   const gt = groundTruthTokens("eval_001");
   await page.setContent('<p id="shown">cam_gt</p><p id="idle">idle</p><p id="tag" data-camera="ground-truth"></p>');
 
+  // unless the watch checks the page as it starts, for a page that must not show it yet
+  let stop = await watchGroundTruth(page, gt, { checkPage: true });
+  const atArming = await stop();
+  expect(atArming).toHaveLength(1);
+  expect(atArming[0]).toMatch(/^page at arming: .*cam_gt/);
+
   // values the page held when the watch began are not leaks (a reveal before arming shows them)
-  let stop = await watchGroundTruth(page, gt);
+  stop = await watchGroundTruth(page, gt);
   await page.evaluate(() => {
     document.getElementById("shown")!.firstChild!.textContent = "POSITION WITHHELD";
     document.getElementById("tag")!.setAttribute("data-camera", "cam_a");
@@ -367,4 +373,17 @@ test("ground-truth watcher (blank page, no API): sees a token written and overwr
     tag.setAttribute("data-camera", "cam_a");
   });
   expect(await stop()).toEqual(["text (old): …cam_gt…", '@data-camera (old): …data-camera="ground-truth"…']);
+
+  // a node inserted holding a token and overwritten in the same task: its first old values,
+  // and its text's, were written after arming too
+  stop = await watchGroundTruth(page, gt);
+  await page.evaluate(() => {
+    const p = document.createElement("p");
+    p.setAttribute("data-camera", "ground-truth");
+    p.textContent = "cam_gt";
+    document.body.append(p);
+    p.setAttribute("data-camera", "cam_a");
+    (p.firstChild as Text).data = "idle";
+  });
+  expect(await stop()).toEqual(['@data-camera (old): …data-camera="ground-truth"…', "text (old): …cam_gt…"]);
 });
