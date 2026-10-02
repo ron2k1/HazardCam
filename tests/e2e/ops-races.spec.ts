@@ -1,7 +1,7 @@
 /**
- * Actions taken on /ops while a request is still in flight. Each test holds one real request in
- * the browser (POST /api/runs or the judge call) until it has checked the page, then lets it go
- * on to the real API. Fixture profile throughout: these tests need a fixed run, not a model.
+ * Actions taken on /ops while a request is still in flight, or just after one. A test that holds
+ * a real request in the browser (POST /api/runs or the judge call) checks the page, then lets it
+ * go on to the real API. Fixture profile throughout: these tests need a fixed run, not a model.
  */
 import type { Page } from "@playwright/test";
 
@@ -116,7 +116,7 @@ test("reveal across a RE-RUN [fixture]: the dropped reveal neither keeps FETCHIN
   const posted = page.waitForRequest((r) => r.method() === "POST" && RUNS_ROUTE.test(r.url()));
   const rerun = runToEnd(page);
   await posted;
-  // well inside the page's 6 s judge timeout, whose abort would also end FETCHING
+  // the RE-RUN itself clears it: the dropped reveal's own end, even its 6 s abort, may not
   await expect(revealBtn, "FETCHING ends when the RE-RUN starts").not.toHaveText("FETCHING JUDGE DATA", { timeout: 2_000 });
   await rerun;
   await expect(revealBtn).toHaveText("REVEAL FOR JUDGE");
@@ -141,8 +141,9 @@ test("reveal across a RE-RUN [fixture]: the dropped reveal neither keeps FETCHIN
   expect(judgeCalls, "one judge call per reveal click").toHaveLength(2);
 });
 
-test("scenario change during a reveal [fixture]: the new scenario neither shows FETCHING nor takes the old reply", async ({ page }) => {
+test("scenario change during a reveal [fixture]: FETCHING ends, and the old reply reveals nothing, even back on its scenario", async ({ page }) => {
   const u = ui(page);
+  const gtTokens = groundTruthTokens("eval_001");
   const judgeCalls: string[] = [];
   page.on("request", (r) => {
     // the judge record itself, not the revealed camera's video
@@ -159,11 +160,14 @@ test("scenario change during a reveal [fixture]: the new scenario neither shows 
 
   // the scenario select stays open while a reveal is pending; switching drops that reveal
   await u.select.selectOption("eval_005");
-  // well inside the page's 6 s judge timeout (see "reveal across a RE-RUN")
   await expect(revealBtn, "FETCHING ends with the scenario change").toHaveText("REVEAL AFTER RUN", { timeout: 2_000 });
   await expect(revealBtn).toBeDisabled();
 
-  // eval_001's reply lands on eval_005: not shown, and nothing unlocked by it
+  // back on eval_001 before its reply lands: a reply matched by scenario alone would reveal the
+  // camera now, with no run on screen and no click
+  await u.select.selectOption("eval_001");
+  await expect(revealBtn).toHaveText("REVEAL AFTER RUN");
+  const stopGtWatch = await watchGroundTruth(page, gtTokens, { checkPage: true });
   const staleReply = page.waitForResponse(JUDGE_ROUTE, { timeout: 4_000 });
   judge.release();
   await (await staleReply).finished();
@@ -171,11 +175,13 @@ test("scenario change during a reveal [fixture]: the new scenario neither shows 
   await page.waitForTimeout(300);
   await expect(u.groundTruth).toHaveAttribute("data-state", "withheld");
   await expect(revealBtn).toHaveText("REVEAL AFTER RUN");
+  expect(await stopGtWatch(), "ground-truth tokens shown by the dropped reply").toEqual([]);
 
+  // nor was the reply kept: the next reveal asks the judge again
   await runToEnd(page);
   await revealBtn.click();
   await expect(u.groundTruth).toHaveAttribute("data-state", "revealed");
-  expect(judgeCalls).toEqual(["/api/judge/scenarios/eval_001", "/api/judge/scenarios/eval_005"]);
+  expect(judgeCalls).toEqual(["/api/judge/scenarios/eval_001", "/api/judge/scenarios/eval_001"]);
 });
 
 test("RE-RUN after a reveal [fixture]: the cached ground truth stays withheld until it is revealed again", async ({ page }) => {
