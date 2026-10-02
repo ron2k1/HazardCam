@@ -27,8 +27,10 @@ USAGE
 
 # Do the Playwright args pick tests? -g/--grep, --test-list, or a spec file or path. An option's
 # value is skipped, so --output a/b or --shard 1/2 keeps the default, and an inverted filter
-# (-G/--grep-invert) narrows it. The option lists follow `playwright test --help`;
-# tests/unit/scripts/test_run_sh.py checks them against the installed Playwright.
+# (-G/--grep-invert) narrows it. Playwright drops every test filter after `--`, and -x (the one
+# short flag with no value) clusters with the next, as in -xc. The option lists follow
+# `playwright test --help`; tests/unit/scripts/test_run_sh.py checks them against the installed
+# Playwright.
 picks_tests() {
   local a value=none
   for a in "$@"; do
@@ -36,7 +38,9 @@ picks_tests() {
       next) value=none && continue ;;
       optional) value=none && [[ $a != -* ]] && continue ;;
     esac
+    while [[ $a == -x?* ]]; do a="-${a#-x}"; done
     case "$a" in
+      --) return 1 ;;
       -g | -g?* | --grep | --grep=* | --test-list | --test-list=*) return 0 ;;
       --add-reporter | --browser | -c | --config | -G | --grep-invert | --global-timeout | -j | \
         --workers | --last-failed-file | --max-failures | --output | --project | --repeat-each | \

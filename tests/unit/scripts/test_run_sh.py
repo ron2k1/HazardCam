@@ -104,6 +104,33 @@ def _tool_dir() -> str:
             ("--only-changed", "-g", "eval_005"),
             "E2E_PROFILE=lite-local args: --dir apps/web e2e --only-changed -g eval_005",
         ),
+        # Playwright drops every test filter after `--`, so nothing there picks tests
+        (
+            "lite-e2e",
+            ("--", "tests/e2e/ops-races.spec.ts"),
+            "E2E_PROFILE=lite-local args: --dir apps/web e2e -g eval_001 -- tests/e2e/ops-races.spec.ts",
+        ),
+        (
+            "full-e2e",
+            ("--headed", "--", "ops-races.spec.ts", "-g", "eval_005"),
+            "E2E_PROFILE=full-local args: --dir apps/web e2e -g eval_001 --headed -- ops-races.spec.ts -g eval_005",
+        ),
+        # -x clusters with the short flag after it: -xc is -x -c, -xg is -x -g
+        (
+            "lite-e2e",
+            ("-xc", "../../tests/e2e/playwright.config.ts"),
+            "E2E_PROFILE=lite-local args: --dir apps/web e2e -g eval_001 -xc ../../tests/e2e/playwright.config.ts",
+        ),
+        (
+            "full-e2e",
+            ("-xG", "ops/races"),
+            "E2E_PROFILE=full-local args: --dir apps/web e2e -g eval_001 -xG ops/races",
+        ),
+        (
+            "lite-e2e",
+            ("-xg", "eval_005"),
+            "E2E_PROFILE=lite-local args: --dir apps/web e2e -xg eval_005",
+        ),
     ],
 )
 def test_run_e2e_targets_pin_their_profile_and_scope(tmp_path, target, args, expected):
@@ -134,6 +161,9 @@ def test_run_e2e_targets_skip_the_value_of_every_playwright_option(tmp_path):
         f for spec in specs for f in spec.split(", ") if f not in {"-g", "--grep", "--test-list"}
     ]
     assert {"-c", "--output", "--shard", "--debug"} <= set(flags), usage
+    # run.sh unbundles -x alone (-xc is -x -c), so it must stay the only short flag with no value
+    shorts = re.findall(r"^\s+(-\w)(?:, --[\w-]+)?\s{2,}", usage, re.MULTILINE)
+    assert set(shorts) == {"-x", "-h"}, usage
     args = [arg for flag in flags for arg in (flag, "a/b.spec.ts")]
     assert _run_e2e_target(tmp_path, "lite-e2e", *args) == (
         f"E2E_PROFILE=lite-local args: --dir apps/web e2e -g eval_001 {' '.join(args)}"
