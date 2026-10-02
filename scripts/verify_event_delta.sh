@@ -4,6 +4,8 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 # shellcheck source=scripts/_python.sh
 . scripts/_python.sh
+# shellcheck source=scripts/_boundary.sh
+. scripts/_boundary.sh
 mkdir -p artifacts/event_day
 BASE_COMMIT=""
 if [ -f artifacts/PREBUILD_SNAPSHOT.json ]; then
@@ -16,6 +18,7 @@ except Exception:
 PY
 )"
 fi
+mapfile -t EVAL_HITS < <(eval_import_hits)
 {
   echo "verified_at_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
   echo "prebuild_commit=${BASE_COMMIT:-unknown}"
@@ -32,4 +35,17 @@ fi
   else
     echo "No usable prebuild git commit in snapshot; compare timestamps/checksums manually."
   fi
+  echo
+  echo "== imports of the judge-side eval package from ${EVENT_DAY_CODE_DIRS[*]} =="
+  if ((${#EVAL_HITS[@]})); then
+    printf 'FORBIDDEN_EVAL_IMPORT %s\n' "${EVAL_HITS[@]}"
+  else
+    echo "none"
+  fi
 } | tee artifacts/event_day/DELTA_REPORT.txt
+
+# Decided out here: the report block above runs in a subshell.
+if ((${#EVAL_HITS[@]})); then
+  echo "event-day code imports eval/ (see artifacts/event_day/DELTA_REPORT.txt)" >&2
+  exit 1
+fi
