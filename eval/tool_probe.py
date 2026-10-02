@@ -13,13 +13,16 @@ request; the reply is scored and never executed or answered.
   malformed call whose tool message is the session's real rejection text.
 * Scoring: the first call must pass ``tool_call_error`` (the session's own validator), name
   a tool that is acceptable in that state, and carry arguments that fit the state (an
-  unsampled camera, an in-range frame index, ...). The acceptable set follows the
-  prerequisites the tools enforce; any productive order passes, not just the harness's.
+  unsampled camera, an in-range frame index, ...). Cameras may be taken in any order, but
+  fusion is acceptable only once every visible camera is sampled and inspected. That is
+  stricter than the tools, which let correlation run after one inspected camera: a run
+  that fuses early throws away the other cameras' evidence.
 """
 
 from __future__ import annotations
 
 import json
+import statistics
 from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -27,13 +30,15 @@ from typing import Any
 
 from apps.api.schemas.contracts import SCHEMA_FILES, load_schema
 from eval.summary import proportion
-from tools.session import TOOL_NAMES, tool_call_error
+from tools.session import TOOL_NAMES, rejection_error, tool_call_error
 
 SYSTEM_PROMPT = (
     "You run a multi-camera video analysis by calling tools. "
     "Reply with exactly one tool call that continues the run."
 )
 RECOVERY_CASE = "recovery"
+REQUEST_FAILED = "request_failed"  # no reply to score: HTTP error, timeout, malformed body
+NOT_A_VALID_CALL = ("no_tool_call", "bad_json", "invalid_call", REQUEST_FAILED)
 _FILES = {file: name for name, file in SCHEMA_FILES.items()}
 _SCHEMA_META = frozenset({"$schema", "$id", "$defs"})
 _MAX_REF_DEPTH = 16
@@ -182,7 +187,7 @@ def build_cases(scenario_id: str, cameras: list[str], steps: list[Step]) -> list
         rejected = Step(
             "inspect_camera",
             bad_args,
-            {"ok": False, "error": tool_call_error("inspect_camera", bad_args)},
+            {"ok": False, "error": rejection_error("inspect_camera", bad_args)},
         )
         done = [first, rejected]
         cases.append(
@@ -246,18 +251,18 @@ def score_reply(case: Case, message: dict[str, Any]) -> dict[str, Any]:
 
 
 def summarize_probe(rows: list[dict[str, Any]], *, meta: dict[str, Any]) -> dict[str, Any]:
-    latency = sorted(r["latency_s"] for r in rows if r.get("latency_s") is not None)
+    """A failed request stays in every denominator and never counts as a valid call."""
+    answered = [r for r in rows if r["outcome"] != REQUEST_FAILED]
+    latency = [r["latency_s"] for r in answered if r.get("latency_s") is not None]
     return {
         "meta": meta,
         "n": len(rows),
         "pass": proportion([r["outcome"] == "ok" for r in rows]),
-        "schema_valid": proportion(
-            [r["outcome"] not in ("no_tool_call", "bad_json", "invalid_call") for r in rows]
-        ),
+        "schema_valid": proportion([r["outcome"] not in NOT_A_VALID_CALL for r in rows]),
         "outcomes": dict(sorted(Counter(r["outcome"] for r in rows).items())),
         "parallel_calls": sum(r["tool_calls"] > 1 for r in rows),
         "invisible_camera_calls": sum(r["invisible_camera"] for r in rows),
         "recovered": next((r["outcome"] == "ok" for r in rows if r["case"] == RECOVERY_CASE), None),
-        "median_latency_s": latency[len(latency) // 2] if latency else None,
+        "median_latency_s": statistics.median(latency) if latency else None,
         "rows": rows,
     }

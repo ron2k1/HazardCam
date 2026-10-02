@@ -23,6 +23,7 @@ from tools.session import (
     ToolSession,
     _Trace,
     args_def,
+    rejection_error,
 )
 
 pytestmark = pytest.mark.media
@@ -156,6 +157,7 @@ def test_invalid_calls_fail_their_pair_with_a_corrective_error(
     assert info.value.stage == stage
     failed = _failed_call(events)
     assert failed["tool"] == stage and message in failed["error"]
+    assert failed["error"] == rejection_error(name, arguments)
     assert len(events) == 2  # nothing ran
     assert events[0][1]["args_summary"] == {"rejected": True}
     assert "cam_gt" not in str(info.value) and "cam_gt" not in json.dumps(events)

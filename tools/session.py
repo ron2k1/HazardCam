@@ -170,6 +170,12 @@ def tool_call_error(name: str, arguments: Any) -> str | None:
     return f"{name}: {where}: {_schema_message(error)}"
 
 
+def rejection_error(name: str, arguments: Any) -> str | None:
+    """The ``tool.completed`` error ``call_tool`` reports for an invalid call, else ``None``."""
+    error = tool_call_error(name, arguments)
+    return None if error is None else _short(ValueError(error))
+
+
 class _Trace:
     """Wraps one tool call in a tool.started / tool.completed pair.
 

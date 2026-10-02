@@ -27,6 +27,7 @@ sys.path.insert(0, str(REPO))
 
 from apps.api.services.scenarios import LoadedScenario, ScenarioStore
 from eval.tool_probe import (
+    REQUEST_FAILED,
     SYSTEM_PROMPT,
     Case,
     Step,
@@ -98,7 +99,9 @@ def ask(endpoint: EndpointConfig, case: Case, tools: list[dict[str, Any]]) -> di
         if resp.status_code >= 400:
             return _failed(case, f"HTTP {resp.status_code}", latency)
         message = resp.json()["choices"][0]["message"]
-    except (httpx.HTTPError, ValueError, KeyError, IndexError) as exc:
+        if not isinstance(message, dict):
+            raise TypeError("message is not an object")
+    except (httpx.HTTPError, ValueError, KeyError, IndexError, TypeError) as exc:
         return _failed(case, type(exc).__name__, round(time.perf_counter() - started, 2))
     row = score_reply(case, message)
     row["latency_s"] = latency
@@ -111,7 +114,7 @@ def _failed(case: Case, error: str, latency: float) -> dict[str, Any]:
         "tool_calls": 0,
         "content_chars": 0,
         "tool": None,
-        "outcome": "request_failed",
+        "outcome": REQUEST_FAILED,
         "error": error,
         "invisible_camera": False,
         "latency_s": latency,

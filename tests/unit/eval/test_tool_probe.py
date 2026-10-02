@@ -23,7 +23,7 @@ from eval.tool_probe import (
     summarize_probe,
     tool_definitions,
 )
-from tools.session import TOOL_NAMES, args_def
+from tools.session import TOOL_NAMES, args_def, rejection_error
 
 CAMS = ["cam_a", "cam_b", "cam_c"]
 HYPOTHESIS = json.loads(
@@ -124,7 +124,10 @@ def test_cases_cover_every_prefix_and_the_recovery():
     recovery = cases[-1]
     assert recovery.name == RECOVERY_CASE
     rejection = json.loads(recovery.messages[-1]["content"])
-    assert rejection == {"ok": False, "error": "inspect_camera: camera_id: must be a string"}
+    # Word for word what the session's failed tool.completed carries for this call.
+    error = "ValueError: inspect_camera: camera_id: must be a string"
+    assert rejection == {"ok": False, "error": error}
+    assert error == rejection_error("inspect_camera", {"camera_id": ["cam_a"]})
     # The rejected call did not count: cam_a still needs inspecting.
     assert recovery.acceptable["inspect_camera"]({"camera_id": "cam_a"})
 
@@ -168,3 +171,21 @@ def test_summary_counts_and_recovery():
     assert summary["pass"]["k"] == sum(r["outcome"] == "ok" for r in rows) > 0
     assert summary["recovered"] is True  # sampling cam_c is productive after the rejection
     assert summary["median_latency_s"] == 1.0
+
+
+def test_a_failed_request_is_never_a_schema_valid_call():
+    (case,) = build_cases("eval_001", CAMS, _steps())[:1]
+    ok = score_reply(case, _call("sample_video", '{"camera_id": "cam_a"}'))
+    failed = {"case": case.name, "outcome": "request_failed", "tool_calls": 0}
+    rows = [
+        {**ok, "latency_s": 1.0},
+        {**ok, "latency_s": 2.0},
+        {**ok, "latency_s": 3.0},
+        {**ok, "latency_s": 4.0},
+        {**failed, "invisible_camera": False, "latency_s": 300.0},
+    ]
+    summary = summarize_probe(rows, meta={})
+    assert (summary["schema_valid"]["k"], summary["schema_valid"]["n"]) == (4, 5)
+    assert summary["outcomes"]["request_failed"] == 1
+    # The true median of the answered requests; a timed-out request has no reply latency.
+    assert summary["median_latency_s"] == 2.5
