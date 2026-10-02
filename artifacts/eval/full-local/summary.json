@@ -1,0 +1,478 @@
+{
+  "meta": {
+    "profile": "full-local",
+    "mode": "local",
+    "perception_model": "qwen3.5:9b",
+    "reasoning_model": "ministral-3:8b",
+    "media": {
+      "sample_fps": 1.0,
+      "max_frames_per_camera": 8,
+      "max_width": 768,
+      "concurrency": 1
+    },
+    "git_commit": "b51f3d7f87556d028c51281b9e9a287762a61fbc",
+    "scored_at": "2026-10-02T15:53:21+00:00",
+    "manifest": "meva-kf1-22",
+    "scenarios": [
+      "eval_001",
+      "eval_002",
+      "eval_003",
+      "eval_004",
+      "eval_005",
+      "eval_006",
+      "eval_007",
+      "eval_008",
+      "eval_009",
+      "eval_010",
+      "eval_011",
+      "eval_012",
+      "eval_013",
+      "eval_014",
+      "eval_015",
+      "eval_016",
+      "eval_017",
+      "eval_018",
+      "eval_019",
+      "eval_020",
+      "eval_021",
+      "scenario_001"
+    ],
+    "scoring_rules": "eval/SCORING.md"
+  },
+  "n": 22,
+  "decision": {
+    "accuracy": {
+      "k": 10,
+      "n": 22,
+      "rate": 0.45454545454545453,
+      "wilson95": [
+        0.2692,
+        0.6534
+      ]
+    },
+    "balanced_accuracy": 0.4583333333333333,
+    "by_category": {
+      "positive": {
+        "k": 3,
+        "n": 8,
+        "rate": 0.375,
+        "wilson95": [
+          0.1368,
+          0.6943
+        ]
+      },
+      "negative": {
+        "k": 5,
+        "n": 7,
+        "rate": 0.7142857142857143,
+        "wilson95": [
+          0.3589,
+          0.9178
+        ]
+      },
+      "ambiguous": {
+        "k": 2,
+        "n": 7,
+        "rate": 0.2857142857142857,
+        "wilson95": [
+          0.0822,
+          0.6411
+        ]
+      }
+    },
+    "false_alarm_rate": {
+      "k": 2,
+      "n": 7,
+      "rate": 0.2857142857142857,
+      "wilson95": [
+        0.0822,
+        0.6411
+      ]
+    },
+    "abstention_rate": {
+      "k": 6,
+      "n": 22,
+      "rate": 0.2727272727272727,
+      "wilson95": [
+        0.1315,
+        0.4815
+      ]
+    },
+    "raw_accuracy": {
+      "k": 10,
+      "n": 22,
+      "rate": 0.45454545454545453,
+      "wilson95": [
+        0.2692,
+        0.6534
+      ]
+    },
+    "outcomes": {
+      "abstain_ok": 1,
+      "correct_reject": 5,
+      "false_alarm": 2,
+      "hit": 4,
+      "miss_abstain": 1,
+      "miss_no_event": 3,
+      "wrong_class": 6
+    }
+  },
+  "region": {
+    "acceptance": {
+      "k": 0,
+      "n": 9,
+      "rate": 0.0,
+      "wilson95": [
+        0.0,
+        0.2991
+      ]
+    },
+    "full_hit": {
+      "k": 0,
+      "n": 8,
+      "rate": 0.0,
+      "wilson95": [
+        0.0,
+        0.3244
+      ]
+    },
+    "median_localization_error_m": 26.4,
+    "fusion_region_hit": {
+      "k": 0,
+      "n": 14,
+      "rate": 0.0,
+      "wilson95": [
+        0.0,
+        0.2153
+      ]
+    },
+    "median_best_candidate_error_m": 26.4
+  },
+  "evidence": {
+    "event_claims": 12,
+    "median_count": 6.0,
+    "unsupported_claims": 0,
+    "brier_event_claims": 0.3406
+  },
+  "time": {
+    "median_best_cluster_iou": 0.526
+  },
+  "system": {
+    "completion": {
+      "k": 22,
+      "n": 22,
+      "rate": 1.0,
+      "wilson95": [
+        0.8513,
+        1.0
+      ]
+    },
+    "schema_valid": {
+      "k": 22,
+      "n": 22,
+      "rate": 1.0,
+      "wilson95": [
+        0.8513,
+        1.0
+      ]
+    },
+    "gt_leaks": 0,
+    "failed_adapter_calls": 0,
+    "replay_mismatches": null,
+    "latency": {
+      "scenario_ms": {
+        "median": 77214.0,
+        "max": 177426.4
+      },
+      "perception_call_s": {
+        "median": 13.198,
+        "max": 90.453
+      },
+      "reasoning_s": {
+        "median": 17.394,
+        "max": 32.808
+      },
+      "tool_ms": {
+        "correlate_observations": {
+          "median": 0.2,
+          "max": 0.3
+        },
+        "get_supporting_frames": {
+          "median": 0.0,
+          "max": 0.1
+        },
+        "inspect_camera": {
+          "median": 13198.2,
+          "max": 90453.1
+        },
+        "reason_hypothesis": {
+          "median": 17393.7,
+          "max": 32808.1
+        },
+        "sample_video": {
+          "median": 576.8,
+          "max": 1657.4
+        },
+        "submit_hypothesis": {
+          "median": 0.1,
+          "max": 0.4
+        },
+        "triangulate_region": {
+          "median": 1.3,
+          "max": 1.9
+        }
+      }
+    }
+  },
+  "baselines": {
+    "answers": {
+      "passenger_dropoff_pickup": {
+        "decision_accuracy": 0.2727272727272727,
+        "balanced_accuracy": 0.2619047619047619
+      },
+      "vehicle_turnaround": {
+        "decision_accuracy": 0.3181818181818182,
+        "balanced_accuracy": 0.30952380952380953
+      },
+      "vehicle_stop": {
+        "decision_accuracy": 0.2727272727272727,
+        "balanced_accuracy": 0.2619047619047619
+      },
+      "vehicle_departure": {
+        "decision_accuracy": 0.045454545454545456,
+        "balanced_accuracy": 0.047619047619047616
+      },
+      "vehicle_turn": {
+        "decision_accuracy": 0.0,
+        "balanced_accuracy": 0.0
+      },
+      "vehicle_loading_unloading": {
+        "decision_accuracy": 0.045454545454545456,
+        "balanced_accuracy": 0.047619047619047616
+      },
+      "object_transport": {
+        "decision_accuracy": 0.0,
+        "balanced_accuracy": 0.0
+      },
+      "object_left_behind": {
+        "decision_accuracy": 0.0,
+        "balanced_accuracy": 0.0
+      },
+      "object_taken": {
+        "decision_accuracy": 0.0,
+        "balanced_accuracy": 0.0
+      },
+      "cyclist_movement": {
+        "decision_accuracy": 0.0,
+        "balanced_accuracy": 0.0
+      },
+      "unknown": {
+        "decision_accuracy": 0.6363636363636364,
+        "balanced_accuracy": 0.6666666666666666
+      },
+      "no_event": {
+        "decision_accuracy": 0.3181818181818182,
+        "balanced_accuracy": 0.3333333333333333
+      }
+    },
+    "best": {
+      "decision_accuracy": {
+        "answer": "unknown",
+        "value": 0.6363636363636364
+      },
+      "balanced_accuracy": {
+        "answer": "unknown",
+        "value": 0.6666666666666666
+      }
+    }
+  },
+  "verdict": {
+    "pipeline_ok": true,
+    "beats_constant_baselines": false
+  },
+  "failures": [
+    {
+      "scenario_id": "eval_002",
+      "category": "positive",
+      "outcome": "wrong_class",
+      "event_type": "vehicle_turnaround",
+      "raw_event_type": "vehicle_turnaround",
+      "accepted": [
+        "passenger_dropoff_pickup",
+        "vehicle_stop",
+        "stopped_vehicle",
+        "vehicle_activity",
+        "traffic_obstruction",
+        "pedestrian_activity"
+      ],
+      "error": null
+    },
+    {
+      "scenario_id": "eval_003",
+      "category": "ambiguous",
+      "outcome": "wrong_class",
+      "event_type": "passenger_dropoff_pickup",
+      "raw_event_type": "passenger_dropoff_pickup",
+      "accepted": [
+        "vehicle_turnaround",
+        "vehicle_reversing",
+        "u_turn",
+        "vehicle_maneuver",
+        "traffic_obstruction",
+        "vehicle_activity"
+      ],
+      "error": null
+    },
+    {
+      "scenario_id": "eval_004",
+      "category": "negative",
+      "outcome": "false_alarm",
+      "event_type": "passenger_dropoff_pickup",
+      "raw_event_type": "passenger_dropoff_pickup",
+      "accepted": [
+        "unknown",
+        "none",
+        "no_event"
+      ],
+      "error": null
+    },
+    {
+      "scenario_id": "eval_007",
+      "category": "positive",
+      "outcome": "wrong_class",
+      "event_type": "passenger_dropoff_pickup",
+      "raw_event_type": "passenger_dropoff_pickup",
+      "accepted": [
+        "vehicle_turnaround",
+        "vehicle_reversing",
+        "u_turn",
+        "vehicle_maneuver",
+        "traffic_obstruction",
+        "vehicle_activity"
+      ],
+      "error": null
+    },
+    {
+      "scenario_id": "eval_008",
+      "category": "positive",
+      "outcome": "miss_abstain",
+      "event_type": "unknown",
+      "raw_event_type": "unknown",
+      "accepted": [
+        "vehicle_turnaround",
+        "vehicle_reversing",
+        "u_turn",
+        "vehicle_maneuver",
+        "traffic_obstruction",
+        "vehicle_activity"
+      ],
+      "error": null
+    },
+    {
+      "scenario_id": "eval_010",
+      "category": "negative",
+      "outcome": "false_alarm",
+      "event_type": "vehicle_stop",
+      "raw_event_type": "vehicle_stop",
+      "accepted": [
+        "unknown",
+        "none",
+        "no_event"
+      ],
+      "error": null
+    },
+    {
+      "scenario_id": "eval_012",
+      "category": "ambiguous",
+      "outcome": "wrong_class",
+      "event_type": "passenger_dropoff_pickup",
+      "raw_event_type": "passenger_dropoff_pickup",
+      "accepted": [
+        "vehicle_turnaround",
+        "vehicle_reversing",
+        "u_turn",
+        "vehicle_maneuver",
+        "traffic_obstruction",
+        "vehicle_activity"
+      ],
+      "error": null
+    },
+    {
+      "scenario_id": "eval_015",
+      "category": "ambiguous",
+      "outcome": "miss_no_event",
+      "event_type": "no_event",
+      "raw_event_type": "no_event",
+      "accepted": [
+        "passenger_dropoff_pickup",
+        "vehicle_stop",
+        "stopped_vehicle",
+        "vehicle_activity",
+        "traffic_obstruction",
+        "pedestrian_activity"
+      ],
+      "error": null
+    },
+    {
+      "scenario_id": "eval_018",
+      "category": "ambiguous",
+      "outcome": "wrong_class",
+      "event_type": "passenger_dropoff_pickup",
+      "raw_event_type": "passenger_dropoff_pickup",
+      "accepted": [
+        "vehicle_turnaround",
+        "vehicle_reversing",
+        "u_turn",
+        "vehicle_maneuver",
+        "traffic_obstruction",
+        "vehicle_activity"
+      ],
+      "error": null
+    },
+    {
+      "scenario_id": "eval_019",
+      "category": "positive",
+      "outcome": "miss_no_event",
+      "event_type": "no_event",
+      "raw_event_type": "no_event",
+      "accepted": [
+        "passenger_dropoff_pickup",
+        "vehicle_stop",
+        "stopped_vehicle",
+        "vehicle_activity",
+        "traffic_obstruction",
+        "pedestrian_activity"
+      ],
+      "error": null
+    },
+    {
+      "scenario_id": "eval_020",
+      "category": "positive",
+      "outcome": "wrong_class",
+      "event_type": "passenger_dropoff_pickup",
+      "raw_event_type": "passenger_dropoff_pickup",
+      "accepted": [
+        "vehicle_turnaround",
+        "vehicle_reversing",
+        "u_turn",
+        "vehicle_maneuver",
+        "traffic_obstruction",
+        "vehicle_activity"
+      ],
+      "error": null
+    },
+    {
+      "scenario_id": "eval_021",
+      "category": "ambiguous",
+      "outcome": "miss_no_event",
+      "event_type": "no_event",
+      "raw_event_type": "no_event",
+      "accepted": [
+        "vehicle_departure",
+        "vehicle_activity",
+        "vehicle_maneuver"
+      ],
+      "error": null
+    }
+  ]
+}

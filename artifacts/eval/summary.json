@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-02T15:23:00+00:00",
+  "generated_at": "2026-10-02T15:53:21+00:00",
   "scoring_rules": "eval/SCORING.md",
   "manifest_scenarios": 22,
   "best_constant_baselines": {
@@ -76,6 +76,74 @@
         ]
       },
       "median_scenario_ms": 1075.6,
+      "verdict": {
+        "pipeline_ok": true,
+        "beats_constant_baselines": false
+      }
+    },
+    "full-local": {
+      "perception_model": "qwen3.5:9b",
+      "reasoning_model": "ministral-3:8b",
+      "scored_at": "2026-10-02T15:53:21+00:00",
+      "n": 22,
+      "decision_accuracy": {
+        "k": 10,
+        "n": 22,
+        "rate": 0.45454545454545453,
+        "wilson95": [
+          0.2692,
+          0.6534
+        ]
+      },
+      "balanced_accuracy": 0.4583333333333333,
+      "by_category": {
+        "positive": {
+          "k": 3,
+          "n": 8,
+          "rate": 0.375,
+          "wilson95": [
+            0.1368,
+            0.6943
+          ]
+        },
+        "negative": {
+          "k": 5,
+          "n": 7,
+          "rate": 0.7142857142857143,
+          "wilson95": [
+            0.3589,
+            0.9178
+          ]
+        },
+        "ambiguous": {
+          "k": 2,
+          "n": 7,
+          "rate": 0.2857142857142857,
+          "wilson95": [
+            0.0822,
+            0.6411
+          ]
+        }
+      },
+      "region_acceptance": {
+        "k": 0,
+        "n": 9,
+        "rate": 0.0,
+        "wilson95": [
+          0.0,
+          0.2991
+        ]
+      },
+      "full_hit": {
+        "k": 0,
+        "n": 8,
+        "rate": 0.0,
+        "wilson95": [
+          0.0,
+          0.3244
+        ]
+      },
+      "median_scenario_ms": 77214.0,
       "verdict": {
         "pipeline_ok": true,
         "beats_constant_baselines": false
