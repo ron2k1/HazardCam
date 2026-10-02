@@ -3,10 +3,10 @@
 # started_jobs+=("$!"); however the script ends, every one of them and everything it started is
 # gone before it returns.
 STOP_GRACE_S="${STOP_GRACE_S:-10}"
-if [[ ! $STOP_GRACE_S =~ ^(0|[1-9][0-9]*)$ ]]; then
-  # bash arithmetic cannot compare anything else (08 reads as octal), and the stop would never
-  # reach its KILL
-  echo "STOP_GRACE_S must be whole seconds with no leading zero, not $STOP_GRACE_S" >&2
+if [[ ! $STOP_GRACE_S =~ ^(0|[1-9][0-9]{0,5})$ ]]; then
+  # bash arithmetic cannot compare anything else (08 reads as octal, and a 19-digit grace times
+  # 5 wraps negative), and the stop would never reach its KILL
+  echo "STOP_GRACE_S must be whole seconds, 0 to 999999 with no leading zero, not $STOP_GRACE_S" >&2
   exit 2
 fi
 
