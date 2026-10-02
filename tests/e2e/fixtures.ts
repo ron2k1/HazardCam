@@ -273,17 +273,24 @@ export function groundTruthTokens(scenarioId: string): GroundTruthTokens {
   if (gt.file) tokens.push(path.posix.basename(gt.file).replace(/\.[^.]+$/, ""));
   if (gt.label) tokens.push(gt.label, ...(/\bG\d{3,4}\b/.exec(gt.label) ?? []));
   tokens.push(...revealed);
+  return { id: gt.id, tokens, revealed, pattern: boundedPattern(tokens) };
+}
+
+function boundedPattern(tokens: string[]): string {
   const escaped = tokens.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
-  return { id: gt.id, tokens, revealed, pattern: `(?<![A-Za-z0-9])(?:${escaped.join("|")})(?![A-Za-z0-9])` };
+  return `(?<![A-Za-z0-9])(?:${escaped.join("|")})(?![A-Za-z0-9])`;
 }
 
 export function containsGroundTruth(html: string, gt: GroundTruthTokens): boolean {
   return new RegExp(gt.pattern, "i").test(html);
 }
 
-/** The reveal-only tokens `html` lacks: after REVEAL this must be empty, or the detector is blind. */
+/**
+ * The reveal-only tokens the detector cannot find in `html`, each matched with its bounds: after
+ * REVEAL this must be empty, or the detector is blind to what the console draws.
+ */
 export function missingRevealTokens(html: string, gt: GroundTruthTokens): string[] {
-  return gt.revealed.filter((t) => !html.includes(t));
+  return gt.revealed.filter((t) => !new RegExp(boundedPattern([t]), "i").test(html));
 }
 
 /**

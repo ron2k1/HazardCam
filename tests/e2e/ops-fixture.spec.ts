@@ -400,4 +400,10 @@ test("ground-truth watcher (blank page, no API): sees a token written and overwr
     document.body.append(p);
   });
   expect(await stop()).toEqual(['@data-camera (old): …data-camera="ground-truth"…']);
+
+  // after REVEAL each reveal token must be found with the detector's bounds: one glued to a
+  // letter is on the page but invisible to the detector, so it counts as missing
+  expect(gt.revealed).toHaveLength(3);
+  expect(missingRevealTokens(`<p>${gt.revealed.join(" | ")}</p>`, gt)).toEqual([]);
+  expect(missingRevealTokens(`<p>${gt.revealed.map((t) => `${t}M`).join(" | ")}</p>`, gt)).toEqual(gt.revealed);
 });
