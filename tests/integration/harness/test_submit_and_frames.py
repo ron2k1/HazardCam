@@ -82,7 +82,7 @@ def test_alternatives_normalized(bundle, hyp):
         {"event_type": "stalled_vehicle", "confidence": 0.39},
         {"event_type": "debris", "confidence": 0.39},
     ]
-    out = submit_hypothesis(hyp.model_copy(update={"alternatives": alts}), bundle)
+    out = submit_hypothesis({**hyp.model_dump(), "alternatives": alts}, bundle)
     assert [(a.event_type, a.confidence) for a in out.alternatives] == [
         ("debris", 0.39),
         ("stalled_vehicle", 0.39),
