@@ -88,12 +88,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3794,
+                  "duration": 3880,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T16:24:36.711Z",
+                  "startTime": "2026-10-02T17:14:06.172Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -103,7 +103,7 @@
           ],
           "id": "d3a3065b3deec3cdea4f-2a812a5713d27b3a28e5",
           "file": "ops-fixture.spec.ts",
-          "line": 74,
+          "line": 77,
           "column": 5
         },
         {
@@ -122,12 +122,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2440,
+                  "duration": 2570,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T16:24:40.582Z",
+                  "startTime": "2026-10-02T17:14:10.130Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -137,7 +137,7 @@
           ],
           "id": "d3a3065b3deec3cdea4f-e9508ad984d4cc9dc56a",
           "file": "ops-fixture.spec.ts",
-          "line": 254,
+          "line": 290,
           "column": 5
         },
         {
@@ -156,12 +156,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2088,
+                  "duration": 2193,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T16:24:43.029Z",
+                  "startTime": "2026-10-02T17:14:12.706Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -171,7 +171,151 @@
           ],
           "id": "d3a3065b3deec3cdea4f-f0680ec8eeda7f19acc4",
           "file": "ops-fixture.spec.ts",
-          "line": 279,
+          "line": 315,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "ops-races.spec.ts",
+      "file": "ops-races.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "run request in flight [fixture]: scenario, profile and REVEAL stay locked until the API answers",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3063,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T17:14:14.908Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5effc2c4ab74afb7d3c8-30079db503aefe60c338",
+          "file": "ops-races.spec.ts",
+          "line": 41,
+          "column": 5
+        },
+        {
+          "title": "judge reply after RE-RUN [fixture]: a reveal still in flight when the next run starts is dropped",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3133,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T17:14:17.978Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5effc2c4ab74afb7d3c8-b03966ce866f92c94349",
+          "file": "ops-races.spec.ts",
+          "line": 63,
+          "column": 5
+        },
+        {
+          "title": "RE-RUN after a reveal [fixture]: the cached ground truth stays withheld until it is revealed again",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3217,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T17:14:21.118Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5effc2c4ab74afb7d3c8-3f7c03c4c197798e644c",
+          "file": "ops-races.spec.ts",
+          "line": 88,
+          "column": 5
+        },
+        {
+          "title": "leaving /ops while the run request is in flight [fixture]: no event stream opens afterwards",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2107,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T17:14:24.345Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5effc2c4ab74afb7d3c8-7bfd4316ebc006b60098",
+          "file": "ops-races.spec.ts",
+          "line": 115,
           "column": 5
         }
       ]
@@ -198,12 +342,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 4806,
+                  "duration": 4791,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T16:24:45.132Z",
+                  "startTime": "2026-10-02T17:14:26.467Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -214,6 +358,108 @@
           "id": "43873ff4c5a83e3f95e3-54a5195089f017884027",
           "file": "ops-resilience.spec.ts",
           "line": 28,
+          "column": 5
+        },
+        {
+          "title": "API drops after the scenarios loaded: offline notice and RUN disabled by the offline rule alone",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14725,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T17:14:31.264Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "43873ff4c5a83e3f95e3-3cc00319e8db35da3486",
+          "file": "ops-resilience.spec.ts",
+          "line": 50,
+          "column": 5
+        },
+        {
+          "title": "scenario list fails once (500 injected in the browser): the page asks again without a reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4760,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T17:14:45.996Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "43873ff4c5a83e3f95e3-7b44f0019bfc4a003a1d",
+          "file": "ops-resilience.spec.ts",
+          "line": 71,
+          "column": 5
+        },
+        {
+          "title": "run request fails at the network (reset in the browser): the notice says unconfirmed, not rejected",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 509,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T17:14:50.764Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "43873ff4c5a83e3f95e3-d4c1050a32bfe14a3e59",
+          "file": "ops-resilience.spec.ts",
+          "line": 88,
           "column": 5
         },
         {
@@ -232,12 +478,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1875,
+                  "duration": 1997,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T16:24:49.950Z",
+                  "startTime": "2026-10-02T17:14:51.279Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -247,7 +493,7 @@
           ],
           "id": "43873ff4c5a83e3f95e3-657a279b9e8b81da5b94",
           "file": "ops-resilience.spec.ts",
-          "line": 106,
+          "line": 157,
           "column": 5
         },
         {
@@ -266,12 +512,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1857,
+                  "duration": 1957,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T16:24:51.832Z",
+                  "startTime": "2026-10-02T17:14:53.282Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -281,7 +527,75 @@
           ],
           "id": "43873ff4c5a83e3f95e3-f476030eba15c7e3c9ae",
           "file": "ops-resilience.spec.ts",
-          "line": 123,
+          "line": 174,
+          "column": 5
+        },
+        {
+          "title": "SSE own reconnect [fixture] (browser reconnect answered 500 in the browser): the page resumes with ?after_seq",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3429,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T17:14:55.245Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "43873ff4c5a83e3f95e3-fa89e4837770fc5ac995",
+          "file": "ops-resilience.spec.ts",
+          "line": 204,
+          "column": 5
+        },
+        {
+          "title": "API gone mid-run [fixture] (every reconnect refused in the browser): the page stops after its retry budget and marks the stream lost",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3511,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T17:14:58.680Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "43873ff4c5a83e3f95e3-38f55b7bde70f417061f",
+          "file": "ops-resilience.spec.ts",
+          "line": 221,
           "column": 5
         },
         {
@@ -300,12 +614,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2788,
+                  "duration": 2896,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T16:24:53.696Z",
+                  "startTime": "2026-10-02T17:15:02.198Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -315,7 +629,7 @@
           ],
           "id": "43873ff4c5a83e3f95e3-457dce8f42a26ea98ad0",
           "file": "ops-resilience.spec.ts",
-          "line": 153,
+          "line": 242,
           "column": 5
         },
         {
@@ -334,12 +648,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 330,
+                  "duration": 337,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T16:24:56.490Z",
+                  "startTime": "2026-10-02T17:15:05.100Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -349,7 +663,7 @@
           ],
           "id": "43873ff4c5a83e3f95e3-36606caf45d56462dc57",
           "file": "ops-resilience.spec.ts",
-          "line": 213,
+          "line": 302,
           "column": 5
         }
       ]
@@ -357,9 +671,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-10-02T16:24:31.464Z",
-    "duration": 25635.341,
-    "expected": 8,
+    "startTime": "2026-10-02T17:13:59.819Z",
+    "duration": 66104.197,
+    "expected": 17,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0
