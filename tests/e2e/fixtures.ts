@@ -3,6 +3,7 @@ import path from "node:path";
 
 import { test as base, expect, type APIRequestContext, type Locator, type Page } from "@playwright/test";
 
+import { signedCoord } from "../../apps/web/src/lib/format";
 import { API_URL, ARTIFACTS_DIR, REPO_ROOT, RUN_TIMEOUT_MS } from "./env";
 
 const LOCAL_HOSTS = new Set(["127.0.0.1", "localhost", "[::1]"]);
@@ -239,8 +240,16 @@ export async function runToEnd(page: Page, terminal: "complete" | "failed" = "co
 export interface GroundTruthTokens {
   /** The withheld camera's id, e.g. cam_gt. */
   id: string;
-  /** Every string that would identify it: id, media file stem, label, MEVA camera id. */
+  /**
+   * Every string that would identify it: id, media file stem, label, MEVA camera id, and what
+   * the console draws once it is revealed (`revealed`).
+   */
   tokens: string[];
+  /**
+   * What only a revealed console shows: the plan's marker and label and the tile's position
+   * readout. The position is the secret itself, and none of it names the camera.
+   */
+  revealed: string[];
   /** Case-insensitive regex source, bounded so "cam_gt" matches "CAM_GT" but not "cam_gtx". */
   pattern: string;
 }
@@ -251,23 +260,39 @@ export interface GroundTruthTokens {
  */
 export function groundTruthTokens(scenarioId: string): GroundTruthTokens {
   const file = path.join(REPO_ROOT, "data", "manifests", `${scenarioId}.json`);
-  const gt = (JSON.parse(fs.readFileSync(file, "utf8")) as { ground_truth_camera: { id: string; file?: string; label?: string } })
-    .ground_truth_camera;
+  const gt = (
+    JSON.parse(fs.readFileSync(file, "utf8")) as {
+      ground_truth_camera: { id: string; file?: string; label?: string; position?: [number, number] | null };
+    }
+  ).ground_truth_camera;
+  // blind-zone-plan.tsx's marker and label; ground-truth-tile.tsx's readout, formatted by the
+  // app's own helper so the token cannot drift from what the UI prints
+  const revealed = ['data-camera="ground-truth"', "GT · JUDGE"];
+  if (gt.position) revealed.push(`X ${signedCoord(gt.position[0])} Y ${signedCoord(gt.position[1])}`);
   const tokens = [gt.id];
   if (gt.file) tokens.push(path.posix.basename(gt.file).replace(/\.[^.]+$/, ""));
   if (gt.label) tokens.push(gt.label, ...(/\bG\d{3,4}\b/.exec(gt.label) ?? []));
+  tokens.push(...revealed);
   const escaped = tokens.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
-  return { id: gt.id, tokens, pattern: `(?<![A-Za-z0-9])(?:${escaped.join("|")})(?![A-Za-z0-9])` };
+  return { id: gt.id, tokens, revealed, pattern: `(?<![A-Za-z0-9])(?:${escaped.join("|")})(?![A-Za-z0-9])` };
 }
 
 export function containsGroundTruth(html: string, gt: GroundTruthTokens): boolean {
   return new RegExp(gt.pattern, "i").test(html);
 }
 
+/** The reveal-only tokens `html` lacks: after REVEAL this must be empty, or the detector is blind. */
+export function missingRevealTokens(html: string, gt: GroundTruthTokens): string[] {
+  return gt.revealed.filter((t) => !html.includes(t));
+}
+
 /**
  * Watch every DOM change from now on (added nodes, attribute values, text edits) for the
  * ground-truth tokens; returns a stop() that disconnects and yields the hits. Scanning only
- * what changed keeps it cheap through a minutes-long real-model run.
+ * what changed keeps it cheap through a minutes-long real-model run. Values written after
+ * arming and overwritten before the callback runs are seen through the records' old values;
+ * the value a node held when the watch began is not (the page check at arming covers it, and a
+ * reveal before arming legitimately shows the camera). One watcher at a time per page.
  */
 export async function watchGroundTruth(page: Page, gt: GroundTruthTokens): Promise<() => Promise<string[]>> {
   await page.evaluate((pattern) => {
@@ -277,14 +302,43 @@ export async function watchGroundTruth(page: Page, gt: GroundTruthTokens): Promi
       const m = text ? re.exec(text) : null;
       if (m && text && hits.length < 10) hits.push(`${where}: …${text.slice(Math.max(0, m.index - 60), m.index + 60)}…`);
     };
+    // The first record for a node and key carries the value from before arming; every later one
+    // carries a value written since. A node inserted after arming has no value from before.
+    const seen = new WeakMap<Node, Set<string>>();
+    const inserted = new WeakSet<Node>();
+    const writtenSinceArming = (node: Node, key: string) => {
+      const keys = seen.get(node) ?? new Set<string>();
+      seen.set(node, keys);
+      const later = keys.has(key);
+      keys.add(key);
+      for (let n: Node | null = node; !later && n; n = n.parentNode) if (inserted.has(n)) return true;
+      return later;
+    };
     const observer = new MutationObserver((records) => {
       for (const r of records) {
-        if (r.type === "attributes") scan((r.target as Element).getAttribute(r.attributeName ?? ""), `@${r.attributeName}`);
-        else if (r.type === "characterData") scan(r.target.textContent, "text");
-        else for (const n of r.addedNodes) scan(n instanceof Element ? n.outerHTML : n.textContent, "node");
+        if (r.type === "attributes") {
+          // as name="value", so an attribute that turns an element into the plan's marker matches
+          const name = r.attributeName ?? "";
+          scan(`${name}="${(r.target as Element).getAttribute(name)}"`, `@${name}`);
+          if (writtenSinceArming(r.target, `@${name}`)) scan(`${name}="${r.oldValue}"`, `@${name} (old)`);
+        } else if (r.type === "characterData") {
+          scan(r.target.textContent, "text");
+          if (writtenSinceArming(r.target, "#text")) scan(r.oldValue, "text (old)");
+        } else
+          for (const n of r.addedNodes) {
+            inserted.add(n);
+            scan(n instanceof Element ? n.outerHTML : n.textContent, "node");
+          }
       }
     });
-    observer.observe(document.documentElement, { subtree: true, childList: true, attributes: true, characterData: true });
+    observer.observe(document.documentElement, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      characterData: true,
+      attributeOldValue: true,
+      characterDataOldValue: true,
+    });
     (window as unknown as { __gtWatch: () => string[] }).__gtWatch = () => {
       observer.disconnect();
       return hits;

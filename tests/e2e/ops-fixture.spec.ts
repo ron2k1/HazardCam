@@ -13,6 +13,7 @@ import {
   expect,
   groundTruthTokens,
   meta,
+  missingRevealTokens,
   openOps,
   runEvents,
   runToEnd,
@@ -116,8 +117,9 @@ test(`eval_001 [${PROFILE}]: live trace in tool order, evidence seeks media, GT 
   await expect(revealBtn).toHaveText("REVEAL AFTER RUN");
   await expect(revealBtn).toBeDisabled();
   const gtTokens = groundTruthTokens("eval_001");
-  expect(containsGroundTruth(await page.content(), gtTokens), "ground-truth tokens on the page before the run").toBe(false);
+  // armed first, so nothing slips in between the snapshot and the watch
   const stopGtWatch = await watchGroundTruth(page, gtTokens);
+  expect(containsGroundTruth(await page.content(), gtTokens), "ground-truth tokens on the page before the run").toBe(false);
 
   const trace = await watchTrace(page);
   const { run, clickToDoneMs } = await runToEnd(page);
@@ -238,6 +240,8 @@ test(`eval_001 [${PROFILE}]: live trace in tool order, evidence seeks media, GT 
   expect(await stopGtWatch(), "ground-truth tokens added to the DOM during the run").toEqual([]);
   expect(containsGroundTruth(await page.content(), gtTokens), "ground-truth tokens on the page before reveal").toBe(false);
 
+  // the same watcher across REVEAL must fire, so its silence during the run was not a blind spot
+  const stopRevealWatch = await watchGroundTruth(page, gtTokens);
   const judgeReply = page.waitForResponse((r) => new URL(r.url()).pathname === "/api/judge/scenarios/eval_001");
   await revealBtn.click();
   const judgeRes = await judgeReply;
@@ -247,7 +251,9 @@ test(`eval_001 [${PROFILE}]: live trace in tool order, evidence seeks media, GT 
   expect(gt.id, "the judge's withheld camera is the one the manifest names").toBe(gtTokens.id);
   await expect(u.groundTruth).toHaveAttribute("data-state", "revealed");
   await expect(u.groundTruth).toContainText(gt.id.toUpperCase());
-  // the same detector fires once the camera is shown, so its silence above was not a blind spot
+  expect(await stopRevealWatch(), "watcher sees the reveal").not.toEqual([]);
+  // every reveal-only rendering is a detector token, so the checks above would have caught each
+  expect(missingRevealTokens(await page.content(), gtTokens), "reveal-only tokens missing after REVEAL").toEqual([]);
   expect(containsGroundTruth(await page.content(), gtTokens), "detector finds the revealed camera").toBe(true);
   if (judge.expected?.event_type) {
     await expect(page.getByTestId("gt-expected")).toContainText(`EXPECTED ${label(judge.expected.event_type)}`);
@@ -334,4 +340,31 @@ test("eval_005 [fixture]: a real abstention renders as ABSTAIN / unknown with no
   if (h.evidence_ids.length === 0) await expect(u.hypothesis).toContainText("NONE CITED");
 
   await page.screenshot({ path: shot("ops-fixture-eval_005-abstain.png"), animations: "disabled" });
+});
+
+test("ground-truth watcher (blank page, no API): sees a token written and overwritten in one task, not one already there", async ({
+  page,
+}) => {
+  const gt = groundTruthTokens("eval_001");
+  await page.setContent('<p id="shown">cam_gt</p><p id="idle">idle</p><p id="tag" data-camera="ground-truth"></p>');
+
+  // values the page held when the watch began are not leaks (a reveal before arming shows them)
+  let stop = await watchGroundTruth(page, gt);
+  await page.evaluate(() => {
+    document.getElementById("shown")!.firstChild!.textContent = "POSITION WITHHELD";
+    document.getElementById("tag")!.setAttribute("data-camera", "cam_a");
+  });
+  expect(await stop()).toEqual([]);
+
+  // a token on screen for less than one callback is caught through the next record's old value
+  stop = await watchGroundTruth(page, gt);
+  await page.evaluate(() => {
+    const text = document.getElementById("idle")!.firstChild!;
+    text.textContent = "cam_gt";
+    text.textContent = "idle";
+    const tag = document.getElementById("tag")!;
+    tag.setAttribute("data-camera", "ground-truth");
+    tag.setAttribute("data-camera", "cam_a");
+  });
+  expect(await stop()).toEqual(["text (old): …cam_gt…", '@data-camera (old): …data-camera="ground-truth"…']);
 });
