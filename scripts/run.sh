@@ -15,6 +15,7 @@ usage: scripts/run.sh <target> [args...]
   test                 pytest (args pass through)
   eval                 score the harness on data/eval/manifest.json ($MODEL_PROFILE, else fixture)
   tool-probe           single-turn tool-call probe against local reasoning models
+  offline-check        prove the fixture path needs no network (writes artifacts/offline)
   fixture-e2e | lite-e2e | full-e2e
   boundary-check | snapshot-prebuild | prebuild-ultracode
   event-day-start | event-day-ultracode | verify-event-delta
@@ -31,6 +32,7 @@ case "$target" in
   test) py -m pytest "$@" ;;
   eval) py scripts/eval/run_eval.py "$@" ;;
   tool-probe) py scripts/eval/probe_tool_calls.py "$@" ;;
+  offline-check) py scripts/offline_check.py "$@" ;;
   fixture-e2e | lite-e2e | full-e2e)
     echo "$target: not wired yet (P13/P14/P15)" >&2
     exit 2
