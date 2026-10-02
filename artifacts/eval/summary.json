@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-02T15:53:21+00:00",
+  "generated_at": "2026-10-02T16:42:37+00:00",
   "scoring_rules": "eval/SCORING.md",
   "manifest_scenarios": 22,
   "best_constant_baselines": {
@@ -16,7 +16,7 @@
     "fixture": {
       "perception_model": "replay: qwen3-vl:4b-instruct",
       "reasoning_model": "replay: ministral-3:3b",
-      "scored_at": "2026-10-02T15:23:00+00:00",
+      "scored_at": "2026-10-02T16:42:37+00:00",
       "n": 22,
       "decision_accuracy": {
         "k": 9,
@@ -75,7 +75,7 @@
           0.3244
         ]
       },
-      "median_scenario_ms": 1075.6,
+      "median_scenario_ms": 1053.7,
       "verdict": {
         "pipeline_ok": true,
         "beats_constant_baselines": false

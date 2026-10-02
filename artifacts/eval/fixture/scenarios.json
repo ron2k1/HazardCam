@@ -28,22 +28,22 @@
     ],
     "unsupported_claim": false,
     "schema_errors": [],
-    "duration_ms": 1284.4,
+    "duration_ms": 2032.7,
     "perception_latency_s": [
-      0.001,
+      0.0,
       0.0,
       0.0
     ],
-    "reasoning_latency_s": 0.001,
+    "reasoning_latency_s": 0.0,
     "failed_calls": 0,
     "tool_latency_ms": {
       "sample_video": [
-        356.7,
-        429.3,
-        403.7
+        1117.0,
+        425.8,
+        380.3
       ],
       "inspect_camera": [
-        1.0,
+        0.4,
         0.4,
         0.3
       ],
@@ -51,10 +51,10 @@
         0.2
       ],
       "triangulate_region": [
-        1.5
+        1.4
       ],
       "reason_hypothesis": [
-        1.0
+        0.4
       ],
       "get_supporting_frames": [
         0.0,
@@ -96,9 +96,9 @@
     ],
     "unsupported_claim": false,
     "schema_errors": [],
-    "duration_ms": 1143.8,
+    "duration_ms": 1090.5,
     "perception_latency_s": [
-      0.001,
+      0.0,
       0.0,
       0.0
     ],
@@ -106,23 +106,23 @@
     "failed_calls": 0,
     "tool_latency_ms": {
       "sample_video": [
-        314.2,
-        424.9,
-        399.5
+        304.0,
+        412.2,
+        370.1
       ],
       "inspect_camera": [
-        1.2,
         0.4,
-        0.4
+        0.3,
+        0.5
       ],
       "correlate_observations": [
         0.2
       ],
       "triangulate_region": [
-        1.6
+        1.7
       ],
       "reason_hypothesis": [
-        0.6
+        0.4
       ],
       "get_supporting_frames": [
         0.0,
@@ -165,22 +165,22 @@
     ],
     "unsupported_claim": false,
     "schema_errors": [],
-    "duration_ms": 1094.4,
+    "duration_ms": 1058.0,
     "perception_latency_s": [
-      0.001,
+      0.0,
       0.0,
       0.0
     ],
-    "reasoning_latency_s": 0.001,
+    "reasoning_latency_s": 0.0,
     "failed_calls": 0,
     "tool_latency_ms": {
       "sample_video": [
-        302.5,
-        387.1,
-        400.3
+        292.3,
+        377.6,
+        385.0
       ],
       "inspect_camera": [
-        1.0,
+        0.3,
         0.3,
         0.3
       ],
@@ -188,10 +188,10 @@
         0.2
       ],
       "triangulate_region": [
-        1.1
+        1.0
       ],
       "reason_hypothesis": [
-        1.0
+        0.3
       ],
       "get_supporting_frames": [
         0.0,
@@ -234,22 +234,22 @@
     ],
     "unsupported_claim": false,
     "schema_errors": [],
-    "duration_ms": 1049.0,
+    "duration_ms": 1007.3,
     "perception_latency_s": [
-      0.001,
+      0.0,
       0.0,
       0.0
     ],
-    "reasoning_latency_s": 0.001,
+    "reasoning_latency_s": 0.0,
     "failed_calls": 0,
     "tool_latency_ms": {
       "sample_video": [
-        291.4,
-        389.3,
-        364.1
+        290.7,
+        372.8,
+        340.8
       ],
       "inspect_camera": [
-        1.0,
+        0.3,
         0.3,
         0.3
       ],
@@ -257,10 +257,10 @@
         0.1
       ],
       "triangulate_region": [
-        0.8
+        0.9
       ],
       "reason_hypothesis": [
-        1.1
+        0.4
       ],
       "get_supporting_frames": [
         0.0,
@@ -299,7 +299,7 @@
     "evidence_cameras": [],
     "unsupported_claim": null,
     "schema_errors": [],
-    "duration_ms": 1079.2,
+    "duration_ms": 1039.9,
     "perception_latency_s": [
       0.0,
       0.0,
@@ -309,12 +309,12 @@
     "failed_calls": 0,
     "tool_latency_ms": {
       "sample_video": [
-        294.1,
-        398.7,
-        384.3
+        291.9,
+        384.6,
+        361.7
       ],
       "inspect_camera": [
-        0.4,
+        0.3,
         0.3,
         0.3
       ],
@@ -325,7 +325,7 @@
         0.2
       ],
       "reason_hypothesis": [
-        0.4
+        0.3
       ],
       "submit_hypothesis": [
         0.0
@@ -359,22 +359,22 @@
     "evidence_cameras": [],
     "unsupported_claim": null,
     "schema_errors": [],
-    "duration_ms": 1112.6,
+    "duration_ms": 1090.4,
     "perception_latency_s": [
       0.0,
       0.0,
       0.0
     ],
-    "reasoning_latency_s": 0.001,
+    "reasoning_latency_s": 0.0,
     "failed_calls": 0,
     "tool_latency_ms": {
       "sample_video": [
-        304.4,
-        435.9,
-        369.6
+        294.6,
+        426.9,
+        366.9
       ],
       "inspect_camera": [
-        0.5,
+        0.3,
         0.3,
         0.3
       ],
@@ -385,7 +385,7 @@
         0.2
       ],
       "reason_hypothesis": [
-        0.9
+        0.3
       ],
       "submit_hypothesis": [
         0.0
@@ -422,22 +422,22 @@
     ],
     "unsupported_claim": false,
     "schema_errors": [],
-    "duration_ms": 1072.0,
+    "duration_ms": 1045.7,
     "perception_latency_s": [
-      0.001,
+      0.0,
       0.0,
       0.0
     ],
-    "reasoning_latency_s": 0.001,
+    "reasoning_latency_s": 0.0,
     "failed_calls": 0,
     "tool_latency_ms": {
       "sample_video": [
-        306.6,
-        384.7,
-        376.9
+        308.7,
+        361.8,
+        372.5
       ],
       "inspect_camera": [
-        0.9,
+        0.3,
         0.3,
         0.3
       ],
@@ -448,7 +448,7 @@
         0.6
       ],
       "reason_hypothesis": [
-        1.0
+        0.3
       ],
       "get_supporting_frames": [
         0.0,
@@ -488,33 +488,33 @@
     ],
     "unsupported_claim": false,
     "schema_errors": [],
-    "duration_ms": 1037.6,
+    "duration_ms": 1058.7,
     "perception_latency_s": [
-      0.001,
-      0.001,
+      0.0,
+      0.0,
       0.0
     ],
-    "reasoning_latency_s": 0.001,
+    "reasoning_latency_s": 0.0,
     "failed_calls": 0,
     "tool_latency_ms": {
       "sample_video": [
-        291.3,
-        371.3,
-        370.1
+        325.7,
+        363.6,
+        366.4
       ],
       "inspect_camera": [
-        1.0,
-        0.7,
+        0.3,
+        0.4,
         0.3
       ],
       "correlate_observations": [
         0.2
       ],
       "triangulate_region": [
-        1.0
+        0.9
       ],
       "reason_hypothesis": [
-        1.0
+        0.3
       ],
       "get_supporting_frames": [
         0.0
@@ -553,24 +553,24 @@
     ],
     "unsupported_claim": null,
     "schema_errors": [],
-    "duration_ms": 1037.6,
+    "duration_ms": 1005.2,
     "perception_latency_s": [
-      0.001,
+      0.0,
       0.0,
       0.0
     ],
-    "reasoning_latency_s": 0.001,
+    "reasoning_latency_s": 0.0,
     "failed_calls": 0,
     "tool_latency_ms": {
       "sample_video": [
-        306.5,
-        349.3,
-        377.9
+        294.2,
+        337.9,
+        370.5
       ],
       "inspect_camera": [
-        0.9,
         0.3,
-        0.4
+        0.3,
+        0.3
       ],
       "correlate_observations": [
         0.1
@@ -579,7 +579,7 @@
         0.7
       ],
       "reason_hypothesis": [
-        0.9
+        0.3
       ],
       "get_supporting_frames": [
         0.0
@@ -618,23 +618,23 @@
     ],
     "unsupported_claim": null,
     "schema_errors": [],
-    "duration_ms": 1029.4,
+    "duration_ms": 1001.7,
     "perception_latency_s": [
-      0.001,
+      0.0,
       0.0,
       0.0
     ],
-    "reasoning_latency_s": 0.001,
+    "reasoning_latency_s": 0.0,
     "failed_calls": 0,
     "tool_latency_ms": {
       "sample_video": [
-        307.8,
-        342.1,
-        375.8
+        296.9,
+        339.8,
+        362.3
       ],
       "inspect_camera": [
-        0.9,
         0.3,
+        0.4,
         0.3
       ],
       "correlate_observations": [
@@ -644,7 +644,7 @@
         0.6
       ],
       "reason_hypothesis": [
-        1.0
+        0.3
       ],
       "get_supporting_frames": [
         0.0
@@ -681,7 +681,7 @@
     "evidence_cameras": [],
     "unsupported_claim": null,
     "schema_errors": [],
-    "duration_ms": 1018.8,
+    "duration_ms": 1021.0,
     "perception_latency_s": [
       0.0,
       0.0,
@@ -691,12 +691,12 @@
     "failed_calls": 0,
     "tool_latency_ms": {
       "sample_video": [
-        295.1,
-        359.4,
-        362.3
+        314.3,
+        346.8,
+        357.8
       ],
       "inspect_camera": [
-        0.4,
+        0.3,
         0.3,
         0.3
       ],
@@ -704,10 +704,10 @@
         0.0
       ],
       "triangulate_region": [
-        0.2
+        0.3
       ],
       "reason_hypothesis": [
-        0.4
+        0.3
       ],
       "submit_hypothesis": [
         0.0
@@ -744,22 +744,22 @@
     ],
     "unsupported_claim": null,
     "schema_errors": [],
-    "duration_ms": 1204.7,
+    "duration_ms": 1162.2,
     "perception_latency_s": [
-      0.001,
+      0.0,
       0.0,
       0.0
     ],
-    "reasoning_latency_s": 0.001,
+    "reasoning_latency_s": 0.0,
     "failed_calls": 0,
     "tool_latency_ms": {
       "sample_video": [
-        323.4,
-        499.3,
-        377.7
+        320.0,
+        484.3,
+        354.9
       ],
       "inspect_camera": [
-        0.9,
+        0.3,
         0.3,
         0.3
       ],
@@ -770,7 +770,7 @@
         0.9
       ],
       "reason_hypothesis": [
-        1.0
+        0.3
       ],
       "get_supporting_frames": [
         0.0,
@@ -811,22 +811,22 @@
     ],
     "unsupported_claim": false,
     "schema_errors": [],
-    "duration_ms": 1095.4,
+    "duration_ms": 1101.1,
     "perception_latency_s": [
-      0.001,
+      0.0,
       0.0,
       0.0
     ],
-    "reasoning_latency_s": 0.001,
+    "reasoning_latency_s": 0.0,
     "failed_calls": 0,
     "tool_latency_ms": {
       "sample_video": [
-        298.8,
-        445.0,
-        347.0
+        294.7,
+        447.9,
+        355.7
       ],
       "inspect_camera": [
-        1.3,
+        0.3,
         0.3,
         0.3
       ],
@@ -837,7 +837,7 @@
         0.7
       ],
       "reason_hypothesis": [
-        1.3
+        0.4
       ],
       "get_supporting_frames": [
         0.0,
@@ -877,23 +877,23 @@
     ],
     "unsupported_claim": null,
     "schema_errors": [],
-    "duration_ms": 1119.3,
+    "duration_ms": 1105.7,
     "perception_latency_s": [
-      0.001,
+      0.0,
       0.0,
       0.0
     ],
-    "reasoning_latency_s": 0.001,
+    "reasoning_latency_s": 0.0,
     "failed_calls": 0,
     "tool_latency_ms": {
       "sample_video": [
-        294.7,
-        462.5,
-        358.0
+        298.5,
+        458.3,
+        346.0
       ],
       "inspect_camera": [
-        0.9,
         0.3,
+        0.4,
         0.3
       ],
       "correlate_observations": [
@@ -903,7 +903,7 @@
         0.9
       ],
       "reason_hypothesis": [
-        1.0
+        0.3
       ],
       "get_supporting_frames": [
         0.0
@@ -943,22 +943,22 @@
     ],
     "unsupported_claim": false,
     "schema_errors": [],
-    "duration_ms": 965.2,
+    "duration_ms": 937.8,
     "perception_latency_s": [
-      0.001,
+      0.0,
       0.0,
       0.0
     ],
-    "reasoning_latency_s": 0.001,
+    "reasoning_latency_s": 0.0,
     "failed_calls": 0,
     "tool_latency_ms": {
       "sample_video": [
-        280.4,
-        349.3,
-        330.0
+        266.8,
+        348.7,
+        317.7
       ],
       "inspect_camera": [
-        1.0,
+        0.3,
         0.4,
         0.4
       ],
@@ -966,10 +966,10 @@
         0.2
       ],
       "triangulate_region": [
-        1.5
+        1.6
       ],
       "reason_hypothesis": [
-        1.0
+        0.4
       ],
       "get_supporting_frames": [
         0.0,
@@ -1009,24 +1009,24 @@
     ],
     "unsupported_claim": null,
     "schema_errors": [],
-    "duration_ms": 1082.6,
+    "duration_ms": 1049.4,
     "perception_latency_s": [
-      0.001,
+      0.0,
       0.0,
       0.0
     ],
-    "reasoning_latency_s": 0.001,
+    "reasoning_latency_s": 0.0,
     "failed_calls": 0,
     "tool_latency_ms": {
       "sample_video": [
-        296.4,
-        429.6,
-        352.4
+        289.3,
+        418.2,
+        338.7
       ],
       "inspect_camera": [
-        0.9,
+        0.3,
         0.4,
-        0.3
+        0.4
       ],
       "correlate_observations": [
         0.2
@@ -1035,7 +1035,7 @@
         1.0
       ],
       "reason_hypothesis": [
-        1.0
+        0.4
       ],
       "get_supporting_frames": [
         0.0
@@ -1075,22 +1075,22 @@
     ],
     "unsupported_claim": false,
     "schema_errors": [],
-    "duration_ms": 1064.3,
+    "duration_ms": 1127.8,
     "perception_latency_s": [
-      0.001,
+      0.0,
       0.0,
       0.0
     ],
-    "reasoning_latency_s": 0.001,
+    "reasoning_latency_s": 0.0,
     "failed_calls": 0,
     "tool_latency_ms": {
       "sample_video": [
-        302.9,
-        404.2,
-        352.4
+        301.4,
+        395.2,
+        427.1
       ],
       "inspect_camera": [
-        1.0,
+        0.4,
         0.4,
         0.3
       ],
@@ -1098,13 +1098,13 @@
         0.2
       ],
       "triangulate_region": [
-        1.4
+        1.7
       ],
       "reason_hypothesis": [
-        0.9
+        0.4
       ],
       "get_supporting_frames": [
-        0.0,
+        0.1,
         0.0
       ],
       "submit_hypothesis": [
@@ -1143,22 +1143,22 @@
     ],
     "unsupported_claim": false,
     "schema_errors": [],
-    "duration_ms": 1031.1,
+    "duration_ms": 1027.0,
     "perception_latency_s": [
-      0.001,
+      0.0,
       0.0,
       0.0
     ],
-    "reasoning_latency_s": 0.001,
+    "reasoning_latency_s": 0.0,
     "failed_calls": 0,
     "tool_latency_ms": {
       "sample_video": [
-        309.8,
-        372.9,
-        344.2
+        306.7,
+        365.8,
+        351.5
       ],
       "inspect_camera": [
-        1.0,
+        0.3,
         0.3,
         0.3
       ],
@@ -1169,7 +1169,7 @@
         0.8
       ],
       "reason_hypothesis": [
-        1.0
+        0.3
       ],
       "get_supporting_frames": [
         0.0,
@@ -1212,24 +1212,24 @@
     ],
     "unsupported_claim": false,
     "schema_errors": [],
-    "duration_ms": 1035.4,
+    "duration_ms": 1000.9,
     "perception_latency_s": [
-      0.001,
+      0.0,
       0.0,
       0.0
     ],
-    "reasoning_latency_s": 0.001,
+    "reasoning_latency_s": 0.0,
     "failed_calls": 0,
     "tool_latency_ms": {
       "sample_video": [
-        301.0,
-        381.2,
-        348.4
+        292.3,
+        367.7,
+        337.3
       ],
       "inspect_camera": [
-        1.0,
+        0.3,
         0.4,
-        0.3
+        0.4
       ],
       "correlate_observations": [
         0.2
@@ -1238,7 +1238,7 @@
         1.3
       ],
       "reason_hypothesis": [
-        0.9
+        0.4
       ],
       "get_supporting_frames": [
         0.0,
@@ -1279,22 +1279,22 @@
     ],
     "unsupported_claim": null,
     "schema_errors": [],
-    "duration_ms": 950.4,
+    "duration_ms": 936.0,
     "perception_latency_s": [
-      0.001,
+      0.0,
       0.0,
       0.0
     ],
-    "reasoning_latency_s": 0.001,
+    "reasoning_latency_s": 0.0,
     "failed_calls": 0,
     "tool_latency_ms": {
       "sample_video": [
-        283.9,
-        361.6,
-        301.0
+        282.1,
+        350.5,
+        300.9
       ],
       "inspect_camera": [
-        1.0,
+        0.4,
         0.3,
         0.3
       ],
@@ -1305,7 +1305,7 @@
         0.6
       ],
       "reason_hypothesis": [
-        1.1
+        0.3
       ],
       "get_supporting_frames": [
         0.0
@@ -1345,22 +1345,22 @@
     ],
     "unsupported_claim": false,
     "schema_errors": [],
-    "duration_ms": 1121.1,
+    "duration_ms": 1088.8,
     "perception_latency_s": [
-      0.001,
+      0.0,
       0.0,
       0.0
     ],
-    "reasoning_latency_s": 0.001,
+    "reasoning_latency_s": 0.0,
     "failed_calls": 0,
     "tool_latency_ms": {
       "sample_video": [
-        304.1,
-        470.0,
-        342.7
+        304.8,
+        444.5,
+        336.5
       ],
       "inspect_camera": [
-        0.9,
+        0.3,
         0.4,
         0.3
       ],
@@ -1371,7 +1371,7 @@
         1.0
       ],
       "reason_hypothesis": [
-        1.0
+        0.3
       ],
       "get_supporting_frames": [
         0.0,
@@ -1413,33 +1413,33 @@
     ],
     "unsupported_claim": false,
     "schema_errors": [],
-    "duration_ms": 1099.4,
+    "duration_ms": 1091.1,
     "perception_latency_s": [
-      0.001,
+      0.0,
       0.0,
       0.0
     ],
-    "reasoning_latency_s": 0.001,
+    "reasoning_latency_s": 0.0,
     "failed_calls": 0,
     "tool_latency_ms": {
       "sample_video": [
-        322.1,
-        377.1,
-        394.0
+        332.2,
+        371.8,
+        382.1
       ],
       "inspect_camera": [
-        1.0,
-        0.5,
+        0.4,
+        0.4,
         0.4
       ],
       "correlate_observations": [
         0.3
       ],
       "triangulate_region": [
-        2.3
+        2.2
       ],
       "reason_hypothesis": [
-        1.0
+        0.4
       ],
       "get_supporting_frames": [
         0.0,

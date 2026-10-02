@@ -1,6 +1,6 @@
 # Eval summary: fixture
 
-Scored at 2026-10-02T15:23:00+00:00 on commit `d9bb40151a53ceabfb216b8224fa8044dc209991`, rules in `eval/SCORING.md`. Rates are k/n = rate [Wilson 95%].
+Scored at 2026-10-02T16:42:37+00:00 on commit `b03632474d7ec8901f90f38c930c77737aa9e445`, rules in `eval/SCORING.md`. Rates are k/n = rate [Wilson 95%].
 
 - Models: `replay: qwen3-vl:4b-instruct` + `replay: ministral-3:3b`
 - Verdict: pipeline_ok = **True**, beats_constant_baselines = **False**
@@ -14,7 +14,7 @@ Scored at 2026-10-02T15:23:00+00:00 on commit `d9bb40151a53ceabfb216b8224fa8044d
 | positive | 2/8 = 0.25 [0.07, 0.59] | |
 | negative | 5/7 = 0.71 [0.36, 0.92] | |
 | ambiguous | 2/7 = 0.29 [0.08, 0.64] | |
-| false alarms on negatives | 2/7 = 0.29 [0.08, 0.64] | |
+| false alarms on negatives (failed runs count) | 2/7 = 0.29 [0.08, 0.64] | |
 | abstention rate | 8/22 = 0.36 [0.20, 0.57] | |
 | raw (pre-gate) accuracy | 9/22 = 0.41 [0.23, 0.61] | |
 
@@ -36,7 +36,7 @@ Outcomes: abstain_ok 1, correct_reject 5, false_alarm 2, hit 3, miss_abstain 2, 
 
 - Completion 22/22 = 1.00 [0.85, 1.00]; schema-valid 22/22 = 1.00 [0.85, 1.00]
 - GT leaks 0; failed adapter calls 0; fixture replay mismatches 0
-- Scenario ms {'median': 1075.6, 'max': 1284.4}; perception call s {'median': 0.0, 'max': 0.001}; reasoning s {'median': 0.001, 'max': 0.001}
+- Scenario ms {'median': 1053.7, 'max': 2032.7}; perception call s {'median': 0.0, 'max': 0.0}; reasoning s {'median': 0.0, 'max': 0.0}
 
 ## Failures
 
