@@ -30,12 +30,29 @@ function createStreamController(
   let eventsUrl: string | null = null;
   let lastSeq = 0;
   let retries = 0;
+  // No component owns the controller (unmounted): start() opens nothing. A run POST that
+  // resolves after the user left /ops would otherwise stream a whole run nobody sees.
+  let detached = false;
 
   const stop = () => {
     source?.close();
     source = null;
     if (timer !== null) clearTimeout(timer);
     timer = null;
+  };
+
+  const giveUp = () => {
+    stop();
+    setStatus("lost");
+    setView((v) =>
+      v.phase === "running" || v.phase === "queued"
+        ? {
+            ...v,
+            phase: "failed",
+            failure: { stage: "event_stream", error: `stream lost after ${retries} reconnects; server run state unknown` },
+          }
+        : v,
+    );
   };
 
   const connect = () => {
@@ -62,35 +79,25 @@ function createStreamController(
     };
     es.onerror = () => {
       if (source !== es) return;
-      // CONNECTING: the browser retries on its own and sends Last-Event-ID.
-      if (es.readyState === EventSource.CONNECTING) {
-        setStatus("reconnecting");
-        return;
-      }
-      // CLOSED: the browser gave up (HTTP error or a non-SSE reply). Resume from lastSeq ourselves.
-      stop();
+      // Every failed attempt counts, the browser's included: with the API gone, Chromium
+      // retries a refused connection forever and the run would sit at RUNNING.
       if (retries >= LIVE.streamMaxRetries) {
-        setStatus("lost");
-        setView((v) =>
-          v.phase === "running" || v.phase === "queued"
-            ? {
-                ...v,
-                phase: "failed",
-                failure: { stage: "event_stream", error: `stream lost after ${retries} reconnects; server run state unknown` },
-              }
-            : v,
-        );
+        giveUp();
         return;
       }
-      const delay = LIVE.streamRetryBaseMs * 2 ** retries;
       retries += 1;
       setStatus("reconnecting");
-      timer = setTimeout(connect, delay);
+      // CONNECTING: the browser retries on its own and sends Last-Event-ID.
+      if (es.readyState === EventSource.CONNECTING) return;
+      // CLOSED: the browser gave up (HTTP error or a non-SSE reply). Resume from lastSeq ourselves.
+      stop();
+      timer = setTimeout(connect, LIVE.streamRetryBaseMs * 2 ** (retries - 1));
     };
   };
 
   return {
     start(run: RunResponse) {
+      if (detached) return;
       stop();
       eventsUrl = run.events_url;
       lastSeq = 0;
@@ -113,6 +120,15 @@ function createStreamController(
       setStatus("idle");
     },
     stop,
+    /** Mount: the owning component is live (again, under StrictMode's remount). */
+    attach() {
+      detached = false;
+    },
+    /** Unmount: close the stream and refuse any later start(). */
+    detach() {
+      detached = true;
+      stop();
+    },
   };
 }
 
@@ -123,6 +139,9 @@ export function useRunStream(): { view: RunView; status: StreamStatus; stream: S
   const [view, setView] = useState<RunView>(EMPTY_RUN_VIEW);
   const [status, setStatus] = useState<StreamStatus>("idle");
   const [stream] = useState(() => createStreamController(setView, setStatus));
-  useEffect(() => () => stream.stop(), [stream]);
+  useEffect(() => {
+    stream.attach();
+    return () => stream.detach();
+  }, [stream]);
   return { view, status, stream };
 }

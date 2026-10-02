@@ -28,7 +28,10 @@ export const LIVE = {
   offlinePollMs: 4_000,
   /** Abort a JSON request after this long; the API is local, so a slow reply means trouble. */
   requestTimeoutMs: 6_000,
-  /** Our own SSE reconnects (the browser gave up, e.g. HTTP error), with doubling backoff. */
+  /**
+   * Failed SSE connection attempts before a run is marked lost: the browser's own retries and
+   * ours (after the browser gives up, e.g. an HTTP error; doubling backoff) count together.
+   */
   streamMaxRetries: 5,
   streamRetryBaseMs: 750,
 } as const;
