@@ -1,4 +1,4 @@
-"""P16: the integrity scripts fail when they find a violation, and run from any cwd.
+"""P16: the integrity and start scripts fail when they find a problem, and run from any cwd.
 
 Each test copies the real scripts into a scratch tree and runs them with bash, so nothing
 is written to the repo (in particular no ``artifacts/event_day/START.txt``).
@@ -9,6 +9,8 @@ from __future__ import annotations
 import os
 import shutil
 import subprocess
+import threading
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 import pytest
@@ -50,12 +52,14 @@ def _tree(root: Path, *scripts: str, files: dict[str, str] | None = None) -> Pat
     return root
 
 
-def _run(script: Path, cwd: Path) -> subprocess.CompletedProcess[str]:
+def _run(
+    script: Path, cwd: Path, *args: str, env: dict[str, str] | None = None
+) -> subprocess.CompletedProcess[str]:
     # Stop git from walking up out of the scratch tree into a real repository.
-    env = {**os.environ, "GIT_CEILING_DIRECTORIES": str(cwd.parent)}
+    env = {**os.environ, "GIT_CEILING_DIRECTORIES": str(cwd.parent), **(env or {})}
     assert BASH is not None
     return subprocess.run(
-        [BASH, script.as_posix()],
+        [BASH, script.as_posix(), *args],
         cwd=cwd,
         env=env,
         capture_output=True,
@@ -138,3 +142,37 @@ def test_event_day_start_writes_into_the_repo_from_any_cwd(tmp_path):
     assert done.returncode == 0, done.stderr
     assert (root / "artifacts" / "event_day" / "START.txt").is_file()
     assert not (elsewhere / "artifacts").exists()
+
+
+class _Answers(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+
+    def log_message(self, *args):
+        pass
+
+
+def test_start_app_refuses_a_port_that_already_answers(tmp_path):
+    # Otherwise the readiness check would pass against a server that is not ours.
+    root = _tree(tmp_path / "repo", "start_app.sh", "_python.sh")
+    with ThreadingHTTPServer(("127.0.0.1", 0), _Answers) as foreign:
+        threading.Thread(target=foreign.serve_forever, daemon=True).start()
+        port = foreign.server_address[1]
+        try:
+            done = _run(
+                root / "scripts" / "start_app.sh",
+                tmp_path,
+                env={"API_PORT": str(port), "WEB_PORT": "1"},
+            )
+        finally:
+            foreign.shutdown()
+    assert done.returncode == 1
+    assert f"something already answers http://127.0.0.1:{port}/healthz" in done.stderr
+
+
+def test_start_app_rejects_an_unknown_argument(tmp_path):
+    root = _tree(tmp_path / "repo", "start_app.sh", "_python.sh")
+    done = _run(root / "scripts" / "start_app.sh", tmp_path, "--bogus")
+    assert done.returncode == 2
+    assert "usage: scripts/start_app.sh [--smoke]" in done.stderr

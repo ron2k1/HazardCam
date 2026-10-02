@@ -12,6 +12,7 @@ usage() {
   cat <<'USAGE'
 usage: scripts/run.sh <target> [args...]
   preflight | remote-probe | status | demo-check
+  start                API + web on 127.0.0.1, open /ops ($MODEL_PROFILE, else fixture; --smoke)
   test                 pytest (args pass through)
   eval                 score the harness on data/eval/manifest.json ($MODEL_PROFILE, else fixture)
   tool-probe           single-turn tool-call probe against local reasoning models
@@ -29,6 +30,7 @@ case "$target" in
   remote-probe) ./scripts/remote_probe.sh "$@" ;;
   status) py scripts/task_status.py "$@" ;;
   demo-check) ./scripts/demo_check.sh "$@" ;;
+  start) ./scripts/start_app.sh "$@" ;;
   test) py -m pytest "$@" ;;
   eval) py scripts/eval/run_eval.py "$@" ;;
   tool-probe) py scripts/eval/probe_tool_calls.py "$@" ;;
