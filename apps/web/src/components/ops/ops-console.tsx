@@ -35,8 +35,11 @@ export interface OpsConsoleProps {
   view: RunView;
   onScenarioChange: (scenarioId: string) => void;
   onRun: () => void;
-  /** Disable RUN on top of the API-offline rule, e.g. while the POST is in flight. */
-  runDisabled?: boolean;
+  /**
+   * A run request is in flight: RUN, both selects and REVEAL are locked until it answers, so
+   * the run it starts and the ground truth shown belong to the same scenario.
+   */
+  runPending?: boolean;
   /** Live SSE link state; the mock has none. */
   linkStatus?: StreamStatus | null;
   notice?: OpsNotice | null;
@@ -123,6 +126,9 @@ export function OpsConsole(props: OpsConsoleProps) {
   const media = (url: string | null, available: boolean) => (url && available ? apiUrl(url) : null);
   const gtCam = props.judge?.ground_truth_camera ?? null;
   const running = view.phase === "running" || view.phase === "queued";
+  // Reveal only a finished run of the scenario on screen, never while the next one is posting.
+  const canReveal =
+    view.phase === "complete" && view.scenarioId === scenario?.id && !props.runPending && !!props.onRevealGroundTruth;
 
   return (
     // Below the `ops` breakpoint (1240px) the three columns stack and the page scrolls.
@@ -155,7 +161,8 @@ export function OpsConsole(props: OpsConsoleProps) {
         phase={view.phase}
         runId={view.runId}
         lastSeq={view.lastSeq}
-        disabled={props.apiStatus === "offline" || !!props.runDisabled}
+        disabled={props.apiStatus === "offline" || !!props.runPending}
+        locked={!!props.runPending}
         link={props.linkStatus}
         sourceLabel={props.sourceLabel}
       />
@@ -221,7 +228,7 @@ export function OpsConsole(props: OpsConsoleProps) {
               revealed={props.groundTruthRevealed}
               pending={props.groundTruthPending}
               error={props.groundTruthError}
-              canReveal={view.phase === "complete" && !!props.onRevealGroundTruth}
+              canReveal={canReveal}
               onReveal={props.onRevealGroundTruth}
               onHide={props.onHideGroundTruth}
             />

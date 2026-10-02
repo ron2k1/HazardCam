@@ -21,6 +21,8 @@ export interface RunControlsProps {
   lastSeq: number;
   /** Disable RUN independently of phase (e.g. API offline). */
   disabled?: boolean;
+  /** Lock the scenario and profile choice too (a run request is in flight). */
+  locked?: boolean;
   /** SSE link state of the live console; omitted (no indicator) for the mock. */
   link?: StreamStatus | null;
   /** Data provenance tag, e.g. "MOCK · contracts/examples". */
@@ -64,6 +66,7 @@ export function RunControls({
   runId,
   lastSeq,
   disabled = false,
+  locked = false,
   link,
   sourceLabel,
   className,
@@ -83,7 +86,7 @@ export function RunControls({
           data-testid="scenario-select"
           className={cn(selectCls, "w-[min(280px,62vw)]")}
           value={scenarioId ?? ""}
-          disabled={running || scenarios.length === 0}
+          disabled={running || locked || scenarios.length === 0}
           onChange={(e) => onScenarioChange(e.target.value)}
           title={scenarios.find((s) => s.id === scenarioId)?.title ?? undefined}
         >
@@ -100,7 +103,7 @@ export function RunControls({
           id="profile-select"
           className={cn(selectCls, "w-[112px]")}
           value={profile}
-          disabled={running || !onProfileChange}
+          disabled={running || locked || !onProfileChange}
           onChange={(e) => onProfileChange?.(e.target.value)}
         >
           {profiles.map((p) => (
@@ -121,7 +124,7 @@ export function RunControls({
         {running ? "RUNNING" : phase === "idle" ? "▶ RUN" : "▶ RE-RUN"}
       </Button>
 
-      <div className="micro ml-1 flex items-center gap-2 text-fg/85" data-run-phase={phase}>
+      <div className="micro ml-1 flex items-center gap-2 text-fg/85" data-run-phase={phase} data-run-id={runId ?? undefined}>
         <StatusDot tone={phase === "failed" ? "danger" : running ? "fg" : phase === "complete" ? "muted" : "dim"} pulse={running} />
         <span className={phase === "failed" ? "text-danger" : undefined}>{phase.toUpperCase()}</span>
       </div>

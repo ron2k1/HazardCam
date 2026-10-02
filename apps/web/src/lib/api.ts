@@ -44,7 +44,14 @@ async function request<T>(path: string, init: RequestInit = {}, signal?: AbortSi
     if (signal?.aborted) throw err;
     throw new ApiError(0, timeout.aborted ? "timeout" : "unreachable");
   }
-  const body: unknown = await res.json().catch(() => null);
+  let body: unknown = null;
+  try {
+    body = await res.json();
+  } catch (err) {
+    if (signal?.aborted) throw err;
+    // An error reply may have no JSON detail; a success reply without its JSON is no success.
+    if (res.ok) throw new ApiError(res.status, timeout.aborted ? "timeout" : "invalid JSON");
+  }
   if (!res.ok) throw new ApiError(res.status, detailOf(body, res.statusText || "error"));
   return body as T;
 }

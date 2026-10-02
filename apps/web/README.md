@@ -36,13 +36,14 @@ Turbopack cannot import files outside the app root, so the contract examples are
 ## Routes
 
 - `/`: landing.
-- `/ops`: run console. It currently renders `OpsMock`, which replays `contracts/examples` through the live reducer with no network.
+- `/ops`: run console on the local API (`OpsLive`). `?scenario=<id>` preselects a scenario; `?pace=<s>` (0-5) slows a run for a demo.
+- `/ops?mock`: `OpsMock`, which replays `contracts/examples` through the live reducer with no network (design checks).
   - `/ops?mock=abstain`: the abstain hypothesis.
   - `/ops?mock=idle`: an empty console before any run.
 
-## Wiring the live API (P11)
+## How `/ops` uses the API (P11)
 
-`OpsConsole` (`src/components/ops/ops-console.tsx`) is prop-driven. A live container replaces `OpsMock` and feeds it:
+`OpsConsole` (`src/components/ops/ops-console.tsx`) is prop-driven. `OpsLive` (`src/components/ops/ops-live.tsx`) feeds it:
 
 - `scenarios` and `scenario`: from `GET /api/scenarios` (`ScenarioList`) and `GET /api/scenarios/{id}` (`PublicScenario`).
 - `view`: reduce SSE envelopes into a `RunView`:
@@ -53,7 +54,7 @@ Turbopack cannot import files outside the app root, so the contract examples are
 - `apiStatus` and `apiDetail`: from `GET /healthz` (`ServiceHealth`).
 - `judge`: from `GET /api/judge/scenarios/{id}` (`JudgeGroundTruth`). Fetch it only for the reveal action.
 - `onRun`:
-  - `POST /api/runs` with a `RunRequest`; the response is a `RunResponse`.
-  - Then open `new EventSource(apiUrl(events_url))` and listen on `onmessage` only, because the API sends no named events.
+  - `POST /api/runs` with a `RunRequest`; the response is a `RunResponse`. The scenario and profile selects and REVEAL stay locked until it answers.
+  - Then `src/hooks/use-run-stream.ts` opens `new EventSource(apiUrl(events_url))` and listens on `onmessage` only, because the API sends no named events. Failed connection attempts (the browser's retries and its own `?after_seq=` reconnects) share `LIVE.streamMaxRetries`; past it the run shows as lost.
 
 Media is requested only when the API reports it present (`media_available` / `video_available`). Seeking and GT-reveal state are handled inside `OpsConsole`.

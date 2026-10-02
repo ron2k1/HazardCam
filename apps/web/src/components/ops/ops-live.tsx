@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { useRunStream } from "@/hooks/use-run-stream";
 import { useStackHealth } from "@/hooks/use-stack-health";
-import { api, describeError } from "@/lib/api";
+import { api, ApiError, describeError } from "@/lib/api";
 import { API_BASE_URL, LIVE } from "@/lib/config";
 import type { JudgeGroundTruth, PublicScenario } from "@/lib/contracts";
 
@@ -24,6 +24,7 @@ export interface OpsLiveProps {
 export function OpsLive({ initialScenarioId = null, paceS = null }: OpsLiveProps) {
   const [scenarios, setScenarios] = useState<PublicScenario[]>([]);
   const [scenarioError, setScenarioError] = useState<string | null>(null);
+  const [scenarioAttempt, setScenarioAttempt] = useState(0);
   const [scenarioId, setScenarioId] = useState<string | null>(initialScenarioId);
   const [profile, setProfile] = useState<string>(LIVE.defaultProfile);
   const [runError, setRunError] = useState<string | null>(null);
@@ -32,37 +33,50 @@ export function OpsLive({ initialScenarioId = null, paceS = null }: OpsLiveProps
   const [revealed, setRevealed] = useState(false);
   const [judgePending, setJudgePending] = useState(false);
   const [judgeError, setJudgeError] = useState<string | null>(null);
+  // Bumped by every run and scenario change; a run or judge reply from before it is dropped.
+  const generation = useRef(0);
 
   const health = useStackHealth(profile);
   const { view, status, stream } = useRunStream();
   const online = health.service !== null;
 
-  // Load the list once the API answers, and again if it comes back with nothing loaded.
+  // Load the list once the API answers, and again if it comes back with nothing loaded; a
+  // failed load is retried while the API stays up.
   const needScenarios = online && scenarios.length === 0;
   useEffect(() => {
     if (!needScenarios) return;
     const ctrl = new AbortController();
+    let retry: ReturnType<typeof setTimeout> | undefined;
     api.scenarios(ctrl.signal).then(
       (r) => {
         setScenarios(r.scenarios);
         setScenarioError(null);
       },
       (err) => {
-        if (!ctrl.signal.aborted) setScenarioError(describeError(err));
+        if (ctrl.signal.aborted) return;
+        setScenarioError(describeError(err));
+        retry = setTimeout(() => setScenarioAttempt((n) => n + 1), LIVE.scenarioRetryMs);
       },
     );
-    return () => ctrl.abort();
-  }, [needScenarios]);
+    return () => {
+      ctrl.abort();
+      clearTimeout(retry);
+    };
+  }, [needScenarios, scenarioAttempt]);
 
   const scenario = scenarios.find((s) => s.id === scenarioId) ?? scenarios[0] ?? null;
   // A judge reply for another scenario (selection changed mid-fetch) is never shown.
   const judgeShown = judge && scenario && judge.scenario_id === scenario.id ? judge : null;
 
-  // Only fixture is listed unless the API's own default profile is something else.
+  // Only fixture is listed unless the API's own default profile is something else. A choice the
+  // API no longer offers (restarted with another MODEL_PROFILE) falls back to the default, so
+  // the select shows the profile RUN will post.
   const apiProfile = health.service?.profile;
   const profiles = apiProfile && apiProfile !== LIVE.defaultProfile ? [LIVE.defaultProfile, apiProfile] : [LIVE.defaultProfile];
+  const runProfile = profiles.includes(profile) ? profile : LIVE.defaultProfile;
 
   const changeScenario = (id: string) => {
+    generation.current += 1;
     setScenarioId(id);
     stream.reset();
     setRevealed(false);
@@ -73,8 +87,11 @@ export function OpsLive({ initialScenarioId = null, paceS = null }: OpsLiveProps
     window.history.replaceState(null, "", url);
   };
 
+  // The scenario and profile selects and REVEAL are locked while this POST is in flight
+  // (runPending), so the run it starts belongs to the scenario on screen.
   const run = async () => {
     if (!scenario || posting) return;
+    const gen = ++generation.current;
     setPosting(true);
     setRunError(null);
     setRevealed(false);
@@ -82,12 +99,18 @@ export function OpsLive({ initialScenarioId = null, paceS = null }: OpsLiveProps
     try {
       const res = await api.createRun({
         scenario_id: scenario.id,
-        profile,
+        profile: runProfile,
         ...(paceS != null ? { pace_s: paceS } : {}),
       });
-      stream.start(res);
+      if (gen === generation.current) stream.start(res);
     } catch (err) {
-      setRunError(describeError(err));
+      if (gen !== generation.current) return;
+      // No HTTP status: the request may still have reached the API and started a run.
+      setRunError(
+        err instanceof ApiError && err.status === 0
+          ? `RUN NOT CONFIRMED · ${describeError(err)} · THE API MAY HAVE STARTED IT`
+          : `RUN REJECTED · ${describeError(err)}`,
+      );
     } finally {
       setPosting(false);
     }
@@ -100,13 +123,17 @@ export function OpsLive({ initialScenarioId = null, paceS = null }: OpsLiveProps
       setRevealed(true);
       return;
     }
+    const gen = generation.current;
     setJudgePending(true);
     setJudgeError(null);
     try {
-      setJudge(await api.judge(scenario.id));
+      const reply = await api.judge(scenario.id);
+      // a RE-RUN or scenario change since the click: this reveal no longer applies
+      if (gen !== generation.current) return;
+      setJudge(reply);
       setRevealed(true);
     } catch (err) {
-      setJudgeError(describeError(err));
+      if (gen === generation.current) setJudgeError(describeError(err));
     } finally {
       setJudgePending(false);
     }
@@ -116,7 +143,7 @@ export function OpsLive({ initialScenarioId = null, paceS = null }: OpsLiveProps
   if (health.apiStatus === "offline") {
     notice = { tone: "danger", text: `API OFFLINE · ${API_BASE_URL} · ${health.apiDetail ?? "unreachable"}` };
   } else if (runError) {
-    notice = { tone: "danger", text: `RUN REJECTED · ${runError}` };
+    notice = { tone: "danger", text: runError };
   } else if (scenarioError) {
     notice = { tone: "danger", text: `SCENARIOS UNAVAILABLE · ${scenarioError}` };
   } else if (status === "reconnecting") {
@@ -130,9 +157,9 @@ export function OpsLive({ initialScenarioId = null, paceS = null }: OpsLiveProps
       view={view}
       onScenarioChange={changeScenario}
       onRun={run}
-      runDisabled={posting}
+      runPending={posting}
       profiles={profiles}
-      profile={profile}
+      profile={runProfile}
       onProfileChange={setProfile}
       health={health.models}
       apiStatus={health.apiStatus}

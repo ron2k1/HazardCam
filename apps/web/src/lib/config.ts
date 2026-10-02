@@ -28,6 +28,8 @@ export const LIVE = {
   offlinePollMs: 4_000,
   /** Abort a JSON request after this long; the API is local, so a slow reply means trouble. */
   requestTimeoutMs: 6_000,
+  /** Ask for the scenario list again this long after it failed while the API is up. */
+  scenarioRetryMs: 4_000,
   /**
    * Failed SSE connection attempts before a run is marked lost: the browser's own retries and
    * ours (after the browser gives up, e.g. an HTTP error; doubling backoff) count together.
