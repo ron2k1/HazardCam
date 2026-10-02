@@ -24,18 +24,28 @@ const JUDGE_ROUTE = /\/api\/judge\/scenarios\//;
 /** The reveal button only: a revealed tile also has HIDE. */
 const revealButton = (page: Page) => ui(page).groundTruth.getByRole("button", { name: /^(REVEAL|FETCHING)/ });
 
-/** Hold `method` requests to `url` in the browser until release(); then they reach the real API. */
+/**
+ * Hold `method` requests to `url` in the browser. releaseOne(i) lets the i-th held request on to
+ * the real API; release() lets every held and later one through.
+ */
 async function hold(page: Page, url: RegExp, method: "GET" | "POST") {
-  let release: () => void = () => undefined;
-  const gate = new Promise<void>((r) => (release = r));
   const held: string[] = [];
+  const gates: (() => void)[] = [];
+  let open = false;
   await page.route(url, async (route) => {
-    if (route.request().method() !== method) return route.fallback();
+    if (route.request().method() !== method || open) return route.fallback();
     held.push(route.request().url());
-    await gate;
+    await new Promise<void>((r) => gates.push(r));
     return route.fallback();
   });
-  return { held, release: () => release() };
+  return {
+    held,
+    releaseOne: (i: number) => gates[i]?.(),
+    release: () => {
+      open = true;
+      for (const g of gates) g();
+    },
+  };
 }
 
 test("run request in flight [fixture]: scenario, profile and REVEAL stay locked until the API answers", async ({ page }) => {
@@ -75,14 +85,60 @@ test("judge reply after RE-RUN [fixture]: a reveal still in flight when the next
   const posted = page.waitForRequest((r) => r.method() === "POST" && RUNS_ROUTE.test(r.url()));
   const rerun = runToEnd(page);
   await posted;
+  const judged = page.waitForResponse(JUDGE_ROUTE);
   judge.release();
-  // the reveal has settled (pending cleared) before the state is read
-  await expect(revealBtn).not.toHaveText("FETCHING JUDGE DATA");
+  // the stale reply has reached the page before the state is read
+  await (await judged).finished();
   await rerun;
 
   await expect(u.groundTruth).toHaveAttribute("data-state", "withheld");
   expect(await stopGtWatch(), "ground-truth tokens added to the DOM after RE-RUN").toEqual([]);
   expect(containsGroundTruth(await page.content(), gtTokens)).toBe(false);
+});
+
+test("reveal across a RE-RUN [fixture]: the dropped reveal neither keeps FETCHING nor unlocks the next one", async ({ page }) => {
+  const u = ui(page);
+  const judgeCalls: string[] = [];
+  page.on("request", (r) => {
+    if (JUDGE_ROUTE.test(r.url())) judgeCalls.push(r.url());
+  });
+  // pace 0: the page aborts a judge call after LIVE.requestTimeoutMs (6 s), so the held first
+  // reveal must still be open when the second one starts, a RE-RUN later
+  await openOps(page, "?scenario=eval_001&pace=0");
+  await runToEnd(page);
+
+  const judge = await hold(page, JUDGE_ROUTE, "GET");
+  const revealBtn = revealButton(page);
+  await revealBtn.click();
+  await expect(revealBtn).toHaveText("FETCHING JUDGE DATA");
+
+  // the RE-RUN drops that reveal: nothing is fetching for the new run, during it or after
+  const posted = page.waitForRequest((r) => r.method() === "POST" && RUNS_ROUTE.test(r.url()));
+  const rerun = runToEnd(page);
+  await posted;
+  // well inside the page's 6 s judge timeout, whose abort would also end FETCHING
+  await expect(revealBtn, "FETCHING ends when the RE-RUN starts").not.toHaveText("FETCHING JUDGE DATA", { timeout: 2_000 });
+  await rerun;
+  await expect(revealBtn).toHaveText("REVEAL FOR JUDGE");
+  await expect(revealBtn).toBeEnabled();
+
+  await revealBtn.click();
+  await expect.poll(() => judge.held.length).toBe(2);
+  await expect(revealBtn).toHaveText("FETCHING JUDGE DATA");
+  // the dropped reveal's reply lands while the new one is still held (a short wait: if the page
+  // already timed that call out, no reply comes and the test fails here instead of hanging)
+  const firstReply = page.waitForResponse(JUDGE_ROUTE, { timeout: 4_000 });
+  judge.releaseOne(0);
+  await (await firstReply).finished();
+  // absence check, so a fixed wait: an unlock by the stale reply would show up here
+  await page.waitForTimeout(300);
+  await expect(revealBtn).toHaveText("FETCHING JUDGE DATA");
+  await expect(revealBtn).toBeDisabled();
+  await expect(u.groundTruth).toHaveAttribute("data-state", "withheld");
+
+  judge.releaseOne(1);
+  await expect(u.groundTruth).toHaveAttribute("data-state", "revealed");
+  expect(judgeCalls, "one judge call per reveal click").toHaveLength(2);
 });
 
 test("RE-RUN after a reveal [fixture]: the cached ground truth stays withheld until it is revealed again", async ({ page }) => {

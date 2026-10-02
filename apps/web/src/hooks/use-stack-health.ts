@@ -8,11 +8,15 @@ import { LIVE } from "@/lib/config";
 import type { ModelsHealth, ServiceHealth } from "@/lib/contracts";
 
 export interface StackHealth {
+  /** The profiles RUN can post: fixture, plus the API's own MODEL_PROFILE when it differs. */
+  profiles: string[];
+  /** The chosen profile if the API offers it, else the default: the one RUN posts. */
+  profile: string;
   apiStatus: ApiStatus;
   /** API row detail: version + scenario count, failing dependencies, or why it is offline. */
   apiDetail: string | null;
   service: ServiceHealth | null;
-  /** GET /api/models/health for `profile`; null while offline or not loaded. */
+  /** GET /api/models/health for `profile` (the resolved one); null while offline or not loaded. */
   models: ModelsHealth | null;
 }
 
@@ -33,8 +37,10 @@ function serviceDetail(h: ServiceHealth): string {
 /**
  * Polls GET /healthz (cheap, local). Models health is fetched when the profile changes or
  * the API comes back, never on a timer: for a non-fixture profile it probes model servers.
+ * `chosen` resolves against what the API offers here, so the models health shown is always
+ * for the profile RUN will post.
  */
-export function useStackHealth(profile: string): StackHealth {
+export function useStackHealth(chosen: string): StackHealth {
   const [service, setService] = useState<ServiceHealth | null>(null);
   const [offline, setOffline] = useState<string | null>(null);
   const [checked, setChecked] = useState(false);
@@ -66,6 +72,10 @@ export function useStackHealth(profile: string): StackHealth {
   }, []);
 
   const online = service !== null;
+  const apiProfile = service?.profile;
+  const profiles = apiProfile && apiProfile !== LIVE.defaultProfile ? [LIVE.defaultProfile, apiProfile] : [LIVE.defaultProfile];
+  // A choice the API no longer offers (restarted with another MODEL_PROFILE) falls back to the default.
+  const profile = profiles.includes(chosen) ? chosen : LIVE.defaultProfile;
   useEffect(() => {
     if (!online) return;
     const ctrl = new AbortController();
@@ -80,6 +90,8 @@ export function useStackHealth(profile: string): StackHealth {
 
   const apiStatus: ApiStatus = !checked ? "checking" : !service ? "offline" : service.status === "ok" ? "online" : "degraded";
   return {
+    profiles,
+    profile,
     apiStatus,
     apiDetail: service ? serviceDetail(service) : offline,
     service,

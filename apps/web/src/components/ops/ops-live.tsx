@@ -68,18 +68,15 @@ export function OpsLive({ initialScenarioId = null, paceS = null }: OpsLiveProps
   // A judge reply for another scenario (selection changed mid-fetch) is never shown.
   const judgeShown = judge && scenario && judge.scenario_id === scenario.id ? judge : null;
 
-  // Only fixture is listed unless the API's own default profile is something else. A choice the
-  // API no longer offers (restarted with another MODEL_PROFILE) falls back to the default, so
-  // the select shows the profile RUN will post.
-  const apiProfile = health.service?.profile;
-  const profiles = apiProfile && apiProfile !== LIVE.defaultProfile ? [LIVE.defaultProfile, apiProfile] : [LIVE.defaultProfile];
-  const runProfile = profiles.includes(profile) ? profile : LIVE.defaultProfile;
+  // The select, the models health and RUN all use the profile the API offers (useStackHealth).
+  const { profiles, profile: runProfile } = health;
 
   const changeScenario = (id: string) => {
     generation.current += 1;
     setScenarioId(id);
     stream.reset();
     setRevealed(false);
+    setJudgePending(false);
     setJudgeError(null);
     setRunError(null);
     const url = new URL(window.location.href);
@@ -95,6 +92,8 @@ export function OpsLive({ initialScenarioId = null, paceS = null }: OpsLiveProps
     setPosting(true);
     setRunError(null);
     setRevealed(false);
+    // a reveal still in flight belongs to the previous run; its reply will be dropped
+    setJudgePending(false);
     setJudgeError(null);
     try {
       const res = await api.createRun({
@@ -105,9 +104,10 @@ export function OpsLive({ initialScenarioId = null, paceS = null }: OpsLiveProps
       if (gen === generation.current) stream.start(res);
     } catch (err) {
       if (gen !== generation.current) return;
-      // No HTTP status: the request may still have reached the API and started a run.
+      // No reply (status 0), or a 2xx whose body never arrived: the API may have started a run.
+      const unconfirmed = err instanceof ApiError && (err.status === 0 || (err.status >= 200 && err.status < 300));
       setRunError(
-        err instanceof ApiError && err.status === 0
+        unconfirmed
           ? `RUN NOT CONFIRMED · ${describeError(err)} · THE API MAY HAVE STARTED IT`
           : `RUN REJECTED · ${describeError(err)}`,
       );
@@ -135,7 +135,8 @@ export function OpsLive({ initialScenarioId = null, paceS = null }: OpsLiveProps
     } catch (err) {
       if (gen === generation.current) setJudgeError(describeError(err));
     } finally {
-      setJudgePending(false);
+      // only this generation's reveal may clear it: an older one must not unlock a newer one
+      if (gen === generation.current) setJudgePending(false);
     }
   };
 

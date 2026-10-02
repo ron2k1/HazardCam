@@ -98,6 +98,48 @@ test("run request fails at the network (reset in the browser): the notice says u
   await expect(u.run).toBeEnabled();
 });
 
+test("run request answered 202 with a cut body (in the browser): the notice says unconfirmed, not rejected", async ({ page }) => {
+  const u = ui(page);
+  await openOps(page, "?scenario=eval_001");
+  await page.route(/\/api\/runs$/, (route) =>
+    route.request().method() === "POST"
+      ? route.fulfill({ status: 202, contentType: "application/json", body: "{" })
+      : route.fallback(),
+  );
+  await u.run.click();
+  // a 2xx means the API accepted the run; only its id was lost on the way
+  await expect(u.notice).toContainText("RUN NOT CONFIRMED · HTTP 202 · invalid JSON");
+  await expect(u.notice).not.toContainText("REJECTED");
+  await expect(u.run).toBeEnabled();
+});
+
+test("API restarted with another MODEL_PROFILE (/healthz rewritten in the browser): models health follows the profile RUN posts", async ({
+  page,
+}) => {
+  const u = ui(page);
+  let apiProfile = "lite-local";
+  const probed: string[] = [];
+  await page.route(`${API_URL}/healthz`, async (route) => {
+    const response = await route.fetch();
+    return route.fulfill({ response, json: { ...(await response.json()), profile: apiProfile } });
+  });
+  // record which profile each models probe asks for; lite-local's never reaches a model server
+  await page.route(/\/api\/models\/health\?/, (route) => {
+    const profile = new URL(route.request().url()).searchParams.get("profile") ?? "";
+    probed.push(profile);
+    return profile === "fixture" ? route.fallback() : route.abort("connectionrefused");
+  });
+  await openOps(page, "?scenario=eval_001", "lite-local");
+  await expect.poll(() => probed).toContain("lite-local");
+
+  apiProfile = "fixture";
+  // the next /healthz poll (10 s) drops lite-local; select, probe and RUN all fall back to fixture
+  await expect(u.profile).toHaveValue("fixture", { timeout: 15_000 });
+  await expect.poll(() => probed.at(-1)).toBe("fixture");
+  await expect(u.healthRow("PROFILE")).toHaveAttribute("data-status", "fixture");
+  await expect(u.profile.locator('option[value="lite-local"]')).toHaveCount(0);
+});
+
 const CUT = 20;
 
 /**
