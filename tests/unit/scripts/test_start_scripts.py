@@ -1,5 +1,5 @@
 """P16: start_app.sh starts both servers and stops them completely (the stop itself:
-test_proc.py); run.sh's e2e targets pin their profile and scope.
+test_proc.py; run.sh's e2e targets: test_run_sh.py).
 
 The servers are stubs (real uvicorn on a tiny ASGI app, a node stand-in for next) in a scratch
 tree, so the lifecycle runs in seconds and nothing is written to the repo.
@@ -281,81 +281,3 @@ def test_start_app_on_term_stops_both_servers_and_exits_143(tmp_path):
     assert "open http" in (tmp_path / "app.out").read_text(), (tmp_path / "app.err").read_text()
     assert out.strip() == "exit 143"
     assert left_open == []
-
-
-# --- run.sh e2e targets ------------------------------------------------------------------------
-
-_STUB_PNPM = '#!/usr/bin/env bash\necho "E2E_PROFILE=${E2E_PROFILE:-} args: $*"\n'
-
-
-def _tool_dir() -> str:
-    """The directory holding coreutils for the bash in use; PATH gets nothing else, so a stub
-    that bash fails to pick up cannot fall through to the real pnpm and start Playwright."""
-    assert BASH is not None
-    if os.name == "nt":
-        return str(Path(BASH).parents[1] / "usr" / "bin")
-    dirname = shutil.which("dirname")
-    assert dirname is not None
-    return str(Path(dirname).parent)
-
-
-@pytest.mark.parametrize(
-    ("target", "args", "expected"),
-    [
-        # a profile left in the shell must not turn the fixture suite into a model run
-        ("fixture-e2e", (), "E2E_PROFILE=fixture args: --dir apps/web e2e"),
-        # bare real-model targets run eval_001 alone, so they do not rewrite fixture evidence
-        ("lite-e2e", (), "E2E_PROFILE=lite-local args: --dir apps/web e2e -g eval_001"),
-        ("full-e2e", (), "E2E_PROFILE=full-local args: --dir apps/web e2e -g eval_001"),
-        # a test selection replaces eval_001; any other flag runs on top of it
-        (
-            "lite-e2e",
-            ("-g", "eval_005"),
-            "E2E_PROFILE=lite-local args: --dir apps/web e2e -g eval_005",
-        ),
-        (
-            "lite-e2e",
-            ("--grep=eval_005",),
-            "E2E_PROFILE=lite-local args: --dir apps/web e2e --grep=eval_005",
-        ),
-        (
-            "full-e2e",
-            ("ops-races.spec.ts",),
-            "E2E_PROFILE=full-local args: --dir apps/web e2e ops-races.spec.ts",
-        ),
-        (
-            "lite-e2e",
-            ("--headed",),
-            "E2E_PROFILE=lite-local args: --dir apps/web e2e -g eval_001 --headed",
-        ),
-        (
-            "full-e2e",
-            ("--workers", "1", "--reporter=line"),
-            "E2E_PROFILE=full-local args: --dir apps/web e2e -g eval_001 --workers 1 --reporter=line",
-        ),
-        (
-            "lite-e2e",
-            ("--output=tmp/e2e",),
-            "E2E_PROFILE=lite-local args: --dir apps/web e2e -g eval_001 --output=tmp/e2e",
-        ),
-    ],
-)
-def test_run_e2e_targets_pin_their_profile_and_scope(tmp_path, target, args, expected):
-    root = script_tree(tmp_path / "repo", "run.sh", "_python.sh")
-    stubs = tmp_path / "bin"
-    stubs.mkdir()
-    (stubs / "pnpm").write_text(_STUB_PNPM, newline="\n")
-    (stubs / "pnpm").chmod(0o755)
-    done = run_script(
-        root / "scripts" / "run.sh",
-        tmp_path,
-        target,
-        *args,
-        # bash's own directory too: the stub's `env bash` needs it where /bin is not /usr/bin
-        env={
-            "PATH": os.pathsep.join([str(stubs), str(Path(BASH or "").parent), _tool_dir()]),
-            "E2E_PROFILE": "from-the-shell",
-        },
-    )
-    assert done.returncode == 0, done.stderr
-    assert done.stdout.strip() == expected

@@ -49,8 +49,9 @@ scripts/run.sh lite-e2e                       # eval_001 alone on lite-local mod
 scripts/run.sh full-e2e                       # eval_001 alone on full-local models, ~1.5 min + build
 ```
 
-`lite-e2e` / `full-e2e` keep `-g eval_001` under flags such as `--headed`; a `-g` / `--grep`
-or a spec file replaces it.
+`lite-e2e` / `full-e2e` keep `-g eval_001` under other options and their values (`--headed`,
+`--output dir`); a `-g` / `--grep`, `--test-list` or spec path replaces it, and `--grep-invert`
+narrows it.
 
 ## Prebuild now
 
