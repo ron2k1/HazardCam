@@ -37,5 +37,19 @@ Schema: `contracts/sse_envelope.schema.json` (Python: `apps.api.schemas.SseEnvel
 | `run.complete` | `{hypothesis: Hypothesis, duration_ms}` |
 | `run.failed` | `{stage, error}` where `error` is a short message with no stack traces or secrets |
 
-`camera.*` events are emitted inside the matching `tool.started`/`tool.completed` pair for `inspect_camera`.
-The `orchestrator.*` and `tool.*` events form the agent trace panel. On event day the OpenClaw agent emits the same `tool.*` events, so the UI does not change.
+`args_summary` and `result_summary` are a string or a flat object (the UI renders objects as `k=v`); keep frame URLs and large payloads out of them.
+
+Every domain event is emitted while the tool call that produced it is open, i.e. between that call's `tool.started` and `tool.completed`. Tool calls never nest.
+
+| domain event | emitted inside |
+|---|---|
+| `camera.started`, `camera.frames.sampled` | `sample_video` |
+| `camera.observation`, `camera.complete` | `inspect_camera` |
+| `fusion.started`, `evidence.linked` | `correlate_observations` |
+| `triangulation.updated` | `triangulate_region` |
+| `hypothesis.updated` (`final: false`) | `reason_hypothesis` |
+| `hypothesis.updated` (`final: true`) | `submit_hypothesis` |
+
+A rejected call (unknown tool, arguments that violate `contracts/tools.schema.json`, a tool called before the one it depends on, or a camera that is not a visible input camera) emits only its failed pair: `tool.completed` with `ok: false` and an `error` that says how to correct the call, and no domain events. An unknown tool name is reported as `unknown_tool`. A camera id that is not a visible camera never appears in any payload; `args_summary.camera_id` shows `not_visible` instead.
+
+The `orchestrator.*` and `tool.*` events form the agent trace panel. On event day the OpenClaw agent calls the same tool functions through the same event-emitting bindings, so the UI does not change.

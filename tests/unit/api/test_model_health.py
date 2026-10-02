@@ -1,90 +1,14 @@
-"""P03: the temporary fixture replay executor and the model-health helpers."""
+"""P03: the model-health helpers (profile description and endpoint probes)."""
 
 from __future__ import annotations
 
-import json
-import shutil
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import httpx
 import pytest
 
-from apps.api.schemas import EVENT_TYPES, TERMINAL_EVENT_TYPES, Hypothesis
 from apps.api.services import model_health
-from apps.api.services.fixture_executor import FIXTURES_DIR, HARNESS, FixtureReplayExecutor
-
-NON_TERMINAL = set(EVENT_TYPES) - TERMINAL_EVENT_TYPES
-
-
-def _record(executor, scenario, tmp_path, pace_s=0.0):
-    events: list[tuple[str, dict]] = []
-    result = executor(scenario, "fixture", lambda t, p: events.append((t, p)), tmp_path, pace_s)
-    return result, events
-
-
-def test_fixture_replay_covers_the_catalog(scenario, tmp_path):
-    hypothesis, events = _record(FixtureReplayExecutor(), scenario, tmp_path)
-    expected = Hypothesis.model_validate_json((FIXTURES_DIR / "final_hypothesis.json").read_bytes())
-    assert hypothesis == expected
-    types = [t for t, _ in events]
-    assert set(types) == NON_TERMINAL
-    assert types[:2] == ["run.started", "orchestrator.started"]
-    assert events[0][1]["harness"] == HARNESS == "fixture-replay"
-    assert events[1][1]["agent"] is False
-    assert [p["camera_id"] for t, p in events if t == "camera.started"] == [
-        "cam_01",
-        "cam_02",
-        "cam_03",
-    ]
-    observed = [p["observation"].id for t, p in events if t == "camera.observation"]
-    assert observed == ["obs_a_001", "obs_b_001", "obs_c_001"]
-    (cluster_payload,) = [p for t, p in events if t == "evidence.linked"]
-    assert cluster_payload["cluster"].evidence_ids == observed
-    (triangulation,) = [p for t, p in events if t == "triangulation.updated"]
-    assert [c.id for c in triangulation["candidates"]] == ["blind_zone_02"]
-    assert triangulation["candidates"][0].method == "zone_prior"
-    finals = [p["final"] for t, p in events if t == "hypothesis.updated"]
-    assert finals == [False, True]
-    assert "cam_gt" not in repr(events) and "hidden_ground_truth" not in repr(events)
-
-
-def test_fixture_replay_tool_pairs_balance(scenario, tmp_path):
-    _, events = _record(FixtureReplayExecutor(), scenario, tmp_path)
-    started = [p["call_id"] for t, p in events if t == "tool.started"]
-    completed = [p["call_id"] for t, p in events if t == "tool.completed"]
-    assert started == completed and len(set(started)) == len(started) == 6
-
-
-def test_per_scenario_fixtures_take_precedence(scenario, tmp_path):
-    fixtures = tmp_path / "fixtures"
-    shutil.copytree(FIXTURES_DIR, fixtures, ignore=shutil.ignore_patterns("*.example.json"))
-    scoped = fixtures / scenario.id
-    scoped.mkdir()
-    abstain = {"event_type": "unknown", "region": "unknown", "confidence": 0.2, "reason": "weak"}
-    (scoped / "final_hypothesis.json").write_text(json.dumps(abstain), encoding="utf-8")
-    (scoped / "qwen_observations.json").write_text(json.dumps({}), encoding="utf-8")
-    hypothesis, events = _record(FixtureReplayExecutor(fixtures), scenario, tmp_path / "run")
-    assert hypothesis.abstained
-    assert not any(t in {"camera.observation", "evidence.linked"} for t, _ in events)
-    (triangulation,) = [p for t, p in events if t == "triangulation.updated"]
-    assert triangulation["candidates"] == []
-
-
-def test_failed_tool_reports_and_reraises(scenario, tmp_path):
-    fixtures = tmp_path / "fixtures"
-    fixtures.mkdir()
-    shutil.copy(FIXTURES_DIR / "final_hypothesis.json", fixtures)
-    (fixtures / "qwen_observations.json").write_text(
-        json.dumps({"cam_01": {"camera_id": "cam_01", "observations": [{"id": ""}]}})
-    )
-    events: list[tuple[str, dict]] = []
-    with pytest.raises(ValueError):
-        FixtureReplayExecutor(fixtures)(
-            scenario, "fixture", lambda t, p: events.append((t, p)), tmp_path, 0.0
-        )
-    assert events[-1][0] == "tool.completed"
-    assert events[-1][1]["ok"] is False and events[-1][1]["tool"] == "inspect_camera"
 
 
 def test_yaml_profile_info_applies_env_overrides(tmp_path, monkeypatch):

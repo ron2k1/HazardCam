@@ -177,6 +177,7 @@ async def test_frame_route_refuses_symlink_escape(
     outside = tmp_path / "outside_frames"
     make_jpeg(outside / "0000.jpg")
     link = settings.runs_dir / run_id / "frames" / "cam_01"
+    shutil.rmtree(link, ignore_errors=True)  # the run sampled real frames here
     link.parent.mkdir(parents=True, exist_ok=True)
     try:
         link.symlink_to(outside, target_is_directory=True)

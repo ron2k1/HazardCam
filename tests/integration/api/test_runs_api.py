@@ -8,18 +8,20 @@ import threading
 
 from apps.api.schemas import (
     EVENT_TYPES,
+    REPO_ROOT,
     GroundTruthAccessError,
     Hypothesis,
     SseEnvelope,
     validate_json,
 )
-from apps.api.services.fixture_executor import FIXTURES_DIR
 
 # Ground-truth camera of contracts/examples/scenario_001.json.
 GT_ID = "cam_gt"
 GT_BASENAME = "hidden_ground_truth.mp4"
 GT_FILE = "data/prepared/scenario_001/" + GT_BASENAME
+FIXTURES_DIR = REPO_ROOT / "data" / "fixtures"
 FIXTURE_HYPOTHESIS = json.loads((FIXTURES_DIR / "final_hypothesis.json").read_text("utf-8"))
+CAMERA_TOOLS = {"sample_video", "inspect_camera"}
 
 
 async def _finished_run(start_run, read_events, **body):
@@ -60,11 +62,19 @@ async def test_fixture_run_streams_contiguous_catalog(client, start_run, read_ev
     assert set(types) == set(EVENT_TYPES) - {"run.failed"}
     started = messages[0]["data"]["payload"]
     assert started["camera_ids"] == ["cam_01", "cam_02", "cam_03"]
-    assert started["harness"] == "fixture-replay"
+    assert started["harness"] == "dev-sequence"
 
     complete = messages[-1]["data"]["payload"]
-    assert complete["hypothesis"] == FIXTURE_HYPOTHESIS
+    finals = [m["data"]["payload"] for m in messages if m["data"]["type"] == "hypothesis.updated"]
+    assert [f["final"] for f in finals] == [False, True]
+    assert complete["hypothesis"] == finals[-1]["hypothesis"]
     assert isinstance(complete["duration_ms"], int)
+
+    # The harness's frame URLs are the API's frame route: fetch one back.
+    sampled = next(m for m in messages if m["data"]["type"] == "camera.frames.sampled")
+    url = sampled["data"]["payload"]["frames"][0]["url"]
+    frame = await client.get(url)
+    assert frame.status_code == 200 and frame.headers["content-type"] == "image/jpeg"
 
     record = (await client.get(f"/api/runs/{run['run_id']}")).json()
     validate_json("run", record)
@@ -73,7 +83,7 @@ async def test_fixture_run_streams_contiguous_catalog(client, start_run, read_ev
     assert record["finished_at"] is not None
     assert (
         Hypothesis.model_validate(record["hypothesis"]).event_type
-        == FIXTURE_HYPOTHESIS["event_type"]
+        == complete["hypothesis"]["event_type"]
     )
 
     run_dir = settings.runs_dir / run["run_id"]
@@ -82,7 +92,7 @@ async def test_fixture_run_streams_contiguous_catalog(client, start_run, read_ev
     assert json.loads((run_dir / "run.json").read_text())["state"] == "complete"
 
 
-async def test_camera_events_sit_inside_inspect_camera_tool_pairs(start_run, read_events):
+async def test_camera_events_sit_inside_camera_tool_pairs(start_run, read_events):
     _, messages = await _finished_run(start_run, read_events)
     open_tool = None
     for envelope in (m["data"] for m in messages):
@@ -92,7 +102,7 @@ async def test_camera_events_sit_inside_inspect_camera_tool_pairs(start_run, rea
             assert envelope["payload"]["tool"] == open_tool and envelope["payload"]["ok"]
             open_tool = None
         elif envelope["type"].startswith("camera."):
-            assert open_tool == "inspect_camera", envelope["type"]
+            assert open_tool in CAMERA_TOOLS, envelope["type"]
 
 
 async def test_replay_after_finish_is_identical(start_run, read_events):

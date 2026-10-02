@@ -20,6 +20,7 @@ import pytest
 
 from apps.api.main import create_app
 from apps.api.schemas import REPO_ROOT
+from apps.api.services.pipeline import DevSequenceExecutor
 from apps.api.settings import Settings
 
 EXAMPLE_SCENARIO = REPO_ROOT / "contracts" / "examples" / "scenario_001.json"
@@ -161,8 +162,10 @@ def read_events(client: httpx.AsyncClient) -> Callable[..., Any]:
 
 
 @pytest.fixture
-def start_run(client: httpx.AsyncClient) -> Callable[..., Any]:
+def start_run(app, client: httpx.AsyncClient) -> Callable[..., Any]:
     async def _start(**body: Any) -> dict[str, Any]:
+        if FFMPEG is None and isinstance(app.state.executor, DevSequenceExecutor):
+            pytest.skip("the dev-sequence executor samples video; ffmpeg not on PATH")
         response = await client.post("/api/runs", json={"scenario_id": "scenario_001", **body})
         assert response.status_code == 202, response.text
         return response.json()
