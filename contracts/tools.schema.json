@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ambient-mirror.local/contracts/tools.schema.json",
+  "title": "ToolCall",
+  "description": "One call to a run-scoped tool (tools/session.py ToolSession). Arguments are small: run state (sampled frames, observations, the evidence bundle) lives in the session, so a caller never echoes large JSON back. The same interface serves the NON-AGENT dev harness and the event-day agent. Each tool's result schema is $defs/<tool>_result.",
+  "type": "object",
+  "required": ["name", "arguments"],
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "enum": [
+        "sample_video",
+        "inspect_camera",
+        "correlate_observations",
+        "triangulate_region",
+        "reason_hypothesis",
+        "get_supporting_frames",
+        "submit_hypothesis"
+      ]
+    },
+    "arguments": { "type": "object" }
+  },
+  "oneOf": [
+    {
+      "properties": {
+        "name": { "const": "sample_video" },
+        "arguments": { "$ref": "#/$defs/sample_video_args" }
+      }
+    },
+    {
+      "properties": {
+        "name": { "const": "inspect_camera" },
+        "arguments": { "$ref": "#/$defs/inspect_camera_args" }
+      }
+    },
+    {
+      "properties": {
+        "name": { "const": "correlate_observations" },
+        "arguments": { "$ref": "#/$defs/no_args" }
+      }
+    },
+    {
+      "properties": {
+        "name": { "const": "triangulate_region" },
+        "arguments": { "$ref": "#/$defs/no_args" }
+      }
+    },
+    {
+      "properties": {
+        "name": { "const": "reason_hypothesis" },
+        "arguments": { "$ref": "#/$defs/no_args" }
+      }
+    },
+    {
+      "properties": {
+        "name": { "const": "get_supporting_frames" },
+        "arguments": { "$ref": "#/$defs/get_supporting_frames_args" }
+      }
+    },
+    {
+      "properties": {
+        "name": { "const": "submit_hypothesis" },
+        "arguments": { "$ref": "#/$defs/submit_hypothesis_args" }
+      }
+    }
+  ],
+  "$defs": {
+    "camera_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "A visible camera id from the scenario. The withheld ground-truth camera is refused."
+    },
+    "no_args": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {}
+    },
+    "sample_video_args": {
+      "description": "Sample frames from one visible camera at the profile's rate. Call once per camera before inspect_camera.",
+      "type": "object",
+      "required": ["camera_id"],
+      "additionalProperties": false,
+      "properties": { "camera_id": { "$ref": "#/$defs/camera_id" } }
+    },
+    "sample_video_result": { "$ref": "media_manifest.schema.json" },
+    "inspect_camera_args": {
+      "description": "Run the perception model over a camera's sampled frames and return movement cues. Requires sample_video for that camera.",
+      "type": "object",
+      "required": ["camera_id"],
+      "additionalProperties": false,
+      "properties": { "camera_id": { "$ref": "#/$defs/camera_id" } }
+    },
+    "inspect_camera_result": { "$ref": "observation.schema.json" },
+    "correlate_observations_result": {
+      "description": "Every inspected camera's cues on the scenario clock, linked into clusters by time.",
+      "type": "object",
+      "required": ["evidence", "clusters"],
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "type": "array",
+          "items": { "$ref": "evidence.schema.json#/$defs/evidence_item" }
+        },
+        "clusters": {
+          "type": "array",
+          "items": { "$ref": "evidence.schema.json#/$defs/cluster" }
+        }
+      }
+    },
+    "triangulate_region_result": {
+      "description": "The assembled evidence bundle: region candidates from camera bearings, plus the ok/insufficient status. Requires correlate_observations.",
+      "$ref": "evidence.schema.json"
+    },
+    "reason_hypothesis_result": {
+      "description": "The reasoning model's hypothesis over the bundle. Requires triangulate_region.",
+      "$ref": "hypothesis.schema.json"
+    },
+    "get_supporting_frames_args": {
+      "description": "Resolve frame indices a cue cites into seekable frames. Requires sample_video for that camera.",
+      "type": "object",
+      "required": ["camera_id", "frame_indices"],
+      "additionalProperties": false,
+      "properties": {
+        "camera_id": { "$ref": "#/$defs/camera_id" },
+        "frame_indices": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "get_supporting_frames_result": {
+      "type": "object",
+      "required": ["camera_id", "frames"],
+      "additionalProperties": false,
+      "properties": {
+        "camera_id": { "$ref": "#/$defs/camera_id" },
+        "frames": {
+          "type": "array",
+          "items": { "$ref": "media_manifest.schema.json#/properties/frames/items" }
+        }
+      }
+    },
+    "submit_hypothesis_args": {
+      "description": "Submit the final hypothesis through the deterministic gate (evidence, region and confidence rules). With no hypothesis, submits the one reason_hypothesis returned.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": { "hypothesis": { "$ref": "hypothesis.schema.json" } }
+    },
+    "submit_hypothesis_result": { "$ref": "hypothesis.schema.json" }
+  }
+}

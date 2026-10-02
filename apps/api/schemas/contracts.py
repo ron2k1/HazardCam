@@ -19,6 +19,7 @@ SCHEMA_FILES = {
     "hypothesis": "hypothesis.schema.json",
     "run": "run.schema.json",
     "sse_envelope": "sse_envelope.schema.json",
+    "tool_call": "tools.schema.json",
 }
 
 
@@ -41,6 +42,13 @@ def validator(name: str) -> Draft202012Validator:
     return Draft202012Validator(
         load_schema(name), registry=_registry(), format_checker=FormatChecker()
     )
+
+
+@cache
+def def_validator(name: str, def_name: str) -> Draft202012Validator:
+    """Validator for ``$defs/<def_name>`` of contract ``name``; its refs resolve as usual."""
+    ref = f"{load_schema(name)['$id']}#/$defs/{def_name}"
+    return Draft202012Validator({"$ref": ref}, registry=_registry(), format_checker=FormatChecker())
 
 
 def validate_json(name: str, instance: Any) -> None:
