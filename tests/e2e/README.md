@@ -6,13 +6,13 @@ Run from the repo root with one command. The default is fixture mode: recorded m
 pnpm --dir apps/web e2e
 ```
 
-To run with real local models (P14), set the profile and a larger run budget:
+To run with real local models (P14), set the profile and a larger run budget. Only the eval_001 test follows the profile; the rest would redo their fixture runs and rewrite the fixture screenshots, so select it:
 
 ```
-E2E_PROFILE=lite-local E2E_RUN_TIMEOUT_S=600 pnpm --dir apps/web e2e
+E2E_PROFILE=lite-local E2E_RUN_TIMEOUT_S=600 pnpm --dir apps/web e2e -g eval_001
 ```
 
-In PowerShell, set the two variables first: `$env:E2E_PROFILE='lite-local'; $env:E2E_RUN_TIMEOUT_S='600'`. Extra arguments go to Playwright, e.g. `pnpm --dir apps/web e2e -g eval_001`.
+`scripts/run.sh lite-e2e` / `full-e2e` do this for you. In PowerShell, set the two variables first: `$env:E2E_PROFILE='lite-local'; $env:E2E_RUN_TIMEOUT_S='600'`. Extra arguments go to Playwright.
 
 `playwright.config.ts` starts both servers itself and stops them (by PID tree) when the run ends:
 
@@ -42,12 +42,22 @@ The suite writes screenshots, `<profile>-run-timing.json` and `results.json` (or
     - The live trace matches the server's event log: the same calls, in the same order, with the same ok or error outcome. The distinct tools follow the 7-tool harness order.
     - The event, confidence and region readouts equal `GET /api/runs/{id}`.
     - Clicking a timeline bar seeks the camera `<video>`, and so does a cited hypothesis chip when the hypothesis cites evidence. Both are checked through `seeked` and `currentTime`.
-    - GT stays withheld, with no `/api/judge` request, until REVEAL, and is shown after it.
+    - GT stays withheld, with no `/api/judge` request, until REVEAL, and is shown after it. Until then nothing on the page names the withheld camera. The tokens come from its manifest: id, file stem, label, MEVA id, and what only a revealed console draws. A MutationObserver scans every change, including values overwritten before it could look. After REVEAL the same detector must find every reveal token, so it has been shown able to fire. A blank-page test checks the detector itself.
     - The run must finish within `E2E_RUN_TIMEOUT_S`. Screenshots are taken at desktop and at 390 px.
     - Fixture only: the recorded hypothesis is a claim that cites other evidence, and no tool failed. These are not asserted for real models.
   - **eval_012 and eval_005, always fixture.** The real `no_event` claim and the real abstention (`unknown`).
+- **`ops-races.spec.ts`**, always fixture. Each test holds one real request in the browser while it acts on the page.
+  - While the run POST is in flight, the scenario, profile and REVEAL stay locked.
+  - A judge reply that lands after RE-RUN or a scenario change is dropped. It neither shows the ground truth nor leaves the new run stuck at FETCHING.
+  - RE-RUN after a reveal withholds the cached ground truth again.
+  - Leaving /ops while the run POST is in flight opens no event stream.
 - **`ops-resilience.spec.ts`**, always fixture where a run is needed, because these tests need a fixed event log, not a model.
-  - **API offline and recovery.**
+  - **API offline and recovery**, before the page loads and after the scenarios loaded.
+  - **Failed requests.**
+    - A scenario list answered 500 is asked for again without a reload.
+    - A run POST reset at the network, or answered 202 with a cut body, reads RUN NOT CONFIRMED, not REJECTED.
+  - **Profile.** If the API restarts with another `MODEL_PROFILE`, the models health follows the profile RUN posts.
   - **SSE resume.** The stream is cut in the browser. The test asserts the `Last-Event-ID` reconnect and that the replayed events are not duplicated.
+  - **SSE retries.** The page's own `?after_seq` reconnect is checked. With the API gone mid-run, the page stops after its retry budget and marks the stream lost.
   - **Injected failure.** A failed tool and `run.failed` are rewritten into the stream in the browser; the backend run itself succeeds.
   - **Mock route.** `/ops?mock=default` makes no API calls.
