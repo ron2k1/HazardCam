@@ -17,7 +17,8 @@ usage: scripts/run.sh <target> [args...]
   eval                 score the harness on data/eval/manifest.json ($MODEL_PROFILE, else fixture)
   tool-probe           single-turn tool-call probe against local reasoning models
   offline-check        prove the fixture path needs no network (writes artifacts/offline)
-  fixture-e2e | lite-e2e | full-e2e
+  fixture-e2e          Playwright on /ops, fixture profile (args pass to playwright)
+  lite-e2e | full-e2e  the same suite's eval_001 run on lite-local / full-local models
   boundary-check | snapshot-prebuild | prebuild-ultracode
   event-day-start | event-day-ultracode | verify-event-delta
 USAGE
@@ -35,10 +36,9 @@ case "$target" in
   eval) py scripts/eval/run_eval.py "$@" ;;
   tool-probe) py scripts/eval/probe_tool_calls.py "$@" ;;
   offline-check) py scripts/offline_check.py "$@" ;;
-  fixture-e2e | lite-e2e | full-e2e)
-    echo "$target: not wired yet (P13/P14/P15)" >&2
-    exit 2
-    ;;
+  fixture-e2e) pnpm --dir apps/web e2e "$@" ;;
+  lite-e2e) E2E_PROFILE=lite-local E2E_RUN_TIMEOUT_S="${E2E_RUN_TIMEOUT_S:-600}" pnpm --dir apps/web e2e "$@" ;;
+  full-e2e) E2E_PROFILE=full-local E2E_RUN_TIMEOUT_S="${E2E_RUN_TIMEOUT_S:-900}" pnpm --dir apps/web e2e "$@" ;;
   boundary-check) ./scripts/assert_prebuild_boundary.sh "$@" ;;
   snapshot-prebuild) ./scripts/snapshot_prebuild.sh "$@" ;;
   prebuild-ultracode) ./scripts/start_prebuild_ultracode.sh "$@" ;;

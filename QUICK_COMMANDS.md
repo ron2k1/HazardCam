@@ -37,7 +37,9 @@ scripts/run.sh eval                           # fixture eval, 22 scenarios, ~25 
 scripts/run.sh eval --profile full-local      # live models, ~30 min on the laptop
 scripts/run.sh tool-probe                     # single-turn tool-call probe, 8B and 3B
 scripts/run.sh offline-check                  # network refused during a fixture run
-pnpm --dir apps/web e2e                       # Playwright on /ops, fixture profile
+scripts/run.sh fixture-e2e                    # Playwright on /ops, fixture profile, ~30 s
+scripts/run.sh lite-e2e                       # same suite, eval_001 on lite-local models
+scripts/run.sh full-e2e -g eval_001           # eval_001 alone on full-local models, ~1.5 min
 ```
 
 ## Prebuild now

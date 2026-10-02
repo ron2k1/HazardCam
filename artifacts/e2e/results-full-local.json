@@ -1,0 +1,123 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Users\\thegr\\OneDrive\\Desktop\\nvidia hackathon\\ambient-mirror-ultracode-prebuild-v3\\apps\\web\\node_modules\\.pnpm\\@playwright+test@1.63.0\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "-c",
+      "../../tests/e2e/playwright.config.ts",
+      "-g",
+      "eval_001"
+    ],
+    "configFile": "C:\\Users\\thegr\\OneDrive\\Desktop\\nvidia hackathon\\ambient-mirror-ultracode-prebuild-v3\\tests\\e2e\\playwright.config.ts",
+    "rootDir": "C:/Users/thegr/OneDrive/Desktop/nvidia hackathon/ambient-mirror-ultracode-prebuild-v3/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/thegr/OneDrive/Desktop/nvidia hackathon/ambient-mirror-ultracode-prebuild-v3/tests/e2e/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/thegr/OneDrive/Desktop/nvidia hackathon/ambient-mirror-ultracode-prebuild-v3/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 960000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "C:\\Users\\thegr\\OneDrive\\Desktop\\nvidia hackathon\\ambient-mirror-ultracode-prebuild-v3\\artifacts\\e2e\\results-full-local.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "ops-fixture.spec.ts",
+      "file": "ops-fixture.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "eval_001 [full-local]: live trace in tool order, evidence seeks media, GT withheld until reveal",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 960000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 90362,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T16:38:58.519Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d3a3065b3deec3cdea4f-fddacff1b08ea5ddc9b4",
+          "file": "ops-fixture.spec.ts",
+          "line": 74,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-02T16:38:52.039Z",
+    "duration": 97592.831,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}
