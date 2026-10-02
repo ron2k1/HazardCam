@@ -1,0 +1,231 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/*
+ * Visual system: monochrome scientific HUD (reference/theme-reference.jpeg).
+ * Project tokens come from docs/FRONTEND_SPEC.md. The shadcn variable names
+ * below are aliased onto them so every shadcn primitive inherits the theme.
+ */
+:root {
+  --bg: #050505;
+  --panel: #090909;
+  --fg: #f1f1ef;
+  --muted: #777773;
+  --dim: #3e3e3b;
+  --line: rgba(255, 255, 255, 0.12);
+  --line-strong: rgba(255, 255, 255, 0.28);
+  --danger: #ff453a;
+  --radius: 0px;
+
+  --fs-micro: 9px;
+  --lh-micro: 12px;
+  --fs-tele: 10px;
+  --lh-tele: 14px;
+
+  --background: var(--bg);
+  --foreground: var(--fg);
+  --card: var(--panel);
+  --card-foreground: var(--fg);
+  --popover: var(--panel);
+  --popover-foreground: var(--fg);
+  --primary: var(--fg);
+  --primary-foreground: var(--bg);
+  --secondary: #111110;
+  --secondary-foreground: var(--fg);
+  --muted-foreground: var(--muted);
+  --accent: #141413;
+  --accent-foreground: var(--fg);
+  --destructive: var(--danger);
+  --border: var(--line);
+  --input: var(--line-strong);
+  --ring: var(--line-strong);
+
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-fg: var(--fg);
+  --color-dim: var(--dim);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-danger: var(--danger);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --font-sans: var(--font-mono-hud), ui-monospace, monospace;
+  --font-mono: var(--font-mono-hud), ui-monospace, monospace;
+  --font-heading: var(--font-mono-hud), ui-monospace, monospace;
+
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 0px;
+  --radius-4xl: 0px;
+
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-mono;
+    background: var(--bg);
+  }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-size: 12px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: tabular-nums;
+  }
+  ::selection {
+    background: var(--fg);
+    color: var(--bg);
+  }
+  :focus-visible {
+    outline: 1px solid var(--fg);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* micro telemetry label: 9-10px, tracked, uppercase */
+  .tele {
+    font-size: var(--fs-tele);
+    line-height: var(--lh-tele);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .micro {
+    font-size: var(--fs-micro);
+    line-height: var(--lh-micro);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* dotted rule, as under the reference headline */
+  .rule-dotted {
+    height: 1px;
+    background-image: radial-gradient(circle, var(--line-strong) 0.6px, transparent 0.8px);
+    background-size: 5px 1px;
+    background-repeat: repeat-x;
+  }
+  .rule-dotted-v {
+    width: 1px;
+    background-image: radial-gradient(circle, var(--line-strong) 0.6px, transparent 0.8px);
+    background-size: 1px 5px;
+    background-repeat: repeat-y;
+  }
+
+  /* static dot field used where a canvas would be wasteful */
+  .dot-field {
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.075) 0.75px, transparent 1px);
+    background-size: 12px 12px;
+  }
+
+  /* withheld judge tile: diagonal hatch */
+  .hatch {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      rgba(255, 255, 255, 0.045) 0px,
+      rgba(255, 255, 255, 0.045) 1px,
+      transparent 1px,
+      transparent 7px
+    );
+  }
+
+  /* scan line: only rendered while a camera is being analyzed */
+  .scanline {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--line-strong), transparent);
+    animation: scan 2.4s linear infinite;
+  }
+
+  /* hide native select chrome, keep native behavior + a11y */
+  .hud-select {
+    appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+      linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+    background-position:
+      calc(100% - 13px) 50%,
+      calc(100% - 9px) 50%;
+    background-size: 4px 4px;
+    background-repeat: no-repeat;
+  }
+  .hud-select option {
+    background: var(--panel);
+    color: var(--fg);
+  }
+
+  .thin-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: var(--dim) transparent;
+  }
+}
+
+@keyframes scan {
+  from {
+    top: 0%;
+  }
+  to {
+    top: 100%;
+  }
+}
+
+@keyframes blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0.15;
+  }
+}
+
+.blink {
+  animation: blink 1.2s steps(1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .scanline {
+    display: none;
+  }
+}

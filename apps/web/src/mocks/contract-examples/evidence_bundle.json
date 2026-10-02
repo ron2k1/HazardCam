@@ -1,0 +1,127 @@
+{
+  "scenario_id": "scenario_001",
+  "status": "ok",
+  "cameras": [
+    {
+      "id": "cam_01",
+      "label": null,
+      "model_access": true,
+      "position": [
+        0,
+        4
+      ],
+      "heading_deg": 95,
+      "fov_deg": 70
+    },
+    {
+      "id": "cam_02",
+      "label": null,
+      "model_access": true,
+      "position": [
+        8,
+        0
+      ],
+      "heading_deg": 185,
+      "fov_deg": 65
+    },
+    {
+      "id": "cam_03",
+      "label": null,
+      "model_access": true,
+      "position": [
+        3,
+        -5
+      ],
+      "heading_deg": 20,
+      "fov_deg": 80
+    }
+  ],
+  "evidence": [
+    {
+      "id": "obs_a_001",
+      "t_start": 8.0,
+      "t_end": 8.6,
+      "cue_type": "traffic_reaction",
+      "description": "Several visible vehicles brake abruptly",
+      "direction": "west",
+      "confidence": 0.84,
+      "supporting_frames": [
+        8
+      ],
+      "camera_id": "cam_01",
+      "bearing_deg": null
+    },
+    {
+      "id": "obs_b_001",
+      "t_start": 8.2,
+      "t_end": 9.0,
+      "cue_type": "human_reaction",
+      "description": "Visible pedestrians rapidly orient toward the left side of frame",
+      "direction": "northwest",
+      "confidence": 0.76,
+      "supporting_frames": [
+        8,
+        9
+      ],
+      "camera_id": "cam_02",
+      "bearing_deg": null
+    },
+    {
+      "id": "obs_c_001",
+      "t_start": 9.1,
+      "t_end": 10.5,
+      "cue_type": "traffic_flow_change",
+      "description": "A queue begins forming downstream",
+      "direction": null,
+      "confidence": 0.79,
+      "supporting_frames": [
+        9,
+        10
+      ],
+      "camera_id": "cam_03",
+      "bearing_deg": null
+    }
+  ],
+  "clusters": [
+    {
+      "id": "clu_01",
+      "t_start": 8.0,
+      "t_end": 10.5,
+      "evidence_ids": [
+        "obs_a_001",
+        "obs_b_001",
+        "obs_c_001"
+      ],
+      "camera_ids": [
+        "cam_01",
+        "cam_02",
+        "cam_03"
+      ],
+      "score": 0.78
+    }
+  ],
+  "region_candidates": [
+    {
+      "id": "blind_zone_02",
+      "label": "intersection core",
+      "center": [
+        4.0,
+        0.5
+      ],
+      "radius_m": 3.0,
+      "score": 0.66,
+      "camera_ids": [
+        "cam_01",
+        "cam_02"
+      ],
+      "evidence_ids": [
+        "obs_a_001",
+        "obs_b_001"
+      ],
+      "method": "ray_intersection"
+    }
+  ],
+  "notes": [
+    "Illustrative example; values are not from a real run."
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "base": "http://127.0.0.1:3000",
+  "shots": [
+    "C:\\Users\\thegr\\OneDrive\\Desktop\\nvidia hackathon\\ambient-mirror-ultracode-prebuild-v3\\design\\screenshots\\landing-1440x900.png",
+    "C:\\Users\\thegr\\OneDrive\\Desktop\\nvidia hackathon\\ambient-mirror-ultracode-prebuild-v3\\design\\screenshots\\ops-1440x900.png",
+    "C:\\Users\\thegr\\OneDrive\\Desktop\\nvidia hackathon\\ambient-mirror-ultracode-prebuild-v3\\design\\screenshots\\ops-evidence-selected-1440x900.png",
+    "C:\\Users\\thegr\\OneDrive\\Desktop\\nvidia hackathon\\ambient-mirror-ultracode-prebuild-v3\\design\\screenshots\\ops-gt-revealed-1440x900.png",
+    "C:\\Users\\thegr\\OneDrive\\Desktop\\nvidia hackathon\\ambient-mirror-ultracode-prebuild-v3\\design\\screenshots\\ops-midrun-1440x900.png",
+    "C:\\Users\\thegr\\OneDrive\\Desktop\\nvidia hackathon\\ambient-mirror-ultracode-prebuild-v3\\design\\screenshots\\ops-abstain-1440x900.png",
+    "C:\\Users\\thegr\\OneDrive\\Desktop\\nvidia hackathon\\ambient-mirror-ultracode-prebuild-v3\\design\\screenshots\\ops-idle-1440x900.png",
+    "C:\\Users\\thegr\\OneDrive\\Desktop\\nvidia hackathon\\ambient-mirror-ultracode-prebuild-v3\\design\\screenshots\\ops-1920x1080.png",
+    "C:\\Users\\thegr\\OneDrive\\Desktop\\nvidia hackathon\\ambient-mirror-ultracode-prebuild-v3\\design\\screenshots\\landing-1920x1080.png",
+    "C:\\Users\\thegr\\OneDrive\\Desktop\\nvidia hackathon\\ambient-mirror-ultracode-prebuild-v3\\design\\screenshots\\ops-1280x800.png",
+    "C:\\Users\\thegr\\OneDrive\\Desktop\\nvidia hackathon\\ambient-mirror-ultracode-prebuild-v3\\design\\screenshots\\landing-1280x800.png",
+    "C:\\Users\\thegr\\OneDrive\\Desktop\\nvidia hackathon\\ambient-mirror-ultracode-prebuild-v3\\design\\screenshots\\landing-reduced-motion-1440x900.png",
+    "C:\\Users\\thegr\\OneDrive\\Desktop\\nvidia hackathon\\ambient-mirror-ultracode-prebuild-v3\\design\\screenshots\\ops-reduced-motion-1440x900.png"
+  ],
+  "consoleErrors": [],
+  "pageErrors": [],
+  "external": [],
+  "failed": [],
+  "prefetchCancelled": [],
+  "checks": {
+    "landingHeadline": "INFER / THE UNSEEN",
+    "enterSystemHref": "/ops",
+    "cameraTiles": 4,
+    "gtLabel": 1,
+    "harnessLabel": 1,
+    "traceRows": 11,
+    "hypothesisState": "FINAL",
+    "seekHighlightsCam02": true,
+    "gtRevealed": 1,
+    "midRunPhase": "running",
+    "afterRunPhase": "complete",
+    "overflowX_1920": false,
+    "overflowX_1280": false,
+    "reducedMotionMatchesLanding": true,
+    "smilAnimationsLandingReduced": 0,
+    "reducedMotionMatchesOps": true,
+    "smilAnimationsOpsReduced": 0,
+    "smilAnimationsLandingFull": 7
+  }
+}

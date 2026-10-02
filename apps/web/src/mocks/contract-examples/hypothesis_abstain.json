@@ -1,0 +1,17 @@
+{
+  "event_type": "unknown",
+  "region": "unknown",
+  "confidence": 0.2,
+  "evidence_ids": [],
+  "reason": "Only one camera shows a weak cue; no corroborating evidence in time or space.",
+  "alternatives": [
+    {
+      "event_type": "no_event",
+      "confidence": 0.5
+    }
+  ],
+  "limitations": [
+    "Single weak cue",
+    "No ray intersection available"
+  ]
+}

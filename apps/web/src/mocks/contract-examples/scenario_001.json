@@ -1,0 +1,79 @@
+{
+  "id": "scenario_001",
+  "title": "Prepared real multi-camera blind-zone event",
+  "duration_seconds": 15,
+  "visible_cameras": [
+    {
+      "id": "cam_01",
+      "file": "data/prepared/scenario_001/cam_a.mp4",
+      "model_access": true,
+      "position": [
+        0,
+        4
+      ],
+      "heading_deg": 95,
+      "fov_deg": 70,
+      "time_offset_s": 0.0
+    },
+    {
+      "id": "cam_02",
+      "file": "data/prepared/scenario_001/cam_b.mp4",
+      "model_access": true,
+      "position": [
+        8,
+        0
+      ],
+      "heading_deg": 185,
+      "fov_deg": 65,
+      "time_offset_s": 0.0
+    },
+    {
+      "id": "cam_03",
+      "file": "data/prepared/scenario_001/cam_c.mp4",
+      "model_access": true,
+      "position": [
+        3,
+        -5
+      ],
+      "heading_deg": 20,
+      "fov_deg": 80,
+      "time_offset_s": 0.0
+    }
+  ],
+  "ground_truth_camera": {
+    "id": "cam_gt",
+    "file": "data/prepared/scenario_001/hidden_ground_truth.mp4",
+    "model_access": false,
+    "position": [
+      4,
+      1
+    ],
+    "heading_deg": 270,
+    "fov_deg": 70
+  },
+  "coordinate_frame": "ILLUSTRATIVE example geometry (not measured). x_east_m, y_north_m; compass headings.",
+  "zones": [
+    {
+      "id": "blind_zone_01",
+      "label": "north approach",
+      "center": [
+        4.0,
+        6.0
+      ],
+      "radius_m": 3.0
+    },
+    {
+      "id": "blind_zone_02",
+      "label": "intersection core",
+      "center": [
+        4.0,
+        0.5
+      ],
+      "radius_m": 3.0
+    }
+  ],
+  "provenance": {
+    "kind": "illustrative_example",
+    "note": "Contract example only; real manifests live in data/manifests/."
+  }
+}
