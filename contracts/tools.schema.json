@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://ambient-mirror.local/contracts/tools.schema.json",
   "title": "ToolCall",
-  "description": "One call to a run-scoped tool (tools/session.py ToolSession). Arguments are small: run state (sampled frames, observations, the evidence bundle) lives in the session, so a caller never echoes large JSON back. The same interface serves the NON-AGENT dev harness and the event-day agent. Each tool's result schema is $defs/<tool>_result.",
+  "description": "One call to a run-scoped tool (tools/session.py ToolSession). Arguments are small: run state (sampled frames, observations, the evidence bundle) lives in the session, so a caller never echoes large JSON back. The same interface serves the NON-AGENT dev harness and the event-day agent. Each tool's result schema is $defs/<tool>_result. A tool's description is its oneOf branch's description, else its arguments' description.",
   "type": "object",
   "required": ["name", "arguments"],
   "additionalProperties": false,
@@ -34,18 +34,21 @@
       }
     },
     {
+      "description": "Put every inspected camera's cues on the scenario clock and link them into clusters by time. Requires inspect_camera for at least one camera.",
       "properties": {
         "name": { "const": "correlate_observations" },
         "arguments": { "$ref": "#/$defs/no_args" }
       }
     },
     {
+      "description": "Cast camera bearings into region candidates and assemble the evidence bundle with its ok/insufficient status. Requires correlate_observations.",
       "properties": {
         "name": { "const": "triangulate_region" },
         "arguments": { "$ref": "#/$defs/no_args" }
       }
     },
     {
+      "description": "Ask the reasoning model for a hypothesis over the evidence bundle. Requires triangulate_region.",
       "properties": {
         "name": { "const": "reason_hypothesis" },
         "arguments": { "$ref": "#/$defs/no_args" }
