@@ -4,8 +4,13 @@ Every `make <target>` is also `scripts/run.sh <target>`, for machines without ma
 
 ## Run it
 
-First time on a machine: `pnpm --dir apps/web install`, then `scripts/run.sh offline-check`
-to confirm dependencies, media, labels, recordings and the web build are all local.
+First time on a machine (needs uv, Node with pnpm, and ffmpeg on PATH):
+
+```bash
+uv sync --frozen                 # .venv from uv.lock, Python 3.11-3.13
+pnpm --dir apps/web install
+scripts/run.sh offline-check     # dependencies, media, labels, recordings, web build all local
+```
 
 Fixture mode makes no model calls and needs no network:
 
