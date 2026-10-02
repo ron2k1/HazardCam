@@ -1,4 +1,4 @@
-"""P16: the integrity and start scripts fail when they find a problem, and run from any cwd.
+"""P16: the integrity scripts fail when they find a problem, and run from any cwd.
 
 Each test copies the real scripts into a scratch tree and runs them with bash, so nothing
 is written to the repo (in particular no ``artifacts/event_day/START.txt``).
@@ -6,72 +6,20 @@ is written to the repo (in particular no ``artifacts/event_day/START.txt``).
 
 from __future__ import annotations
 
-import os
-import shutil
-import subprocess
-import threading
-from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 import pytest
 
-from apps.api.schemas import REPO_ROOT
+from tests.unit.scripts._shell import BASH, run_script, script_tree
 
-SCRIPTS = REPO_ROOT / "scripts"
-
-
-def _bash() -> str | None:
-    if os.name != "nt":
-        return shutil.which("bash")
-    # A bare `bash` on Windows can be the WSL launcher; use the one Git ships, found above
-    # git.exe (cmd\ or mingw64\bin\ depending on PATH).
-    git = shutil.which("git")
-    for parent in Path(git).resolve().parents if git else []:
-        if (parent / "bin" / "bash.exe").is_file():
-            return str(parent / "bin" / "bash.exe")
-    return None
-
-
-BASH = _bash()
 pytestmark = pytest.mark.skipif(BASH is None, reason="no bash to run the scripts with")
 
 
-def _tree(root: Path, *scripts: str, files: dict[str, str] | None = None) -> Path:
-    (root / "scripts").mkdir(parents=True)
-    for name in scripts:
-        shutil.copy(SCRIPTS / name, root / "scripts" / name)
-    for rel, text in {
-        "agent/README.md": "Agent built on event day.\n",
-        "agent/tools.template.json": "{}\n",
-        "agent/event_day/.gitkeep": "",
-        **(files or {}),
-    }.items():
-        path = root / rel
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(text, encoding="utf-8", newline="\n")
-    return root
-
-
-def _run(
-    script: Path, cwd: Path, *args: str, env: dict[str, str] | None = None
-) -> subprocess.CompletedProcess[str]:
-    # Stop git from walking up out of the scratch tree into a real repository.
-    env = {**os.environ, "GIT_CEILING_DIRECTORIES": str(cwd.parent), **(env or {})}
-    assert BASH is not None
-    return subprocess.run(
-        [BASH, script.as_posix(), *args],
-        cwd=cwd,
-        env=env,
-        capture_output=True,
-        text=True,
-        timeout=60,
-        check=False,  # the exit status is what the tests assert
-    )
-
-
 def _boundary(tmp_path: Path, files: dict[str, str] | None = None):
-    root = _tree(tmp_path / "repo", "assert_prebuild_boundary.sh", "_boundary.sh", files=files)
-    done = _run(root / "scripts" / "assert_prebuild_boundary.sh", tmp_path)
+    root = script_tree(
+        tmp_path / "repo", "assert_prebuild_boundary.sh", "_boundary.sh", files=files
+    )
+    done = run_script(root / "scripts" / "assert_prebuild_boundary.sh", tmp_path)
     report = (root / "artifacts" / "PREBUILD_BOUNDARY_CHECK.txt").read_text("utf-8")
     return done, report
 
@@ -120,59 +68,27 @@ def test_prose_and_lookalike_names_are_not_eval_imports(tmp_path, rel, text):
 
 def test_event_day_delta_fails_when_event_day_code_imports_eval(tmp_path):
     scripts = ("verify_event_delta.sh", "_boundary.sh", "_python.sh")
-    clean = _tree(tmp_path / "clean" / "repo", *scripts)
-    assert _run(clean / "scripts" / "verify_event_delta.sh", tmp_path / "clean").returncode == 0
+    clean = script_tree(tmp_path / "clean" / "repo", *scripts)
+    assert (
+        run_script(clean / "scripts" / "verify_event_delta.sh", tmp_path / "clean").returncode == 0
+    )
 
-    bad = _tree(
+    bad = script_tree(
         tmp_path / "bad" / "repo",
         *scripts,
         files={"runtime/policy.py": "from eval.tool_probe import acceptable_calls\n"},
     )
-    done = _run(bad / "scripts" / "verify_event_delta.sh", tmp_path / "bad")
+    done = run_script(bad / "scripts" / "verify_event_delta.sh", tmp_path / "bad")
     assert done.returncode == 1
     report = (bad / "artifacts" / "event_day" / "DELTA_REPORT.txt").read_text("utf-8")
     assert "FORBIDDEN_EVAL_IMPORT runtime/policy.py:1:" in report
 
 
 def test_event_day_start_writes_into_the_repo_from_any_cwd(tmp_path):
-    root = _tree(tmp_path / "repo", "event_day_start.sh")
+    root = script_tree(tmp_path / "repo", "event_day_start.sh")
     elsewhere = tmp_path / "elsewhere"
     elsewhere.mkdir()
-    done = _run(root / "scripts" / "event_day_start.sh", elsewhere)
+    done = run_script(root / "scripts" / "event_day_start.sh", elsewhere)
     assert done.returncode == 0, done.stderr
     assert (root / "artifacts" / "event_day" / "START.txt").is_file()
     assert not (elsewhere / "artifacts").exists()
-
-
-class _Answers(BaseHTTPRequestHandler):
-    def do_GET(self):
-        self.send_response(200)
-        self.end_headers()
-
-    def log_message(self, *args):
-        pass
-
-
-def test_start_app_refuses_a_port_that_already_answers(tmp_path):
-    # Otherwise the readiness check would pass against a server that is not ours.
-    root = _tree(tmp_path / "repo", "start_app.sh", "_python.sh")
-    with ThreadingHTTPServer(("127.0.0.1", 0), _Answers) as foreign:
-        threading.Thread(target=foreign.serve_forever, daemon=True).start()
-        port = foreign.server_address[1]
-        try:
-            done = _run(
-                root / "scripts" / "start_app.sh",
-                tmp_path,
-                env={"API_PORT": str(port), "WEB_PORT": "1"},
-            )
-        finally:
-            foreign.shutdown()
-    assert done.returncode == 1
-    assert f"something already answers http://127.0.0.1:{port}/healthz" in done.stderr
-
-
-def test_start_app_rejects_an_unknown_argument(tmp_path):
-    root = _tree(tmp_path / "repo", "start_app.sh", "_python.sh")
-    done = _run(root / "scripts" / "start_app.sh", tmp_path, "--bogus")
-    assert done.returncode == 2
-    assert "usage: scripts/start_app.sh [--smoke]" in done.stderr
