@@ -1,0 +1,169 @@
+{
+  "meta": {
+    "profile": "full-local",
+    "model": "ministral-3:8b",
+    "scenario": "eval_001",
+    "cases": 13,
+    "system_prompt": "You run a multi-camera video analysis by calling tools. Reply with exactly one tool call that continues the run.",
+    "tools_contract": "contracts/tools.schema.json",
+    "probed_at": "2026-10-02T15:57:00+00:00"
+  },
+  "n": 13,
+  "pass": {
+    "k": 13,
+    "n": 13,
+    "rate": 1.0,
+    "wilson95": [
+      0.7719,
+      1.0
+    ]
+  },
+  "schema_valid": {
+    "k": 13,
+    "n": 13,
+    "rate": 1.0,
+    "wilson95": [
+      0.7719,
+      1.0
+    ]
+  },
+  "outcomes": {
+    "ok": 13
+  },
+  "parallel_calls": 0,
+  "invisible_camera_calls": 0,
+  "recovered": true,
+  "median_latency_s": 0.62,
+  "rows": [
+    {
+      "case": "00_next_after_start",
+      "tool_calls": 1,
+      "content_chars": 0,
+      "tool": "sample_video",
+      "outcome": "ok",
+      "error": null,
+      "invisible_camera": false,
+      "latency_s": 7.26
+    },
+    {
+      "case": "01_next_after_sample_video",
+      "tool_calls": 1,
+      "content_chars": 0,
+      "tool": "sample_video",
+      "outcome": "ok",
+      "error": null,
+      "invisible_camera": false,
+      "latency_s": 0.6
+    },
+    {
+      "case": "02_next_after_inspect_camera",
+      "tool_calls": 1,
+      "content_chars": 0,
+      "tool": "sample_video",
+      "outcome": "ok",
+      "error": null,
+      "invisible_camera": false,
+      "latency_s": 0.62
+    },
+    {
+      "case": "03_next_after_sample_video",
+      "tool_calls": 1,
+      "content_chars": 0,
+      "tool": "inspect_camera",
+      "outcome": "ok",
+      "error": null,
+      "invisible_camera": false,
+      "latency_s": 0.59
+    },
+    {
+      "case": "04_next_after_inspect_camera",
+      "tool_calls": 1,
+      "content_chars": 0,
+      "tool": "sample_video",
+      "outcome": "ok",
+      "error": null,
+      "invisible_camera": false,
+      "latency_s": 0.59
+    },
+    {
+      "case": "05_next_after_sample_video",
+      "tool_calls": 1,
+      "content_chars": 0,
+      "tool": "inspect_camera",
+      "outcome": "ok",
+      "error": null,
+      "invisible_camera": false,
+      "latency_s": 0.62
+    },
+    {
+      "case": "06_next_after_inspect_camera",
+      "tool_calls": 1,
+      "content_chars": 0,
+      "tool": "correlate_observations",
+      "outcome": "ok",
+      "error": null,
+      "invisible_camera": false,
+      "latency_s": 0.47
+    },
+    {
+      "case": "07_next_after_correlate_observations",
+      "tool_calls": 1,
+      "content_chars": 0,
+      "tool": "triangulate_region",
+      "outcome": "ok",
+      "error": null,
+      "invisible_camera": false,
+      "latency_s": 0.45
+    },
+    {
+      "case": "08_next_after_triangulate_region",
+      "tool_calls": 1,
+      "content_chars": 0,
+      "tool": "reason_hypothesis",
+      "outcome": "ok",
+      "error": null,
+      "invisible_camera": false,
+      "latency_s": 0.42
+    },
+    {
+      "case": "09_next_after_reason_hypothesis",
+      "tool_calls": 1,
+      "content_chars": 0,
+      "tool": "submit_hypothesis",
+      "outcome": "ok",
+      "error": null,
+      "invisible_camera": false,
+      "latency_s": 3.05
+    },
+    {
+      "case": "10_next_after_get_supporting_frames",
+      "tool_calls": 1,
+      "content_chars": 0,
+      "tool": "submit_hypothesis",
+      "outcome": "ok",
+      "error": null,
+      "invisible_camera": false,
+      "latency_s": 6.83
+    },
+    {
+      "case": "11_next_after_get_supporting_frames",
+      "tool_calls": 1,
+      "content_chars": 0,
+      "tool": "submit_hypothesis",
+      "outcome": "ok",
+      "error": null,
+      "invisible_camera": false,
+      "latency_s": 6.8
+    },
+    {
+      "case": "recovery",
+      "tool_calls": 1,
+      "content_chars": 0,
+      "tool": "inspect_camera",
+      "outcome": "ok",
+      "error": null,
+      "invisible_camera": false,
+      "latency_s": 0.67
+    }
+  ]
+}

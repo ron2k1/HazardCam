@@ -1,0 +1,170 @@
+{
+  "meta": {
+    "profile": "lite-local",
+    "model": "ministral-3:3b",
+    "scenario": "eval_001",
+    "cases": 13,
+    "system_prompt": "You run a multi-camera video analysis by calling tools. Reply with exactly one tool call that continues the run.",
+    "tools_contract": "contracts/tools.schema.json",
+    "probed_at": "2026-10-02T15:56:31+00:00"
+  },
+  "n": 13,
+  "pass": {
+    "k": 10,
+    "n": 13,
+    "rate": 0.7692307692307693,
+    "wilson95": [
+      0.4974,
+      0.9182
+    ]
+  },
+  "schema_valid": {
+    "k": 10,
+    "n": 13,
+    "rate": 0.7692307692307693,
+    "wilson95": [
+      0.4974,
+      0.9182
+    ]
+  },
+  "outcomes": {
+    "no_tool_call": 3,
+    "ok": 10
+  },
+  "parallel_calls": 2,
+  "invisible_camera_calls": 0,
+  "recovered": true,
+  "median_latency_s": 0.33,
+  "rows": [
+    {
+      "case": "00_next_after_start",
+      "tool_calls": 3,
+      "content_chars": 0,
+      "tool": "sample_video",
+      "outcome": "ok",
+      "error": null,
+      "invisible_camera": false,
+      "latency_s": 4.72
+    },
+    {
+      "case": "01_next_after_sample_video",
+      "tool_calls": 1,
+      "content_chars": 0,
+      "tool": "sample_video",
+      "outcome": "ok",
+      "error": null,
+      "invisible_camera": false,
+      "latency_s": 0.26
+    },
+    {
+      "case": "02_next_after_inspect_camera",
+      "tool_calls": 1,
+      "content_chars": 0,
+      "tool": "sample_video",
+      "outcome": "ok",
+      "error": null,
+      "invisible_camera": false,
+      "latency_s": 0.46
+    },
+    {
+      "case": "03_next_after_sample_video",
+      "tool_calls": 1,
+      "content_chars": 0,
+      "tool": "sample_video",
+      "outcome": "ok",
+      "error": null,
+      "invisible_camera": false,
+      "latency_s": 0.26
+    },
+    {
+      "case": "04_next_after_inspect_camera",
+      "tool_calls": 1,
+      "content_chars": 0,
+      "tool": "sample_video",
+      "outcome": "ok",
+      "error": null,
+      "invisible_camera": false,
+      "latency_s": 0.31
+    },
+    {
+      "case": "05_next_after_sample_video",
+      "tool_calls": 1,
+      "content_chars": 0,
+      "tool": "inspect_camera",
+      "outcome": "ok",
+      "error": null,
+      "invisible_camera": false,
+      "latency_s": 0.33
+    },
+    {
+      "case": "06_next_after_inspect_camera",
+      "tool_calls": 1,
+      "content_chars": 0,
+      "tool": "correlate_observations",
+      "outcome": "ok",
+      "error": null,
+      "invisible_camera": false,
+      "latency_s": 0.25
+    },
+    {
+      "case": "07_next_after_correlate_observations",
+      "tool_calls": 1,
+      "content_chars": 0,
+      "tool": "triangulate_region",
+      "outcome": "ok",
+      "error": null,
+      "invisible_camera": false,
+      "latency_s": 0.24
+    },
+    {
+      "case": "08_next_after_triangulate_region",
+      "tool_calls": 0,
+      "content_chars": 96,
+      "tool": null,
+      "outcome": "no_tool_call",
+      "error": null,
+      "invisible_camera": false,
+      "latency_s": 0.44
+    },
+    {
+      "case": "09_next_after_reason_hypothesis",
+      "tool_calls": 2,
+      "content_chars": 0,
+      "tool": "get_supporting_frames",
+      "outcome": "ok",
+      "error": null,
+      "invisible_camera": false,
+      "latency_s": 1.06
+    },
+    {
+      "case": "10_next_after_get_supporting_frames",
+      "tool_calls": 0,
+      "content_chars": 149,
+      "tool": null,
+      "outcome": "no_tool_call",
+      "error": null,
+      "invisible_camera": false,
+      "latency_s": 0.55
+    },
+    {
+      "case": "11_next_after_get_supporting_frames",
+      "tool_calls": 0,
+      "content_chars": 153,
+      "tool": null,
+      "outcome": "no_tool_call",
+      "error": null,
+      "invisible_camera": false,
+      "latency_s": 0.53
+    },
+    {
+      "case": "recovery",
+      "tool_calls": 1,
+      "content_chars": 0,
+      "tool": "sample_video",
+      "outcome": "ok",
+      "error": null,
+      "invisible_camera": false,
+      "latency_s": 0.27
+    }
+  ]
+}
