@@ -13,6 +13,8 @@ data/prepared/**/*.mp4
 data/runs/
 /models/
 *.log
+# curated, token-scrubbed evidence cited by artifacts/runtime/runtime_smoke.md
+!artifacts/runtime/runtime_smoke.log
 .DS_Store
 .ruff_cache/
 tmp/
