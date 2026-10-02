@@ -1,0 +1,40 @@
+profile: remote16gb
+mode: remote_optional
+notes: >-
+  Optional acceleration on the SSH desktop (RTX 2060 6 GB). Probe hardware first; prefer
+  data/media/test jobs. The endpoint is not configured: set QWEN_BASE_URL and
+  MISTRAL_BASE_URL (e.g. http://<remote-host>:11434/v1) before selecting this profile.
+  Model tags assume the lite models are pulled on the remote; override with QWEN_MODEL /
+  MISTRAL_MODEL otherwise.
+perception:
+  backend: openai_compatible
+  base_url: REPLACE_FROM_ENV_QWEN_BASE_URL
+  model: qwen3-vl:4b-instruct
+  quantization: Q4_K_M (Ollama GGUF)
+  timeout_seconds: 240
+  max_tokens: 1024
+  temperature: 0.0
+  retries: 2
+  think: false
+  think_param: reasoning_effort
+  structured_output: json_schema
+  context_tokens: 4096
+  max_image_width: 512
+reasoning:
+  backend: openai_compatible
+  base_url: REPLACE_FROM_ENV_MISTRAL_BASE_URL
+  model: ministral-3:3b
+  quantization: Q4_K_M (Ollama GGUF)
+  timeout_seconds: 240
+  max_tokens: 768
+  temperature: 0.0
+  retries: 2
+  think: false
+  think_param: reasoning_effort
+  structured_output: json_schema
+  context_tokens: 4096
+media:
+  sample_fps: 1
+  max_frames_per_camera: 6
+  max_width: 768
+  concurrency: 1

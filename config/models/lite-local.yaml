@@ -1,0 +1,39 @@
+profile: lite-local
+mode: local
+notes: >-
+  Small free local models through Ollama's OpenAI-compatible /v1 endpoint (verified on
+  Ollama 0.22.1, RTX 4060 8 GB). Ollama serves a 4096-token context by default and
+  silently truncates longer prompts, so frames are downscaled to 512 px for the model
+  and the adapter subsamples frames to fit context_tokens.
+perception:
+  backend: openai_compatible
+  base_url: http://127.0.0.1:11434/v1
+  model: qwen3-vl:4b-instruct
+  quantization: Q4_K_M (Ollama GGUF)
+  timeout_seconds: 180
+  max_tokens: 1024
+  temperature: 0.0
+  retries: 2
+  think: false
+  think_param: reasoning_effort
+  structured_output: json_schema
+  context_tokens: 4096
+  max_image_width: 512
+reasoning:
+  backend: openai_compatible
+  base_url: http://127.0.0.1:11434/v1
+  model: ministral-3:3b
+  quantization: Q4_K_M (Ollama GGUF)
+  timeout_seconds: 180
+  max_tokens: 768
+  temperature: 0.0
+  retries: 2
+  think: false
+  think_param: reasoning_effort
+  structured_output: json_schema
+  context_tokens: 4096
+media:
+  sample_fps: 1
+  max_frames_per_camera: 8
+  max_width: 768
+  concurrency: 1

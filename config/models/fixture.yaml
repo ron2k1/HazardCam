@@ -1,0 +1,18 @@
+profile: fixture
+mode: fixture
+notes: >-
+  No model runtime. Adapters replay JSON fixtures. A per-scenario file at
+  <fixture_dir>/<scenario_id>/<fixture file name> wins over the shared fixture.
+perception:
+  backend: fixture
+  fixture: data/fixtures/qwen_observations.json
+  fixture_dir: data/fixtures
+reasoning:
+  backend: fixture
+  fixture: data/fixtures/final_hypothesis.json
+  fixture_dir: data/fixtures
+media:
+  sample_fps: 1
+  max_frames_per_camera: 8
+  max_width: 768
+  concurrency: 1

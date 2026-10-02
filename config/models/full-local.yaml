@@ -1,0 +1,42 @@
+profile: full-local
+mode: local
+notes: >-
+  Closest practical pair to the intended stack on the 8 GB dev laptop, through Ollama /v1.
+  The intended 35B-class Qwen (qwen3.5:35b-a3b) and a larger Mistral do NOT fit 8 GB VRAM +
+  16 GB RAM at a usable speed; they run on the gb10 profile. qwen3.5:9b is a hybrid-thinking
+  model: with thinking on it spends the whole token budget reasoning and returns empty
+  content, so thinking is explicitly off. Ollama 0.22.1 ignores response_format for
+  qwen3.5:9b, so its JSON relies on the prompt plus the adapter's parse/repair pass.
+  The two models together exceed 8 GB; Ollama swaps them, one at a time.
+perception:
+  backend: openai_compatible
+  base_url: http://127.0.0.1:11434/v1
+  model: qwen3.5:9b
+  quantization: Q4_K_M (Ollama GGUF)
+  timeout_seconds: 300
+  max_tokens: 1024
+  temperature: 0.0
+  retries: 2
+  think: false
+  think_param: reasoning_effort
+  structured_output: json_schema
+  context_tokens: 4096
+  max_image_width: 512
+reasoning:
+  backend: openai_compatible
+  base_url: http://127.0.0.1:11434/v1
+  model: ministral-3:8b
+  quantization: Q4_K_M (Ollama GGUF)
+  timeout_seconds: 300
+  max_tokens: 768
+  temperature: 0.0
+  retries: 2
+  think: false
+  think_param: reasoning_effort
+  structured_output: json_schema
+  context_tokens: 4096
+media:
+  sample_fps: 1
+  max_frames_per_camera: 8
+  max_width: 768
+  concurrency: 1

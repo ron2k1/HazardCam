@@ -1,0 +1,45 @@
+profile: gb10
+mode: local_competition
+notes: >-
+  Competition profile (ARM64 Linux, 128 GB unified memory). Serving runtime, checkpoints,
+  quantization and context are filled after probing the actual GB10 on event day (D02/D03).
+  Assumes vLLM / NIM OpenAI-compatible servers: thinking is toggled through
+  chat_template_kwargs and response_format json_schema is honored (guided decoding).
+  Selecting this profile fails until the REPLACE_ON_GB10 values are filled or overridden
+  with QWEN_MODEL / MISTRAL_MODEL.
+perception:
+  backend: openai_compatible
+  base_url: http://127.0.0.1:8000/v1
+  # Intended: the 35B-class Qwen multimodal checkpoint (e.g. Qwen3.5-35B-A3B or
+  # Qwen3-VL-30B-A3B-Instruct), exact id/hash recorded at serve time.
+  model: REPLACE_ON_GB10
+  quantization: null  # label recorded at serve time (e.g. FP8 / NVFP4 / BF16)
+  timeout_seconds: 120
+  max_tokens: 1024
+  temperature: 0.0
+  retries: 2
+  think: false
+  think_param: chat_template_kwargs
+  structured_output: json_schema
+  # Set to the server's --max-model-len; null disables the frame budget guard.
+  context_tokens: null
+  max_image_width: 768
+reasoning:
+  backend: openai_compatible
+  base_url: http://127.0.0.1:8001/v1
+  # Intended: a larger Mistral/Ministral instruct checkpoint than the 8 GB dev pair.
+  model: REPLACE_ON_GB10
+  quantization: null  # label recorded at serve time (e.g. FP8 / NVFP4 / BF16)
+  timeout_seconds: 120
+  max_tokens: 1024
+  temperature: 0.0
+  retries: 2
+  think: false
+  think_param: none
+  structured_output: json_schema
+  context_tokens: null
+media:
+  sample_fps: 1
+  max_frames_per_camera: 12
+  max_width: 768
+  concurrency: 2
