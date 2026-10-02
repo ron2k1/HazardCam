@@ -1,0 +1,13 @@
+Ambient Urban Mirror prebuild boundary check
+UTC: 2026-10-02T19:39:08Z
+
+Allowed prebuild agent files: templates/readmes only.
+
+Executable-looking files under agent/:
+PASS: no finished agent implementation detected.
+
+Imports of the judge-side eval package from agent runtime scripts/runtime:
+PASS: none.
+
+Event-day directory contents:
+README.md

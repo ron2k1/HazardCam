@@ -1,0 +1,43 @@
+{
+  "checked_at": "2026-10-02T19:39:08+00:00",
+  "git_commit": "4990f364dbeee9106f6ce2e0db5242d2c638e567",
+  "ok": true,
+  "checks": [
+    {
+      "name": "python dependencies",
+      "ok": true,
+      "required": true,
+      "detail": "10 runtime packages import on Python 3.12.13"
+    },
+    {
+      "name": "ffmpeg / ffprobe",
+      "ok": true,
+      "required": true,
+      "detail": "ffmpeg C:\\Users\\thegr\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1-full_build\\bin\\ffmpeg.EXE; ffprobe C:\\Users\\thegr\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1-full_build\\bin\\ffprobe.EXE"
+    },
+    {
+      "name": "scenario data",
+      "ok": true,
+      "required": true,
+      "detail": "22 scenarios, 88 media files, labels and recordings"
+    },
+    {
+      "name": "web install + build",
+      "ok": true,
+      "required": true,
+      "detail": "build tjoJZNJRRJ3Ee4KqgtC84; 34 source and 15 bundle files name no remote font/CDN host"
+    },
+    {
+      "name": "local models (Ollama)",
+      "ok": true,
+      "required": false,
+      "detail": "present in Ollama: ministral-3:3b, ministral-3:8b, qwen3-vl:4b-instruct, qwen3.5:9b"
+    },
+    {
+      "name": "fixture run, network refused",
+      "ok": true,
+      "required": true,
+      "detail": "eval_001 fixture run with non-loopback sockets refused: passenger_dropoff_pickup in 1.8 s, 0 network attempts"
+    }
+  ]
+}
