@@ -1,10 +1,10 @@
 {
   "scenario_id": "eval_001",
-  "run_id": "run_20261002T163900Z_6915a6",
+  "run_id": "run_20261002T193716Z_1f4f19",
   "profile": "full-local",
   "run_timeout_ms": 900000,
-  "browser_click_to_complete_ms": 86712,
-  "server_created_to_finished_ms": 86610,
+  "browser_click_to_complete_ms": 91425,
+  "server_created_to_finished_ms": 91309,
   "sse_events": 49,
   "tool_calls": 13,
   "failed_tool_calls": 0,
@@ -21,7 +21,7 @@
     4,
     5,
     6,
-    8,
+    7,
     9,
     13
   ],
@@ -31,15 +31,15 @@
       "evidence_id": "cam_a.o2",
       "camera_id": "cam_a",
       "target_s": 19,
-      "landed_s": 19.000292
+      "landed_s": 19.000446
     },
     {
       "via": "hypothesis chip",
       "evidence_id": "cam_a.o1",
       "camera_id": "cam_a",
       "target_s": 8,
-      "landed_s": 8.000457
+      "landed_s": 8.000309
     }
   ],
-  "measured_at": "2026-10-02T16:40:29.070Z"
+  "measured_at": "2026-10-02T19:38:50.098Z"
 }

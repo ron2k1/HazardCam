@@ -90,12 +90,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 31126,
+                  "duration": 32739,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T17:17:39.250Z",
+                  "startTime": "2026-10-02T19:34:26.805Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -105,7 +105,7 @@
           ],
           "id": "d3a3065b3deec3cdea4f-035f590fba5a17e1049e",
           "file": "ops-fixture.spec.ts",
-          "line": 77,
+          "line": 78,
           "column": 5
         }
       ]
@@ -113,8 +113,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-10-02T17:17:34.013Z",
-    "duration": 36733.744,
+    "startTime": "2026-10-02T19:34:24.969Z",
+    "duration": 35038.574,
     "expected": 1,
     "skipped": 0,
     "unexpected": 0,
