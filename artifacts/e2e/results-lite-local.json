@@ -1,0 +1,367 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Users\\thegr\\OneDrive\\Desktop\\nvidia hackathon\\ambient-mirror-ultracode-prebuild-v3\\apps\\web\\node_modules\\.pnpm\\@playwright+test@1.63.0\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "-c",
+      "../../tests/e2e/playwright.config.ts"
+    ],
+    "configFile": "C:\\Users\\thegr\\OneDrive\\Desktop\\nvidia hackathon\\ambient-mirror-ultracode-prebuild-v3\\tests\\e2e\\playwright.config.ts",
+    "rootDir": "C:/Users/thegr/OneDrive/Desktop/nvidia hackathon/ambient-mirror-ultracode-prebuild-v3/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/thegr/OneDrive/Desktop/nvidia hackathon/ambient-mirror-ultracode-prebuild-v3/tests/e2e/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/thegr/OneDrive/Desktop/nvidia hackathon/ambient-mirror-ultracode-prebuild-v3/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 660000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "C:\\Users\\thegr\\OneDrive\\Desktop\\nvidia hackathon\\ambient-mirror-ultracode-prebuild-v3\\artifacts\\e2e\\results-lite-local.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "ops-fixture.spec.ts",
+      "file": "ops-fixture.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "eval_001 [lite-local]: live trace in tool order, evidence seeks media, GT withheld until reveal",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 660000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 32005,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T16:30:51.322Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d3a3065b3deec3cdea4f-035f590fba5a17e1049e",
+          "file": "ops-fixture.spec.ts",
+          "line": 74,
+          "column": 5
+        },
+        {
+          "title": "eval_012 [fixture]: a real no_event claim renders as a negative claim on its region",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 660000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2888,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T16:31:23.413Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d3a3065b3deec3cdea4f-e9508ad984d4cc9dc56a",
+          "file": "ops-fixture.spec.ts",
+          "line": 254,
+          "column": 5
+        },
+        {
+          "title": "eval_005 [fixture]: a real abstention renders as ABSTAIN / unknown with no claim",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 660000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2261,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T16:31:26.311Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d3a3065b3deec3cdea4f-f0680ec8eeda7f19acc4",
+          "file": "ops-fixture.spec.ts",
+          "line": 279,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "ops-resilience.spec.ts",
+      "file": "ops-resilience.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "API down: offline notice, RUN disabled, recovers when the API answers again",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 660000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4809,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T16:31:28.587Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "43873ff4c5a83e3f95e3-54a5195089f017884027",
+          "file": "ops-resilience.spec.ts",
+          "line": 28,
+          "column": 5
+        },
+        {
+          "title": "SSE resume [fixture] (first connection cut in the browser): the reconnect sends Last-Event-ID and the API resumes after it",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 660000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2049,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T16:31:33.402Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "43873ff4c5a83e3f95e3-657a279b9e8b81da5b94",
+          "file": "ops-resilience.spec.ts",
+          "line": 106,
+          "column": 5
+        },
+        {
+          "title": "SSE replay [fixture] (reconnect answered from seq 1 in the browser): events already applied are dropped, not duplicated",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 660000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2094,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T16:31:35.458Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "43873ff4c5a83e3f95e3-f476030eba15c7e3c9ae",
+          "file": "ops-resilience.spec.ts",
+          "line": 123,
+          "column": 5
+        },
+        {
+          "title": "tool failure + run.failed [fixture] (injected in the browser; the backend run itself succeeds) render as a failed run",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 660000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3074,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T16:31:37.558Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "43873ff4c5a83e3f95e3-457dce8f42a26ea98ad0",
+          "file": "ops-resilience.spec.ts",
+          "line": 153,
+          "column": 5
+        },
+        {
+          "title": "/ops?mock=default still renders the offline mock and never calls the API",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 660000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 477,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T16:31:40.639Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "43873ff4c5a83e3f95e3-36606caf45d56462dc57",
+          "file": "ops-resilience.spec.ts",
+          "line": 213,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-02T16:30:46.066Z",
+    "duration": 55479.478,
+    "expected": 8,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}
