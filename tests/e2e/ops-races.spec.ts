@@ -141,6 +141,43 @@ test("reveal across a RE-RUN [fixture]: the dropped reveal neither keeps FETCHIN
   expect(judgeCalls, "one judge call per reveal click").toHaveLength(2);
 });
 
+test("scenario change during a reveal [fixture]: the new scenario neither shows FETCHING nor takes the old reply", async ({ page }) => {
+  const u = ui(page);
+  const judgeCalls: string[] = [];
+  page.on("request", (r) => {
+    // the judge record itself, not the revealed camera's video
+    const path = new URL(r.url()).pathname;
+    if (/^\/api\/judge\/scenarios\/[^/]+$/.test(path)) judgeCalls.push(path);
+  });
+  await openOps(page, "?scenario=eval_001");
+  await runToEnd(page);
+
+  const judge = await hold(page, JUDGE_ROUTE, "GET");
+  const revealBtn = revealButton(page);
+  await revealBtn.click();
+  await expect(revealBtn).toHaveText("FETCHING JUDGE DATA");
+
+  // the scenario select stays open while a reveal is pending; switching drops that reveal
+  await u.select.selectOption("eval_005");
+  // well inside the page's 6 s judge timeout (see "reveal across a RE-RUN")
+  await expect(revealBtn, "FETCHING ends with the scenario change").toHaveText("REVEAL AFTER RUN", { timeout: 2_000 });
+  await expect(revealBtn).toBeDisabled();
+
+  // eval_001's reply lands on eval_005: not shown, and nothing unlocked by it
+  const staleReply = page.waitForResponse(JUDGE_ROUTE, { timeout: 4_000 });
+  judge.release();
+  await (await staleReply).finished();
+  // absence check, so a fixed wait
+  await page.waitForTimeout(300);
+  await expect(u.groundTruth).toHaveAttribute("data-state", "withheld");
+  await expect(revealBtn).toHaveText("REVEAL AFTER RUN");
+
+  await runToEnd(page);
+  await revealBtn.click();
+  await expect(u.groundTruth).toHaveAttribute("data-state", "revealed");
+  expect(judgeCalls).toEqual(["/api/judge/scenarios/eval_001", "/api/judge/scenarios/eval_005"]);
+});
+
 test("RE-RUN after a reveal [fixture]: the cached ground truth stays withheld until it is revealed again", async ({ page }) => {
   const u = ui(page);
   const gtTokens = groundTruthTokens("eval_001");
