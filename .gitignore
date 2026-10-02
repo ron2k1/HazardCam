@@ -11,7 +11,7 @@ __pycache__/
 data/raw/
 data/prepared/**/*.mp4
 data/runs/
-models/
+/models/
 *.log
 .DS_Store
 .ruff_cache/

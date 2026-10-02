@@ -32,7 +32,7 @@ pythonpath = ["."]
 asyncio_mode = "auto"
 addopts = "-q --import-mode=importlib"
 markers = [
-    "live_model: needs a running local model endpoint (skipped unless MODEL_PROFILE is a live profile)",
+    "live_model: needs a running local model endpoint (skipped when the endpoint is unreachable or the model is not served)",
     "media: needs ffmpeg/ffprobe on PATH",
 ]
 
@@ -40,3 +40,7 @@ markers = [
 line-length = 100
 target-version = "py311"
 extend-exclude = ["apps/web", "agent", "reference"]
+
+[tool.ruff.lint.per-file-ignores]
+# MEVA clip names encode local wall-clock time with no zone; naive datetimes are deliberate.
+"scripts/data/*" = ["DTZ007"]
