@@ -1,0 +1,1455 @@
+[
+  {
+    "scenario_id": "eval_001",
+    "category": "positive",
+    "completed": true,
+    "error": null,
+    "gt_leaks": 0,
+    "replay_match": true,
+    "event_type": "passenger_dropoff_pickup",
+    "raw_event_type": "passenger_dropoff_pickup",
+    "region": "region_01",
+    "confidence": 0.75,
+    "class_ok": true,
+    "raw_class_ok": true,
+    "outcome": "hit",
+    "gate_changed": false,
+    "region_scored": true,
+    "region_ok": false,
+    "localization_error_m": 48.48,
+    "full_hit": false,
+    "fusion_region_hit": false,
+    "best_candidate_error_m": 48.48,
+    "best_cluster_iou": 0.7489285714285714,
+    "evidence_count": 9,
+    "evidence_cameras": [
+      "cam_a",
+      "cam_b"
+    ],
+    "unsupported_claim": false,
+    "schema_errors": [],
+    "duration_ms": 1284.4,
+    "perception_latency_s": [
+      0.001,
+      0.0,
+      0.0
+    ],
+    "reasoning_latency_s": 0.001,
+    "failed_calls": 0,
+    "tool_latency_ms": {
+      "sample_video": [
+        356.7,
+        429.3,
+        403.7
+      ],
+      "inspect_camera": [
+        1.0,
+        0.4,
+        0.3
+      ],
+      "correlate_observations": [
+        0.2
+      ],
+      "triangulate_region": [
+        1.5
+      ],
+      "reason_hypothesis": [
+        1.0
+      ],
+      "get_supporting_frames": [
+        0.0,
+        0.0
+      ],
+      "submit_hypothesis": [
+        0.1
+      ]
+    },
+    "schema_valid": true
+  },
+  {
+    "scenario_id": "eval_002",
+    "category": "positive",
+    "completed": true,
+    "error": null,
+    "gt_leaks": 0,
+    "replay_match": true,
+    "event_type": "vehicle_turnaround",
+    "raw_event_type": "vehicle_turnaround",
+    "region": "z_north_lot",
+    "confidence": 0.78,
+    "class_ok": false,
+    "raw_class_ok": false,
+    "outcome": "wrong_class",
+    "gate_changed": false,
+    "region_scored": true,
+    "region_ok": false,
+    "localization_error_m": 14.31,
+    "full_hit": false,
+    "fusion_region_hit": false,
+    "best_candidate_error_m": 14.31,
+    "best_cluster_iou": 0.7751851851851852,
+    "evidence_count": 11,
+    "evidence_cameras": [
+      "cam_a",
+      "cam_b",
+      "cam_c"
+    ],
+    "unsupported_claim": false,
+    "schema_errors": [],
+    "duration_ms": 1143.8,
+    "perception_latency_s": [
+      0.001,
+      0.0,
+      0.0
+    ],
+    "reasoning_latency_s": 0.0,
+    "failed_calls": 0,
+    "tool_latency_ms": {
+      "sample_video": [
+        314.2,
+        424.9,
+        399.5
+      ],
+      "inspect_camera": [
+        1.2,
+        0.4,
+        0.4
+      ],
+      "correlate_observations": [
+        0.2
+      ],
+      "triangulate_region": [
+        1.6
+      ],
+      "reason_hypothesis": [
+        0.6
+      ],
+      "get_supporting_frames": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "submit_hypothesis": [
+        0.1
+      ]
+    },
+    "schema_valid": true
+  },
+  {
+    "scenario_id": "eval_003",
+    "category": "ambiguous",
+    "completed": true,
+    "error": null,
+    "gt_leaks": 0,
+    "replay_match": true,
+    "event_type": "vehicle_stop",
+    "raw_event_type": "vehicle_stop",
+    "region": "z_north_road",
+    "confidence": 0.85,
+    "class_ok": false,
+    "raw_class_ok": false,
+    "outcome": "wrong_class",
+    "gate_changed": false,
+    "region_scored": true,
+    "region_ok": false,
+    "localization_error_m": 20.67,
+    "full_hit": null,
+    "fusion_region_hit": false,
+    "best_candidate_error_m": 20.67,
+    "best_cluster_iou": 0.525925925925926,
+    "evidence_count": 7,
+    "evidence_cameras": [
+      "cam_a",
+      "cam_b",
+      "cam_c"
+    ],
+    "unsupported_claim": false,
+    "schema_errors": [],
+    "duration_ms": 1094.4,
+    "perception_latency_s": [
+      0.001,
+      0.0,
+      0.0
+    ],
+    "reasoning_latency_s": 0.001,
+    "failed_calls": 0,
+    "tool_latency_ms": {
+      "sample_video": [
+        302.5,
+        387.1,
+        400.3
+      ],
+      "inspect_camera": [
+        1.0,
+        0.3,
+        0.3
+      ],
+      "correlate_observations": [
+        0.2
+      ],
+      "triangulate_region": [
+        1.1
+      ],
+      "reason_hypothesis": [
+        1.0
+      ],
+      "get_supporting_frames": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "submit_hypothesis": [
+        0.1
+      ]
+    },
+    "schema_valid": true
+  },
+  {
+    "scenario_id": "eval_004",
+    "category": "negative",
+    "completed": true,
+    "error": null,
+    "gt_leaks": 0,
+    "replay_match": true,
+    "event_type": "vehicle_departure",
+    "raw_event_type": "vehicle_departure",
+    "region": "region_01",
+    "confidence": 0.79,
+    "class_ok": false,
+    "raw_class_ok": false,
+    "outcome": "false_alarm",
+    "gate_changed": false,
+    "region_scored": false,
+    "region_ok": null,
+    "localization_error_m": null,
+    "full_hit": null,
+    "fusion_region_hit": null,
+    "best_candidate_error_m": null,
+    "best_cluster_iou": null,
+    "evidence_count": 5,
+    "evidence_cameras": [
+      "cam_a",
+      "cam_b",
+      "cam_c"
+    ],
+    "unsupported_claim": false,
+    "schema_errors": [],
+    "duration_ms": 1049.0,
+    "perception_latency_s": [
+      0.001,
+      0.0,
+      0.0
+    ],
+    "reasoning_latency_s": 0.001,
+    "failed_calls": 0,
+    "tool_latency_ms": {
+      "sample_video": [
+        291.4,
+        389.3,
+        364.1
+      ],
+      "inspect_camera": [
+        1.0,
+        0.3,
+        0.3
+      ],
+      "correlate_observations": [
+        0.1
+      ],
+      "triangulate_region": [
+        0.8
+      ],
+      "reason_hypothesis": [
+        1.1
+      ],
+      "get_supporting_frames": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "submit_hypothesis": [
+        0.1
+      ]
+    },
+    "schema_valid": true
+  },
+  {
+    "scenario_id": "eval_005",
+    "category": "negative",
+    "completed": true,
+    "error": null,
+    "gt_leaks": 0,
+    "replay_match": true,
+    "event_type": "unknown",
+    "raw_event_type": "unknown",
+    "region": "unknown",
+    "confidence": 0.0,
+    "class_ok": true,
+    "raw_class_ok": true,
+    "outcome": "correct_reject",
+    "gate_changed": false,
+    "region_scored": false,
+    "region_ok": null,
+    "localization_error_m": null,
+    "full_hit": null,
+    "fusion_region_hit": null,
+    "best_candidate_error_m": null,
+    "best_cluster_iou": null,
+    "evidence_count": 0,
+    "evidence_cameras": [],
+    "unsupported_claim": null,
+    "schema_errors": [],
+    "duration_ms": 1079.2,
+    "perception_latency_s": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "reasoning_latency_s": 0.0,
+    "failed_calls": 0,
+    "tool_latency_ms": {
+      "sample_video": [
+        294.1,
+        398.7,
+        384.3
+      ],
+      "inspect_camera": [
+        0.4,
+        0.3,
+        0.3
+      ],
+      "correlate_observations": [
+        0.0
+      ],
+      "triangulate_region": [
+        0.2
+      ],
+      "reason_hypothesis": [
+        0.4
+      ],
+      "submit_hypothesis": [
+        0.0
+      ]
+    },
+    "schema_valid": true
+  },
+  {
+    "scenario_id": "eval_006",
+    "category": "negative",
+    "completed": true,
+    "error": null,
+    "gt_leaks": 0,
+    "replay_match": true,
+    "event_type": "unknown",
+    "raw_event_type": "unknown",
+    "region": "unknown",
+    "confidence": 0.0,
+    "class_ok": true,
+    "raw_class_ok": true,
+    "outcome": "correct_reject",
+    "gate_changed": false,
+    "region_scored": false,
+    "region_ok": null,
+    "localization_error_m": null,
+    "full_hit": null,
+    "fusion_region_hit": null,
+    "best_candidate_error_m": null,
+    "best_cluster_iou": null,
+    "evidence_count": 0,
+    "evidence_cameras": [],
+    "unsupported_claim": null,
+    "schema_errors": [],
+    "duration_ms": 1112.6,
+    "perception_latency_s": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "reasoning_latency_s": 0.001,
+    "failed_calls": 0,
+    "tool_latency_ms": {
+      "sample_video": [
+        304.4,
+        435.9,
+        369.6
+      ],
+      "inspect_camera": [
+        0.5,
+        0.3,
+        0.3
+      ],
+      "correlate_observations": [
+        0.0
+      ],
+      "triangulate_region": [
+        0.2
+      ],
+      "reason_hypothesis": [
+        0.9
+      ],
+      "submit_hypothesis": [
+        0.0
+      ]
+    },
+    "schema_valid": true
+  },
+  {
+    "scenario_id": "eval_007",
+    "category": "positive",
+    "completed": true,
+    "error": null,
+    "gt_leaks": 0,
+    "replay_match": true,
+    "event_type": "passenger_dropoff_pickup",
+    "raw_event_type": "passenger_dropoff_pickup",
+    "region": "z_north_lot",
+    "confidence": 0.65,
+    "class_ok": false,
+    "raw_class_ok": false,
+    "outcome": "wrong_class",
+    "gate_changed": false,
+    "region_scored": true,
+    "region_ok": false,
+    "localization_error_m": 10.82,
+    "full_hit": false,
+    "fusion_region_hit": false,
+    "best_candidate_error_m": 10.82,
+    "best_cluster_iou": 0.84,
+    "evidence_count": 2,
+    "evidence_cameras": [
+      "cam_b",
+      "cam_c"
+    ],
+    "unsupported_claim": false,
+    "schema_errors": [],
+    "duration_ms": 1072.0,
+    "perception_latency_s": [
+      0.001,
+      0.0,
+      0.0
+    ],
+    "reasoning_latency_s": 0.001,
+    "failed_calls": 0,
+    "tool_latency_ms": {
+      "sample_video": [
+        306.6,
+        384.7,
+        376.9
+      ],
+      "inspect_camera": [
+        0.9,
+        0.3,
+        0.3
+      ],
+      "correlate_observations": [
+        0.1
+      ],
+      "triangulate_region": [
+        0.6
+      ],
+      "reason_hypothesis": [
+        1.0
+      ],
+      "get_supporting_frames": [
+        0.0,
+        0.0
+      ],
+      "submit_hypothesis": [
+        0.1
+      ]
+    },
+    "schema_valid": true
+  },
+  {
+    "scenario_id": "eval_008",
+    "category": "positive",
+    "completed": true,
+    "error": null,
+    "gt_leaks": 0,
+    "replay_match": true,
+    "event_type": "vehicle_turnaround",
+    "raw_event_type": "vehicle_turnaround",
+    "region": "z_hospital_drive",
+    "confidence": 0.35,
+    "class_ok": true,
+    "raw_class_ok": true,
+    "outcome": "hit",
+    "gate_changed": true,
+    "region_scored": true,
+    "region_ok": false,
+    "localization_error_m": 10.52,
+    "full_hit": false,
+    "fusion_region_hit": false,
+    "best_candidate_error_m": 10.52,
+    "best_cluster_iou": 0.7322222222222222,
+    "evidence_count": 6,
+    "evidence_cameras": [
+      "cam_b"
+    ],
+    "unsupported_claim": false,
+    "schema_errors": [],
+    "duration_ms": 1037.6,
+    "perception_latency_s": [
+      0.001,
+      0.001,
+      0.0
+    ],
+    "reasoning_latency_s": 0.001,
+    "failed_calls": 0,
+    "tool_latency_ms": {
+      "sample_video": [
+        291.3,
+        371.3,
+        370.1
+      ],
+      "inspect_camera": [
+        1.0,
+        0.7,
+        0.3
+      ],
+      "correlate_observations": [
+        0.2
+      ],
+      "triangulate_region": [
+        1.0
+      ],
+      "reason_hypothesis": [
+        1.0
+      ],
+      "get_supporting_frames": [
+        0.0
+      ],
+      "submit_hypothesis": [
+        0.1
+      ]
+    },
+    "schema_valid": true
+  },
+  {
+    "scenario_id": "eval_009",
+    "category": "ambiguous",
+    "completed": true,
+    "error": null,
+    "gt_leaks": 0,
+    "replay_match": true,
+    "event_type": "unknown",
+    "raw_event_type": "unknown",
+    "region": "unknown",
+    "confidence": 0.0,
+    "class_ok": true,
+    "raw_class_ok": true,
+    "outcome": "abstain_ok",
+    "gate_changed": false,
+    "region_scored": false,
+    "region_ok": null,
+    "localization_error_m": null,
+    "full_hit": null,
+    "fusion_region_hit": false,
+    "best_candidate_error_m": 13.41,
+    "best_cluster_iou": 0.17405719021964358,
+    "evidence_count": 3,
+    "evidence_cameras": [
+      "cam_c"
+    ],
+    "unsupported_claim": null,
+    "schema_errors": [],
+    "duration_ms": 1037.6,
+    "perception_latency_s": [
+      0.001,
+      0.0,
+      0.0
+    ],
+    "reasoning_latency_s": 0.001,
+    "failed_calls": 0,
+    "tool_latency_ms": {
+      "sample_video": [
+        306.5,
+        349.3,
+        377.9
+      ],
+      "inspect_camera": [
+        0.9,
+        0.3,
+        0.4
+      ],
+      "correlate_observations": [
+        0.1
+      ],
+      "triangulate_region": [
+        0.7
+      ],
+      "reason_hypothesis": [
+        0.9
+      ],
+      "get_supporting_frames": [
+        0.0
+      ],
+      "submit_hypothesis": [
+        0.1
+      ]
+    },
+    "schema_valid": true
+  },
+  {
+    "scenario_id": "eval_010",
+    "category": "negative",
+    "completed": true,
+    "error": null,
+    "gt_leaks": 0,
+    "replay_match": true,
+    "event_type": "unknown",
+    "raw_event_type": "unknown",
+    "region": "unknown",
+    "confidence": 0.0,
+    "class_ok": true,
+    "raw_class_ok": true,
+    "outcome": "correct_reject",
+    "gate_changed": false,
+    "region_scored": false,
+    "region_ok": null,
+    "localization_error_m": null,
+    "full_hit": null,
+    "fusion_region_hit": null,
+    "best_candidate_error_m": null,
+    "best_cluster_iou": null,
+    "evidence_count": 2,
+    "evidence_cameras": [
+      "cam_b"
+    ],
+    "unsupported_claim": null,
+    "schema_errors": [],
+    "duration_ms": 1029.4,
+    "perception_latency_s": [
+      0.001,
+      0.0,
+      0.0
+    ],
+    "reasoning_latency_s": 0.001,
+    "failed_calls": 0,
+    "tool_latency_ms": {
+      "sample_video": [
+        307.8,
+        342.1,
+        375.8
+      ],
+      "inspect_camera": [
+        0.9,
+        0.3,
+        0.3
+      ],
+      "correlate_observations": [
+        0.1
+      ],
+      "triangulate_region": [
+        0.6
+      ],
+      "reason_hypothesis": [
+        1.0
+      ],
+      "get_supporting_frames": [
+        0.0
+      ],
+      "submit_hypothesis": [
+        0.1
+      ]
+    },
+    "schema_valid": true
+  },
+  {
+    "scenario_id": "eval_011",
+    "category": "negative",
+    "completed": true,
+    "error": null,
+    "gt_leaks": 0,
+    "replay_match": true,
+    "event_type": "unknown",
+    "raw_event_type": "unknown",
+    "region": "unknown",
+    "confidence": 0.0,
+    "class_ok": true,
+    "raw_class_ok": true,
+    "outcome": "correct_reject",
+    "gate_changed": false,
+    "region_scored": false,
+    "region_ok": null,
+    "localization_error_m": null,
+    "full_hit": null,
+    "fusion_region_hit": null,
+    "best_candidate_error_m": null,
+    "best_cluster_iou": null,
+    "evidence_count": 0,
+    "evidence_cameras": [],
+    "unsupported_claim": null,
+    "schema_errors": [],
+    "duration_ms": 1018.8,
+    "perception_latency_s": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "reasoning_latency_s": 0.0,
+    "failed_calls": 0,
+    "tool_latency_ms": {
+      "sample_video": [
+        295.1,
+        359.4,
+        362.3
+      ],
+      "inspect_camera": [
+        0.4,
+        0.3,
+        0.3
+      ],
+      "correlate_observations": [
+        0.0
+      ],
+      "triangulate_region": [
+        0.2
+      ],
+      "reason_hypothesis": [
+        0.4
+      ],
+      "submit_hypothesis": [
+        0.0
+      ]
+    },
+    "schema_valid": true
+  },
+  {
+    "scenario_id": "eval_012",
+    "category": "ambiguous",
+    "completed": true,
+    "error": null,
+    "gt_leaks": 0,
+    "replay_match": true,
+    "event_type": "no_event",
+    "raw_event_type": "no_event",
+    "region": "z_north_road",
+    "confidence": 0.61,
+    "class_ok": false,
+    "raw_class_ok": false,
+    "outcome": "miss_no_event",
+    "gate_changed": false,
+    "region_scored": false,
+    "region_ok": null,
+    "localization_error_m": null,
+    "full_hit": null,
+    "fusion_region_hit": null,
+    "best_candidate_error_m": 136.35,
+    "best_cluster_iou": 0.8856666666666667,
+    "evidence_count": 5,
+    "evidence_cameras": [
+      "cam_b",
+      "cam_c"
+    ],
+    "unsupported_claim": null,
+    "schema_errors": [],
+    "duration_ms": 1204.7,
+    "perception_latency_s": [
+      0.001,
+      0.0,
+      0.0
+    ],
+    "reasoning_latency_s": 0.001,
+    "failed_calls": 0,
+    "tool_latency_ms": {
+      "sample_video": [
+        323.4,
+        499.3,
+        377.7
+      ],
+      "inspect_camera": [
+        0.9,
+        0.3,
+        0.3
+      ],
+      "correlate_observations": [
+        0.1
+      ],
+      "triangulate_region": [
+        0.9
+      ],
+      "reason_hypothesis": [
+        1.0
+      ],
+      "get_supporting_frames": [
+        0.0,
+        0.0
+      ],
+      "submit_hypothesis": [
+        0.1
+      ]
+    },
+    "schema_valid": true
+  },
+  {
+    "scenario_id": "eval_013",
+    "category": "negative",
+    "completed": true,
+    "error": null,
+    "gt_leaks": 0,
+    "replay_match": true,
+    "event_type": "vehicle_stop",
+    "raw_event_type": "vehicle_stop",
+    "region": "z_north_road",
+    "confidence": 0.75,
+    "class_ok": false,
+    "raw_class_ok": false,
+    "outcome": "false_alarm",
+    "gate_changed": false,
+    "region_scored": false,
+    "region_ok": null,
+    "localization_error_m": null,
+    "full_hit": null,
+    "fusion_region_hit": null,
+    "best_candidate_error_m": null,
+    "best_cluster_iou": null,
+    "evidence_count": 3,
+    "evidence_cameras": [
+      "cam_b",
+      "cam_c"
+    ],
+    "unsupported_claim": false,
+    "schema_errors": [],
+    "duration_ms": 1095.4,
+    "perception_latency_s": [
+      0.001,
+      0.0,
+      0.0
+    ],
+    "reasoning_latency_s": 0.001,
+    "failed_calls": 0,
+    "tool_latency_ms": {
+      "sample_video": [
+        298.8,
+        445.0,
+        347.0
+      ],
+      "inspect_camera": [
+        1.3,
+        0.3,
+        0.3
+      ],
+      "correlate_observations": [
+        0.1
+      ],
+      "triangulate_region": [
+        0.7
+      ],
+      "reason_hypothesis": [
+        1.3
+      ],
+      "get_supporting_frames": [
+        0.0,
+        0.0
+      ],
+      "submit_hypothesis": [
+        0.1
+      ]
+    },
+    "schema_valid": true
+  },
+  {
+    "scenario_id": "eval_014",
+    "category": "negative",
+    "completed": true,
+    "error": null,
+    "gt_leaks": 0,
+    "replay_match": true,
+    "event_type": "unknown",
+    "raw_event_type": "unknown",
+    "region": "unknown",
+    "confidence": 0.0,
+    "class_ok": true,
+    "raw_class_ok": true,
+    "outcome": "correct_reject",
+    "gate_changed": false,
+    "region_scored": false,
+    "region_ok": null,
+    "localization_error_m": null,
+    "full_hit": null,
+    "fusion_region_hit": null,
+    "best_candidate_error_m": null,
+    "best_cluster_iou": null,
+    "evidence_count": 2,
+    "evidence_cameras": [
+      "cam_b"
+    ],
+    "unsupported_claim": null,
+    "schema_errors": [],
+    "duration_ms": 1119.3,
+    "perception_latency_s": [
+      0.001,
+      0.0,
+      0.0
+    ],
+    "reasoning_latency_s": 0.001,
+    "failed_calls": 0,
+    "tool_latency_ms": {
+      "sample_video": [
+        294.7,
+        462.5,
+        358.0
+      ],
+      "inspect_camera": [
+        0.9,
+        0.3,
+        0.3
+      ],
+      "correlate_observations": [
+        0.1
+      ],
+      "triangulate_region": [
+        0.9
+      ],
+      "reason_hypothesis": [
+        1.0
+      ],
+      "get_supporting_frames": [
+        0.0
+      ],
+      "submit_hypothesis": [
+        0.1
+      ]
+    },
+    "schema_valid": true
+  },
+  {
+    "scenario_id": "eval_015",
+    "category": "ambiguous",
+    "completed": true,
+    "error": null,
+    "gt_leaks": 0,
+    "replay_match": true,
+    "event_type": "vehicle_turnaround",
+    "raw_event_type": "vehicle_turnaround",
+    "region": "z_north_road",
+    "confidence": 0.75,
+    "class_ok": false,
+    "raw_class_ok": false,
+    "outcome": "wrong_class",
+    "gate_changed": false,
+    "region_scored": true,
+    "region_ok": false,
+    "localization_error_m": 23.35,
+    "full_hit": null,
+    "fusion_region_hit": false,
+    "best_candidate_error_m": 23.35,
+    "best_cluster_iou": 0.2652173913043478,
+    "evidence_count": 7,
+    "evidence_cameras": [
+      "cam_b",
+      "cam_c"
+    ],
+    "unsupported_claim": false,
+    "schema_errors": [],
+    "duration_ms": 965.2,
+    "perception_latency_s": [
+      0.001,
+      0.0,
+      0.0
+    ],
+    "reasoning_latency_s": 0.001,
+    "failed_calls": 0,
+    "tool_latency_ms": {
+      "sample_video": [
+        280.4,
+        349.3,
+        330.0
+      ],
+      "inspect_camera": [
+        1.0,
+        0.4,
+        0.4
+      ],
+      "correlate_observations": [
+        0.2
+      ],
+      "triangulate_region": [
+        1.5
+      ],
+      "reason_hypothesis": [
+        1.0
+      ],
+      "get_supporting_frames": [
+        0.0,
+        0.0
+      ],
+      "submit_hypothesis": [
+        0.6
+      ]
+    },
+    "schema_valid": true
+  },
+  {
+    "scenario_id": "eval_016",
+    "category": "positive",
+    "completed": true,
+    "error": null,
+    "gt_leaks": 0,
+    "replay_match": true,
+    "event_type": "unknown",
+    "raw_event_type": "unknown",
+    "region": "unknown",
+    "confidence": 0.25,
+    "class_ok": false,
+    "raw_class_ok": false,
+    "outcome": "miss_abstain",
+    "gate_changed": false,
+    "region_scored": false,
+    "region_ok": null,
+    "localization_error_m": null,
+    "full_hit": false,
+    "fusion_region_hit": false,
+    "best_candidate_error_m": 10.87,
+    "best_cluster_iou": 0.6931999999999999,
+    "evidence_count": 4,
+    "evidence_cameras": [
+      "cam_b"
+    ],
+    "unsupported_claim": null,
+    "schema_errors": [],
+    "duration_ms": 1082.6,
+    "perception_latency_s": [
+      0.001,
+      0.0,
+      0.0
+    ],
+    "reasoning_latency_s": 0.001,
+    "failed_calls": 0,
+    "tool_latency_ms": {
+      "sample_video": [
+        296.4,
+        429.6,
+        352.4
+      ],
+      "inspect_camera": [
+        0.9,
+        0.4,
+        0.3
+      ],
+      "correlate_observations": [
+        0.2
+      ],
+      "triangulate_region": [
+        1.0
+      ],
+      "reason_hypothesis": [
+        1.0
+      ],
+      "get_supporting_frames": [
+        0.0
+      ],
+      "submit_hypothesis": [
+        0.1
+      ]
+    },
+    "schema_valid": true
+  },
+  {
+    "scenario_id": "eval_017",
+    "category": "ambiguous",
+    "completed": true,
+    "error": null,
+    "gt_leaks": 0,
+    "replay_match": true,
+    "event_type": "vehicle_stop",
+    "raw_event_type": "vehicle_stop",
+    "region": "region_01",
+    "confidence": 0.65,
+    "class_ok": true,
+    "raw_class_ok": true,
+    "outcome": "hit",
+    "gate_changed": false,
+    "region_scored": true,
+    "region_ok": false,
+    "localization_error_m": 36.32,
+    "full_hit": null,
+    "fusion_region_hit": false,
+    "best_candidate_error_m": 36.32,
+    "best_cluster_iou": 0.8354522339266255,
+    "evidence_count": 4,
+    "evidence_cameras": [
+      "cam_a",
+      "cam_b"
+    ],
+    "unsupported_claim": false,
+    "schema_errors": [],
+    "duration_ms": 1064.3,
+    "perception_latency_s": [
+      0.001,
+      0.0,
+      0.0
+    ],
+    "reasoning_latency_s": 0.001,
+    "failed_calls": 0,
+    "tool_latency_ms": {
+      "sample_video": [
+        302.9,
+        404.2,
+        352.4
+      ],
+      "inspect_camera": [
+        1.0,
+        0.4,
+        0.3
+      ],
+      "correlate_observations": [
+        0.2
+      ],
+      "triangulate_region": [
+        1.4
+      ],
+      "reason_hypothesis": [
+        0.9
+      ],
+      "get_supporting_frames": [
+        0.0,
+        0.0
+      ],
+      "submit_hypothesis": [
+        0.1
+      ]
+    },
+    "schema_valid": true
+  },
+  {
+    "scenario_id": "eval_018",
+    "category": "ambiguous",
+    "completed": true,
+    "error": null,
+    "gt_leaks": 0,
+    "replay_match": true,
+    "event_type": "passenger_dropoff_pickup",
+    "raw_event_type": "passenger_dropoff_pickup",
+    "region": "region_01",
+    "confidence": 0.85,
+    "class_ok": false,
+    "raw_class_ok": false,
+    "outcome": "wrong_class",
+    "gate_changed": false,
+    "region_scored": true,
+    "region_ok": false,
+    "localization_error_m": 17.8,
+    "full_hit": null,
+    "fusion_region_hit": false,
+    "best_candidate_error_m": 17.8,
+    "best_cluster_iou": 0.3264,
+    "evidence_count": 4,
+    "evidence_cameras": [
+      "cam_a",
+      "cam_b",
+      "cam_c"
+    ],
+    "unsupported_claim": false,
+    "schema_errors": [],
+    "duration_ms": 1031.1,
+    "perception_latency_s": [
+      0.001,
+      0.0,
+      0.0
+    ],
+    "reasoning_latency_s": 0.001,
+    "failed_calls": 0,
+    "tool_latency_ms": {
+      "sample_video": [
+        309.8,
+        372.9,
+        344.2
+      ],
+      "inspect_camera": [
+        1.0,
+        0.3,
+        0.3
+      ],
+      "correlate_observations": [
+        0.1
+      ],
+      "triangulate_region": [
+        0.8
+      ],
+      "reason_hypothesis": [
+        1.0
+      ],
+      "get_supporting_frames": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "submit_hypothesis": [
+        0.1
+      ]
+    },
+    "schema_valid": true
+  },
+  {
+    "scenario_id": "eval_019",
+    "category": "positive",
+    "completed": true,
+    "error": null,
+    "gt_leaks": 0,
+    "replay_match": true,
+    "event_type": "vehicle_turnaround",
+    "raw_event_type": "vehicle_turnaround",
+    "region": "region_01",
+    "confidence": 0.77,
+    "class_ok": false,
+    "raw_class_ok": false,
+    "outcome": "wrong_class",
+    "gate_changed": false,
+    "region_scored": true,
+    "region_ok": false,
+    "localization_error_m": 34.13,
+    "full_hit": false,
+    "fusion_region_hit": false,
+    "best_candidate_error_m": 34.13,
+    "best_cluster_iou": 0.49115384615384616,
+    "evidence_count": 9,
+    "evidence_cameras": [
+      "cam_a",
+      "cam_b",
+      "cam_c"
+    ],
+    "unsupported_claim": false,
+    "schema_errors": [],
+    "duration_ms": 1035.4,
+    "perception_latency_s": [
+      0.001,
+      0.0,
+      0.0
+    ],
+    "reasoning_latency_s": 0.001,
+    "failed_calls": 0,
+    "tool_latency_ms": {
+      "sample_video": [
+        301.0,
+        381.2,
+        348.4
+      ],
+      "inspect_camera": [
+        1.0,
+        0.4,
+        0.3
+      ],
+      "correlate_observations": [
+        0.2
+      ],
+      "triangulate_region": [
+        1.3
+      ],
+      "reason_hypothesis": [
+        0.9
+      ],
+      "get_supporting_frames": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "submit_hypothesis": [
+        0.1
+      ]
+    },
+    "schema_valid": true
+  },
+  {
+    "scenario_id": "eval_020",
+    "category": "positive",
+    "completed": true,
+    "error": null,
+    "gt_leaks": 0,
+    "replay_match": true,
+    "event_type": "unknown",
+    "raw_event_type": "unknown",
+    "region": "unknown",
+    "confidence": 0.0,
+    "class_ok": false,
+    "raw_class_ok": false,
+    "outcome": "miss_abstain",
+    "gate_changed": false,
+    "region_scored": false,
+    "region_ok": null,
+    "localization_error_m": null,
+    "full_hit": false,
+    "fusion_region_hit": false,
+    "best_candidate_error_m": 15.11,
+    "best_cluster_iou": 0.5970000000000001,
+    "evidence_count": 2,
+    "evidence_cameras": [
+      "cam_a"
+    ],
+    "unsupported_claim": null,
+    "schema_errors": [],
+    "duration_ms": 950.4,
+    "perception_latency_s": [
+      0.001,
+      0.0,
+      0.0
+    ],
+    "reasoning_latency_s": 0.001,
+    "failed_calls": 0,
+    "tool_latency_ms": {
+      "sample_video": [
+        283.9,
+        361.6,
+        301.0
+      ],
+      "inspect_camera": [
+        1.0,
+        0.3,
+        0.3
+      ],
+      "correlate_observations": [
+        0.1
+      ],
+      "triangulate_region": [
+        0.6
+      ],
+      "reason_hypothesis": [
+        1.1
+      ],
+      "get_supporting_frames": [
+        0.0
+      ],
+      "submit_hypothesis": [
+        0.1
+      ]
+    },
+    "schema_valid": true
+  },
+  {
+    "scenario_id": "eval_021",
+    "category": "ambiguous",
+    "completed": true,
+    "error": null,
+    "gt_leaks": 0,
+    "replay_match": true,
+    "event_type": "vehicle_turn",
+    "raw_event_type": "vehicle_turn",
+    "region": "region_01",
+    "confidence": 0.75,
+    "class_ok": false,
+    "raw_class_ok": false,
+    "outcome": "wrong_class",
+    "gate_changed": false,
+    "region_scored": true,
+    "region_ok": false,
+    "localization_error_m": 83.06,
+    "full_hit": null,
+    "fusion_region_hit": false,
+    "best_candidate_error_m": 83.06,
+    "best_cluster_iou": 0.2696,
+    "evidence_count": 7,
+    "evidence_cameras": [
+      "cam_a",
+      "cam_b"
+    ],
+    "unsupported_claim": false,
+    "schema_errors": [],
+    "duration_ms": 1121.1,
+    "perception_latency_s": [
+      0.001,
+      0.0,
+      0.0
+    ],
+    "reasoning_latency_s": 0.001,
+    "failed_calls": 0,
+    "tool_latency_ms": {
+      "sample_video": [
+        304.1,
+        470.0,
+        342.7
+      ],
+      "inspect_camera": [
+        0.9,
+        0.4,
+        0.3
+      ],
+      "correlate_observations": [
+        0.2
+      ],
+      "triangulate_region": [
+        1.0
+      ],
+      "reason_hypothesis": [
+        1.0
+      ],
+      "get_supporting_frames": [
+        0.0,
+        0.0
+      ],
+      "submit_hypothesis": [
+        0.1
+      ]
+    },
+    "schema_valid": true
+  },
+  {
+    "scenario_id": "scenario_001",
+    "category": "positive",
+    "completed": true,
+    "error": null,
+    "gt_leaks": 0,
+    "replay_match": true,
+    "event_type": "vehicle_loading_unloading",
+    "raw_event_type": "vehicle_loading_unloading",
+    "region": "region_01",
+    "confidence": 0.75,
+    "class_ok": false,
+    "raw_class_ok": false,
+    "outcome": "wrong_class",
+    "gate_changed": false,
+    "region_scored": true,
+    "region_ok": false,
+    "localization_error_m": 26.08,
+    "full_hit": false,
+    "fusion_region_hit": false,
+    "best_candidate_error_m": 26.08,
+    "best_cluster_iou": 0.5750000000000001,
+    "evidence_count": 8,
+    "evidence_cameras": [
+      "cam_a",
+      "cam_b",
+      "cam_c"
+    ],
+    "unsupported_claim": false,
+    "schema_errors": [],
+    "duration_ms": 1099.4,
+    "perception_latency_s": [
+      0.001,
+      0.0,
+      0.0
+    ],
+    "reasoning_latency_s": 0.001,
+    "failed_calls": 0,
+    "tool_latency_ms": {
+      "sample_video": [
+        322.1,
+        377.1,
+        394.0
+      ],
+      "inspect_camera": [
+        1.0,
+        0.5,
+        0.4
+      ],
+      "correlate_observations": [
+        0.3
+      ],
+      "triangulate_region": [
+        2.3
+      ],
+      "reason_hypothesis": [
+        1.0
+      ],
+      "get_supporting_frames": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "submit_hypothesis": [
+        0.1
+      ]
+    },
+    "schema_valid": true
+  }
+]

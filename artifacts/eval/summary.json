@@ -1,0 +1,85 @@
+{
+  "generated_at": "2026-10-02T15:23:00+00:00",
+  "scoring_rules": "eval/SCORING.md",
+  "manifest_scenarios": 22,
+  "best_constant_baselines": {
+    "decision_accuracy": {
+      "answer": "unknown",
+      "value": 0.6363636363636364
+    },
+    "balanced_accuracy": {
+      "answer": "unknown",
+      "value": 0.6666666666666666
+    }
+  },
+  "profiles": {
+    "fixture": {
+      "perception_model": "replay: qwen3-vl:4b-instruct",
+      "reasoning_model": "replay: ministral-3:3b",
+      "scored_at": "2026-10-02T15:23:00+00:00",
+      "n": 22,
+      "decision_accuracy": {
+        "k": 9,
+        "n": 22,
+        "rate": 0.4090909090909091,
+        "wilson95": [
+          0.2326,
+          0.6127
+        ]
+      },
+      "balanced_accuracy": 0.4166666666666667,
+      "by_category": {
+        "positive": {
+          "k": 2,
+          "n": 8,
+          "rate": 0.25,
+          "wilson95": [
+            0.0715,
+            0.5907
+          ]
+        },
+        "negative": {
+          "k": 5,
+          "n": 7,
+          "rate": 0.7142857142857143,
+          "wilson95": [
+            0.3589,
+            0.9178
+          ]
+        },
+        "ambiguous": {
+          "k": 2,
+          "n": 7,
+          "rate": 0.2857142857142857,
+          "wilson95": [
+            0.0822,
+            0.6411
+          ]
+        }
+      },
+      "region_acceptance": {
+        "k": 0,
+        "n": 11,
+        "rate": 0.0,
+        "wilson95": [
+          0.0,
+          0.2588
+        ]
+      },
+      "full_hit": {
+        "k": 0,
+        "n": 8,
+        "rate": 0.0,
+        "wilson95": [
+          0.0,
+          0.3244
+        ]
+      },
+      "median_scenario_ms": 1075.6,
+      "verdict": {
+        "pipeline_ok": true,
+        "beats_constant_baselines": false
+      }
+    }
+  }
+}
