@@ -15,58 +15,58 @@
       "notes": "contracts/*.schema.json + apps/api/schemas mirrors; 29 tests incl. GT invariant"
     },
     "P02": {
-      "status": "todo",
+      "status": "done",
       "owner": "frontend",
       "phase": "prebuild",
-      "notes": ""
+      "notes": "db86cf0: ops console shell + visual system (OpsMock until P11 wiring)"
     },
     "P03": {
-      "status": "todo",
+      "status": "done",
       "owner": "backend",
       "phase": "prebuild",
-      "notes": ""
+      "notes": "2ea0ae0: FastAPI run lifecycle, SSE bus, media routes; events.jsonl per-line append"
     },
     "P04": {
-      "status": "todo",
+      "status": "done",
       "owner": "vision",
       "phase": "prebuild",
-      "notes": ""
+      "notes": "daf014a: frame-exact deterministic sampler"
     },
     "P05": {
-      "status": "in_progress",
+      "status": "done",
       "owner": "data",
       "phase": "prebuild",
-      "notes": "data worker: research + MEVA-first acquisition"
+      "notes": "ebed5b6: 22 real MEVA KF1 scenarios (CC BY 4.0); GT G341, visible G506/G436/G340"
     },
     "P06": {
-      "status": "todo",
+      "status": "done",
       "owner": "inference",
       "phase": "prebuild",
-      "notes": ""
+      "notes": "b139e9e: model profiles fixture/lite-local/full-local/remote16gb/gb10"
     },
     "P07": {
-      "status": "todo",
+      "status": "done",
       "owner": "vision",
       "phase": "prebuild",
-      "notes": ""
+      "notes": "b139e9e: Qwen perception adapter, cue vocabulary"
     },
     "P08": {
-      "status": "todo",
+      "status": "done",
       "owner": "fusion",
       "phase": "prebuild",
-      "notes": ""
+      "notes": "f09ff1b: deterministic correlation + coarse triangulation"
     },
     "P09": {
-      "status": "todo",
+      "status": "done",
       "owner": "reasoning",
       "phase": "prebuild",
-      "notes": ""
+      "notes": "b139e9e: Mistral reasoning adapter, event vocabulary"
     },
     "P10": {
-      "status": "todo",
+      "status": "done",
       "owner": "integrator",
       "phase": "prebuild",
-      "notes": ""
+      "notes": "c30048b submit gate; b72cffe ToolSession + contracts/tools.schema.json; e2f283e dev-sequence harness runs every API run (FixtureReplay removed); 657 tests"
     },
     "P11": {
       "status": "todo",
