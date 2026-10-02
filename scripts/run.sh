@@ -18,7 +18,7 @@ usage: scripts/run.sh <target> [args...]
   tool-probe           single-turn tool-call probe against local reasoning models
   offline-check        prove the fixture path needs no network (writes artifacts/offline)
   fixture-e2e          Playwright on /ops, fixture profile (args pass to playwright)
-  lite-e2e | full-e2e  the same suite's eval_001 run on lite-local / full-local models
+  lite-e2e | full-e2e  eval_001 on lite-local / full-local models (args replace -g eval_001)
   boundary-check | snapshot-prebuild | prebuild-ultracode
   event-day-start | event-day-ultracode | verify-event-delta
 USAGE
@@ -36,9 +36,18 @@ case "$target" in
   eval) py scripts/eval/run_eval.py "$@" ;;
   tool-probe) py scripts/eval/probe_tool_calls.py "$@" ;;
   offline-check) py scripts/offline_check.py "$@" ;;
-  fixture-e2e) pnpm --dir apps/web e2e "$@" ;;
-  lite-e2e) E2E_PROFILE=lite-local E2E_RUN_TIMEOUT_S="${E2E_RUN_TIMEOUT_S:-600}" pnpm --dir apps/web e2e "$@" ;;
-  full-e2e) E2E_PROFILE=full-local E2E_RUN_TIMEOUT_S="${E2E_RUN_TIMEOUT_S:-900}" pnpm --dir apps/web e2e "$@" ;;
+  # E2E_PROFILE is set on every target, so one left in the shell cannot change the run.
+  fixture-e2e) E2E_PROFILE=fixture pnpm --dir apps/web e2e "$@" ;;
+  # Bare, a model target runs eval_001 alone: it is the only spec that follows E2E_PROFILE, and
+  # the others would just redo the fixture run and rewrite its screenshots.
+  lite-e2e)
+    [ "$#" -gt 0 ] || set -- -g eval_001
+    E2E_PROFILE=lite-local E2E_RUN_TIMEOUT_S="${E2E_RUN_TIMEOUT_S:-600}" pnpm --dir apps/web e2e "$@"
+    ;;
+  full-e2e)
+    [ "$#" -gt 0 ] || set -- -g eval_001
+    E2E_PROFILE=full-local E2E_RUN_TIMEOUT_S="${E2E_RUN_TIMEOUT_S:-900}" pnpm --dir apps/web e2e "$@"
+    ;;
   boundary-check) ./scripts/assert_prebuild_boundary.sh "$@" ;;
   snapshot-prebuild) ./scripts/snapshot_prebuild.sh "$@" ;;
   prebuild-ultracode) ./scripts/start_prebuild_ultracode.sh "$@" ;;
