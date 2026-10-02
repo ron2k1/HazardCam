@@ -69,40 +69,40 @@
       "notes": "c30048b submit gate; b72cffe ToolSession + contracts/tools.schema.json; e2f283e dev-sequence harness runs every API run (FixtureReplay removed); 657 tests"
     },
     "P11": {
-      "status": "todo",
+      "status": "done",
       "owner": "frontend",
       "phase": "prebuild",
-      "notes": ""
+      "notes": "b2cd138 /ops wired to the API; 9e1439c SSE retry budget + detach; 2eda816 POST lock + stale-reply drop; 0dff9d7 favicon; 91149e0 2xx unconfirmed, health follows profile, generation-scoped reveal"
     },
     "P12": {
-      "status": "todo",
+      "status": "done",
       "owner": "eval",
       "phase": "prebuild",
-      "notes": ""
+      "notes": "c2087c2 SCORING.md pre-registered; d9bb401 scorer + run_eval; 909b74a/c586478 fixture eval: pipeline_ok, 9/22 vs always-unknown 14/22"
     },
     "P13": {
-      "status": "todo",
+      "status": "done",
       "owner": "verifier",
       "phase": "prebuild",
-      "notes": ""
+      "notes": "8ac8929 fixture Playwright; 75b6f65/9bcd27e manifest-token GT detector, races, resilience; 50fe1ae/ce59cab/2e8d9a9/f3e448c/347246b; 22 tests"
     },
     "P14": {
-      "status": "todo",
+      "status": "done",
       "owner": "verifier",
       "phase": "prebuild",
-      "notes": ""
+      "notes": "f9e4736 lite-local e2e 8/8 with real calls, 29.1 s RUN to complete"
     },
     "P15": {
-      "status": "todo",
+      "status": "done",
       "owner": "inference",
       "phase": "prebuild",
-      "notes": ""
+      "notes": "c719c72 full-local eval 10/22, balanced 0.46, Brier 0.341, pipeline_ok; d42f6d8 MODEL_BENCHMARK.md; b036324 full-e2e eval_001"
     },
     "P16": {
-      "status": "todo",
+      "status": "done",
       "owner": "integrator",
       "phase": "prebuild",
-      "notes": ""
+      "notes": "7e7f58f..d3191f5 run.sh, start_app, offline check (b51f3d7, 095261c), boundary exit fix (70c9d64), exec bits (d73e3e1); artifacts/PREBUILD_VERIFICATION.md; snapshot last"
     },
     "D00": {
       "status": "todo",

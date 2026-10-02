@@ -44,9 +44,9 @@ scripts/run.sh eval                           # fixture eval, 22 scenarios, ~25 
 scripts/run.sh eval --profile full-local      # live models, ~30 min on the laptop
 scripts/run.sh tool-probe                     # single-turn tool-call probe, 8B and 3B
 scripts/run.sh offline-check                  # network refused during a fixture run
-scripts/run.sh fixture-e2e                    # Playwright on /ops, fixture profile, 17 tests, ~1 min + build
+scripts/run.sh fixture-e2e                    # Playwright on /ops, fixture profile, 22 tests, ~1.5 min + build
 scripts/run.sh lite-e2e                       # eval_001 alone on lite-local models, ~40 s + build
-scripts/run.sh full-e2e                       # eval_001 alone on full-local models, ~1.5 min + build
+scripts/run.sh full-e2e                       # eval_001 alone on full-local models, ~2 min + build
 ```
 
 `lite-e2e` / `full-e2e` keep `-g eval_001` under other options and their values (`--headed`,
