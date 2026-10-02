@@ -18,10 +18,25 @@ usage: scripts/run.sh <target> [args...]
   tool-probe           single-turn tool-call probe against local reasoning models
   offline-check        prove the fixture path needs no network (writes artifacts/offline)
   fixture-e2e          Playwright on /ops, fixture profile (args pass to playwright)
-  lite-e2e | full-e2e  eval_001 on lite-local / full-local models (args replace -g eval_001)
+  lite-e2e | full-e2e  eval_001 on lite-local / full-local models (a -g/--grep or spec file
+                       replaces -g eval_001; other args add to it)
   boundary-check | snapshot-prebuild | prebuild-ultracode
   event-day-start | event-day-ultracode | verify-event-delta
 USAGE
+}
+
+# Do the Playwright args pick tests? -g/--grep, or a spec file or path. A flag's separate value
+# (--workers 1) is neither, so it keeps the default.
+picks_tests() {
+  local a
+  for a in "$@"; do
+    case "$a" in
+      -g | -g?* | --grep | --grep=* | --grep-invert | --grep-invert=*) return 0 ;;
+      -*) ;; # --output=a/b is not a spec path
+      *.ts | *.ts:* | */*) return 0 ;;
+    esac
+  done
+  return 1
 }
 
 target="${1:-help}"
@@ -38,14 +53,15 @@ case "$target" in
   offline-check) py scripts/offline_check.py "$@" ;;
   # E2E_PROFILE is set on every target, so one left in the shell cannot change the run.
   fixture-e2e) E2E_PROFILE=fixture pnpm --dir apps/web e2e "$@" ;;
-  # Bare, a model target runs eval_001 alone: it is the only spec that follows E2E_PROFILE, and
-  # the others would just redo the fixture run and rewrite its screenshots.
+  # A model target runs eval_001 alone unless the args pick tests: it is the only spec that
+  # follows E2E_PROFILE, and the others would just redo the fixture run and rewrite its
+  # screenshots.
   lite-e2e)
-    [ "$#" -gt 0 ] || set -- -g eval_001
+    picks_tests "$@" || set -- -g eval_001 "$@"
     E2E_PROFILE=lite-local E2E_RUN_TIMEOUT_S="${E2E_RUN_TIMEOUT_S:-600}" pnpm --dir apps/web e2e "$@"
     ;;
   full-e2e)
-    [ "$#" -gt 0 ] || set -- -g eval_001
+    picks_tests "$@" || set -- -g eval_001 "$@"
     E2E_PROFILE=full-local E2E_RUN_TIMEOUT_S="${E2E_RUN_TIMEOUT_S:-900}" pnpm --dir apps/web e2e "$@"
     ;;
   boundary-check) ./scripts/assert_prebuild_boundary.sh "$@" ;;

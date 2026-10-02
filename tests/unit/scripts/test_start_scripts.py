@@ -307,10 +307,36 @@ def _tool_dir() -> str:
         # bare real-model targets run eval_001 alone, so they do not rewrite fixture evidence
         ("lite-e2e", (), "E2E_PROFILE=lite-local args: --dir apps/web e2e -g eval_001"),
         ("full-e2e", (), "E2E_PROFILE=full-local args: --dir apps/web e2e -g eval_001"),
+        # a test selection replaces eval_001; any other flag runs on top of it
         (
             "lite-e2e",
             ("-g", "eval_005"),
             "E2E_PROFILE=lite-local args: --dir apps/web e2e -g eval_005",
+        ),
+        (
+            "lite-e2e",
+            ("--grep=eval_005",),
+            "E2E_PROFILE=lite-local args: --dir apps/web e2e --grep=eval_005",
+        ),
+        (
+            "full-e2e",
+            ("ops-races.spec.ts",),
+            "E2E_PROFILE=full-local args: --dir apps/web e2e ops-races.spec.ts",
+        ),
+        (
+            "lite-e2e",
+            ("--headed",),
+            "E2E_PROFILE=lite-local args: --dir apps/web e2e -g eval_001 --headed",
+        ),
+        (
+            "full-e2e",
+            ("--workers", "1", "--reporter=line"),
+            "E2E_PROFILE=full-local args: --dir apps/web e2e -g eval_001 --workers 1 --reporter=line",
+        ),
+        (
+            "lite-e2e",
+            ("--output=tmp/e2e",),
+            "E2E_PROFILE=lite-local args: --dir apps/web e2e -g eval_001 --output=tmp/e2e",
         ),
     ],
 )
@@ -325,7 +351,11 @@ def test_run_e2e_targets_pin_their_profile_and_scope(tmp_path, target, args, exp
         tmp_path,
         target,
         *args,
-        env={"PATH": f"{stubs}{os.pathsep}{_tool_dir()}", "E2E_PROFILE": "from-the-shell"},
+        # bash's own directory too: the stub's `env bash` needs it where /bin is not /usr/bin
+        env={
+            "PATH": os.pathsep.join([str(stubs), str(Path(BASH or "").parent), _tool_dir()]),
+            "E2E_PROFILE": "from-the-shell",
+        },
     )
     assert done.returncode == 0, done.stderr
     assert done.stdout.strip() == expected
