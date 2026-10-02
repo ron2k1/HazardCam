@@ -112,13 +112,14 @@ def test_stop_jobs_on_exit_survives_a_second_interrupt_and_terms_every_job_at_on
     assert b_term_s < 1, f"B got TERM {b_term_s:.1f}s after Ctrl+C"
 
 
-@pytest.mark.parametrize("grace", ["1.5", "ten", "-1"])
+@pytest.mark.parametrize("grace", ["1.5", "ten", "-1", "08"])
 def test_proc_rejects_a_stop_grace_that_is_not_whole_seconds(tmp_path, grace):
-    # bash arithmetic cannot compare it, so the stop would never reach its KILL or its limit
+    # bash arithmetic cannot compare it (08 reads as octal), so the stop would never reach its
+    # KILL or its limit
     root = script_tree(
         tmp_path / "repo", "_proc.sh", files={"driver.sh": ". scripts/_proc.sh\necho sourced\n"}
     )
     done = run_script(root / "driver.sh", root, env={"STOP_GRACE_S": grace})
     assert done.returncode == 2
-    assert f"STOP_GRACE_S must be whole seconds, not {grace}" in done.stderr
+    assert f"STOP_GRACE_S must be whole seconds with no leading zero, not {grace}" in done.stderr
     assert "sourced" not in done.stdout
