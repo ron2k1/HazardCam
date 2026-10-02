@@ -29,6 +29,31 @@ export interface EvidenceTimelineProps {
 
 const LANE_H = 38;
 const LABEL_ROW = 14;
+/** Row pitch / bar height / padding when overlapping bars are stacked within one lane. */
+const ROW_PITCH = 10;
+const ROW_BAR_H = 8;
+const ROW_PAD = 4;
+
+/**
+ * Greedy interval packing: bars that overlap in time go to separate rows of their lane,
+ * so every observation stays visible and clickable (real runs often emit several cues
+ * over the same span).
+ */
+function packLane(items: readonly TimelineItem[]): { row: Map<string, number>; rows: number } {
+  const ends: number[] = [];
+  const row = new Map<string, number>();
+  for (const it of [...items].sort((a, b) => a.tStart - b.tStart || a.tEnd - b.tEnd)) {
+    let r = ends.findIndex((end) => end <= it.tStart + 1e-6);
+    if (r === -1) {
+      r = ends.length;
+      ends.push(it.tEnd);
+    } else {
+      ends[r] = it.tEnd;
+    }
+    row.set(it.id, r);
+  }
+  return { row, rows: Math.max(ends.length, 1) };
+}
 
 export function EvidenceTimeline({
   cameras,
@@ -54,6 +79,19 @@ export function EvidenceTimeline({
   const clusterOf = (id: string) => clusters.find((c) => c.evidence_ids.includes(id));
   const offsetOf = new Map(cameras.map((c) => [c.id, c.time_offset_s ?? 0]));
   const linkedCount = items.filter((i) => i.linked).length;
+
+  const lanes = cameras.map((cam) => {
+    const laneItems = items.filter((it) => it.cameraId === cam.id);
+    const { row, rows } = packLane(laneItems);
+    return { cam, laneItems, row, rows, height: rows > 1 ? Math.max(LANE_H, rows * ROW_PITCH + ROW_PAD * 2) : LANE_H };
+  });
+  const laneTops: number[] = [];
+  let laneTop = LABEL_ROW;
+  for (const l of lanes) {
+    laneTops.push(laneTop);
+    laneTop += l.height;
+  }
+  const lanesHeight = laneTop - LABEL_ROW;
 
   return (
     <Panel
@@ -87,14 +125,14 @@ export function EvidenceTimeline({
         {/* lanes */}
         <div className="relative mt-1 grid grid-cols-[64px_minmax(0,1fr)] gap-x-2">
           <div className="flex flex-col" style={{ paddingTop: LABEL_ROW }}>
-            {cameras.map((c) => (
-              <span key={c.id} className="flex items-center text-[10px] tracking-[0.14em] text-fg/85" style={{ height: LANE_H }}>
-                {c.id.toUpperCase()}
+            {lanes.map(({ cam, height }) => (
+              <span key={cam.id} className="flex items-center text-[10px] tracking-[0.14em] text-fg/85" style={{ height }}>
+                {cam.id.toUpperCase()}
               </span>
             ))}
           </div>
 
-          <div className="relative" style={{ height: LABEL_ROW + LANE_H * cameras.length }}>
+          <div className="relative" style={{ height: LABEL_ROW + lanesHeight }}>
             {/* vertical grid */}
             {ticks.map((t) => (
               <span key={t} aria-hidden className="absolute bottom-0 w-px bg-line/50" style={{ left: x(t), top: LABEL_ROW }} />
@@ -120,11 +158,11 @@ export function EvidenceTimeline({
               </motion.div>
             ))}
 
-            {cameras.map((cam, lane) => (
+            {lanes.map(({ cam, laneItems, row, rows, height }, lane) => (
               <div
                 key={cam.id}
                 className="absolute inset-x-0 border-b border-line/60"
-                style={{ top: LABEL_ROW + lane * LANE_H, height: LANE_H }}
+                style={{ top: laneTops[lane], height }}
               >
                 {/* sampled frame ticks (media time -> scenario time) */}
                 {(samples?.[cam.id] ?? []).map((f) => (
@@ -135,40 +173,44 @@ export function EvidenceTimeline({
                     style={{ left: x(f.t + (offsetOf.get(cam.id) ?? 0)) }}
                   />
                 ))}
-                {items
-                  .filter((it) => it.cameraId === cam.id)
-                  .map((it) => {
-                    const active = it.id === focusId;
-                    return (
-                      <motion.button
-                        key={it.id}
-                        type="button"
-                        initial={{ opacity: 0, scaleX: 0.2 }}
-                        animate={{ opacity: 1, scaleX: 1 }}
-                        transition={{ duration: 0.35 }}
-                        onClick={() => {
-                          onSelect?.(it.id);
-                          onSeek(it.cameraId, it.tStart);
-                        }}
-                        onMouseEnter={() => setHoverId(it.id)}
-                        onMouseLeave={() => setHoverId(null)}
-                        onFocus={() => setHoverId(it.id)}
-                        onBlur={() => setHoverId(null)}
-                        aria-label={`${it.id} ${it.cueType} at ${timecode(it.tStart)}, seek ${cam.id}`}
-                        data-evidence-id={it.id}
-                        className={cn(
-                          "absolute top-1/2 h-3 origin-left -translate-y-1/2 cursor-pointer border outline-none",
-                          it.linked ? "border-fg/80" : "border-dashed border-fg/50",
-                          active && "h-4 border-fg",
-                        )}
-                        style={{
-                          left: x(it.tStart),
-                          width: w(it.tStart, it.tEnd),
-                          backgroundColor: `rgba(241,241,239,${(it.linked ? 0.2 : 0.06) + it.confidence * (it.linked ? 0.65 : 0.2)})`,
-                        }}
-                      />
-                    );
-                  })}
+                {laneItems.map((it) => {
+                  const active = it.id === focusId;
+                  const stacked = rows > 1;
+                  return (
+                    <motion.button
+                      key={it.id}
+                      type="button"
+                      initial={{ opacity: 0, scaleX: 0.2 }}
+                      animate={{ opacity: 1, scaleX: 1 }}
+                      transition={{ duration: 0.35 }}
+                      onClick={() => {
+                        onSelect?.(it.id);
+                        onSeek(it.cameraId, it.tStart);
+                      }}
+                      onMouseEnter={() => setHoverId(it.id)}
+                      onMouseLeave={() => setHoverId(null)}
+                      onFocus={() => setHoverId(it.id)}
+                      onBlur={() => setHoverId(null)}
+                      aria-label={`${it.id} ${it.cueType} at ${timecode(it.tStart)}, seek ${cam.id}`}
+                      data-evidence-id={it.id}
+                      data-camera-id={it.cameraId}
+                      data-t-start={it.tStart}
+                      className={cn(
+                        "absolute origin-left cursor-pointer border outline-none",
+                        stacked ? "" : "top-1/2 h-3 -translate-y-1/2",
+                        it.linked ? "border-fg/80" : "border-dashed border-fg/50",
+                        active && "border-fg",
+                        active && !stacked && "h-4",
+                      )}
+                      style={{
+                        left: x(it.tStart),
+                        width: w(it.tStart, it.tEnd),
+                        ...(stacked ? { top: ROW_PAD + (row.get(it.id) ?? 0) * ROW_PITCH, height: ROW_BAR_H } : {}),
+                        backgroundColor: `rgba(241,241,239,${(it.linked ? 0.2 : 0.06) + it.confidence * (it.linked ? 0.65 : 0.2)})`,
+                      }}
+                    />
+                  );
+                })}
               </div>
             ))}
           </div>

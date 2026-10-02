@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { CornerTicks } from "@/components/hud/panel";
 import { Button } from "@/components/ui/button";
 import type { JudgeGroundTruth } from "@/lib/contracts";
-import { deg, signedCoord } from "@/lib/format";
+import { deg, label, signedCoord } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 export interface GroundTruthTileProps {
@@ -14,6 +14,9 @@ export interface GroundTruthTileProps {
   /** Resolved GT video URL (null when video_available is false); only rendered once revealed. */
   src: string | null;
   revealed: boolean;
+  /** The judge request behind the reveal is in flight / failed. */
+  pending?: boolean;
+  error?: string | null;
   /** Typically: run complete. */
   canReveal: boolean;
   onReveal?: () => void;
@@ -21,20 +24,41 @@ export interface GroundTruthTileProps {
   className?: string;
 }
 
+const str = (v: unknown): string | null => (typeof v === "string" && v ? v : null);
+
+/** The judge's expected outcome from expected.json, as far as it states one. */
+function expectedSummary(expected: Record<string, unknown> | null): string | null {
+  if (!expected) return null;
+  const event = str(expected.event_type);
+  const zone = str((expected.region as Record<string, unknown> | null | undefined)?.zone_id);
+  const category = str(expected.category);
+  const parts = [
+    event ? `EXPECTED ${label(event)}` : null,
+    zone ? `ZONE ${zone.toUpperCase()}` : null,
+    category ? label(category) : null,
+    expected.abstention_acceptable === true ? "ABSTAIN OK" : null,
+  ].filter(Boolean);
+  return parts.length ? parts.join(" · ") : null;
+}
+
 /** Fourth tile: the withheld judge camera. Visually distinct (dashed frame, hatch, inverted tag). */
 export function GroundTruthTile({
   judge,
   src,
   revealed,
+  pending = false,
+  error = null,
   canReveal,
   onReveal,
   onHide,
   className,
 }: GroundTruthTileProps) {
   const cam = judge?.ground_truth_camera;
+  const expected = revealed ? expectedSummary(judge?.expected ?? null) : null;
   return (
     <figure
       aria-label="Judge ground truth camera, not model input"
+      data-testid="ground-truth"
       data-state={revealed ? "revealed" : "withheld"}
       className={cn("relative min-h-0 min-w-0 overflow-hidden border border-dashed border-line-strong bg-bg", className)}
     >
@@ -84,20 +108,32 @@ export function GroundTruthTile({
             <Button
               size="sm"
               variant={canReveal ? "default" : "ghost"}
-              disabled={!canReveal || !onReveal}
+              disabled={!canReveal || !onReveal || pending}
               onClick={onReveal}
               className="pointer-events-auto mt-1 bg-bg"
             >
-              {canReveal ? "REVEAL FOR JUDGE" : "REVEAL AFTER RUN"}
+              {pending ? "FETCHING JUDGE DATA" : canReveal ? "REVEAL FOR JUDGE" : "REVEAL AFTER RUN"}
             </Button>
+            {error ? (
+              <span role="alert" className="micro max-w-[90%] truncate text-danger normal-case" title={error}>
+                REVEAL FAILED · {error}
+              </span>
+            ) : null}
           </motion.div>
         )}
       </AnimatePresence>
 
       <CornerTicks size={9} className="m-1.5" />
       <figcaption className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-2 px-2.5 pt-2">
-        <span className="bg-fg px-1.5 py-0.5 text-[9px] font-bold tracking-[0.16em] text-bg">
-          JUDGE GROUND TRUTH — NOT MODEL INPUT
+        <span className="flex min-w-0 flex-col items-start gap-1">
+          <span className="bg-fg px-1.5 py-0.5 text-[9px] font-bold tracking-[0.16em] text-bg">
+            JUDGE GROUND TRUTH — NOT MODEL INPUT
+          </span>
+          {expected ? (
+            <span className="micro line-clamp-2 max-w-full bg-bg/80 px-1 text-fg/90" data-testid="gt-expected" title={expected}>
+              {expected}
+            </span>
+          ) : null}
         </span>
         {revealed && onHide ? (
           <button

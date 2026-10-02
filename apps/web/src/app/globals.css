@@ -44,6 +44,11 @@
   color-scheme: dark;
 }
 
+@theme {
+  /* /ops: the three-column console needs ~1240px; below it the columns stack */
+  --breakpoint-ops: 77.5rem;
+}
+
 @theme inline {
   --color-bg: var(--bg);
   --color-panel: var(--panel);

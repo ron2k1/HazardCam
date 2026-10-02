@@ -272,6 +272,13 @@ export function isAbstain(h: Hypothesis | null | undefined): boolean {
   return !!h && h.event_type === ABSTAIN_EVENT_TYPE;
 }
 
+/** inference/vocab.py NO_EVENT: a negative claim (unlike "unknown", which makes no claim). */
+export const NO_EVENT_TYPE = "no_event";
+
+export function isNoEvent(h: Hypothesis | null | undefined): boolean {
+  return !!h && h.event_type === NO_EVENT_TYPE;
+}
+
 /* ----------------------------------------------------------------------- run */
 
 export type RunState = "queued" | "running" | "complete" | "failed";

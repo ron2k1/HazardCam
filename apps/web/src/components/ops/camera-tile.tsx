@@ -76,6 +76,7 @@ export function CameraTile({
   return (
     <figure
       aria-label={`${camera.id} input camera`}
+      data-camera-id={camera.id}
       className={cn(
         "relative min-h-0 min-w-0 overflow-hidden border bg-bg",
         highlighted ? "border-fg/80" : "border-line",

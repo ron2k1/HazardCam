@@ -17,6 +17,22 @@ export function apiUrl(path: string): string {
 
 export const APP_VERSION = "v3.0.0-prebuild";
 
+/** Live /ops wiring (P11). */
+export const LIVE = {
+  /** Profile a run posts unless the operator picks another. Fixture makes no model calls. */
+  defaultProfile: "fixture",
+  /** RunRequest.pace_s bounds (apps/api/schemas/run.py). */
+  maxPaceS: 5,
+  /** GET /healthz poll while the API is up / down. */
+  healthPollMs: 10_000,
+  offlinePollMs: 4_000,
+  /** Abort a JSON request after this long; the API is local, so a slow reply means trouble. */
+  requestTimeoutMs: 6_000,
+  /** Our own SSE reconnects (the browser gave up, e.g. HTTP error), with doubling backoff. */
+  streamMaxRetries: 5,
+  streamRetryBaseMs: 750,
+} as const;
+
 /** Fixed timeline/plan rendering constants. */
 export const UI = {
   /** Range of a FOV wedge in the plan view, as a fraction of the plan extent. */

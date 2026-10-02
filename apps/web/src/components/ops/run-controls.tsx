@@ -2,6 +2,7 @@
 
 import { StatusDot } from "@/components/hud/barcode";
 import { Button } from "@/components/ui/button";
+import type { StreamStatus } from "@/hooks/use-run-stream";
 import type { ScenarioSummary } from "@/lib/contracts";
 import { clip, seqId } from "@/lib/format";
 import type { RunPhase } from "@/lib/run-view";
@@ -20,14 +21,25 @@ export interface RunControlsProps {
   lastSeq: number;
   /** Disable RUN independently of phase (e.g. API offline). */
   disabled?: boolean;
+  /** SSE link state of the live console; omitted (no indicator) for the mock. */
+  link?: StreamStatus | null;
   /** Data provenance tag, e.g. "MOCK · contracts/examples". */
   sourceLabel?: string | null;
   className?: string;
 }
 
+const LINK: Record<StreamStatus, { text: string; tone: "fg" | "muted" | "dim" | "danger"; pulse?: boolean }> = {
+  idle: { text: "—", tone: "dim" },
+  connecting: { text: "CONNECTING", tone: "muted", pulse: true },
+  open: { text: "LIVE", tone: "fg", pulse: true },
+  reconnecting: { text: "RESUMING", tone: "danger", pulse: true },
+  closed: { text: "CLOSED", tone: "dim" },
+  lost: { text: "LOST", tone: "danger" },
+};
+
 function Field({ id, k, children }: { id: string; k: string; children: React.ReactNode }) {
   return (
-    <label htmlFor={id} className="flex h-full items-center gap-2 border-r border-line pr-3">
+    <label htmlFor={id} className="flex items-center gap-2 border-r border-line pr-3 ops:h-full">
       <span className="micro">{k}</span>
       {children}
     </label>
@@ -52,16 +64,24 @@ export function RunControls({
   runId,
   lastSeq,
   disabled = false,
+  link,
   sourceLabel,
   className,
 }: RunControlsProps) {
   const running = phase === "running" || phase === "queued";
+  const linkInfo = link ? LINK[link] : null;
   return (
-    <div className={cn("flex h-11 shrink-0 items-center gap-3 border-b border-line px-3", className)}>
+    <div
+      className={cn(
+        "flex min-h-11 shrink-0 flex-wrap items-center gap-x-3 gap-y-1.5 border-b border-line px-3 py-1.5 ops:h-11 ops:flex-nowrap ops:py-0",
+        className,
+      )}
+    >
       <Field id="scenario-select" k="SCENARIO">
         <select
           id="scenario-select"
-          className={cn(selectCls, "w-[280px]")}
+          data-testid="scenario-select"
+          className={cn(selectCls, "w-[min(280px,62vw)]")}
           value={scenarioId ?? ""}
           disabled={running || scenarios.length === 0}
           onChange={(e) => onScenarioChange(e.target.value)}
@@ -107,6 +127,12 @@ export function RunControls({
       </div>
       <span className="micro hidden xl:inline">RUN {runId ?? "—"}</span>
       <span className="micro">SEQ {seqId(lastSeq)}</span>
+      {linkInfo ? (
+        <span className="micro flex items-center gap-1.5" data-link-status={link}>
+          <StatusDot tone={linkInfo.tone} pulse={linkInfo.pulse} />
+          <span className={linkInfo.tone === "danger" ? "text-danger" : undefined}>SSE {linkInfo.text}</span>
+        </span>
+      ) : null}
 
       {sourceLabel ? (
         <span className="micro ml-auto border border-line-strong px-1.5 py-0.5 text-fg/80" data-testid="source-label">

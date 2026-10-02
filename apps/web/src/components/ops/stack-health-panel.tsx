@@ -4,7 +4,8 @@ import type { ModelRoleHealth, ModelRoleStatus, ModelsHealth } from "@/lib/contr
 import { ms } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
-export type ApiStatus = "online" | "offline" | "checking" | "mock";
+/** degraded: /healthz answered but reported a failing dependency. */
+export type ApiStatus = "online" | "offline" | "checking" | "mock" | "degraded";
 
 /** Any status a row can carry: API reachability, models-health roll-up, or a role probe. */
 export type HealthStatus = ApiStatus | ModelRoleStatus | ModelsHealth["status"] | "unknown";
@@ -43,7 +44,11 @@ const TONE: Record<HealthStatus, "fg" | "muted" | "dim" | "danger"> = {
 function Line({ k, value, status, detail }: { k: string; value: string; status: HealthStatus; detail?: string | null }) {
   const bad = TONE[status] === "danger";
   return (
-    <li className="grid grid-cols-[82px_minmax(0,1fr)_auto] items-baseline gap-x-2 border-b border-line/70 py-1.5 last:border-b-0">
+    <li
+      data-health-row={k}
+      data-status={status}
+      className="grid grid-cols-[82px_minmax(0,1fr)_auto] items-baseline gap-x-2 border-b border-line/70 py-1.5 last:border-b-0"
+    >
       <span className="micro">{k}</span>
       <span className="min-w-0">
         <span className="block truncate text-[11px] text-fg/90" title={value}>

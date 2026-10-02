@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { StatusDot } from "@/components/hud/barcode";
 import { Panel } from "@/components/hud/panel";
 import { NumberTicker } from "@/components/ui/number-ticker";
-import { isAbstain, type Hypothesis } from "@/lib/contracts";
+import { isAbstain, isNoEvent, type Hypothesis } from "@/lib/contracts";
 import { fixed, label } from "@/lib/format";
 import type { RunPhase } from "@/lib/run-view";
 import { cn } from "@/lib/utils";
@@ -80,7 +80,11 @@ export function HypothesisPanel({
       className={className}
       bodyClassName="thin-scroll overflow-y-auto [mask-image:linear-gradient(to_bottom,#000_calc(100%-16px),transparent_100%)]"
       meta={
-        <span className="flex items-center gap-1.5 text-fg/85" data-hypothesis-state={stateLabel}>
+        <span
+          className="flex items-center gap-1.5 text-fg/85"
+          data-hypothesis-state={stateLabel}
+          data-event-type={hypothesis?.event_type ?? ""}
+        >
           <StatusDot tone={hypothesis ? (final ? "fg" : "muted") : "dim"} pulse={!final && phase === "running"} />
           {stateLabel}
         </span>
@@ -97,20 +101,25 @@ export function HypothesisPanel({
           >
             <span className="micro">EVENT TYPE</span>
             <p
+              data-testid="hypothesis-event"
               className={cn(
                 "mt-0.5 text-[17px] leading-tight font-bold tracking-[0.08em] break-words",
                 !hypothesis || abstain ? "text-fg/45" : "text-fg",
               )}
             >
-              {!hypothesis ? "UNKNOWN" : abstain ? "ABSTAIN — UNKNOWN" : label(hypothesis.event_type)}
+              {/* no hypothesis is not the `unknown` abstain class, so it gets no label */}
+              {!hypothesis ? "—" : abstain ? "ABSTAIN — UNKNOWN" : label(hypothesis.event_type)}
             </p>
             {abstain ? <p className="micro mt-1 text-fg/80">INSUFFICIENT CORROBORATING EVIDENCE · NO CLAIM MADE</p> : null}
+            {isNoEvent(hypothesis) ? (
+              <p className="micro mt-1 text-fg/80">NEGATIVE CLAIM · REASONER REPORTS NO EVENT IN THE REGION BELOW</p>
+            ) : null}
           </motion.div>
         </AnimatePresence>
 
         <div className="mt-3 flex items-end justify-between gap-3">
           <span className="micro">CONFIDENCE</span>
-          <span className="text-[20px] leading-none font-bold">
+          <span className="text-[20px] leading-none font-bold" data-testid="hypothesis-confidence">
             {hypothesis ? <NumberTicker value={hypothesis.confidence} decimalPlaces={2} /> : <span className="text-dim">—.——</span>}
           </span>
         </div>
@@ -120,7 +129,9 @@ export function HypothesisPanel({
       {hypothesis ? (
         <div className="px-2.5 pb-4">
           <Row k="REGION">
-            <span className="text-[11px] text-fg">{hypothesis.region.toUpperCase()}</span>
+            <span className="text-[11px] text-fg" data-testid="hypothesis-region">
+              {hypothesis.region.toUpperCase()}
+            </span>
             {regionLabel ? <span className="micro ml-2">{regionLabel}</span> : null}
           </Row>
           <Row k="REASON">
@@ -133,6 +144,7 @@ export function HypothesisPanel({
                   <button
                     key={id}
                     type="button"
+                    data-cited-evidence={id}
                     onClick={() => onSelectEvidence?.(id)}
                     className={cn(
                       "border px-1.5 py-px text-[10px] tracking-[0.06em] transition-colors",
@@ -181,7 +193,11 @@ export function HypothesisPanel({
         </div>
       ) : (
         <p className="micro px-2.5 pb-3">
-          {phase === "running" ? "AWAITING REASONING STAGE" : "IDLE · NO HYPOTHESIS"}
+          {phase === "running" || phase === "queued"
+            ? "AWAITING REASONING STAGE"
+            : phase === "failed"
+              ? "RUN FAILED · NO HYPOTHESIS"
+              : "IDLE · NO HYPOTHESIS"}
         </p>
       )}
     </Panel>

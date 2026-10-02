@@ -38,6 +38,7 @@ export function TracePanel({ rows, harness, phase, lastSeq, startedAt = null, cl
 
   const done = new Set(rows.filter((r) => r.status === "ok").map((r) => r.tool));
   const active = new Set(rows.filter((r) => r.status === "running").map((r) => r.tool));
+  const failed = rows.filter((r) => r.status === "error").length;
 
   return (
     <Panel
@@ -49,6 +50,7 @@ export function TracePanel({ rows, harness, phase, lastSeq, startedAt = null, cl
         <>
           <span>SEQ {seqId(lastSeq)}</span>
           <span>{rows.length} CALLS</span>
+          {failed ? <span className="text-danger">{failed} FAILED</span> : null}
         </>
       }
     >
@@ -94,7 +96,11 @@ export function TracePanel({ rows, harness, phase, lastSeq, startedAt = null, cl
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.18 }}
                 data-status={r.status}
-                className="grid grid-cols-[34px_minmax(0,1fr)_auto] gap-x-2 gap-y-0.5 px-2.5 py-1.5"
+                data-tool={r.tool}
+                className={cn(
+                  "grid grid-cols-[34px_minmax(0,1fr)_auto] gap-x-2 gap-y-0.5 px-2.5 py-1.5",
+                  r.status === "error" && "bg-danger/[0.06]",
+                )}
               >
                 <span className="micro row-span-2 pt-px text-dim">{seqId(r.seq)}</span>
                 <span className="flex min-w-0 items-center gap-1.5 text-[11px] text-fg">

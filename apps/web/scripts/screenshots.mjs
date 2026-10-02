@@ -59,9 +59,9 @@ try {
     report.checks.enterSystemHref = await page.getByRole("link", { name: "ENTER SYSTEM" }).getAttribute("href");
     await ctx.close();
   }
-  // ops, default (complete fixture replay)
+  // ops mock, default (contract-example replay; /ops itself is the live console)
   {
-    const { ctx, page } = await open(browser, "/ops");
+    const { ctx, page } = await open(browser, "/ops?mock=default");
     await shot(page, "ops-1440x900");
     report.checks.cameraTiles = await page.locator("[data-testid=camera-grid] figure").count();
     report.checks.gtLabel = await page.getByText("JUDGE GROUND TRUTH — NOT MODEL INPUT").count();
@@ -106,7 +106,7 @@ try {
     [1920, 1080],
     [1280, 800],
   ]) {
-    const { ctx, page } = await open(browser, "/ops", { width: w, height: h });
+    const { ctx, page } = await open(browser, "/ops?mock=default", { width: w, height: h });
     await shot(page, `ops-${w}x${h}`);
     report.checks[`overflowX_${w}`] = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
     await ctx.close();
@@ -115,7 +115,7 @@ try {
     await l.ctx.close();
   }
   // reduced motion
-  for (const path of ["/", "/ops"]) {
+  for (const path of ["/", "/ops?mock=default"]) {
     const { ctx, page } = await open(browser, path, { reducedMotion: "reduce" });
     report.checks[`reducedMotionMatches${path === "/" ? "Landing" : "Ops"}`] = await page.evaluate(
       () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
