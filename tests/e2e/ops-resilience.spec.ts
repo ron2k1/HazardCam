@@ -47,6 +47,57 @@ test("API down: offline notice, RUN disabled, recovers when the API answers agai
   await expect(u.run).toBeEnabled();
 });
 
+test("API drops after the scenarios loaded: offline notice and RUN disabled by the offline rule alone", async ({ page }) => {
+  const u = ui(page);
+  await openOps(page, "?scenario=eval_001");
+  await expect(u.run).toBeEnabled();
+
+  let down = true;
+  await page.route(`${API_URL}/**`, (route) => (down ? route.abort("connectionrefused") : route.fallback()));
+  // the next health poll (10 s while the API is up) finds it gone
+  await expect(u.healthRow("API")).toHaveAttribute("data-status", "offline", { timeout: 15_000 });
+  await expect(u.notice).toContainText("API OFFLINE");
+  await expect(u.run).toBeDisabled();
+  // the list is still loaded, so nothing but the offline rule is holding RUN
+  await expect(u.select).toBeEnabled();
+  await expect(u.select).toHaveValue("eval_001");
+
+  down = false;
+  await expect(u.healthRow("API")).toHaveAttribute("data-status", "online", { timeout: 15_000 });
+  await expect(u.notice).toHaveCount(0);
+  await expect(u.run).toBeEnabled();
+});
+
+test("scenario list fails once (500 injected in the browser): the page asks again without a reload", async ({ page }) => {
+  const u = ui(page);
+  let failed = 0;
+  await page.route(`${API_URL}/api/scenarios`, (route) => {
+    if (failed > 0) return route.fallback();
+    failed += 1;
+    return route.fulfill({ status: 500, contentType: "application/json", body: JSON.stringify({ detail: "e2e injected" }) });
+  });
+
+  await page.goto("/ops?scenario=eval_001");
+  await expect(u.notice).toContainText("SCENARIOS UNAVAILABLE · HTTP 500 · e2e injected");
+  await expect(u.run).toBeDisabled();
+  await expect(u.select).toHaveValue("eval_001", { timeout: 15_000 });
+  await expect(u.notice).toHaveCount(0);
+  await expect(u.run).toBeEnabled();
+});
+
+test("run request fails at the network (reset in the browser): the notice says unconfirmed, not rejected", async ({ page }) => {
+  const u = ui(page);
+  await openOps(page, "?scenario=eval_001");
+  await page.route(/\/api\/runs$/, (route) =>
+    route.request().method() === "POST" ? route.abort("connectionreset") : route.fallback(),
+  );
+  await u.run.click();
+  // the request may have reached the API before the connection broke
+  await expect(u.notice).toContainText("RUN NOT CONFIRMED · unreachable");
+  await expect(u.notice).not.toContainText("REJECTED");
+  await expect(u.run).toBeEnabled();
+});
+
 const CUT = 20;
 
 /**
@@ -148,6 +199,44 @@ test("SSE replay [fixture] (reconnect answered from seq 1 in the browser): event
   expect(markedStarts, "tool.started events among the replayed duplicates").toBeGreaterThan(0);
   await expect(ui(page).trace).not.toContainText(MARK);
   await expectMatchesServerLog(page, request, run.events_url);
+});
+
+test("SSE own reconnect [fixture] (browser reconnect answered 500 in the browser): the page resumes with ?after_seq", async ({
+  page,
+  request,
+}) => {
+  let answered = 0;
+  // the browser's reconnect gets an HTTP error, so EventSource gives up and the page resumes itself
+  const cut = await cutStreamAt(page, (route) =>
+    answered++ === 0 ? route.fulfill({ status: 500, body: "e2e injected" }) : route.fallback(),
+  );
+  const { run } = await runThroughCut(page, cut);
+
+  expect(cut.urls).toHaveLength(3);
+  expect(cut.urls[1], "the browser's own retry").toBe(cut.urls[0]);
+  expect(new URL(cut.urls[2]).searchParams.get("after_seq"), "the page's reconnect").toBe(String(CUT));
+  await expectMatchesServerLog(page, request, run.events_url);
+});
+
+test("API gone mid-run [fixture] (every reconnect refused in the browser): the page stops after its retry budget and marks the stream lost", async ({
+  page,
+}) => {
+  const u = ui(page);
+  const cut = await cutStreamAt(page, (route) => route.abort("connectionrefused"));
+  await openOps(page, "?scenario=eval_001");
+  const done = runToEnd(page, "failed");
+  await expect(u.link).toHaveAttribute("data-link-status", "reconnecting", { timeout: 30_000 });
+  cut.release();
+  await done;
+
+  await expect(u.link).toHaveAttribute("data-link-status", "lost");
+  await expect(u.failure).toContainText("stream lost after 5 reconnects");
+  await expect(u.run).toBeEnabled();
+  // one connection plus 5 refused reconnects (LIVE.streamMaxRetries), then no more (absence check)
+  const seen = cut.urls.length;
+  await page.waitForTimeout(1_000);
+  expect(cut.urls).toHaveLength(seen);
+  expect(seen).toBe(6);
 });
 
 test("tool failure + run.failed [fixture] (injected in the browser; the backend run itself succeeds) render as a failed run", async ({

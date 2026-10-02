@@ -163,7 +163,12 @@ export function HypothesisPanel({
             {hypothesis.alternatives.length ? (
               <ul className="flex flex-col gap-1">
                 {hypothesis.alternatives.map((a) => (
-                  <li key={a.event_type} className="grid grid-cols-[minmax(0,1fr)_64px_32px] items-center gap-2">
+                  <li
+                    key={a.event_type}
+                    className="grid grid-cols-[minmax(0,1fr)_64px_32px] items-center gap-2"
+                    data-testid="hypothesis-alternative"
+                    data-event-type={a.event_type}
+                  >
                     <span className="truncate text-[10px] tracking-[0.06em] text-fg/80">{label(a.event_type)}</span>
                     <span className="relative h-1.5 border border-line">
                       <span className="absolute inset-y-0 left-0 bg-fg/60" style={{ width: `${Math.min(Math.max(a.confidence, 0), 1) * 100}%` }} />
@@ -180,7 +185,7 @@ export function HypothesisPanel({
             {hypothesis.limitations.length ? (
               <ul className="flex flex-col gap-0.5">
                 {hypothesis.limitations.map((l) => (
-                  <li key={l} className="text-[11px] leading-snug text-fg/75">
+                  <li key={l} className="text-[11px] leading-snug text-fg/75" data-testid="hypothesis-limitation">
                     <span className="mr-1.5 text-dim">—</span>
                     {l}
                   </li>

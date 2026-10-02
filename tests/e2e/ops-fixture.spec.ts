@@ -9,7 +9,9 @@ import type { Page } from "@playwright/test";
 import { API_URL, FIXTURE, PROFILE, RUN_TIMEOUT_MS, TOOL_SEQUENCE } from "./env";
 import {
   apiJson,
+  containsGroundTruth,
   expect,
+  groundTruthTokens,
   meta,
   openOps,
   runEvents,
@@ -19,6 +21,7 @@ import {
   shot,
   test,
   ui,
+  watchGroundTruth,
   type ApiScenario,
   type RunRecord,
 } from "./fixtures";
@@ -107,11 +110,14 @@ test(`eval_001 [${PROFILE}]: live trace in tool order, evidence seeks media, GT 
     await expect(u.healthRow("REASONING")).toHaveAttribute("data-status", "fixture");
   }
 
-  // GT withheld before the run
+  // GT withheld before the run, and no string that names the withheld camera on the page
   const revealBtn = u.groundTruth.getByRole("button");
   await expect(u.groundTruth).toHaveAttribute("data-state", "withheld");
   await expect(revealBtn).toHaveText("REVEAL AFTER RUN");
   await expect(revealBtn).toBeDisabled();
+  const gtTokens = groundTruthTokens("eval_001");
+  expect(containsGroundTruth(await page.content(), gtTokens), "ground-truth tokens on the page before the run").toBe(false);
+  const stopGtWatch = await watchGroundTruth(page, gtTokens);
 
   const trace = await watchTrace(page);
   const { run, clickToDoneMs } = await runToEnd(page);
@@ -164,6 +170,30 @@ test(`eval_001 [${PROFILE}]: live trace in tool order, evidence seeks media, GT 
   expect(live.sawRunning, "a tool row was seen in the running state").toBe(true);
   expect(live.counts.length, `rows arrived incrementally: ${live.counts.join(",")}`).toBeGreaterThan(3);
 
+  // which perception adapter answered each camera: the recorded outputs, or a real model call
+  const adapters = events.filter((e) => e.type === "camera.complete").map((e) => String(e.payload.adapter));
+  expect(adapters.length, "camera.complete events").toBeGreaterThan(0);
+  for (const adapter of adapters) {
+    if (FIXTURE) expect(adapter).toBe("fixture");
+    else expect(adapter, "a real model adapter, not the recorded outputs").not.toBe("fixture");
+  }
+
+  // alternatives and limitations: each one the final hypothesis carries, in its order
+  const final = events.at(-1)?.payload.hypothesis as {
+    alternatives: { event_type: string; confidence: number }[];
+    limitations: string[];
+  };
+  if (FIXTURE) {
+    expect(final.alternatives.length, "the recorded eval_001 hypothesis lists alternatives").toBeGreaterThan(0);
+    expect(final.limitations.length, "the recorded eval_001 hypothesis lists limitations").toBeGreaterThan(0);
+  }
+  const alternatives = u.hypothesis.getByTestId("hypothesis-alternative");
+  await expect(alternatives).toHaveCount(final.alternatives.length);
+  expect(
+    await alternatives.evaluateAll((els) => els.map((e) => [e.getAttribute("data-event-type"), e.querySelector(".micro")?.textContent])),
+  ).toEqual(final.alternatives.map((a) => [a.event_type, a.confidence.toFixed(2)]));
+  await expect(u.hypothesis.getByTestId("hypothesis-limitation")).toHaveText(final.limitations.map((l) => `—${l}`));
+
   // timeline click seeks that camera's video
   const bars = await timelineBars(page);
   expect(bars.length, "evidence on the timeline to seek with").toBeGreaterThan(0);
@@ -198,11 +228,15 @@ test(`eval_001 [${PROFILE}]: live trace in tool order, evidence seeks media, GT 
   await u.hypothesis.locator(".overflow-y-auto").first().evaluate((el) => el.scrollTo(0, 0));
   await page.screenshot({ path: shot(`ops-${PROFILE}-eval_001-desktop.png`), animations: "disabled" });
 
-  // still withheld after the run; the judge endpoint has not been called
+  // still withheld after the run; the judge endpoint has not been called, and no ground-truth
+  // token reached the DOM at any point of the run (any case, any attribute)
   expect(judgeRequests).toEqual([]);
   await expect(u.groundTruth).toHaveAttribute("data-state", "withheld");
   await expect(revealBtn).toHaveText("REVEAL FOR JUDGE");
-  const domBeforeReveal = await page.content();
+  await expect(u.groundTruth).toContainText("POSITION WITHHELD");
+  await expect(page.getByTestId("gt-expected")).toHaveCount(0);
+  expect(await stopGtWatch(), "ground-truth tokens added to the DOM during the run").toEqual([]);
+  expect(containsGroundTruth(await page.content(), gtTokens), "ground-truth tokens on the page before reveal").toBe(false);
 
   const judgeReply = page.waitForResponse((r) => new URL(r.url()).pathname === "/api/judge/scenarios/eval_001");
   await revealBtn.click();
@@ -210,9 +244,11 @@ test(`eval_001 [${PROFILE}]: live trace in tool order, evidence seeks media, GT 
   expect(judgeRes.status()).toBe(200);
   const judge = (await judgeRes.json()) as JudgeView;
   const gt = judge.ground_truth_camera;
-  expect(domBeforeReveal, "GT camera id absent from the DOM before reveal").not.toContain(gt.id);
+  expect(gt.id, "the judge's withheld camera is the one the manifest names").toBe(gtTokens.id);
   await expect(u.groundTruth).toHaveAttribute("data-state", "revealed");
   await expect(u.groundTruth).toContainText(gt.id.toUpperCase());
+  // the same detector fires once the camera is shown, so its silence above was not a blind spot
+  expect(containsGroundTruth(await page.content(), gtTokens), "detector finds the revealed camera").toBe(true);
   if (judge.expected?.event_type) {
     await expect(page.getByTestId("gt-expected")).toContainText(`EXPECTED ${label(judge.expected.event_type)}`);
   }

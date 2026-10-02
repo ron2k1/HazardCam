@@ -3,7 +3,7 @@ import path from "node:path";
 
 import { test as base, expect, type APIRequestContext, type Locator, type Page } from "@playwright/test";
 
-import { API_URL, ARTIFACTS_DIR, RUN_TIMEOUT_MS } from "./env";
+import { API_URL, ARTIFACTS_DIR, REPO_ROOT, RUN_TIMEOUT_MS } from "./env";
 
 const LOCAL_HOSTS = new Set(["127.0.0.1", "localhost", "[::1]"]);
 
@@ -204,9 +204,10 @@ export interface FinishedRun {
 }
 
 /**
- * Click RUN and wait (polling every animation frame) for a terminal phase, which must be
- * `terminal`. Either end stops the wait, so a failed real-model run fails at once with its
- * banner text instead of using up the whole RUN_TIMEOUT_MS.
+ * Click RUN and wait (polling every animation frame) for this run's terminal phase, which must
+ * be `terminal`. Either end stops the wait, so a failed real-model run fails at once with its
+ * banner text instead of using up the whole RUN_TIMEOUT_MS. Matching the run id keeps a second
+ * run on the same page from ending on the previous run's phase.
  */
 export async function runToEnd(page: Page, terminal: "complete" | "failed" = "complete"): Promise<FinishedRun> {
   const u = ui(page);
@@ -218,8 +219,11 @@ export async function runToEnd(page: Page, terminal: "complete" | "failed" = "co
   expect(res.status(), "POST /api/runs").toBe(202);
   const run = (await res.json()) as RunRecord;
   const ended = await page.waitForFunction(
-    () => document.querySelector('[data-run-phase="complete"], [data-run-phase="failed"]')?.getAttribute("data-run-phase"),
-    undefined,
+    (runId) => {
+      const phase = document.querySelector(`[data-run-id="${CSS.escape(runId)}"]`)?.getAttribute("data-run-phase");
+      return phase === "complete" || phase === "failed" ? phase : null;
+    },
+    run.run_id,
     { polling: "raf", timeout: RUN_TIMEOUT_MS },
   );
   const clickToDoneMs = Date.now() - t0;
@@ -227,6 +231,66 @@ export async function runToEnd(page: Page, terminal: "complete" | "failed" = "co
   const banner = (await u.failure.allTextContents()).join(" ");
   expect(phase, `run ${run.run_id} (${run.profile}) ended ${phase}${banner ? `: ${banner}` : ""}`).toBe(terminal);
   return { run, clickToDoneMs };
+}
+
+// ---------------------------------------------------------------------------------------------
+// Ground-truth exclusion
+
+export interface GroundTruthTokens {
+  /** The withheld camera's id, e.g. cam_gt. */
+  id: string;
+  /** Every string that would identify it: id, media file stem, label, MEVA camera id. */
+  tokens: string[];
+  /** Case-insensitive regex source, bounded so "cam_gt" matches "CAM_GT" but not "cam_gtx". */
+  pattern: string;
+}
+
+/**
+ * The scenario's withheld camera as its manifest on disk describes it. Read from the repo, not
+ * the judge API, so nothing calls the judge endpoint before the UI reveal does.
+ */
+export function groundTruthTokens(scenarioId: string): GroundTruthTokens {
+  const file = path.join(REPO_ROOT, "data", "manifests", `${scenarioId}.json`);
+  const gt = (JSON.parse(fs.readFileSync(file, "utf8")) as { ground_truth_camera: { id: string; file?: string; label?: string } })
+    .ground_truth_camera;
+  const tokens = [gt.id];
+  if (gt.file) tokens.push(path.posix.basename(gt.file).replace(/\.[^.]+$/, ""));
+  if (gt.label) tokens.push(gt.label, ...(/\bG\d{3,4}\b/.exec(gt.label) ?? []));
+  const escaped = tokens.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  return { id: gt.id, tokens, pattern: `(?<![A-Za-z0-9])(?:${escaped.join("|")})(?![A-Za-z0-9])` };
+}
+
+export function containsGroundTruth(html: string, gt: GroundTruthTokens): boolean {
+  return new RegExp(gt.pattern, "i").test(html);
+}
+
+/**
+ * Watch every DOM change from now on (added nodes, attribute values, text edits) for the
+ * ground-truth tokens; returns a stop() that disconnects and yields the hits. Scanning only
+ * what changed keeps it cheap through a minutes-long real-model run.
+ */
+export async function watchGroundTruth(page: Page, gt: GroundTruthTokens): Promise<() => Promise<string[]>> {
+  await page.evaluate((pattern) => {
+    const re = new RegExp(pattern, "i");
+    const hits: string[] = [];
+    const scan = (text: string | null, where: string) => {
+      const m = text ? re.exec(text) : null;
+      if (m && text && hits.length < 10) hits.push(`${where}: …${text.slice(Math.max(0, m.index - 60), m.index + 60)}…`);
+    };
+    const observer = new MutationObserver((records) => {
+      for (const r of records) {
+        if (r.type === "attributes") scan((r.target as Element).getAttribute(r.attributeName ?? ""), `@${r.attributeName}`);
+        else if (r.type === "characterData") scan(r.target.textContent, "text");
+        else for (const n of r.addedNodes) scan(n instanceof Element ? n.outerHTML : n.textContent, "node");
+      }
+    });
+    observer.observe(document.documentElement, { subtree: true, childList: true, attributes: true, characterData: true });
+    (window as unknown as { __gtWatch: () => string[] }).__gtWatch = () => {
+      observer.disconnect();
+      return hits;
+    };
+  }, gt.pattern);
+  return () => page.evaluate(() => (window as unknown as { __gtWatch: () => string[] }).__gtWatch());
 }
 
 type ProbeVideo = HTMLVideoElement & { __seeked?: Promise<number> };
