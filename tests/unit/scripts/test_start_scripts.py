@@ -1,5 +1,5 @@
-"""P16: start_app.sh starts both servers and stops them completely; run.sh's e2e targets pin
-their profile and scope.
+"""P16: start_app.sh starts both servers and stops them completely (the stop itself:
+test_proc.py); run.sh's e2e targets pin their profile and scope.
 
 The servers are stubs (real uvicorn on a tiny ASGI app, a node stand-in for next) in a scratch
 tree, so the lifecycle runs in seconds and nothing is written to the repo.
@@ -7,6 +7,7 @@ tree, so the lifecycle runs in seconds and nothing is written to the repo.
 
 from __future__ import annotations
 
+import contextlib
 import os
 import shutil
 import signal
@@ -57,54 +58,6 @@ def test_start_app_rejects_an_unknown_argument(tmp_path):
     done = run_script(root / "scripts" / "start_app.sh", tmp_path, "--bogus")
     assert done.returncode == 2
     assert "usage: scripts/start_app.sh [--smoke]" in done.stderr
-
-
-# --- stop_group: a server outlives the bash subshell that leads its job --------------------
-
-# The job mirrors start_app's: `py` (a function) runs in a forked subshell that leads the
-# group, and the server is that subshell's child.
-_STOP_DRIVER = """\
-set -m
-. scripts/_python.sh
-. scripts/_proc.sh
-PYTHON="$BASH" py -c "$INNER" inner "$PWD/inner.pid" &
-leader=$!
-until [ -s inner.pid ]; do sleep 0.1; done
-inner=$(cat inner.pid)
-stop_group "$leader"
-if kill -0 "$inner" 2>/dev/null; then echo "inner alive"; else echo "inner gone"; fi
-echo "leader $leader inner $inner"
-kill -KILL "$inner" 2>/dev/null || true # a server stop_group missed must not outlive the test
-"""
-
-
-@pytest.mark.parametrize(
-    ("case", "inner", "grace_s"),
-    [
-        # TERM handled slowly, as uvicorn does while it finishes in-flight requests
-        (
-            "slow-exit",
-            "trap 'sleep 1; exit 0' TERM; echo $$ >\"$1\"; while :; do sleep 0.1; done",
-            20,
-        ),
-        # TERM ignored: only the KILL after the grace period ends it
-        ("ignores-term", "trap '' TERM; echo $$ >\"$1\"; while :; do sleep 0.1; done", 1),
-    ],
-    ids=["slow-exit", "ignores-term"],
-)
-def test_stop_group_returns_only_once_the_server_is_gone(tmp_path, case, inner, grace_s):
-    root = script_tree(
-        tmp_path / "repo", "_python.sh", "_proc.sh", files={"driver.sh": _STOP_DRIVER}
-    )
-    started = time.monotonic()
-    done = run_script(root / "driver.sh", root, env={"INNER": inner, "STOP_GRACE_S": str(grace_s)})
-    elapsed = time.monotonic() - started
-    assert done.returncode == 0, done.stderr
-    leader, inner_pid = done.stdout.split("leader ")[1].split(" inner ")
-    assert leader.strip() != inner_pid.strip(), "the server must be the leader's child"
-    assert "inner gone" in done.stdout, case
-    # a slow exit is waited for, not sat out to the grace limit
-    assert elapsed < 10, f"{case} took {elapsed:.1f}s"
 
 
 # --- start_app lifecycle on stub servers -----------------------------------------------------
@@ -214,6 +167,7 @@ def _start_app(tmp_path, *args, script="start_app.sh", ports=None, env=None):
     }
     out, err = tmp_path / "out.txt", tmp_path / "err.txt"
     assert BASH is not None
+    left_open: list[str] | None = None
     try:
         with out.open("w") as stdout, err.open("w") as stderr:
             done = subprocess.run(
@@ -227,13 +181,15 @@ def _start_app(tmp_path, *args, script="start_app.sh", ports=None, env=None):
             )
         left_open = [name for name, port in ports.items() if not _refused(port)]
     finally:
-        for pidfile in ("api.pid", "web.pid"):
+        # Only a server whose port still answers: a pid file outlives its server, and Windows
+        # hands a freed pid to the next process.
+        if left_open is None:
+            left_open = [name for name, port in ports.items() if not _refused(port, 0)]
+        for name, pidfile in (("API_PORT", "api.pid"), ("WEB_PORT", "web.pid")):
             pid = _pid_in(tmp_path / pidfile)
-            if pid is not None:
-                try:
+            if name in left_open and pid is not None:
+                with contextlib.suppress(OSError):
                     os.kill(pid, signal.SIGTERM)
-                except OSError:
-                    pass  # already gone, as it should be
     return done.returncode, out.read_text(), err.read_text(), ports, left_open
 
 

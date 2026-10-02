@@ -32,8 +32,9 @@ MODEL_PROFILE=lite-local scripts/run.sh start
 `/ops` offers `fixture` plus the API's `MODEL_PROFILE` in its profile selector. A
 lite-local scenario took 8-85 s on the RTX 4060 laptop, full-local 12-177 s (median 77 s).
 `API_PORT` / `WEB_PORT` move the servers; `SKIP_BUILD=1` reuses the web build the last
-`start` made for the same API port (it refuses any other build). Ctrl+C gives each server
-`STOP_GRACE_S` (10) to exit before it is killed.
+`start` made for the same API port (it refuses any other build). Ctrl+C gives the servers
+`STOP_GRACE_S` (10, whole seconds) to exit before they are killed; a second Ctrl+C while
+they stop is ignored.
 
 Checks:
 

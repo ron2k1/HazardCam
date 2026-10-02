@@ -12,8 +12,8 @@
 # build this script made for the same API_PORT, since NEXT_PUBLIC_API_BASE_URL is inlined at
 # build time).
 set -euo pipefail
-# wait -n needs bash 4.3 and "${pids[@]}" on an empty array under set -u needs 4.4 (macOS
-# ships 3.2 as /bin/bash)
+# wait -n needs bash 4.3 and _proc.sh's "${started_jobs[@]}" on an empty array under set -u
+# needs 4.4 (macOS ships 3.2 as /bin/bash)
 if ((BASH_VERSINFO[0] * 100 + BASH_VERSINFO[1] < 404)); then
   echo "scripts/start_app.sh needs bash 4.4 or newer; this is $BASH_VERSION" >&2
   exit 1
@@ -67,18 +67,7 @@ if [ "${SKIP_BUILD:-0}" = 1 ] && [ "$(cat "$BUILD_STAMP" 2>/dev/null)" != "$API_
 fi
 
 set -m # each background job gets its own process group, so a kill reaches its children
-pids=()
-stop() {
-  trap - EXIT INT TERM
-  local pid
-  for pid in "${pids[@]}"; do
-    stop_job "$pid" || true
-  done
-  wait 2>/dev/null || true
-}
-trap stop EXIT
-trap 'exit 130' INT
-trap 'exit 143' TERM
+stop_jobs_on_exit
 
 wait_for() { # name url pid
   local deadline=$((SECONDS + READY_TIMEOUT_S))
@@ -99,22 +88,23 @@ wait_for() { # name url pid
 echo "api: profile $MODEL_PROFILE on $API_URL"
 AUM_CORS_ORIGINS="$WEB_URL,http://localhost:$WEB_PORT" PYTHONUTF8=1 \
   py -m uvicorn apps.api.main:app --host 127.0.0.1 --port "$API_PORT" --log-level warning &
-pids+=("$!")
-wait_for api "$API_URL/healthz" "${pids[0]}"
+api_pid=$!
+started_jobs+=("$api_pid")
+wait_for api "$API_URL/healthz" "$api_pid"
 
 if [ "${SKIP_BUILD:-0}" != 1 ]; then
   echo "web: building for $API_URL"
   (cd apps/web && NEXT_PUBLIC_API_BASE_URL="$API_URL" NEXT_TELEMETRY_DISABLED=1 "${NEXT[@]}" build)
-  printf '%s
-' "$API_URL" >"$BUILD_STAMP"
+  printf '%s\n' "$API_URL" >"$BUILD_STAMP"
 fi
 (cd apps/web && NEXT_TELEMETRY_DISABLED=1 exec "${NEXT[@]}" start -H 127.0.0.1 -p "$WEB_PORT") &
-pids+=("$!")
-wait_for web "$WEB_URL/ops" "${pids[1]}"
+web_pid=$!
+started_jobs+=("$web_pid")
+wait_for web "$WEB_URL/ops" "$web_pid"
 
 if ((smoke)); then
   # The build takes minutes; the API that answered before it must still be up.
-  if ! kill -0 "${pids[0]}" 2>/dev/null || ! answers "$API_URL/healthz"; then
+  if ! kill -0 "$api_pid" 2>/dev/null || ! answers "$API_URL/healthz"; then
     echo "smoke: api no longer answers $API_URL/healthz" >&2
     exit 1
   fi
