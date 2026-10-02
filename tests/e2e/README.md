@@ -42,13 +42,13 @@ The suite writes screenshots, `<profile>-run-timing.json` and `results.json` (or
     - The live trace matches the server's event log: the same calls, in the same order, with the same ok or error outcome. The distinct tools follow the 7-tool harness order.
     - The event, confidence and region readouts equal `GET /api/runs/{id}`.
     - Clicking a timeline bar seeks the camera `<video>`, and so does a cited hypothesis chip when the hypothesis cites evidence. Both are checked through `seeked` and `currentTime`.
-    - GT stays withheld, with no `/api/judge` request, until REVEAL, and is shown after it. Until then nothing on the page names the withheld camera. The tokens come from its manifest: id, file stem, label, MEVA id, and what only a revealed console draws. A MutationObserver scans every change, including values overwritten before it could look. After REVEAL the same detector must find every reveal token, so it has been shown able to fire. A blank-page test checks the detector itself.
+    - GT stays withheld, with no `/api/judge` request, until REVEAL, and is shown after it. From the loaded scenario until then, nothing on the page names the withheld camera. The tokens come from its manifest: id, file stem, label, MEVA id, and what only a revealed console draws. The page is checked as the watch starts, and a MutationObserver then scans every change, including values overwritten before it could look. After REVEAL the same detector, with the same bounds, must find each reveal token, so it has been shown able to fire. A blank-page test checks the detector itself.
     - The run must finish within `E2E_RUN_TIMEOUT_S`. Screenshots are taken at desktop and at 390 px.
     - Fixture only: the recorded hypothesis is a claim that cites other evidence, and no tool failed. These are not asserted for real models.
   - **eval_012 and eval_005, always fixture.** The real `no_event` claim and the real abstention (`unknown`).
-- **`ops-races.spec.ts`**, always fixture. Each test holds one real request in the browser while it acts on the page.
+- **`ops-races.spec.ts`**, always fixture. Most tests hold a real request in the browser while they act on the page.
   - While the run POST is in flight, the scenario, profile and REVEAL stay locked.
-  - A judge reply that lands after RE-RUN or a scenario change is dropped. It neither shows the ground truth nor leaves the new run stuck at FETCHING.
+  - A judge reply that lands after RE-RUN or a scenario change shows no ground truth, and FETCHING ends with the RE-RUN or the change, not with the reply. After a scenario change the reply is dropped outright: back on its own scenario it reveals nothing, and the next reveal asks the judge again.
   - RE-RUN after a reveal withholds the cached ground truth again.
   - Leaving /ops while the run POST is in flight opens no event stream.
 - **`ops-resilience.spec.ts`**, always fixture where a run is needed, because these tests need a fixed event log, not a model.
