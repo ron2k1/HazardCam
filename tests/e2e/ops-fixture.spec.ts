@@ -386,4 +386,18 @@ test("ground-truth watcher (blank page, no API): sees a token written and overwr
     (p.firstChild as Text).data = "idle";
   });
   expect(await stop()).toEqual(['@data-camera (old): …data-camera="ground-truth"…', "text (old): …cam_gt…"]);
+
+  // the same, then moved under a parent that was there at arming: its move is the batch's last
+  // record, and the overwrite still counts as written after arming
+  stop = await watchGroundTruth(page, gt);
+  await page.evaluate(() => {
+    const box = document.createElement("div");
+    const p = document.createElement("p");
+    p.setAttribute("data-camera", "ground-truth");
+    box.append(p);
+    document.body.append(box);
+    p.setAttribute("data-camera", "cam_a");
+    document.body.append(p);
+  });
+  expect(await stop()).toEqual(['@data-camera (old): …data-camera="ground-truth"…']);
 });

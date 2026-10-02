@@ -309,7 +309,8 @@ export async function watchGroundTruth(
     };
     if (checkPage) scan(document.documentElement.outerHTML, "page at arming");
     // The first record for a node and key carries the value from before arming; every later one
-    // carries a value written since. A node inserted after arming has no value from before.
+    // carries a value written since. A node inserted after arming has no value from before; one
+    // moved after arming counts as inserted, so its old values are reported too (fail closed).
     const seen = new WeakMap<Node, Set<string>>();
     const inserted = new WeakSet<Node>();
     const writtenSinceArming = (node: Node, key: string) => {
@@ -321,6 +322,9 @@ export async function watchGroundTruth(
       return later;
     };
     const observer = new MutationObserver((records) => {
+      // insertions first: ancestry is read after the whole batch, so a node built, overwritten
+      // and then moved under an older parent must already count as inserted
+      for (const r of records) for (const n of r.addedNodes) inserted.add(n);
       for (const r of records) {
         if (r.type === "attributes") {
           // as name="value", so an attribute that turns an element into the plan's marker matches
@@ -330,11 +334,7 @@ export async function watchGroundTruth(
         } else if (r.type === "characterData") {
           scan(r.target.textContent, "text");
           if (writtenSinceArming(r.target, "#text")) scan(r.oldValue, "text (old)");
-        } else
-          for (const n of r.addedNodes) {
-            inserted.add(n);
-            scan(n instanceof Element ? n.outerHTML : n.textContent, "node");
-          }
+        } else for (const n of r.addedNodes) scan(n instanceof Element ? n.outerHTML : n.textContent, "node");
       }
     });
     observer.observe(document.documentElement, {
