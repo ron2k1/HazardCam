@@ -14,10 +14,12 @@
   ],
   "properties": {
     "event_type": {
-      "type": "string"
+      "type": "string",
+      "minLength": 1
     },
     "region": {
-      "type": "string"
+      "type": "string",
+      "minLength": 1
     },
     "confidence": {
       "type": "number",

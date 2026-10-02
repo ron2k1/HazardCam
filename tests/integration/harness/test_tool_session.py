@@ -5,12 +5,14 @@ Media and fixture profiles come from ``conftest.py`` (TEST MEDIA, TEST FIXTURES)
 
 from __future__ import annotations
 
+import copy
 import json
+import threading
 from typing import Any
 
 import pytest
 
-from apps.api.schemas import load_schema
+from apps.api.schemas import GroundTruthAccessError, load_schema
 from apps.api.schemas.contracts import def_validator
 from apps.api.services.gt_guard import GtGuard
 from tools.session import (
@@ -19,6 +21,7 @@ from tools.session import (
     UNKNOWN_TOOL,
     ToolCallError,
     ToolSession,
+    _Trace,
     args_def,
 )
 
@@ -88,26 +91,61 @@ def test_every_result_round_trips_through_its_schema(session):
     assert [f["index"] for f in frames["frames"]] == [3, 2]
 
 
+def _claim(**overrides: Any) -> dict[str, Any]:
+    claim = {
+        "event_type": "vehicle_stop",
+        "region": "blind_zone_02",
+        "confidence": 0.5,
+        "evidence_ids": [],
+        "reason": "caller-supplied claim",
+        "alternatives": [],
+        "limitations": [],
+    }
+    return {**claim, **overrides}
+
+
 @pytest.mark.parametrize(
     ("name", "arguments", "stage", "message"),
     [
-        ("sample_video", {}, "sample_video", "'camera_id' is a required property"),
-        ("sample_video", {"camera_id": "cam_01", "fps": 2}, "sample_video", "'fps' was unexpected"),
+        ("sample_video", {}, "sample_video", "arguments: missing required argument(s): camera_id"),
         (
-            "inspect_camera",
-            {"camera_id": 1},
-            "inspect_camera",
-            "camera_id: 1 is not of type 'string'",
+            "sample_video",
+            {"camera_id": "cam_01", "fps": 2},
+            "sample_video",
+            "arguments: unexpected argument(s); allowed: camera_id",
         ),
-        ("inspect_camera", None, "inspect_camera", "None is not of type 'object'"),
-        ("correlate_observations", {"all": True}, "correlate_observations", "'all' was unexpected"),
+        ("inspect_camera", {"camera_id": 1}, "inspect_camera", "camera_id: must be a string"),
+        ("inspect_camera", None, "inspect_camera", "arguments: must be an object"),
+        ("correlate_observations", {"all": True}, "correlate_observations", "takes no arguments"),
         (
             "get_supporting_frames",
             {"camera_id": "cam_01", "frame_indices": []},
             "get_supporting_frames",
-            "frame_indices",
+            "frame_indices: must have at least 1 item",
         ),
-        ("teleport", {}, UNKNOWN_TOOL, "unknown tool 'teleport'"),
+        (
+            "get_supporting_frames",
+            {"camera_id": "cam_01", "frame_indices": [-1]},
+            "get_supporting_frames",
+            "frame_indices/0: must be >= 0",
+        ),
+        (
+            "submit_hypothesis",
+            {"hypothesis": _claim(region="")},
+            "submit_hypothesis",
+            "hypothesis/region: must be at least 1 character",
+        ),
+        ("teleport", {}, UNKNOWN_TOOL, "unknown tool; tools are: sample_video, inspect_camera"),
+        # Malformed calls carrying the GT id: the error is built from the schema alone.
+        ("inspect_camera", {"camera_id": ["cam_gt"]}, "inspect_camera", "must be a string"),
+        ("inspect_camera", {"camera_id": {"id": "cam_gt"}}, "inspect_camera", "must be a string"),
+        (
+            "inspect_camera",
+            {"camera_id": "cam_01", "cam_gt": 1},
+            "inspect_camera",
+            "unexpected argument(s); allowed: camera_id",
+        ),
+        ("cam_gt", {}, UNKNOWN_TOOL, "unknown tool"),
     ],
 )
 def test_invalid_calls_fail_their_pair_with_a_corrective_error(
@@ -119,6 +157,8 @@ def test_invalid_calls_fail_their_pair_with_a_corrective_error(
     failed = _failed_call(events)
     assert failed["tool"] == stage and message in failed["error"]
     assert len(events) == 2  # nothing ran
+    assert events[0][1]["args_summary"] == {"rejected": True}
+    assert "cam_gt" not in str(info.value) and "cam_gt" not in json.dumps(events)
 
 
 @pytest.mark.parametrize(
@@ -205,3 +245,123 @@ def test_submit_gates_a_caller_supplied_hypothesis(session):
     assert final["evidence_ids"] == ["obs_a_001"]
     assert final["confidence"] <= 0.6  # single-camera cap
     assert session.raw_hypothesis is None  # reason_hypothesis was never called
+
+
+def test_a_refused_failure_message_still_closes_the_pair():
+    """The API refuses a payload naming the GT camera; the pair must close regardless."""
+    events: Events = []
+
+    def emit(event_type: str, payload: dict[str, Any]) -> None:
+        if "cam_gt" in json.dumps(payload):
+            raise GroundTruthAccessError(f"{event_type} payload references the GT camera")
+        events.append((event_type, payload))
+
+    def fail() -> None:
+        raise ValueError("could not read cam_gt")
+
+    with pytest.raises(ToolCallError) as info:
+        _Trace(emit).call("inspect_camera", {}, fail, lambda _: {})
+    assert _failed_call(events)["error"] == "ValueError: details withheld"
+    assert str(info.value) == "ValueError: details withheld"
+    assert info.value.__cause__ is None and info.value.__suppress_context__
+
+
+def _run_all(session: ToolSession) -> None:
+    for camera_id in session.camera_ids:
+        session.sample_video(camera_id)
+        session.inspect_camera(camera_id)
+    session.correlate_observations()
+    session.triangulate_region()
+    session.reason_hypothesis()
+    session.get_supporting_frames("cam_03", [2])
+    session.submit_hypothesis()
+
+
+STATE = (
+    "manifests",
+    "batches",
+    "evidence",
+    "clusters",
+    "bundle",
+    "raw_hypothesis",
+    "hypothesis",
+    "supporting_frames",
+)
+
+
+@pytest.mark.parametrize(
+    ("tool", "arguments", "event"),
+    [
+        ("sample_video", {"camera_id": "cam_02"}, "camera.frames.sampled"),
+        ("inspect_camera", {"camera_id": "cam_02"}, "camera.complete"),
+        ("correlate_observations", {}, "evidence.linked"),
+        ("triangulate_region", {}, "triangulation.updated"),
+        ("reason_hypothesis", {}, "hypothesis.updated"),
+        ("submit_hypothesis", {"hypothesis": _claim()}, "hypothesis.updated"),
+    ],
+)
+def test_a_call_whose_events_fail_leaves_the_session_unchanged(
+    scenario, consistent, media_root, tmp_path, tool, arguments, event
+):
+    refused: set[str] = set()
+
+    def emit(event_type: str, payload: dict[str, Any]) -> None:
+        if event_type in refused:
+            raise RuntimeError(f"{event_type} dropped")
+
+    session = ToolSession(
+        scenario.model_view(), consistent, emit, run_dir=tmp_path / "run", media_root=media_root
+    )
+    _run_all(session)
+    before = {name: copy.deepcopy(getattr(session, name)) for name in STATE}
+    refused.add(event)
+    with pytest.raises(ToolCallError, match=f"{event} dropped"):
+        session.call_tool(tool, arguments)
+    assert {name: getattr(session, name) for name in STATE} == before
+
+
+@pytest.mark.parametrize(
+    ("tool", "arguments", "cleared"),
+    [
+        ("sample_video", {"camera_id": "cam_02"}, {"evidence", "clusters", "bundle"}),
+        ("inspect_camera", {"camera_id": "cam_02"}, {"evidence", "clusters", "bundle"}),
+        ("correlate_observations", {}, {"bundle"}),
+        ("triangulate_region", {}, set()),
+        ("reason_hypothesis", {}, set()),
+    ],
+)
+def test_rerunning_a_tool_clears_everything_downstream(session, tool, arguments, cleared):
+    _run_all(session)
+    session.call_tool(tool, arguments)
+    if tool == "sample_video":
+        assert "cam_02" not in session.batches
+    for name in cleared:
+        assert getattr(session, name) is None, name
+    assert session.hypothesis is None
+    assert session.supporting_frames == {}
+    if tool != "reason_hypothesis":
+        assert session.raw_hypothesis is None
+
+
+def test_calls_from_parallel_threads_never_interleave(session, events):
+    threads = [
+        threading.Thread(target=session.sample_video, args=(camera_id,))
+        for camera_id in session.camera_ids
+    ]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+    pairs = [(t, p["call_id"]) for t, p in events if t in {"tool.started", "tool.completed"}]
+    assert len(pairs) == 6
+    for opened, closed in zip(pairs[::2], pairs[1::2], strict=True):
+        assert opened[0] == "tool.started" and closed[0] == "tool.completed"
+        assert opened[1] == closed[1]
+
+
+def test_integral_float_frame_indices_are_accepted(session):
+    session.sample_video("cam_03")
+    result = session.call_tool(
+        "get_supporting_frames", {"camera_id": "cam_03", "frame_indices": [1.0, 2]}
+    )
+    assert [f["index"] for f in result["frames"]] == [1, 2]

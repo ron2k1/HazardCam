@@ -14,18 +14,20 @@ The session only binds tools. Which tool runs next is the caller's decision: a f
 order in ``harness/dev_sequence.py``, the agent's own policy on event day.
 
 Ground-truth rule: the session holds a ``ModelScenarioView`` only, and never echoes a
-camera id that is not a visible camera into an event or error message.
+camera id that is not a visible camera into an event or error message. Messages for a
+malformed call are built from the schema, never from the argument values.
 """
 
 from __future__ import annotations
 
+import threading
 import time
 from collections.abc import Callable
 from itertools import count
 from pathlib import Path
 from typing import Any, NoReturn, TypeVar
 
-from jsonschema.exceptions import best_match
+from jsonschema.exceptions import ValidationError, best_match
 
 from apps.api.schemas import (
     REPO_ROOT,
@@ -39,7 +41,6 @@ from apps.api.schemas import (
     ModelCamera,
     ModelScenarioView,
     ObservationBatch,
-    validate_json,
 )
 from apps.api.schemas.contracts import def_validator
 from inference.base import (
@@ -114,28 +115,87 @@ def args_def(name: str) -> str:
     return "no_args" if name in NO_ARGS else f"{name}_args"
 
 
+_TYPE_NAMES = {
+    "string": "a string",
+    "object": "an object",
+    "array": "an array",
+    "integer": "an integer",
+    "number": "a number",
+    "boolean": "a boolean",
+    "null": "null",
+}
+_BOUNDS = {"minimum": ">=", "maximum": "<=", "exclusiveMinimum": ">", "exclusiveMaximum": "<"}
+
+
+def _schema_message(error: ValidationError) -> str:
+    """What the schema requires at the failing spot, without quoting the bad value.
+
+    jsonschema's own messages embed the instance (``['cam_gt'] is not of type
+    'string'``), so a malformed call could echo the withheld camera id.
+    """
+    rule, value = error.validator, error.validator_value
+    what = "field(s)" if error.absolute_path else "argument(s)"
+    if rule == "type":
+        kinds = [value] if isinstance(value, str) else list(value)
+        return "must be " + " or ".join(_TYPE_NAMES.get(k, k) for k in kinds)
+    if rule == "required":
+        missing = [k for k in value if k not in error.instance]
+        return f"missing required {what}: {', '.join(missing)}"
+    if rule == "additionalProperties":
+        allowed = sorted(error.schema.get("properties", {}))
+        if not allowed:
+            return f"takes no {what.removesuffix('(s)')}s"
+        return f"unexpected {what}; allowed: {', '.join(allowed)}"
+    if rule in _BOUNDS:
+        return f"must be {_BOUNDS[rule]} {value}"
+    if rule in ("minItems", "maxItems"):
+        return f"must have at {'least' if rule == 'minItems' else 'most'} {value} item(s)"
+    if rule in ("minLength", "maxLength"):
+        return f"must be at {'least' if rule == 'minLength' else 'most'} {value} character(s)"
+    if rule == "enum":
+        return f"must be one of: {', '.join(map(str, value))}"
+    if rule == "const":
+        return f"must be {value!r}"
+    return f"does not satisfy {rule!r}"
+
+
 def tool_call_error(name: str, arguments: Any) -> str | None:
     """Why ``{name, arguments}`` is not a valid tool call, or ``None`` when it is."""
     if name not in TOOL_NAMES:
-        return f"unknown tool {name!r}; tools are: {', '.join(TOOL_NAMES)}"
+        return f"unknown tool; tools are: {', '.join(TOOL_NAMES)}"
     error = best_match(def_validator(TOOL_CONTRACT, args_def(name)).iter_errors(arguments))
-    if error is not None:
-        where = "/".join(str(p) for p in error.absolute_path) or "arguments"
-        return f"{name}: {where}: {error.message}"
-    validate_json(TOOL_CONTRACT, {"name": name, "arguments": arguments})
-    return None
+    if error is None:
+        return None
+    where = "/".join(str(p) for p in error.absolute_path) or "arguments"
+    return f"{name}: {where}: {_schema_message(error)}"
 
 
 class _Trace:
     """Wraps one tool call in a tool.started / tool.completed pair.
 
     ``before`` and ``after(result)`` emit the call's domain events inside the pair.
+    Calls are serialized, so pairs never interleave even when a runtime calls tools
+    from several threads.
     """
 
     def __init__(self, emit: Emit) -> None:
         self._emit = emit
         self._ids = count(1)
+        self._lock = threading.Lock()
         self.latency_ms: dict[str, list[float]] = {}
+
+    def _failed(self, call_id: str, tool: str, started: float, error: str) -> None:
+        self._emit(
+            "tool.completed",
+            {
+                "call_id": call_id,
+                "tool": tool,
+                "ok": False,
+                "latency_ms": round((time.perf_counter() - started) * 1000, 1),
+                "result_summary": {},
+                "error": error,
+            },
+        )
 
     def call(
         self,
@@ -146,6 +206,18 @@ class _Trace:
         *,
         before: Callable[[], None] | None = None,
         after: Callable[[T], None] | None = None,
+    ) -> T:
+        with self._lock:
+            return self._call(tool, args_summary, fn, summarize, before, after)
+
+    def _call(
+        self,
+        tool: str,
+        args_summary: dict[str, Any],
+        fn: Callable[[], T],
+        summarize: Callable[[T], dict[str, Any]],
+        before: Callable[[], None] | None,
+        after: Callable[[T], None] | None,
     ) -> T:
         call_id = f"call_{next(self._ids):03d}"
         self._emit("tool.started", {"call_id": call_id, "tool": tool, "args_summary": args_summary})
@@ -158,18 +230,15 @@ class _Trace:
                 after(result)
             summary = summarize(result)
         except Exception as exc:
-            self._emit(
-                "tool.completed",
-                {
-                    "call_id": call_id,
-                    "tool": tool,
-                    "ok": False,
-                    "latency_ms": round((time.perf_counter() - started) * 1000, 1),
-                    "result_summary": {},
-                    "error": _short(exc),
-                },
-            )
-            raise ToolCallError(tool, _short(exc)) from exc
+            error = _short(exc)
+            try:
+                self._failed(call_id, tool, started, error)
+            except GroundTruthAccessError:
+                # The detail named the withheld camera: close the pair without it.
+                error = f"{type(exc).__name__}: details withheld"
+                self._failed(call_id, tool, started, error)
+                raise ToolCallError(tool, error) from None
+            raise ToolCallError(tool, error) from exc
         latency = round((time.perf_counter() - started) * 1000, 1)
         self.latency_ms.setdefault(tool, []).append(latency)
         self._emit(
@@ -265,6 +334,12 @@ class ToolSession:
 
     def _reset_bundle(self) -> None:
         self.bundle = self.raw_hypothesis = None
+        self._reset_hypothesis()
+
+    def _reset_hypothesis(self) -> None:
+        """A new claim makes the submitted one, and the frames fetched for it, stale."""
+        self.hypothesis = None
+        self.supporting_frames = {}
 
     # -- tools ------------------------------------------------------------------------
 
@@ -288,9 +363,6 @@ class ToolSession:
             )
 
         def sampled(m: MediaManifest) -> None:
-            self.manifests[camera_id] = m
-            self.batches.pop(camera_id, None)
-            self._reset_fusion()
             frames = [
                 {
                     "index": f.index,
@@ -304,6 +376,9 @@ class ToolSession:
                 "camera.frames.sampled",
                 {"camera_id": camera_id, "sample_fps": m.sample_fps, "frames": frames},
             )
+            self.manifests[camera_id] = m
+            self.batches.pop(camera_id, None)
+            self._reset_fusion()
 
         return self._trace.call(
             "sample_video",
@@ -331,8 +406,6 @@ class ToolSession:
             )
 
         def observed(b: ObservationBatch) -> None:
-            self.batches[camera_id] = b
-            self._reset_fusion()
             for obs in b.observations:
                 self._emit(
                     "camera.observation",
@@ -348,6 +421,8 @@ class ToolSession:
                     "adapter": self.perception.name,
                 },
             )
+            self.batches[camera_id] = b
+            self._reset_fusion()
 
         return self._trace.call(
             "inspect_camera",
@@ -366,10 +441,9 @@ class ToolSession:
             self._emit("fusion.started", {"evidence_count": observations})
 
         def linked(result: tuple[list[EvidenceItem], list[EvidenceCluster]]) -> None:
-            self.evidence, self.clusters = result
-            self._reset_bundle()
-            by_id = {e.id: e for e in self.evidence}
-            for cluster in self.clusters:
+            evidence, clusters = result
+            by_id = {e.id: e for e in evidence}
+            for cluster in clusters:
                 self._emit(
                     "evidence.linked",
                     {
@@ -379,6 +453,8 @@ class ToolSession:
                         ],
                     },
                 )
+            self.evidence, self.clusters = evidence, clusters
+            self._reset_bundle()
 
         return self._trace.call(
             "correlate_observations",
@@ -400,8 +476,6 @@ class ToolSession:
             )
 
         def updated(bundle: EvidenceBundle) -> None:
-            self._reset_bundle()
-            self.bundle = bundle
             self._emit(
                 "triangulation.updated",
                 {
@@ -409,6 +483,8 @@ class ToolSession:
                     "rays": [ray.to_dict() for ray in evidence_rays(bundle.evidence, self.view)],
                 },
             )
+            self._reset_bundle()
+            self.bundle = bundle
 
         return self._trace.call(
             "triangulate_region",
@@ -430,10 +506,11 @@ class ToolSession:
             return reason_hypothesis(self._require_bundle(), options, adapter=self.reasoning)
 
         def updated(h: Hypothesis) -> None:
-            self.raw_hypothesis = h
             self._emit(
                 "hypothesis.updated", {"hypothesis": h.model_dump(mode="json"), "final": False}
             )
+            self._reset_hypothesis()
+            self.raw_hypothesis = h
 
         return self._trace.call(
             "reason_hypothesis",
@@ -468,10 +545,10 @@ class ToolSession:
             return submit_hypothesis(claim, bundle)
 
         def updated(h: Hypothesis) -> None:
-            self.hypothesis = h
             self._emit(
                 "hypothesis.updated", {"hypothesis": h.model_dump(mode="json"), "final": True}
             )
+            self.hypothesis = h
 
         source = "argument" if hypothesis is not None else "reason_hypothesis"
         return self._trace.call(
@@ -489,6 +566,10 @@ class ToolSession:
         if error is not None:
             tool = name if name in TOOL_NAMES else UNKNOWN_TOOL
             return self._trace.call(tool, {"rejected": True}, lambda: _reject(error), lambda _: {})
+        if name == "get_supporting_frames":
+            # JSON Schema counts 1.0 as an integer; list indexing does not.
+            indices = [int(i) for i in arguments["frame_indices"]]
+            arguments = {**arguments, "frame_indices": indices}
         result = getattr(self, name)(**arguments)
         if name == "correlate_observations":
             evidence, clusters = result

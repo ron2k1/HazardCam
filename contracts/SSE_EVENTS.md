@@ -39,7 +39,7 @@ Schema: `contracts/sse_envelope.schema.json` (Python: `apps.api.schemas.SseEnvel
 
 `args_summary` and `result_summary` are a string or a flat object (the UI renders objects as `k=v`); keep frame URLs and large payloads out of them.
 
-Every domain event is emitted while the tool call that produced it is open, i.e. between that call's `tool.started` and `tool.completed`. Tool calls never nest.
+Every domain event is emitted while the tool call that produced it is open, i.e. between that call's `tool.started` and `tool.completed`. Tool calls never nest: the session serializes them, even when a runtime calls tools from several threads.
 
 | domain event | emitted inside |
 |---|---|
@@ -50,6 +50,8 @@ Every domain event is emitted while the tool call that produced it is open, i.e.
 | `hypothesis.updated` (`final: false`) | `reason_hypothesis` |
 | `hypothesis.updated` (`final: true`) | `submit_hypothesis` |
 
-A rejected call (unknown tool, arguments that violate `contracts/tools.schema.json`, a tool called before the one it depends on, or a camera that is not a visible input camera) emits only its failed pair: `tool.completed` with `ok: false` and an `error` that says how to correct the call, and no domain events. An unknown tool name is reported as `unknown_tool`. A camera id that is not a visible camera never appears in any payload; `args_summary.camera_id` shows `not_visible` instead.
+A rejected call (unknown tool, arguments that violate `contracts/tools.schema.json`, a tool called before the one it depends on, or a camera that is not a visible input camera) emits only its failed pair: `tool.completed` with `ok: false` and an `error` that says how to correct the call, and no domain events. An unknown tool name is reported as `unknown_tool`. A camera id that is not a visible camera never appears in any payload; `args_summary.camera_id` shows `not_visible` instead. The `error` for a malformed call is built from the schema (what was expected at which argument), never from the argument values. If a failure message is still refused for naming the withheld camera, the pair closes with `<ExceptionType>: details withheld`.
+
+A call that fails leaves the session state as it was: a tool commits its result only after its domain events are emitted. Re-running a tool clears everything downstream of it, including the submitted hypothesis and the supporting frames fetched for it.
 
 The `orchestrator.*` and `tool.*` events form the agent trace panel. On event day the OpenClaw agent calls the same tool functions through the same event-emitting bindings, so the UI does not change.
