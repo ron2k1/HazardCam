@@ -1,0 +1,11 @@
+# Store text as LF. Windows editors and tools write CRLF, and the event-day box is Linux.
+* text=auto eol=lf
+
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.webp binary
+*.mp4 binary
+*.ico binary
+*.woff binary
+*.woff2 binary
