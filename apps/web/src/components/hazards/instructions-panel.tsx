@@ -1,4 +1,4 @@
-import type { PlainInstructions } from "@/lib/hazards";
+import type { PlainInstructions } from "@/lib/hazards-v1";
 import { cn } from "@/lib/utils";
 
 export interface InstructionsPanelProps {

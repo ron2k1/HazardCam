@@ -1,7 +1,7 @@
 "use client";
 
 import { Panel } from "@/components/hud/panel";
-import type { HazardFindingRaw, HazardTechnical, HazardZone } from "@/lib/hazards";
+import type { HazardFindingRaw, HazardTechnical, HazardZone } from "@/lib/hazards-v1";
 import { cn } from "@/lib/utils";
 
 const fmtNum = (x: unknown, digits = 2): string => {

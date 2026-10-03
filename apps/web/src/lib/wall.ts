@@ -50,7 +50,7 @@ export const WALL = {
   /** A camera that joins the wall late starts this long after it appears, then every gapS. */
   lateStartS: 2,
   lateGapS: 5,
-  tilesPerRow: 3,
+  tilesPerRow: 4,
   /** Re-read the wall config this often while a row is still empty. */
   configRetryMs: 8_000,
   runtimePollMs: 15_000,

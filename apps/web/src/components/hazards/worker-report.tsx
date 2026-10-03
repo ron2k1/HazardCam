@@ -1,6 +1,6 @@
 "use client";
 
-import type { HazardImage, HazardWorker, WorkerHazard } from "@/lib/hazards";
+import type { HazardImage, HazardWorker, WorkerHazard } from "@/lib/hazards-v1";
 import { cn } from "@/lib/utils";
 
 import { HazardCard } from "./hazard-card";

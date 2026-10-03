@@ -28,7 +28,7 @@ from apps.api.services.hazards import HazardService, media_base
 logger = logging.getLogger(__name__)
 
 DEFAULT_WALL_CONFIG = REPO_ROOT / "config" / "wall.yaml"
-TILES_PER_ROW = 3
+TILES_PER_ROW = 4
 DEFAULT_WALL: dict[str, Any] = {
     "title": "Site cameras · Factory floor",
     "hazard_title": "Hazard watch",

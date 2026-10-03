@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type Ref } from "react";
 
 import { CornerTicks } from "@/components/hud/panel";
-import { clock, type HazardImage, type WorkerHazard } from "@/lib/hazards";
+import { clock, type HazardImage, type WorkerHazard } from "@/lib/hazards-v1";
 import { cn } from "@/lib/utils";
 
 import { HazardTimeline } from "./hazard-timeline";

@@ -1,7 +1,7 @@
 "use client";
 
 import { StatusDot } from "@/components/hud/barcode";
-import { clock, countLine, STATUS_WORD, type ClipSummary } from "@/lib/hazards";
+import { clock, countLine, STATUS_WORD, type ClipSummary } from "@/lib/hazards-v1";
 import { cn } from "@/lib/utils";
 
 import { PRIORITY_TONE } from "./hazard-timeline";

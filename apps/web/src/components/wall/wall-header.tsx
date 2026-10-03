@@ -87,9 +87,7 @@ export function WallHeader({ title, agentLine, agentActive, stack, checked, tota
         </p>
         {site ? (
           <span className="tele flex items-center gap-2" data-testid="wall-lead-row">
-            <a href={`/hazards/process?site=${encodeURIComponent(site.id)}`} target="_blank" rel="noreferrer" className="hover:underline">
-              LEAD AGENT · {total || 6} CHECKERS
-            </a>
+            <span>LEAD AGENT · {total || 6} CHECKERS</span>
             {Array.from({ length: total || 6 }, (_, i) => i + 1).map((n) => {
               const st = site.checkers[n] ?? "queued";
               return (

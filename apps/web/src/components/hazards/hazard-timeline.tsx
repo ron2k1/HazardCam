@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 
-import { clock, priorityKey, type HazardImage, type WorkerHazard } from "@/lib/hazards";
+import { clock, priorityKey, type HazardImage, type WorkerHazard } from "@/lib/hazards-v1";
 import { cn } from "@/lib/utils";
 
 export interface HazardTimelineProps {

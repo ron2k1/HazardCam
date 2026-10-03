@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { mediaUrl, type HazardImage } from "@/lib/hazards";
+import { mediaUrl, type HazardImage } from "@/lib/hazards-v1";
 import { cn } from "@/lib/utils";
 
 export interface ThumbProps {

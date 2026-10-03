@@ -11,7 +11,6 @@ import {
   dateStamp,
   elapsedClock,
   kindWord,
-  reasoningHref,
   timeOfDay,
   viewHref,
   type Detection,
@@ -272,15 +271,6 @@ function Readout({ cam, run, onRetry }: { cam: WallCamera; run: TileRun; onRetry
         <Link href={viewHref(cam.clip_id, run.jobId)} className={cn(smallLink, "border-line-strong")} data-testid="tile-view">
           View
         </Link>
-        <a
-          href={reasoningHref(cam.clip_id, run.jobId)}
-          target="_blank"
-          rel="noopener"
-          className={cn(smallLink, "border-line")}
-          data-testid="tile-reasoning"
-        >
-          Open reasoning ↗
-        </a>
       </span>
     ) : null;
 

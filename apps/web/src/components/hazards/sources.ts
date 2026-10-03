@@ -2,6 +2,7 @@
  * Where /hazards gets its data: the local API (live) or src/mocks/hazards (?mock=1). Both expose
  * the same calls, so the screen does not know which one it is talking to.
  */
+import { API_BASE_URL } from "@/lib/config";
 import {
   hazardsApi,
   STEP_MESSAGES,
@@ -11,7 +12,7 @@ import {
   type HazardInstructions,
   type HazardView,
   type JobHandlers,
-} from "@/lib/hazards";
+} from "@/lib/hazards-v1";
 import { MOCK_INSTRUCTIONS, MOCK_STEP_MS, MOCK_VIEWS, summarize } from "@/mocks/hazards";
 
 export interface HazardsSource {
@@ -27,8 +28,13 @@ export interface HazardsSource {
 
 export const liveSource: HazardsSource = {
   kind: "live",
-  // Event day (demo): blind-spot clips (bs_*) stay off this page; hazard clips only.
-  clips: async (signal) => (await hazardsApi.clips(signal)).clips.filter((c) => !c.clip_id.startsWith("bs_")),
+  // Event day (demo): only the clips on the wall (config/wall.yaml: the drive's safety_hazard videos).
+  clips: async (signal) => {
+    const all = (await hazardsApi.clips(signal)).clips;
+    const wall = await fetch(`${API_BASE_URL}/api/wall`, { signal }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+    const ids = new Set<string>((wall?.hazard_tiles ?? []).map((t: { clip_id: string }) => t.clip_id));
+    return ids.size ? all.filter((c) => ids.has(c.clip_id)) : all.filter((c) => !c.clip_id.startsWith("bs_"));
+  },
   view: (clipId, signal) => hazardsApi.view(clipId, signal),
   instructions: (signal) => hazardsApi.instructions(signal),
   review: async (clipId, refresh) => (await hazardsApi.review(clipId, refresh)).job_id,

@@ -12,12 +12,12 @@ blindspot_watch_label: BLIND SPOT
 
 # Clip ids, in tile order. Empty: the first three hazard clips by id / every blind-spot
 # clip in id order (at most three). Ids that are not staged are skipped.
-hazard_clips: []
+hazard_clips: [hz_00, hz_04, hz_05, hz_06]   # the four videos in the drive's safety_hazard folder
 blindspot_clips: []
 # false hides the blind-spot row (hazard-only demo); the clips stay on /hazards.
 show_blindspot: false
 
 # When each tile's automatic check starts, in seconds after the wall loads.
 # 1.5 s apart (CAM 1, 4, 2, 5, 3, 6) so all six detections land within about 25 s.
-hazard_check_after_s: [2, 5, 8]
+hazard_check_after_s: [2, 4, 6, 8]
 blindspot_check_after_s: [3.5, 6.5, 9.5]

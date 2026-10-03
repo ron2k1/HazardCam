@@ -23,7 +23,7 @@ import {
   type HazardInstructions,
   type HazardView,
   type WorkerHazard,
-} from "@/lib/hazards";
+} from "@/lib/hazards-v1";
 import { cn } from "@/lib/utils";
 import { MOCK_CLIPS, MOCK_INSTRUCTIONS, MOCK_VIEWS } from "@/mocks/hazards";
 

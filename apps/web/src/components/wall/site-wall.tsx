@@ -10,7 +10,6 @@ import {
   fetchRuntime,
   fetchWall,
   configured,
-  reasoningHref,
   stackLine,
   viewHref,
   WALL,
@@ -183,15 +182,15 @@ export function SiteWall() {
           <NotificationTray items={notifications} watching={watching} />
         </div>
 
-        <main className={cn("flex min-h-0 min-w-0 flex-1 flex-col gap-3", blindCams.length ? "" : "justify-center")} data-testid="camera-wall">
+        <main className={cn("flex min-h-0 min-w-0 flex-1 flex-col gap-3", blindCams.length || hazardCams.length === 4 ? "" : "justify-center")} data-testid="camera-wall">
           {config === null ? (
             <RowMessage text={offline ? "Can't reach the camera system. Trying again…" : "Connecting to the cameras…"} />
           ) : (
             <>
-              <section aria-label={hazardTitle} className={cn("flex min-h-0 flex-col", blindCams.length ? "flex-1" : "")} data-testid="hazard-row">
+              <section aria-label={hazardTitle} className={cn("flex min-h-0 flex-col", blindCams.length || hazardCams.length === 4 ? "flex-1" : "")} data-testid="hazard-row">
                 <RowTitle title={hazardTitle} cams={hazardCams} className="px-0.5" />
                 {hazardCams.length ? (
-                  <div className="grid min-h-0 flex-1 grid-cols-1 gap-2 md:grid-cols-3">
+                  <div className={cn("grid min-h-0 flex-1 grid-cols-1 gap-2", hazardCams.length === 4 ? "md:grid-cols-2" : "md:grid-cols-3")}>
                     {hazardCams.map((cam) =>
                       framed(cam, <CctvTile cam={cam} run={runs[cam.clip_id] ?? idle} onRetry={() => retry(cam)} />),
                     )}
@@ -275,6 +274,5 @@ function popoutItem(n: WallNotification): DetectionPopoutItem {
     detail: d?.explain || undefined,
     timestamp: new Date(n.at).toLocaleTimeString([], { hour12: false }),
     viewHref: viewHref(n.clipId, n.jobId),
-    reasoningHref: reasoningHref(n.clipId, n.jobId),
   };
 }

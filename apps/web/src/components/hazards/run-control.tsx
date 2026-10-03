@@ -1,7 +1,7 @@
 "use client";
 
 import { StatusDot } from "@/components/hud/barcode";
-import { STEP_WORDS, type HazardClipStatus, type HazardProgress } from "@/lib/hazards";
+import { STEP_WORDS, type HazardClipStatus, type HazardProgress } from "@/lib/hazards-v1";
 import { cn } from "@/lib/utils";
 
 export type JobState =
