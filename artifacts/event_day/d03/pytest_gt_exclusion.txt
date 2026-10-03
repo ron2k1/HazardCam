@@ -1,0 +1,3 @@
+$ .venv/bin/python -m pytest tests/integration/agent/test_least_privilege.py tests/integration/api/test_media_api.py tests/integration/harness/test_tool_session.py tests/unit/api/test_run_handle.py -p no:cacheprovider
+(2026-10-03, D03; summary line below)
+75 passed in 17.21s

@@ -1,0 +1,82 @@
+captured_utc: 2026-10-03T18:20:18Z
+host: promaxgb10-84ff aarch64  git: 15f211c
+nemoclaw: nemoclaw v0.0.124  openshell: openshell 0.0.116
+
+===== nemoclaw ambient-mirror status =====
+✓ Active gateway set to 'nemoclaw'
+
+  Sandbox-scoped status for 'ambient-mirror':
+  Sandbox: ambient-mirror
+    Model:    nvidia/Qwen3.6-35B-A3B-NVFP4
+    Provider: vllm-local
+    Inference: healthy (https://inference.local/v1/models)
+    Inference (route reachability): reachable (https://inference.local/v1/models)
+    Inference (vllm backend): healthy (http://127.0.0.1:8000/v1/models)
+    Serving process (openclaw gateway): not checked
+    Host GPU: yes
+    Sandbox GPU: enabled (auto) (CUDA verified)
+    OpenShell: 0.0.116 (docker)
+    Policies: brew, huggingface, local-inference, npm, openclaw-pricing, pypi, mirror-tools
+    Harness:  OpenClaw (gateway)
+    SSH sessions: none
+    Agent:    OpenClaw v2026.7.1
+
+Sandbox:
+
+  Id: 8d1c9139-f57c-477e-8b3a-bfca6d80cf5b
+  Name: ambient-mirror
+  Phase: Ready
+  Resource version: 147
+  Labels: 
+    ai.nvidia.nemoclaw.create-attempt: d073d60e1f5edf671df9d290142333478e834effb456f2d5cfbc5cd850afb9
+  Policy source: sandbox
+  Revision: 5
+
+Policy:
+(network policy names) read_only read_write brew clawhub huggingface local_inference managed_inference nemoclaw_custom__mirror-tools__mirror_tools npm_registry npm_yarn openclaw-pricing openclaw_api openclaw_docs openclaw_gateway_dialback pypi 
+
+===== openshell sandbox list =====
+NAME            CREATED              PHASE
+ambient-mirror  2026-10-03 16:10:07  Ready
+
+===== openclaw agents (gateway view) =====
+Agents:
+- main (default)
+  Workspace: $OPENCLAW_HOME/.openclaw/workspace
+  Agent dir: $OPENCLAW_HOME/.openclaw/agents/main/agent
+  Model: inference/nvidia/Qwen3.6-35B-A3B-NVFP4
+  Routing rules: 0
+  Routing: default (no explicit rules)
+- urban-mirror (Urban Mirror)
+  Identity: Urban Mirror (IDENTITY.md)
+  Workspace: $OPENCLAW_HOME/.openclaw/workspace-urban-mirror
+  Agent dir: $OPENCLAW_HOME/.openclaw/agents/urban-mirror/agent
+  Model: inference/nvidia/Qwen3.6-35B-A3B-NVFP4
+  Routing rules: 0
+Routing rules map channel/account/peer to an agent. Use --bindings for full rules.
+Channel status reflects local config/creds. For live health: openclaw channels status --probe.
+
+===== openclaw.json (keys only, no secrets) =====
+mcp.servers.mirror: url=http://host.openshell.internal:8090/mcp transport=streamable-http tools=["sample_video","inspect_camera","correlate_observations","triangulate_region","reason_hypothesis","get_supporting_frames","submit_hypothesis","hazard_scan_clip","hazard_review_clip","hazard_submit_summary"] auth_header=set
+agent main: model=undefined alsoAllow=[] deny=["mirror__*"]
+agent urban-mirror: model={"primary":"inference/nvidia/Qwen3.6-35B-A3B-NVFP4","fallbacks":[]} alsoAllow=["mirror__sample_video","mirror__inspect_camera","mirror__correlate_observations","mirror__triangulate_region","mirror__reason_hypothesis","mirror__get_supporting_frames","mirror__submit_hypothesis","mirror__hazard_scan_clip","mirror__hazard_review_clip","mirror__hazard_submit_summary"] deny=["session_status","group:messaging","group:fs","group:runtime","group:web","group:ui","group:sessions","group:memory","group:nodes","group:automation","group:media","group:agents"]
+models.providers.inference: baseUrl=https://inference.local/v1 models=["nvidia/Qwen3.6-35B-A3B-NVFP4"]
+(node:76173) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+===== local model health (host) =====
+http://127.0.0.1:8000/v1/models -> nvidia/Qwen3.6-35B-A3B-NVFP4 (max_model_len 262144)
+http://127.0.0.1:8000/health -> HTTP 200
+http://127.0.0.1:8001/v1/models -> UNREACHABLE
+http://127.0.0.1:8001/health -> HTTP 000
+qwen  nvcr.io/nvidia/vllm:26.05.post1-py3  Up 2 hours  127.0.0.1:8000->8000/tcp, 172.18.0.1:8000->8000/tcp
+
+===== inference.local from inside the sandbox =====
+models: ['nvidia/Qwen3.6-35B-A3B-NVFP4']
+
+===== cloud-route check (gb10 profile + sandbox inference route) =====
+gb10.perception: nvidia/Qwen3.6-35B-A3B-NVFP4 @ http://127.0.0.1:8000/v1 local=True
+gb10.reasoning: nvidia/Qwen3.6-35B-A3B-NVFP4 @ http://127.0.0.1:8000/v1 local=True
+RESULT: OK no cloud route
+Provider: vllm-local
+Model:    nvidia/Qwen3.6-35B-A3B-NVFP4

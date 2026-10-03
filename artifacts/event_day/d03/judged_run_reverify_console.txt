@@ -1,0 +1,14 @@
+re-verifying run_20261003T181121Z_77ad6e (no new run)
+status=complete harness=openclaw-agent total=155.146s wall=Nones startup=5.669s think=77.67s tools=71.8s close=0.004s
+  perception calls=7  tool_s=64.058  max_s=44.972
+  fusion     calls=2  tool_s=0.004   max_s=0.003
+  reasoning  calls=1  tool_s=7.738   max_s=7.738
+  evidence   calls=3  tool_s=0.0     max_s=0.0
+  submit     calls=1  tool_s=0.0     max_s=0.0
+  GT public_scenario_view       OK hits=[] control={'cam_a': 2, 'cam_b': 2, 'cam_c': 2}
+  GT media_route_refuses_gt     OK hits=- control=403
+  GT sse_stream                 OK hits=[] control={'cam_a': 35, 'cam_b': 66, 'cam_c': 80}
+  GT run_dir_files              OK hits=[] control={'cam_a': 40, 'cam_b': 76, 'cam_c': 92}
+  GT agent_session_transcript   OK hits=[] control={'cam_a': 110, 'cam_b': 205, 'cam_c': 253}
+  GT sandbox_filesystem         OK hits=- control=[]
+wrote artifacts/event_day/d03/judged_run_run_20261003T181121Z_77ad6e.json

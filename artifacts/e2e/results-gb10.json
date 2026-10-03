@@ -1,0 +1,124 @@
+{
+  "config": {
+    "argv": [
+      "/home/dell/.local/opt/node-v24.21.0-linux-arm64/bin/node",
+      "/home/dell/ambient-urban-mirror/apps/web/node_modules/@playwright/test/cli.js",
+      "test",
+      "-c",
+      "../../tests/e2e/playwright.config.ts",
+      "ops-fixture.spec.ts",
+      "-g",
+      "eval_001"
+    ],
+    "configFile": "/home/dell/ambient-urban-mirror/tests/e2e/playwright.config.ts",
+    "rootDir": "/home/dell/ambient-urban-mirror/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/dell/ambient-urban-mirror/tests/e2e/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/home/dell/ambient-urban-mirror/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 660000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/home/dell/ambient-urban-mirror/artifacts/e2e/results-gb10.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "ops-fixture.spec.ts",
+      "file": "ops-fixture.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "eval_001 [gb10]: live trace in tool order, evidence seeks media, GT withheld until reveal",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 660000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 40295,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T18:19:46.993Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d3a3065b3deec3cdea4f-af1aa6f6b67456b50b11",
+          "file": "ops-fixture.spec.ts",
+          "line": 78,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-03T18:19:46.699Z",
+    "duration": 40743.437,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

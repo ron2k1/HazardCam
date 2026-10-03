@@ -1,0 +1,175 @@
+{
+  "terminal": "run.complete",
+  "total_s": 37.225,
+  "agent_startup_s": 3.877,
+  "agent_think_between_tools_s": 16.368,
+  "agent_close_s": 0.003,
+  "tool_time_s": 16.973,
+  "first_observation_s": 10.184,
+  "first_hypothesis_s": 31.354,
+  "triangulation_s": 26.383,
+  "stages": {
+    "perception": {
+      "calls": 6,
+      "tool_s": 13.537,
+      "max_s": 5.568
+    },
+    "fusion": {
+      "calls": 2,
+      "tool_s": 0.003,
+      "max_s": 0.002
+    },
+    "reasoning": {
+      "calls": 1,
+      "tool_s": 3.432,
+      "max_s": 3.432
+    },
+    "evidence": {
+      "calls": 1,
+      "tool_s": 0.0,
+      "max_s": 0.0
+    },
+    "submit": {
+      "calls": 1,
+      "tool_s": 0.001,
+      "max_s": 0.001
+    }
+  },
+  "calls": [
+    {
+      "call_id": "call_001",
+      "tool": "sample_video",
+      "stage": "perception",
+      "ok": true,
+      "started_s": 3.877,
+      "latency_s": 0.314,
+      "args": {
+        "camera_id": "cam_a",
+        "sample_fps": 1.0,
+        "max_frames": 12
+      }
+    },
+    {
+      "call_id": "call_002",
+      "tool": "inspect_camera",
+      "stage": "perception",
+      "ok": true,
+      "started_s": 5.666,
+      "latency_s": 4.519,
+      "args": {
+        "camera_id": "cam_a",
+        "frames": 12
+      }
+    },
+    {
+      "call_id": "call_003",
+      "tool": "sample_video",
+      "stage": "perception",
+      "ok": true,
+      "started_s": 11.326,
+      "latency_s": 0.405,
+      "args": {
+        "camera_id": "cam_b",
+        "sample_fps": 1.0,
+        "max_frames": 12
+      }
+    },
+    {
+      "call_id": "call_004",
+      "tool": "inspect_camera",
+      "stage": "perception",
+      "ok": true,
+      "started_s": 12.86,
+      "latency_s": 5.568,
+      "args": {
+        "camera_id": "cam_b",
+        "frames": 12
+      }
+    },
+    {
+      "call_id": "call_005",
+      "tool": "sample_video",
+      "stage": "perception",
+      "ok": true,
+      "started_s": 19.861,
+      "latency_s": 0.388,
+      "args": {
+        "camera_id": "cam_c",
+        "sample_fps": 1.0,
+        "max_frames": 12
+      }
+    },
+    {
+      "call_id": "call_006",
+      "tool": "inspect_camera",
+      "stage": "perception",
+      "ok": true,
+      "started_s": 21.419,
+      "latency_s": 2.343,
+      "args": {
+        "camera_id": "cam_c",
+        "frames": 12
+      }
+    },
+    {
+      "call_id": "call_007",
+      "tool": "correlate_observations",
+      "stage": "fusion",
+      "ok": true,
+      "started_s": 24.964,
+      "latency_s": 0.001,
+      "args": {
+        "cameras": 3,
+        "observations": 9
+      }
+    },
+    {
+      "call_id": "call_008",
+      "tool": "triangulate_region",
+      "stage": "fusion",
+      "ok": true,
+      "started_s": 26.38,
+      "latency_s": 0.002,
+      "args": {
+        "evidence": 9,
+        "clusters": 1
+      }
+    },
+    {
+      "call_id": "call_009",
+      "tool": "reason_hypothesis",
+      "stage": "reasoning",
+      "ok": true,
+      "started_s": 27.921,
+      "latency_s": 3.432,
+      "args": {
+        "status": "ok",
+        "evidence": 9
+      }
+    },
+    {
+      "call_id": "call_010",
+      "tool": "get_supporting_frames",
+      "stage": "evidence",
+      "ok": true,
+      "started_s": 35.284,
+      "latency_s": 0.0,
+      "args": {
+        "camera_id": "cam_b",
+        "frame_indices": 12
+      }
+    },
+    {
+      "call_id": "call_011",
+      "tool": "submit_hypothesis",
+      "stage": "submit",
+      "ok": true,
+      "started_s": 37.221,
+      "latency_s": 0.001,
+      "args": {
+        "source": "reason_hypothesis"
+      }
+    }
+  ],
+  "event_count": 50
+}

@@ -1,0 +1,394 @@
+{
+  "run_id": "run_20261003T181121Z_77ad6e",
+  "scenario_id": "scenario_001",
+  "profile": "gb10",
+  "api": "http://127.0.0.1:8088",
+  "status": "complete",
+  "error": null,
+  "harness": "openclaw-agent",
+  "models": {
+    "perception": {
+      "base_url": "http://127.0.0.1:8000/v1",
+      "model": "nvidia/Qwen3.6-35B-A3B-NVFP4",
+      "status": "ok"
+    },
+    "reasoning": {
+      "base_url": "http://127.0.0.1:8000/v1",
+      "model": "nvidia/Qwen3.6-35B-A3B-NVFP4",
+      "status": "ok"
+    }
+  },
+  "final": {
+    "event_type": "no_event",
+    "region": "z_north_road",
+    "confidence": 0.45,
+    "evidence_ids": [
+      "cam_c.o1",
+      "cam_b.o1",
+      "cam_b.o3",
+      "cam_a.o1",
+      "cam_c.o2",
+      "cam_b.o2",
+      "cam_c.o3",
+      "cam_c.o4"
+    ],
+    "reason": "Multiple cues across three cameras (cam_c.o1, cam_b.o1, cam_b.o3) show vehicles entering and traversing the area, while pedestrians (cam_a.o1, cam_c.o2, cam_b.o2, cam_c.o3, cam_c.o4) move along the sidewalks and road edges. The presence of a suitcase (cam_c.o4) and people carrying bags (cam_b.o2) suggests travel-related activity, but the vehicles are in transit rather than stopping or maneuvering for loading/unloading, and no people are seen entering or exiting vehicles in the blind zone.",
+    "alternatives": [
+      {
+        "event_type": "passenger_dropoff_pickup",
+        "confidence": 0.35
+      },
+      {
+        "event_type": "object_transport",
+        "confidence": 0.3
+      },
+      {
+        "event_type": "vehicle_loading_unloading",
+        "confidence": 0.2
+      }
+    ],
+    "limitations": [
+      "The blind zone itself is not visible, so we cannot confirm if vehicles stopped or if people entered/exited vehicles out of view.",
+      "Pedestrian movements are observed at the edges of the cameras, but their specific destination or interaction with vehicles in the blind zone is inferred rather than directly seen.",
+      "The event itself is not directly visible to any model input camera."
+    ]
+  },
+  "client_wall_s": null,
+  "latency": {
+    "terminal": "run.complete",
+    "total_s": 155.146,
+    "agent_startup_s": 5.669,
+    "agent_think_between_tools_s": 77.67,
+    "agent_close_s": 0.004,
+    "tool_time_s": 71.8,
+    "first_observation_s": 17.89,
+    "first_hypothesis_s": 144.949,
+    "triangulation_s": 135.114,
+    "stages": {
+      "perception": {
+        "calls": 7,
+        "tool_s": 64.058,
+        "max_s": 44.972
+      },
+      "fusion": {
+        "calls": 2,
+        "tool_s": 0.004,
+        "max_s": 0.003
+      },
+      "reasoning": {
+        "calls": 1,
+        "tool_s": 7.738,
+        "max_s": 7.738
+      },
+      "evidence": {
+        "calls": 3,
+        "tool_s": 0.0,
+        "max_s": 0.0
+      },
+      "submit": {
+        "calls": 1,
+        "tool_s": 0.0,
+        "max_s": 0.0
+      }
+    },
+    "calls": [
+      {
+        "call_id": "call_001",
+        "tool": "sample_video",
+        "stage": "perception",
+        "ok": false,
+        "started_s": 5.669,
+        "latency_s": 0.0,
+        "args": {
+          "rejected": true
+        }
+      },
+      {
+        "call_id": "call_002",
+        "tool": "sample_video",
+        "stage": "perception",
+        "ok": true,
+        "started_s": 6.896,
+        "latency_s": 0.306,
+        "args": {
+          "camera_id": "cam_a",
+          "sample_fps": 1.0,
+          "max_frames": 12
+        }
+      },
+      {
+        "call_id": "call_003",
+        "tool": "inspect_camera",
+        "stage": "perception",
+        "ok": true,
+        "started_s": 8.555,
+        "latency_s": 9.335,
+        "args": {
+          "camera_id": "cam_a",
+          "frames": 12
+        }
+      },
+      {
+        "call_id": "call_004",
+        "tool": "sample_video",
+        "stage": "perception",
+        "ok": true,
+        "started_s": 19.56,
+        "latency_s": 0.759,
+        "args": {
+          "camera_id": "cam_b",
+          "sample_fps": 1.0,
+          "max_frames": 12
+        }
+      },
+      {
+        "call_id": "call_005",
+        "tool": "inspect_camera",
+        "stage": "perception",
+        "ok": true,
+        "started_s": 39.34,
+        "latency_s": 44.972,
+        "args": {
+          "camera_id": "cam_b",
+          "frames": 12
+        }
+      },
+      {
+        "call_id": "call_006",
+        "tool": "sample_video",
+        "stage": "perception",
+        "ok": true,
+        "started_s": 118.588,
+        "latency_s": 0.535,
+        "args": {
+          "camera_id": "cam_c",
+          "sample_fps": 1.0,
+          "max_frames": 12
+        }
+      },
+      {
+        "call_id": "call_007",
+        "tool": "inspect_camera",
+        "stage": "perception",
+        "ok": true,
+        "started_s": 121.141,
+        "latency_s": 8.151,
+        "args": {
+          "camera_id": "cam_c",
+          "frames": 12
+        }
+      },
+      {
+        "call_id": "call_008",
+        "tool": "correlate_observations",
+        "stage": "fusion",
+        "ok": true,
+        "started_s": 133.077,
+        "latency_s": 0.001,
+        "args": {
+          "cameras": 3,
+          "observations": 8
+        }
+      },
+      {
+        "call_id": "call_009",
+        "tool": "triangulate_region",
+        "stage": "fusion",
+        "ok": true,
+        "started_s": 135.112,
+        "latency_s": 0.003,
+        "args": {
+          "evidence": 8,
+          "clusters": 1
+        }
+      },
+      {
+        "call_id": "call_010",
+        "tool": "reason_hypothesis",
+        "stage": "reasoning",
+        "ok": true,
+        "started_s": 137.211,
+        "latency_s": 7.738,
+        "args": {
+          "status": "ok",
+          "evidence": 8
+        }
+      },
+      {
+        "call_id": "call_011",
+        "tool": "get_supporting_frames",
+        "stage": "evidence",
+        "ok": true,
+        "started_s": 151.49,
+        "latency_s": 0.0,
+        "args": {
+          "camera_id": "cam_b",
+          "frame_indices": 10
+        }
+      },
+      {
+        "call_id": "call_012",
+        "tool": "get_supporting_frames",
+        "stage": "evidence",
+        "ok": true,
+        "started_s": 151.492,
+        "latency_s": 0.0,
+        "args": {
+          "camera_id": "cam_a",
+          "frame_indices": 5
+        }
+      },
+      {
+        "call_id": "call_013",
+        "tool": "get_supporting_frames",
+        "stage": "evidence",
+        "ok": true,
+        "started_s": 151.494,
+        "latency_s": 0.0,
+        "args": {
+          "camera_id": "cam_c",
+          "frame_indices": 12
+        }
+      },
+      {
+        "call_id": "call_014",
+        "tool": "submit_hypothesis",
+        "stage": "submit",
+        "ok": true,
+        "started_s": 155.142,
+        "latency_s": 0.0,
+        "args": {
+          "source": "reason_hypothesis"
+        }
+      }
+    ],
+    "event_count": 54
+  },
+  "agent_turn": {
+    "harness": "openclaw-agent",
+    "ok": true,
+    "reply": "FINAL event=no_event region=z_north_road confidence=0.45 alert=none",
+    "error": null,
+    "duration_s": 157.02624016000118,
+    "exit_code": 0
+  },
+  "agent_policy": {
+    "calls": 14,
+    "refusals": 0,
+    "failures": 1,
+    "per_tool": {
+      "sample_video": 3,
+      "inspect_camera": 3,
+      "correlate_observations": 1,
+      "triangulate_region": 1,
+      "reason_hypothesis": 1,
+      "get_supporting_frames": 3,
+      "submit_hypothesis": 1
+    },
+    "elapsed_s": 155.143,
+    "closed": true,
+    "finalized_by_policy": false,
+    "stop_reason": null
+  },
+  "agent_session": {
+    "session_key": "agent:urban-mirror:run_20261003t181121z_77ad6e",
+    "session_file": "/sandbox/.openclaw/agents/urban-mirror/sessions/f6b99946-e5af-4677-aca6-d4ad22098905.jsonl",
+    "trajectory": "/sandbox/.openclaw/agents/urban-mirror/sessions/f6b99946-e5af-4677-aca6-d4ad22098905.trajectory.jsonl",
+    "sessionId": "f6b99946-e5af-4677-aca6-d4ad22098905",
+    "status": "done",
+    "model": "nvidia/Qwen3.6-35B-A3B-NVFP4",
+    "modelProvider": "inference",
+    "contextTokens": 262144,
+    "inputTokens": 146149,
+    "outputTokens": 1759,
+    "runtimeMs": 155453,
+    "abortedLastRun": false
+  },
+  "gt_exclusion": {
+    "withheld_camera": "cam_gt",
+    "tokens": [
+      "G341",
+      "cam_gt",
+      "/api/judge",
+      "hidden_ground_truth.mp4",
+      "data/prepared/scenario_001/hidden_ground_truth.mp4",
+      "Hospital rooftop, west-north-west-facing (MEVA G341)"
+    ],
+    "controls": [
+      "cam_a",
+      "cam_b",
+      "cam_c"
+    ],
+    "ok": true,
+    "checks": [
+      {
+        "check": "public_scenario_view",
+        "ok": true,
+        "bytes": 2550,
+        "gt_hits": [],
+        "control_hits": {
+          "cam_a": 2,
+          "cam_b": 2,
+          "cam_c": 2
+        }
+      },
+      {
+        "check": "media_route_refuses_gt",
+        "ok": true,
+        "status": 403,
+        "detail": "{\"detail\":\"the ground-truth camera is judge-only\"}"
+      },
+      {
+        "check": "sse_stream",
+        "ok": true,
+        "bytes": 25636,
+        "gt_hits": [],
+        "control_hits": {
+          "cam_a": 35,
+          "cam_b": 66,
+          "cam_c": 80
+        }
+      },
+      {
+        "check": "run_dir_files",
+        "ok": true,
+        "bytes": 29750,
+        "gt_hits": [],
+        "control_hits": {
+          "cam_a": 40,
+          "cam_b": 76,
+          "cam_c": 92
+        },
+        "files": [
+          "agent_policy.json",
+          "agent_turn.json",
+          "events.jsonl",
+          "run.json"
+        ]
+      },
+      {
+        "check": "agent_session_transcript",
+        "ok": true,
+        "bytes": 270294,
+        "gt_hits": [],
+        "control_hits": {
+          "cam_a": 110,
+          "cam_b": 205,
+          "cam_c": 253
+        },
+        "run_id_present": true,
+        "session_status": "done"
+      },
+      {
+        "check": "sandbox_filesystem",
+        "ok": true,
+        "searched_for": [
+          "hidden_ground_truth.mp4",
+          "scenario_001"
+        ],
+        "found": []
+      }
+    ]
+  },
+  "sse_file": "artifacts/event_day/d03/sse_run_20261003T181121Z_77ad6e.txt"
+}

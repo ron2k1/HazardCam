@@ -1,0 +1,47 @@
+{
+  "scenario_id": "eval_001",
+  "run_id": "run_20261003T181947Z_0cc24a",
+  "profile": "gb10",
+  "run_timeout_ms": 600000,
+  "browser_click_to_complete_ms": 37391,
+  "server_created_to_finished_ms": 37229,
+  "sse_events": 50,
+  "tool_calls": 11,
+  "failed_tool_calls": 0,
+  "hypothesis": {
+    "event_type": "passenger_dropoff_pickup",
+    "region": "z_north_lot",
+    "confidence": 0.6
+  },
+  "trace_row_counts_seen": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "seeks": [
+    {
+      "via": "timeline",
+      "evidence_id": "cam_b.o5",
+      "camera_id": "cam_b",
+      "target_s": 27,
+      "landed_s": 27.000691
+    },
+    {
+      "via": "hypothesis chip",
+      "evidence_id": "cam_b.o1",
+      "camera_id": "cam_b",
+      "target_s": 0,
+      "landed_s": 0.004847
+    }
+  ],
+  "measured_at": "2026-10-03T18:20:27.292Z"
+}

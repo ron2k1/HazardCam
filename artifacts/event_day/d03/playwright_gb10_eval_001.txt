@@ -1,0 +1,7 @@
+
+Running 1 test using 1 worker
+
+  ✓  1 [chromium] › ../../tests/e2e/ops-fixture.spec.ts:78:5 › eval_001 [gb10]: live trace in tool order, evidence seeks media, GT withheld until reveal (40.3s)
+
+  1 passed (40.7s)
+exit=0

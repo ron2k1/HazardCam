@@ -1,0 +1,161 @@
+id: 1
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":1,"ts":"2026-10-03T18:11:21.081Z","type":"run.started","payload":{"scenario_id":"scenario_001","profile":"gb10","camera_ids":["cam_a","cam_b","cam_c"],"harness":"openclaw-agent"}}
+
+id: 2
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":2,"ts":"2026-10-03T18:11:21.081Z","type":"orchestrator.started","payload":{"harness":"openclaw-agent","agent":true,"sequence":["sample_video","inspect_camera","correlate_observations","triangulate_region","reason_hypothesis","get_supporting_frames","submit_hypothesis"]}}
+
+id: 3
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":3,"ts":"2026-10-03T18:11:26.750Z","type":"tool.started","payload":{"call_id":"call_001","tool":"sample_video","args_summary":{"rejected":true}}}
+
+id: 4
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":4,"ts":"2026-10-03T18:11:26.750Z","type":"tool.completed","payload":{"call_id":"call_001","tool":"sample_video","ok":false,"latency_ms":0.0,"result_summary":{},"error":"ValueError: sample_video: arguments: missing required argument(s): camera_id"}}
+
+id: 5
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":5,"ts":"2026-10-03T18:11:27.977Z","type":"tool.started","payload":{"call_id":"call_002","tool":"sample_video","args_summary":{"camera_id":"cam_a","sample_fps":1.0,"max_frames":12}}}
+
+id: 6
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":6,"ts":"2026-10-03T18:11:27.977Z","type":"camera.started","payload":{"camera_id":"cam_a"}}
+
+id: 7
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":7,"ts":"2026-10-03T18:11:28.283Z","type":"camera.frames.sampled","payload":{"camera_id":"cam_a","sample_fps":1.0,"frames":[{"index":0,"frame_id":0,"t":0.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_a/0.jpg"},{"index":1,"frame_id":60,"t":2.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_a/1.jpg"},{"index":2,"frame_id":150,"t":5.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_a/2.jpg"},{"index":3,"frame_id":210,"t":7.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_a/3.jpg"},{"index":4,"frame_id":300,"t":10.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_a/4.jpg"},{"index":5,"frame_id":360,"t":12.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_a/5.jpg"},{"index":6,"frame_id":450,"t":15.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_a/6.jpg"},{"index":7,"frame_id":510,"t":17.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_a/7.jpg"},{"index":8,"frame_id":600,"t":20.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_a/8.jpg"},{"index":9,"frame_id":660,"t":22.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_a/9.jpg"},{"index":10,"frame_id":750,"t":25.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_a/10.jpg"},{"index":11,"frame_id":810,"t":27.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_a/11.jpg"}]}}
+
+id: 8
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":8,"ts":"2026-10-03T18:11:28.283Z","type":"tool.completed","payload":{"call_id":"call_002","tool":"sample_video","ok":true,"latency_ms":305.8,"result_summary":{"frames":12,"duration_s":28.0}}}
+
+id: 9
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":9,"ts":"2026-10-03T18:11:29.636Z","type":"tool.started","payload":{"call_id":"call_003","tool":"inspect_camera","args_summary":{"camera_id":"cam_a","frames":12}}}
+
+id: 10
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":10,"ts":"2026-10-03T18:11:38.971Z","type":"camera.observation","payload":{"camera_id":"cam_a","observation":{"id":"cam_a.o1","t_start":10.0,"t_end":20.0,"cue_type":"person_edge_transit","description":"A person wearing a black jacket and blue jeans exits the building through the double doors and walks toward the camera, eventually leaving the frame at the bottom.","direction":"toward_camera","confidence":1.0,"supporting_frames":[4,5,6,7,8]}}}
+
+id: 11
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":11,"ts":"2026-10-03T18:11:38.971Z","type":"camera.complete","payload":{"camera_id":"cam_a","observation_count":1,"latency_ms":9334.5,"adapter":"openai_compatible/nvidia/Qwen3.6-35B-A3B-NVFP4"}}
+
+id: 12
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":12,"ts":"2026-10-03T18:11:38.972Z","type":"tool.completed","payload":{"call_id":"call_003","tool":"inspect_camera","ok":true,"latency_ms":9335.0,"result_summary":{"observations":1}}}
+
+id: 13
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":13,"ts":"2026-10-03T18:11:40.641Z","type":"tool.started","payload":{"call_id":"call_004","tool":"sample_video","args_summary":{"camera_id":"cam_b","sample_fps":1.0,"max_frames":12}}}
+
+id: 14
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":14,"ts":"2026-10-03T18:11:40.641Z","type":"camera.started","payload":{"camera_id":"cam_b"}}
+
+id: 15
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":15,"ts":"2026-10-03T18:11:41.400Z","type":"camera.frames.sampled","payload":{"camera_id":"cam_b","sample_fps":1.0,"frames":[{"index":0,"frame_id":0,"t":0.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_b/0.jpg"},{"index":1,"frame_id":60,"t":2.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_b/1.jpg"},{"index":2,"frame_id":150,"t":5.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_b/2.jpg"},{"index":3,"frame_id":210,"t":7.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_b/3.jpg"},{"index":4,"frame_id":300,"t":10.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_b/4.jpg"},{"index":5,"frame_id":360,"t":12.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_b/5.jpg"},{"index":6,"frame_id":450,"t":15.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_b/6.jpg"},{"index":7,"frame_id":510,"t":17.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_b/7.jpg"},{"index":8,"frame_id":600,"t":20.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_b/8.jpg"},{"index":9,"frame_id":660,"t":22.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_b/9.jpg"},{"index":10,"frame_id":750,"t":25.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_b/10.jpg"},{"index":11,"frame_id":810,"t":27.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_b/11.jpg"}]}}
+
+id: 16
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":16,"ts":"2026-10-03T18:11:41.400Z","type":"tool.completed","payload":{"call_id":"call_004","tool":"sample_video","ok":true,"latency_ms":759.2,"result_summary":{"frames":12,"duration_s":28.0}}}
+
+id: 17
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":17,"ts":"2026-10-03T18:12:00.421Z","type":"tool.started","payload":{"call_id":"call_005","tool":"inspect_camera","args_summary":{"camera_id":"cam_b","frames":12}}}
+
+id: 18
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":18,"ts":"2026-10-03T18:12:45.393Z","type":"camera.observation","payload":{"camera_id":"cam_b","observation":{"id":"cam_b.o1","t_start":5.0,"t_end":12.0,"cue_type":"vehicle_edge_transit","description":"A grey sedan enters the frame from the bottom edge and drives towards the left side.","direction":"toward_camera","confidence":1.0,"supporting_frames":[2,3,4,5]}}}
+
+id: 19
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":19,"ts":"2026-10-03T18:12:45.393Z","type":"camera.observation","payload":{"camera_id":"cam_b","observation":{"id":"cam_b.o2","t_start":15.0,"t_end":27.0,"cue_type":"person_edge_transit","description":"Two people, one carrying a bag, enter the frame from the left edge and walk onto the road.","direction":"left","confidence":1.0,"supporting_frames":[6,7,8,9,10,11]}}}
+
+id: 20
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":20,"ts":"2026-10-03T18:12:45.393Z","type":"camera.observation","payload":{"camera_id":"cam_b","observation":{"id":"cam_b.o3","t_start":17.0,"t_end":27.0,"cue_type":"vehicle_edge_transit","description":"A white SUV enters the frame from the right edge and drives towards the left.","direction":"right","confidence":1.0,"supporting_frames":[7,8,9,10,11]}}}
+
+id: 21
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":21,"ts":"2026-10-03T18:12:45.393Z","type":"camera.complete","payload":{"camera_id":"cam_b","observation_count":3,"latency_ms":44971.4,"adapter":"openai_compatible/nvidia/Qwen3.6-35B-A3B-NVFP4"}}
+
+id: 22
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":22,"ts":"2026-10-03T18:12:45.393Z","type":"tool.completed","payload":{"call_id":"call_005","tool":"inspect_camera","ok":true,"latency_ms":44972.1,"result_summary":{"observations":3}}}
+
+id: 23
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":23,"ts":"2026-10-03T18:13:19.669Z","type":"tool.started","payload":{"call_id":"call_006","tool":"sample_video","args_summary":{"camera_id":"cam_c","sample_fps":1.0,"max_frames":12}}}
+
+id: 24
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":24,"ts":"2026-10-03T18:13:19.670Z","type":"camera.started","payload":{"camera_id":"cam_c"}}
+
+id: 25
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":25,"ts":"2026-10-03T18:13:20.205Z","type":"camera.frames.sampled","payload":{"camera_id":"cam_c","sample_fps":1.0,"frames":[{"index":0,"frame_id":0,"t":0.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_c/0.jpg"},{"index":1,"frame_id":60,"t":2.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_c/1.jpg"},{"index":2,"frame_id":150,"t":5.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_c/2.jpg"},{"index":3,"frame_id":210,"t":7.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_c/3.jpg"},{"index":4,"frame_id":300,"t":10.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_c/4.jpg"},{"index":5,"frame_id":360,"t":12.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_c/5.jpg"},{"index":6,"frame_id":450,"t":15.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_c/6.jpg"},{"index":7,"frame_id":510,"t":17.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_c/7.jpg"},{"index":8,"frame_id":600,"t":20.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_c/8.jpg"},{"index":9,"frame_id":660,"t":22.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_c/9.jpg"},{"index":10,"frame_id":750,"t":25.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_c/10.jpg"},{"index":11,"frame_id":810,"t":27.0,"url":"/media/runs/run_20261003T181121Z_77ad6e/frames/cam_c/11.jpg"}]}}
+
+id: 26
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":26,"ts":"2026-10-03T18:13:20.205Z","type":"tool.completed","payload":{"call_id":"call_006","tool":"sample_video","ok":true,"latency_ms":535.3,"result_summary":{"frames":12,"duration_s":28.0}}}
+
+id: 27
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":27,"ts":"2026-10-03T18:13:22.222Z","type":"tool.started","payload":{"call_id":"call_007","tool":"inspect_camera","args_summary":{"camera_id":"cam_c","frames":12}}}
+
+id: 28
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":28,"ts":"2026-10-03T18:13:30.372Z","type":"camera.observation","payload":{"camera_id":"cam_c","observation":{"id":"cam_c.o1","t_start":0.0,"t_end":27.0,"cue_type":"vehicle_edge_transit","description":"A silver SUV enters the frame from the right edge and moves towards the left, eventually stopping in the foreground.","direction":"right","confidence":1.0,"supporting_frames":[0,1,2,3,4,5,6,7,8,9,10,11]}}}
+
+id: 29
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":29,"ts":"2026-10-03T18:13:30.372Z","type":"camera.observation","payload":{"camera_id":"cam_c","observation":{"id":"cam_c.o2","t_start":10.0,"t_end":27.0,"cue_type":"person_edge_transit","description":"A man in a green hoodie walks from the left side of the frame towards the right, passing behind the silver SUV.","direction":"left","confidence":1.0,"supporting_frames":[4,5,6,7,8,9,10,11]}}}
+
+id: 30
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":30,"ts":"2026-10-03T18:13:30.372Z","type":"camera.observation","payload":{"camera_id":"cam_c","observation":{"id":"cam_c.o3","t_start":15.0,"t_end":27.0,"cue_type":"person_edge_transit","description":"A man in a black jacket and red shoes walks from behind the silver SUV towards the bottom left of the frame.","direction":"center","confidence":1.0,"supporting_frames":[6,7,8,9,10,11]}}}
+
+id: 31
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":31,"ts":"2026-10-03T18:13:30.373Z","type":"camera.observation","payload":{"camera_id":"cam_c","observation":{"id":"cam_c.o4","t_start":20.0,"t_end":27.0,"cue_type":"person_edge_transit","description":"Two people, one pulling a suitcase, walk from the left side of the frame towards the right along the sidewalk.","direction":"left","confidence":1.0,"supporting_frames":[8,9,10,11]}}}
+
+id: 32
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":32,"ts":"2026-10-03T18:13:30.373Z","type":"camera.complete","payload":{"camera_id":"cam_c","observation_count":4,"latency_ms":8149.4,"adapter":"openai_compatible/nvidia/Qwen3.6-35B-A3B-NVFP4"}}
+
+id: 33
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":33,"ts":"2026-10-03T18:13:30.373Z","type":"tool.completed","payload":{"call_id":"call_007","tool":"inspect_camera","ok":true,"latency_ms":8150.7,"result_summary":{"observations":4}}}
+
+id: 34
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":34,"ts":"2026-10-03T18:13:34.158Z","type":"tool.started","payload":{"call_id":"call_008","tool":"correlate_observations","args_summary":{"cameras":3,"observations":8}}}
+
+id: 35
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":35,"ts":"2026-10-03T18:13:34.159Z","type":"fusion.started","payload":{"evidence_count":8}}
+
+id: 36
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":36,"ts":"2026-10-03T18:13:34.160Z","type":"evidence.linked","payload":{"cluster":{"id":"clu_01","t_start":0.0,"t_end":27.0,"evidence_ids":["cam_c.o1","cam_b.o1","cam_a.o1","cam_c.o2","cam_b.o2","cam_c.o3","cam_b.o3","cam_c.o4"],"camera_ids":["cam_a","cam_b","cam_c"],"score":0.814},"evidence":[{"id":"cam_c.o1","camera_id":"cam_c","t_start":0.0,"t_end":27.0,"cue_type":"vehicle_edge_transit","description":"A silver SUV enters the frame from the right edge and moves towards the left, eventually stopping in the foreground.","direction":"right","bearing_deg":71.6,"confidence":1.0,"supporting_frames":[0,1,2,3,4,5,6,7,8,9,10,11]},{"id":"cam_b.o1","camera_id":"cam_b","t_start":5.0,"t_end":12.0,"cue_type":"vehicle_edge_transit","description":"A grey sedan enters the frame from the bottom edge and drives towards the left side.","direction":"toward_camera","bearing_deg":350.3,"confidence":1.0,"supporting_frames":[2,3,4,5]},{"id":"cam_a.o1","camera_id":"cam_a","t_start":10.0,"t_end":20.0,"cue_type":"person_edge_transit","description":"A person wearing a black jacket and blue jeans exits the building through the double doors and walks toward the camera, eventually leaving the frame at the bottom.","direction":"toward_camera","bearing_deg":353.3,"confidence":1.0,"supporting_frames":[4,5,6,7,8]},{"id":"cam_c.o2","camera_id":"cam_c","t_start":10.0,"t_end":27.0,"cue_type":"person_edge_transit","description":"A man in a green hoodie walks from the left side of the frame towards the right, passing behind the silver SUV.","direction":"left","bearing_deg":44.4,"confidence":1.0,"supporting_frames":[4,5,6,7,8,9,10,11]},{"id":"cam_b.o2","camera_id":"cam_b","t_start":15.0,"t_end":27.0,"cue_type":"person_edge_transit","description":"Two people, one carrying a bag, enter the frame from the left edge and walk onto the road.","direction":"left","bearing_deg":338.82,"confidence":1.0,"supporting_frames":[6,7,8,9,10,11]},{"id":"cam_c.o3","camera_id":"cam_c","t_start":15.0,"t_end":27.0,"cue_type":"person_edge_transit","description":"A man in a black jacket and red shoes walks from behind the silver SUV towards the bottom left of the frame.","direction":"center","bearing_deg":58.0,"confidence":1.0,"supporting_frames":[6,7,8,9,10,11]},{"id":"cam_b.o3","camera_id":"cam_b","t_start":17.0,"t_end":27.0,"cue_type":"vehicle_edge_transit","description":"A white SUV enters the frame from the right edge and drives towards the left.","direction":"right","bearing_deg":1.78,"confidence":1.0,"supporting_frames":[7,8,9,10,11]},{"id":"cam_c.o4","camera_id":"cam_c","t_start":20.0,"t_end":27.0,"cue_type":"person_edge_transit","description":"Two people, one pulling a suitcase, walk from the left side of the frame towards the right along the sidewalk.","direction":"left","bearing_deg":44.4,"confidence":1.0,"supporting_frames":[8,9,10,11]}]}}
+
+id: 37
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":37,"ts":"2026-10-03T18:13:34.160Z","type":"tool.completed","payload":{"call_id":"call_008","tool":"correlate_observations","ok":true,"latency_ms":1.1,"result_summary":{"evidence":8,"clusters":1}}}
+
+id: 38
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":38,"ts":"2026-10-03T18:13:36.193Z","type":"tool.started","payload":{"call_id":"call_009","tool":"triangulate_region","args_summary":{"evidence":8,"clusters":1}}}
+
+id: 39
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":39,"ts":"2026-10-03T18:13:36.195Z","type":"triangulation.updated","payload":{"candidates":[{"id":"z_north_road","label":"Road running north-east toward the school","center":[13.33,43.28],"radius_m":30.372,"score":0.4472,"camera_ids":["cam_a","cam_b","cam_c"],"evidence_ids":["cam_c.o1","cam_b.o1","cam_a.o1","cam_c.o2","cam_b.o2","cam_c.o3","cam_b.o3","cam_c.o4"],"method":"ray_intersection"}],"rays":[{"camera_id":"cam_a","evidence_id":"cam_a.o1","origin":[-14.6,7.8],"bearing_deg":353.3},{"camera_id":"cam_b","evidence_id":"cam_b.o1","origin":[25.9,-29.1],"bearing_deg":350.3},{"camera_id":"cam_b","evidence_id":"cam_b.o2","origin":[25.9,-29.1],"bearing_deg":338.82},{"camera_id":"cam_b","evidence_id":"cam_b.o3","origin":[25.9,-29.1],"bearing_deg":1.78},{"camera_id":"cam_c","evidence_id":"cam_c.o1","origin":[-11.2,20.5],"bearing_deg":71.6},{"camera_id":"cam_c","evidence_id":"cam_c.o2","origin":[-11.2,20.5],"bearing_deg":44.4},{"camera_id":"cam_c","evidence_id":"cam_c.o3","origin":[-11.2,20.5],"bearing_deg":58.0},{"camera_id":"cam_c","evidence_id":"cam_c.o4","origin":[-11.2,20.5],"bearing_deg":44.4}]}}
+
+id: 40
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":40,"ts":"2026-10-03T18:13:36.195Z","type":"tool.completed","payload":{"call_id":"call_009","tool":"triangulate_region","ok":true,"latency_ms":2.5,"result_summary":{"status":"ok","candidates":1,"best":"z_north_road"}}}
+
+id: 41
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":41,"ts":"2026-10-03T18:13:38.292Z","type":"tool.started","payload":{"call_id":"call_010","tool":"reason_hypothesis","args_summary":{"status":"ok","evidence":8}}}
+
+id: 42
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":42,"ts":"2026-10-03T18:13:46.030Z","type":"hypothesis.updated","payload":{"hypothesis":{"event_type":"no_event","region":"z_north_road","confidence":0.45,"evidence_ids":["cam_c.o1","cam_b.o1","cam_b.o3","cam_a.o1","cam_c.o2","cam_b.o2","cam_c.o3","cam_c.o4"],"reason":"Multiple cues across three cameras (cam_c.o1, cam_b.o1, cam_b.o3) show vehicles entering and traversing the area, while pedestrians (cam_a.o1, cam_c.o2, cam_b.o2, cam_c.o3, cam_c.o4) move along the sidewalks and road edges. The presence of a suitcase (cam_c.o4) and people carrying bags (cam_b.o2) suggests travel-related activity, but the vehicles are in transit rather than stopping or maneuvering for loading/unloading, and no people are seen entering or exiting vehicles in the blind zone.","alternatives":[{"event_type":"passenger_dropoff_pickup","confidence":0.35},{"event_type":"object_transport","confidence":0.3},{"event_type":"vehicle_loading_unloading","confidence":0.2}],"limitations":["The blind zone itself is not visible, so we cannot confirm if vehicles stopped or if people entered/exited vehicles out of view.","Pedestrian movements are observed at the edges of the cameras, but their specific destination or interaction with vehicles in the blind zone is inferred rather than directly seen.","The event itself is not directly visible to any model input camera."]},"final":false}}
+
+id: 43
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":43,"ts":"2026-10-03T18:13:46.030Z","type":"tool.completed","payload":{"call_id":"call_010","tool":"reason_hypothesis","ok":true,"latency_ms":7738.4,"result_summary":{"event_type":"no_event","region":"z_north_road","confidence":0.45}}}
+
+id: 44
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":44,"ts":"2026-10-03T18:13:52.571Z","type":"tool.started","payload":{"call_id":"call_011","tool":"get_supporting_frames","args_summary":{"camera_id":"cam_b","frame_indices":10}}}
+
+id: 45
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":45,"ts":"2026-10-03T18:13:52.571Z","type":"tool.completed","payload":{"call_id":"call_011","tool":"get_supporting_frames","ok":true,"latency_ms":0.1,"result_summary":{"frames":10}}}
+
+id: 46
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":46,"ts":"2026-10-03T18:13:52.573Z","type":"tool.started","payload":{"call_id":"call_012","tool":"get_supporting_frames","args_summary":{"camera_id":"cam_a","frame_indices":5}}}
+
+id: 47
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":47,"ts":"2026-10-03T18:13:52.574Z","type":"tool.completed","payload":{"call_id":"call_012","tool":"get_supporting_frames","ok":true,"latency_ms":0.1,"result_summary":{"frames":5}}}
+
+id: 48
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":48,"ts":"2026-10-03T18:13:52.575Z","type":"tool.started","payload":{"call_id":"call_013","tool":"get_supporting_frames","args_summary":{"camera_id":"cam_c","frame_indices":12}}}
+
+id: 49
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":49,"ts":"2026-10-03T18:13:52.575Z","type":"tool.completed","payload":{"call_id":"call_013","tool":"get_supporting_frames","ok":true,"latency_ms":0.1,"result_summary":{"frames":12}}}
+
+id: 50
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":50,"ts":"2026-10-03T18:13:56.223Z","type":"tool.started","payload":{"call_id":"call_014","tool":"submit_hypothesis","args_summary":{"source":"reason_hypothesis"}}}
+
+id: 51
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":51,"ts":"2026-10-03T18:13:56.223Z","type":"hypothesis.updated","payload":{"hypothesis":{"event_type":"no_event","region":"z_north_road","confidence":0.45,"evidence_ids":["cam_c.o1","cam_b.o1","cam_b.o3","cam_a.o1","cam_c.o2","cam_b.o2","cam_c.o3","cam_c.o4"],"reason":"Multiple cues across three cameras (cam_c.o1, cam_b.o1, cam_b.o3) show vehicles entering and traversing the area, while pedestrians (cam_a.o1, cam_c.o2, cam_b.o2, cam_c.o3, cam_c.o4) move along the sidewalks and road edges. The presence of a suitcase (cam_c.o4) and people carrying bags (cam_b.o2) suggests travel-related activity, but the vehicles are in transit rather than stopping or maneuvering for loading/unloading, and no people are seen entering or exiting vehicles in the blind zone.","alternatives":[{"event_type":"passenger_dropoff_pickup","confidence":0.35},{"event_type":"object_transport","confidence":0.3},{"event_type":"vehicle_loading_unloading","confidence":0.2}],"limitations":["The blind zone itself is not visible, so we cannot confirm if vehicles stopped or if people entered/exited vehicles out of view.","Pedestrian movements are observed at the edges of the cameras, but their specific destination or interaction with vehicles in the blind zone is inferred rather than directly seen.","The event itself is not directly visible to any model input camera."]},"final":true}}
+
+id: 52
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":52,"ts":"2026-10-03T18:13:56.223Z","type":"tool.completed","payload":{"call_id":"call_014","tool":"submit_hypothesis","ok":true,"latency_ms":0.2,"result_summary":{"event_type":"no_event","region":"z_north_road","confidence":0.45}}}
+
+id: 53
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":53,"ts":"2026-10-03T18:13:56.225Z","type":"alert.message","payload":{"message":{"id":"msg_01","kind":"all_clear","level":"info","headline":"All clear: nothing unusual seen","lines":[{"key":"what","label":"What happened","value":"The cameras did not show anything unusual."},{"key":"what_to_do","label":"What to do","value":"Nothing to do."}],"evidence_ids":[],"camera_ids":[],"t_start":null,"t_end":null,"created_at":"2026-10-03T18:13:56Z","text":"All clear: nothing unusual seen\nWhat to do: Nothing to do.\nWhat happened: The cameras did not show anything unusual.\n— CameraVision"}}}
+
+id: 54
+data: {"run_id":"run_20261003T181121Z_77ad6e","seq":54,"ts":"2026-10-03T18:13:56.227Z","type":"run.complete","payload":{"hypothesis":{"event_type":"no_event","region":"z_north_road","confidence":0.45,"evidence_ids":["cam_c.o1","cam_b.o1","cam_b.o3","cam_a.o1","cam_c.o2","cam_b.o2","cam_c.o3","cam_c.o4"],"reason":"Multiple cues across three cameras (cam_c.o1, cam_b.o1, cam_b.o3) show vehicles entering and traversing the area, while pedestrians (cam_a.o1, cam_c.o2, cam_b.o2, cam_c.o3, cam_c.o4) move along the sidewalks and road edges. The presence of a suitcase (cam_c.o4) and people carrying bags (cam_b.o2) suggests travel-related activity, but the vehicles are in transit rather than stopping or maneuvering for loading/unloading, and no people are seen entering or exiting vehicles in the blind zone.","alternatives":[{"event_type":"passenger_dropoff_pickup","confidence":0.35},{"event_type":"object_transport","confidence":0.3},{"event_type":"vehicle_loading_unloading","confidence":0.2}],"limitations":["The blind zone itself is not visible, so we cannot confirm if vehicles stopped or if people entered/exited vehicles out of view.","Pedestrian movements are observed at the edges of the cameras, but their specific destination or interaction with vehicles in the blind zone is inferred rather than directly seen.","The event itself is not directly visible to any model input camera."]},"duration_ms":155147}}
