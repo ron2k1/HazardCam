@@ -1,0 +1,81 @@
+{
+  "id": "urban-mirror",
+  "name": "Urban Mirror",
+  "description": "Orchestrates the Ambient Urban Mirror tools for one scenario run: inspects the visible cameras, fuses their cues deterministically, asks the reasoning model for a bounded hypothesis, and submits it or abstains. After a non-abstaining submit it sends the one Telegram alert the policy composed. Never perceives, computes geometry, or concludes on its own.",
+  "workspace": "/sandbox/.openclaw/workspace-urban-mirror",
+  "identity": {
+    "name": "Urban Mirror",
+    "theme": "terse evidence clerk for a multi-camera blind-spot investigation"
+  },
+  "model": {
+    "primary": "inference/nvidia/Qwen3.6-35B-A3B-NVFP4",
+    "fallbacks": []
+  },
+  "params": {
+    "temperature": 0.2
+  },
+  "thinkingDefault": "off",
+  "reasoningDefault": "off",
+  "verboseDefault": "off",
+  "contextInjection": "always",
+  "skills": [],
+  "memorySearch": {
+    "enabled": false
+  },
+  "heartbeat": {
+    "every": "0m"
+  },
+  "sandbox": {
+    "mode": "off"
+  },
+  "subagents": {
+    "allowAgents": []
+  },
+  "tools": {
+    "profile": "minimal",
+    "alsoAllow": [
+      "message"
+    ],
+    "deny": [
+      "session_status",
+      "group:fs",
+      "group:runtime",
+      "group:web",
+      "group:ui",
+      "group:sessions",
+      "group:memory",
+      "group:nodes",
+      "group:automation",
+      "group:media",
+      "group:agents"
+    ],
+    "message": {
+      "actions": {
+        "allow": [
+          "send"
+        ]
+      },
+      "allowCrossContextSend": false,
+      "crossContext": {
+        "allowWithinProvider": false,
+        "allowAcrossProviders": false
+      },
+      "broadcast": {
+        "enabled": false
+      }
+    },
+    "loopDetection": {
+      "enabled": true,
+      "historySize": 30,
+      "warningThreshold": 3,
+      "unknownToolThreshold": 3,
+      "criticalThreshold": 5,
+      "globalCircuitBreakerThreshold": 8,
+      "detectors": {
+        "genericRepeat": true,
+        "knownPollNoProgress": true,
+        "pingPong": true
+      }
+    }
+  }
+}

@@ -1,7 +1,11 @@
 # Event-day agent output directory
 
-This directory intentionally contains **no agent implementation** in the prebuild package.
+The prebuild package left this directory with no agent implementation. Everything here was
+written on event day (2026-10-03), after `make event-day-start`, from the tested interfaces
+in `tools/`, `contracts/` and `apps/api/schemas`.
 
-On event day, the fresh Claude/Ultracode session creates the actual OpenClaw agent files here from the tested interfaces, acceptance tests, and requirements in this repo.
-
-Do not place prewritten agent source here before the event. The event-day scripts verify that executable agent implementation files are created after the event-day start marker.
+- `POLICY.md`: the agent's policy, abstention and alert rules, and the hand-off to D01/D02 (start here)
+- `openclaw/agent.json`: the OpenClaw `agents.list[]` entry for `urban-mirror`
+- `openclaw/workspace/`: playbook and identity files, injected into the agent's system prompt
+- `policy.py`: the bounded tool policy the D01 registration puts between the agent and the tools
+- `tests/`: D00 tests (`.venv/bin/python -m pytest agent/event_day/tests`)

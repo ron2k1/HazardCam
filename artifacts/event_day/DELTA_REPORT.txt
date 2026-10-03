@@ -1,0 +1,21 @@
+verified_at_utc=2026-10-03T16:35:55Z
+prebuild_commit=68060460060e09f807149ce0785402f655c56bad
+current_commit=98453c9ce13eaf67b4003180872e670a92126c55
+
+== current status ==
+ M agent/event_day/README.md
+?? agent/event_day/POLICY.md
+?? agent/event_day/openclaw/
+?? agent/event_day/policy.py
+?? agent/event_day/tests/
+?? artifacts/event_day/DELTA_REPORT.txt
+?? artifacts/event_day/workers/
+
+== event-agent relevant diff ==
+ agent/event_day/README.md | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+M	agent/event_day/README.md
+
+== imports of the judge-side eval package from agent runtime scripts/runtime ==
+none

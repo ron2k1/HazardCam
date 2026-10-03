@@ -1,0 +1,2623 @@
+{
+ "$schema": "http://json-schema.org/draft-07/schema#",
+ "$comment": "agents.list[] entry schema extracted from `openclaw config schema` of OpenClaw 2026.7.1 (2d2ddc4), the version inside the NemoClaw v0.0.124 ambient-mirror sandbox, on 2026-10-03.",
+ "type": "object",
+ "properties": {
+  "id": {
+   "type": "string"
+  },
+  "default": {
+   "type": "boolean"
+  },
+  "name": {
+   "type": "string"
+  },
+  "description": {
+   "type": "string"
+  },
+  "workspace": {
+   "type": "string"
+  },
+  "agentDir": {
+   "type": "string"
+  },
+  "model": {
+   "anyOf": [
+    {
+     "type": "string"
+    },
+    {
+     "type": "object",
+     "properties": {
+      "primary": {
+       "type": "string"
+      },
+      "fallbacks": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      }
+     },
+     "additionalProperties": false
+    }
+   ]
+  },
+  "utilityModel": {
+   "type": "string",
+   "title": "Agent Utility Model",
+   "description": "Optional per-agent utility model override for short internal tasks. Overrides agents.defaults.utilityModel."
+  },
+  "models": {
+   "type": "object",
+   "propertyNames": {
+    "type": "string"
+   },
+   "additionalProperties": {
+    "type": "object",
+    "properties": {
+     "alias": {
+      "type": "string"
+     },
+     "params": {
+      "type": "object",
+      "propertyNames": {
+       "type": "string"
+      },
+      "additionalProperties": {}
+     },
+     "agentRuntime": {
+      "type": "object",
+      "properties": {
+       "id": {
+        "type": "string",
+        "title": "Agent Model Runtime ID",
+        "description": "Per-agent model runtime id: \"openclaw\", \"auto\", a registered plugin harness id such as \"codex\", or a supported CLI backend alias such as \"claude-cli\"."
+       }
+      },
+      "additionalProperties": false,
+      "title": "Agent Model Runtime",
+      "description": "Optional per-model runtime policy for this agent. Use this for agent-specific model exceptions instead of setting a whole-agent runtime."
+     },
+     "streaming": {
+      "type": "boolean"
+     }
+    },
+    "additionalProperties": false
+   },
+   "title": "Agent Model Overrides",
+   "description": "Per-agent model catalog overrides keyed by full provider/model IDs."
+  },
+  "thinkingDefault": {
+   "type": "string",
+   "enum": [
+    "off",
+    "minimal",
+    "low",
+    "medium",
+    "high",
+    "xhigh",
+    "adaptive",
+    "max",
+    "ultra"
+   ],
+   "title": "Agent Thinking Default",
+   "description": "Optional per-agent default thinking level. Overrides agents.defaults.thinkingDefault for this agent when no per-message or session override is set."
+  },
+  "verboseDefault": {
+   "type": "string",
+   "enum": [
+    "off",
+    "on",
+    "full"
+   ]
+  },
+  "toolProgressDetail": {
+   "type": "string",
+   "enum": [
+    "explain",
+    "raw"
+   ]
+  },
+  "reasoningDefault": {
+   "type": "string",
+   "enum": [
+    "on",
+    "off",
+    "stream"
+   ],
+   "title": "Agent Reasoning Default",
+   "description": "Optional per-agent default reasoning visibility (on|off|stream). Applies when no per-message or session reasoning override is set."
+  },
+  "fastModeDefault": {
+   "anyOf": [
+    {
+     "type": "boolean"
+    },
+    {
+     "type": "string",
+     "const": "auto"
+    }
+   ],
+   "title": "Agent Fast Mode Default",
+   "description": "Optional per-agent default for fast mode (\"auto\", true, or false). Applies when no per-message or session fast-mode override is set."
+  },
+  "contextInjection": {
+   "anyOf": [
+    {
+     "type": "string",
+     "const": "always"
+    },
+    {
+     "type": "string",
+     "const": "continuation-skip"
+    },
+    {
+     "type": "string",
+     "const": "never"
+    }
+   ],
+   "title": "Agent Context Injection",
+   "description": "Per-agent override for when workspace bootstrap files are injected into this agent's system prompt. Omit to inherit agents.defaults.contextInjection."
+  },
+  "bootstrapMaxChars": {
+   "type": "integer",
+   "exclusiveMinimum": 0,
+   "maximum": 9007199254740991,
+   "title": "Agent Bootstrap Max Chars",
+   "description": "Per-agent override for max characters of each workspace bootstrap file injected into this agent's system prompt. Omit to inherit agents.defaults.bootstrapMaxChars."
+  },
+  "bootstrapTotalMaxChars": {
+   "type": "integer",
+   "exclusiveMinimum": 0,
+   "maximum": 9007199254740991,
+   "title": "Agent Bootstrap Total Max Chars",
+   "description": "Per-agent override for max total characters across all workspace bootstrap files injected into this agent's system prompt. Omit to inherit agents.defaults.bootstrapTotalMaxChars."
+  },
+  "experimental": {
+   "type": "object",
+   "properties": {
+    "localModelLean": {
+     "type": "boolean",
+     "title": "Agent Lean Local Model Mode",
+     "description": "Per-agent override for lean local-model mode. Enable it for one smaller local-model agent without trimming tools from every agent."
+    }
+   },
+   "additionalProperties": false,
+   "title": "Agent Experimental Flags",
+   "description": "Per-agent experimental flags. Omitted fields inherit agents.defaults.experimental."
+  },
+  "skills": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   },
+   "title": "Agent Skill Filter",
+   "description": "Optional allowlist of skills for this agent. If omitted, the agent inherits agents.defaults.skills when set; otherwise skills stay unrestricted. Set [] for no skills. An explicit list fully replaces inherited defaults instead of merging with them."
+  },
+  "memorySearch": {
+   "type": "object",
+   "properties": {
+    "enabled": {
+     "type": "boolean"
+    },
+    "sources": {
+     "type": "array",
+     "items": {
+      "anyOf": [
+       {
+        "type": "string",
+        "const": "memory"
+       },
+       {
+        "type": "string",
+        "const": "sessions"
+       }
+      ]
+     }
+    },
+    "extraPaths": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "qmd": {
+     "type": "object",
+     "properties": {
+      "extraCollections": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "path": {
+          "type": "string"
+         },
+         "name": {
+          "type": "string"
+         },
+         "pattern": {
+          "type": "string"
+         }
+        },
+        "required": [
+         "path"
+        ],
+        "additionalProperties": false
+       }
+      }
+     },
+     "additionalProperties": false
+    },
+    "multimodal": {
+     "type": "object",
+     "properties": {
+      "enabled": {
+       "type": "boolean"
+      },
+      "modalities": {
+       "type": "array",
+       "items": {
+        "anyOf": [
+         {
+          "type": "string",
+          "const": "image"
+         },
+         {
+          "type": "string",
+          "const": "audio"
+         },
+         {
+          "type": "string",
+          "const": "all"
+         }
+        ]
+       }
+      },
+      "maxFileBytes": {
+       "type": "integer",
+       "exclusiveMinimum": 0,
+       "maximum": 9007199254740991
+      }
+     },
+     "additionalProperties": false
+    },
+    "experimental": {
+     "type": "object",
+     "properties": {
+      "sessionMemory": {
+       "type": "boolean"
+      }
+     },
+     "additionalProperties": false
+    },
+    "provider": {
+     "type": "string"
+    },
+    "remote": {
+     "type": "object",
+     "properties": {
+      "baseUrl": {
+       "type": "string"
+      },
+      "apiKey": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "oneOf": [
+          {
+           "type": "object",
+           "properties": {
+            "source": {
+             "type": "string",
+             "const": "env"
+            },
+            "provider": {
+             "type": "string",
+             "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+            },
+            "id": {
+             "type": "string",
+             "pattern": "^[A-Z][A-Z0-9_]{0,127}$"
+            }
+           },
+           "required": [
+            "source",
+            "provider",
+            "id"
+           ],
+           "additionalProperties": false
+          },
+          {
+           "type": "object",
+           "properties": {
+            "source": {
+             "type": "string",
+             "const": "file"
+            },
+            "provider": {
+             "type": "string",
+             "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+            },
+            "id": {
+             "type": "string"
+            }
+           },
+           "required": [
+            "source",
+            "provider",
+            "id"
+           ],
+           "additionalProperties": false
+          },
+          {
+           "type": "object",
+           "properties": {
+            "source": {
+             "type": "string",
+             "const": "exec"
+            },
+            "provider": {
+             "type": "string",
+             "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+            },
+            "id": {
+             "type": "string"
+            }
+           },
+           "required": [
+            "source",
+            "provider",
+            "id"
+           ],
+           "additionalProperties": false
+          }
+         ]
+        }
+       ]
+      },
+      "headers": {
+       "type": "object",
+       "propertyNames": {
+        "type": "string"
+       },
+       "additionalProperties": {
+        "type": "string"
+       }
+      },
+      "nonBatchConcurrency": {
+       "type": "integer",
+       "exclusiveMinimum": 0,
+       "maximum": 9007199254740991
+      },
+      "batch": {
+       "type": "object",
+       "properties": {
+        "enabled": {
+         "type": "boolean"
+        },
+        "wait": {
+         "type": "boolean"
+        },
+        "concurrency": {
+         "type": "integer",
+         "exclusiveMinimum": 0,
+         "maximum": 9007199254740991
+        },
+        "pollIntervalMs": {
+         "type": "integer",
+         "minimum": 0,
+         "maximum": 9007199254740991
+        },
+        "timeoutMinutes": {
+         "type": "integer",
+         "exclusiveMinimum": 0,
+         "maximum": 9007199254740991
+        }
+       },
+       "additionalProperties": false
+      }
+     },
+     "additionalProperties": false
+    },
+    "fallback": {
+     "type": "string"
+    },
+    "model": {
+     "type": "string"
+    },
+    "inputType": {
+     "type": "string",
+     "minLength": 1
+    },
+    "queryInputType": {
+     "type": "string",
+     "minLength": 1
+    },
+    "documentInputType": {
+     "type": "string",
+     "minLength": 1
+    },
+    "outputDimensionality": {
+     "type": "integer",
+     "exclusiveMinimum": 0,
+     "maximum": 9007199254740991
+    },
+    "local": {
+     "type": "object",
+     "properties": {
+      "modelPath": {
+       "type": "string"
+      },
+      "modelCacheDir": {
+       "type": "string"
+      },
+      "contextSize": {
+       "anyOf": [
+        {
+         "type": "integer",
+         "exclusiveMinimum": 0,
+         "maximum": 9007199254740991
+        },
+        {
+         "type": "string",
+         "const": "auto"
+        }
+       ]
+      }
+     },
+     "additionalProperties": false
+    },
+    "store": {
+     "type": "object",
+     "properties": {
+      "driver": {
+       "type": "string",
+       "const": "sqlite"
+      },
+      "fts": {
+       "type": "object",
+       "properties": {
+        "tokenizer": {
+         "anyOf": [
+          {
+           "type": "string",
+           "const": "unicode61"
+          },
+          {
+           "type": "string",
+           "const": "trigram"
+          }
+         ]
+        }
+       },
+       "additionalProperties": false
+      },
+      "vector": {
+       "type": "object",
+       "properties": {
+        "enabled": {
+         "type": "boolean"
+        },
+        "extensionPath": {
+         "type": "string"
+        }
+       },
+       "additionalProperties": false
+      }
+     },
+     "additionalProperties": false
+    },
+    "chunking": {
+     "type": "object",
+     "properties": {
+      "tokens": {
+       "type": "integer",
+       "exclusiveMinimum": 0,
+       "maximum": 9007199254740991
+      },
+      "overlap": {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 9007199254740991
+      }
+     },
+     "additionalProperties": false
+    },
+    "sync": {
+     "type": "object",
+     "properties": {
+      "onSessionStart": {
+       "type": "boolean"
+      },
+      "onSearch": {
+       "type": "boolean"
+      },
+      "watch": {
+       "type": "boolean"
+      },
+      "watchDebounceMs": {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 9007199254740991
+      },
+      "intervalMinutes": {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 9007199254740991
+      },
+      "embeddingBatchTimeoutSeconds": {
+       "type": "integer",
+       "exclusiveMinimum": 0,
+       "maximum": 9007199254740991
+      },
+      "sessions": {
+       "type": "object",
+       "properties": {
+        "deltaBytes": {
+         "type": "integer",
+         "minimum": 0,
+         "maximum": 9007199254740991
+        },
+        "deltaMessages": {
+         "type": "integer",
+         "minimum": 0,
+         "maximum": 9007199254740991
+        },
+        "postCompactionForce": {
+         "type": "boolean"
+        }
+       },
+       "additionalProperties": false
+      }
+     },
+     "additionalProperties": false
+    },
+    "query": {
+     "type": "object",
+     "properties": {
+      "maxResults": {
+       "type": "integer",
+       "exclusiveMinimum": 0,
+       "maximum": 9007199254740991
+      },
+      "minScore": {
+       "type": "number",
+       "minimum": 0,
+       "maximum": 1
+      },
+      "hybrid": {
+       "type": "object",
+       "properties": {
+        "enabled": {
+         "type": "boolean"
+        },
+        "vectorWeight": {
+         "type": "number",
+         "minimum": 0,
+         "maximum": 1
+        },
+        "textWeight": {
+         "type": "number",
+         "minimum": 0,
+         "maximum": 1
+        },
+        "candidateMultiplier": {
+         "type": "integer",
+         "exclusiveMinimum": 0,
+         "maximum": 9007199254740991
+        },
+        "mmr": {
+         "type": "object",
+         "properties": {
+          "enabled": {
+           "type": "boolean"
+          },
+          "lambda": {
+           "type": "number",
+           "minimum": 0,
+           "maximum": 1
+          }
+         },
+         "additionalProperties": false
+        },
+        "temporalDecay": {
+         "type": "object",
+         "properties": {
+          "enabled": {
+           "type": "boolean"
+          },
+          "halfLifeDays": {
+           "type": "integer",
+           "exclusiveMinimum": 0,
+           "maximum": 9007199254740991
+          }
+         },
+         "additionalProperties": false
+        }
+       },
+       "additionalProperties": false
+      }
+     },
+     "additionalProperties": false
+    },
+    "cache": {
+     "type": "object",
+     "properties": {
+      "enabled": {
+       "type": "boolean"
+      },
+      "maxEntries": {
+       "type": "integer",
+       "exclusiveMinimum": 0,
+       "maximum": 9007199254740991
+      }
+     },
+     "additionalProperties": false
+    }
+   },
+   "additionalProperties": false
+  },
+  "humanDelay": {
+   "type": "object",
+   "properties": {
+    "mode": {
+     "anyOf": [
+      {
+       "type": "string",
+       "const": "off"
+      },
+      {
+       "type": "string",
+       "const": "natural"
+      },
+      {
+       "type": "string",
+       "const": "custom"
+      }
+     ]
+    },
+    "minMs": {
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 9007199254740991
+    },
+    "maxMs": {
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 9007199254740991
+    }
+   },
+   "additionalProperties": false
+  },
+  "tts": {
+   "type": "object",
+   "properties": {
+    "auto": {
+     "type": "string",
+     "enum": [
+      "off",
+      "always",
+      "inbound",
+      "tagged"
+     ]
+    },
+    "enabled": {
+     "type": "boolean"
+    },
+    "mode": {
+     "type": "string",
+     "enum": [
+      "final",
+      "all"
+     ]
+    },
+    "provider": {
+     "type": "string",
+     "minLength": 1
+    },
+    "persona": {
+     "type": "string"
+    },
+    "personas": {
+     "type": "object",
+     "propertyNames": {
+      "type": "string"
+     },
+     "additionalProperties": {
+      "type": "object",
+      "properties": {
+       "label": {
+        "type": "string"
+       },
+       "description": {
+        "type": "string"
+       },
+       "provider": {
+        "type": "string",
+        "minLength": 1
+       },
+       "fallbackPolicy": {
+        "anyOf": [
+         {
+          "type": "string",
+          "const": "preserve-persona"
+         },
+         {
+          "type": "string",
+          "const": "provider-defaults"
+         },
+         {
+          "type": "string",
+          "const": "fail"
+         }
+        ]
+       },
+       "prompt": {
+        "type": "object",
+        "properties": {
+         "profile": {
+          "type": "string"
+         },
+         "scene": {
+          "type": "string"
+         },
+         "sampleContext": {
+          "type": "string"
+         },
+         "style": {
+          "type": "string"
+         },
+         "accent": {
+          "type": "string"
+         },
+         "pacing": {
+          "type": "string"
+         },
+         "constraints": {
+          "type": "array",
+          "items": {
+           "type": "string"
+          }
+         }
+        },
+        "additionalProperties": false
+       },
+       "providers": {
+        "type": "object",
+        "propertyNames": {
+         "type": "string"
+        },
+        "additionalProperties": {
+         "type": "object",
+         "properties": {
+          "apiKey": {
+           "anyOf": [
+            {
+             "type": "string"
+            },
+            {
+             "oneOf": [
+              {
+               "type": "object",
+               "properties": {
+                "source": {
+                 "type": "string",
+                 "const": "env"
+                },
+                "provider": {
+                 "type": "string",
+                 "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+                },
+                "id": {
+                 "type": "string",
+                 "pattern": "^[A-Z][A-Z0-9_]{0,127}$"
+                }
+               },
+               "required": [
+                "source",
+                "provider",
+                "id"
+               ],
+               "additionalProperties": false
+              },
+              {
+               "type": "object",
+               "properties": {
+                "source": {
+                 "type": "string",
+                 "const": "file"
+                },
+                "provider": {
+                 "type": "string",
+                 "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+                },
+                "id": {
+                 "type": "string"
+                }
+               },
+               "required": [
+                "source",
+                "provider",
+                "id"
+               ],
+               "additionalProperties": false
+              },
+              {
+               "type": "object",
+               "properties": {
+                "source": {
+                 "type": "string",
+                 "const": "exec"
+                },
+                "provider": {
+                 "type": "string",
+                 "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+                },
+                "id": {
+                 "type": "string"
+                }
+               },
+               "required": [
+                "source",
+                "provider",
+                "id"
+               ],
+               "additionalProperties": false
+              }
+             ]
+            }
+           ]
+          }
+         },
+         "additionalProperties": {
+          "anyOf": [
+           {
+            "type": "string"
+           },
+           {
+            "type": "number"
+           },
+           {
+            "type": "boolean"
+           },
+           {
+            "type": "null"
+           },
+           {
+            "type": "array",
+            "items": {}
+           },
+           {
+            "type": "object",
+            "propertyNames": {
+             "type": "string"
+            },
+            "additionalProperties": {}
+           }
+          ]
+         }
+        }
+       }
+      },
+      "additionalProperties": false
+     }
+    },
+    "summaryModel": {
+     "type": "string"
+    },
+    "modelOverrides": {
+     "type": "object",
+     "properties": {
+      "enabled": {
+       "type": "boolean"
+      },
+      "allowText": {
+       "type": "boolean"
+      },
+      "allowProvider": {
+       "type": "boolean"
+      },
+      "allowVoice": {
+       "type": "boolean"
+      },
+      "allowModelId": {
+       "type": "boolean"
+      },
+      "allowVoiceSettings": {
+       "type": "boolean"
+      },
+      "allowNormalization": {
+       "type": "boolean"
+      },
+      "allowSeed": {
+       "type": "boolean"
+      }
+     },
+     "additionalProperties": false
+    },
+    "providers": {
+     "type": "object",
+     "propertyNames": {
+      "type": "string"
+     },
+     "additionalProperties": {
+      "type": "object",
+      "properties": {
+       "apiKey": {
+        "anyOf": [
+         {
+          "type": "string"
+         },
+         {
+          "oneOf": [
+           {
+            "type": "object",
+            "properties": {
+             "source": {
+              "type": "string",
+              "const": "env"
+             },
+             "provider": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+             },
+             "id": {
+              "type": "string",
+              "pattern": "^[A-Z][A-Z0-9_]{0,127}$"
+             }
+            },
+            "required": [
+             "source",
+             "provider",
+             "id"
+            ],
+            "additionalProperties": false
+           },
+           {
+            "type": "object",
+            "properties": {
+             "source": {
+              "type": "string",
+              "const": "file"
+             },
+             "provider": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+             },
+             "id": {
+              "type": "string"
+             }
+            },
+            "required": [
+             "source",
+             "provider",
+             "id"
+            ],
+            "additionalProperties": false
+           },
+           {
+            "type": "object",
+            "properties": {
+             "source": {
+              "type": "string",
+              "const": "exec"
+             },
+             "provider": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+             },
+             "id": {
+              "type": "string"
+             }
+            },
+            "required": [
+             "source",
+             "provider",
+             "id"
+            ],
+            "additionalProperties": false
+           }
+          ]
+         }
+        ]
+       }
+      },
+      "additionalProperties": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "number"
+        },
+        {
+         "type": "boolean"
+        },
+        {
+         "type": "null"
+        },
+        {
+         "type": "array",
+         "items": {}
+        },
+        {
+         "type": "object",
+         "propertyNames": {
+          "type": "string"
+         },
+         "additionalProperties": {}
+        }
+       ]
+      }
+     }
+    },
+    "prefsPath": {
+     "type": "string"
+    },
+    "maxTextLength": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 9007199254740991
+    },
+    "timeoutMs": {
+     "type": "integer",
+     "minimum": 1000,
+     "maximum": 120000
+    }
+   },
+   "additionalProperties": false
+  },
+  "skillsLimits": {
+   "type": "object",
+   "properties": {
+    "maxSkillsPromptChars": {
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 9007199254740991,
+     "title": "Agent Skills Prompt Max Chars",
+     "description": "Per-agent override for the skills prompt character budget. This extends the existing skills.limits.maxSkillsPromptChars path instead of routing the same budget through contextLimits."
+    }
+   },
+   "additionalProperties": false,
+   "title": "Agent Skills Limits",
+   "description": "Optional per-agent overrides for skills subsystem budgets. Use this when an agent needs a different skills prompt budget without introducing a second generic context-limits path."
+  },
+  "contextLimits": {
+   "type": "object",
+   "properties": {
+    "memoryGetMaxChars": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 250000,
+     "title": "Agent memory_get Max Chars",
+     "description": "Per-agent override for the default memory_get max character budget."
+    },
+    "memoryGetDefaultLines": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 5000,
+     "title": "Agent memory_get Line Window",
+     "description": "Per-agent override for the default memory_get line window when lines is omitted."
+    },
+    "toolResultMaxChars": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 1000000,
+     "title": "Agent Tool Result Max Chars",
+     "description": "Per-agent advanced ceiling for the live tool-result max character budget. Omit to inherit defaults or the model-context auto cap."
+    },
+    "postCompactionMaxChars": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 50000,
+     "title": "Agent Post-compaction Max Chars",
+     "description": "Per-agent override for the post-compaction AGENTS.md excerpt budget."
+    }
+   },
+   "additionalProperties": false,
+   "title": "Agent Context Limits",
+   "description": "Optional per-agent overrides for the focused context budget knobs. Omitted fields inherit agents.defaults.contextLimits."
+  },
+  "contextTokens": {
+   "type": "integer",
+   "exclusiveMinimum": 0,
+   "maximum": 9007199254740991
+  },
+  "heartbeat": {
+   "type": "object",
+   "properties": {
+    "every": {
+     "type": "string"
+    },
+    "activeHours": {
+     "type": "object",
+     "properties": {
+      "start": {
+       "type": "string"
+      },
+      "end": {
+       "type": "string"
+      },
+      "timezone": {
+       "type": "string"
+      }
+     },
+     "additionalProperties": false
+    },
+    "model": {
+     "type": "string"
+    },
+    "session": {
+     "type": "string"
+    },
+    "includeReasoning": {
+     "type": "boolean"
+    },
+    "target": {
+     "type": "string"
+    },
+    "directPolicy": {
+     "anyOf": [
+      {
+       "type": "string",
+       "const": "allow"
+      },
+      {
+       "type": "string",
+       "const": "block"
+      }
+     ],
+     "title": "Heartbeat Direct Policy",
+     "description": "Per-agent override for heartbeat direct/DM delivery policy; use \"block\" for agents that should only send heartbeat alerts to non-DM destinations."
+    },
+    "to": {
+     "type": "string"
+    },
+    "accountId": {
+     "type": "string"
+    },
+    "prompt": {
+     "type": "string"
+    },
+    "includeSystemPromptSection": {
+     "type": "boolean",
+     "title": "Heartbeat Include System Prompt Section",
+     "description": "Per-agent override for whether the default agent's ## Heartbeats system prompt section is injected. Use false to keep heartbeat runtime behavior but omit the heartbeat prompt instructions from that agent's system prompt."
+    },
+    "ackMaxChars": {
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 9007199254740991
+    },
+    "suppressToolErrorWarnings": {
+     "type": "boolean",
+     "title": "Heartbeat Suppress Tool Error Warnings",
+     "description": "Suppress tool error warning payloads during heartbeat runs."
+    },
+    "timeoutSeconds": {
+     "type": "integer",
+     "exclusiveMinimum": 0,
+     "maximum": 9007199254740991,
+     "title": "Heartbeat Timeout (Seconds)",
+     "description": "Per-agent maximum time in seconds allowed for a heartbeat agent turn before it is aborted. Leave unset to inherit the merged heartbeat timeout, then agents.defaults.timeoutSeconds when set, otherwise the heartbeat cadence capped at 600 seconds."
+    },
+    "lightContext": {
+     "type": "boolean"
+    },
+    "isolatedSession": {
+     "type": "boolean"
+    },
+    "skipWhenBusy": {
+     "type": "boolean",
+     "title": "Heartbeat Skip When Busy",
+     "description": "Per-agent override that defers heartbeat turns on that agent's extra busy lanes: its own session-keyed subagent or nested command work. Cron lanes always defer heartbeat turns."
+    }
+   },
+   "additionalProperties": false
+  },
+  "identity": {
+   "type": "object",
+   "properties": {
+    "name": {
+     "type": "string"
+    },
+    "theme": {
+     "type": "string"
+    },
+    "emoji": {
+     "type": "string"
+    },
+    "avatar": {
+     "type": "string",
+     "title": "Identity Avatar",
+     "description": "Agent avatar (workspace-relative path, http(s) URL, or data URI)."
+    }
+   },
+   "additionalProperties": false
+  },
+  "groupChat": {
+   "type": "object",
+   "properties": {
+    "mentionPatterns": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "historyLimit": {
+     "type": "integer",
+     "exclusiveMinimum": 0,
+     "maximum": 9007199254740991
+    },
+    "unmentionedInbound": {
+     "type": "string",
+     "enum": [
+      "user_request",
+      "room_event"
+     ]
+    },
+    "visibleReplies": {
+     "anyOf": [
+      {
+       "type": "string",
+       "enum": [
+        "automatic",
+        "message_tool"
+       ]
+      },
+      {
+       "type": "boolean"
+      }
+     ]
+    }
+   },
+   "additionalProperties": false
+  },
+  "subagents": {
+   "type": "object",
+   "properties": {
+    "delegationMode": {
+     "type": "string",
+     "enum": [
+      "suggest",
+      "prefer"
+     ],
+     "title": "Sub-agent Delegation Mode",
+     "description": "Per-agent override for sub-agent delegation strength. Use this for coordinator agents that should stay responsive and push non-trivial work into spawned sub-agents."
+    },
+    "allowAgents": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "model": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "object",
+       "properties": {
+        "primary": {
+         "type": "string"
+        },
+        "fallbacks": {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        }
+       },
+       "additionalProperties": false
+      }
+     ]
+    },
+    "thinking": {
+     "type": "string"
+    },
+    "requireAgentId": {
+     "type": "boolean"
+    }
+   },
+   "additionalProperties": false
+  },
+  "runRetries": {
+   "type": "object",
+   "properties": {
+    "base": {
+     "type": "integer",
+     "exclusiveMinimum": 0,
+     "maximum": 9007199254740991,
+     "title": "Agent Run Retries Base",
+     "description": "Base number of run retry iterations for this agent."
+    },
+    "perProfile": {
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 9007199254740991,
+     "title": "Agent Run Retries Per Profile",
+     "description": "Additional run retry iterations granted per fallback profile candidate for this agent."
+    },
+    "min": {
+     "type": "integer",
+     "exclusiveMinimum": 0,
+     "maximum": 9007199254740991,
+     "title": "Agent Run Retries Minimum",
+     "description": "Minimum absolute limit for run retry iterations for this agent."
+    },
+    "max": {
+     "type": "integer",
+     "exclusiveMinimum": 0,
+     "maximum": 9007199254740991,
+     "title": "Agent Run Retries Maximum",
+     "description": "Maximum absolute limit for run retry iterations for this agent."
+    }
+   },
+   "additionalProperties": false,
+   "title": "Agent Run Retries",
+   "description": "Optional per-agent override for the embedded OpenClaw runner's outer run loop retry iteration boundaries."
+  },
+  "embeddedAgent": {
+   "type": "object",
+   "properties": {
+    "executionContract": {
+     "anyOf": [
+      {
+       "type": "string",
+       "const": "default"
+      },
+      {
+       "type": "string",
+       "const": "strict-agentic"
+      }
+     ],
+     "title": "Agent Embedded OpenClaw Execution Contract",
+     "description": "Optional per-agent embedded OpenClaw execution contract override. Set \"strict-agentic\" to enable structured plan tracking and non-visible turn recovery for that agent on supported OpenAI/OpenAI Codex GPT-5-family runs, or \"default\" to inherit the standard runner behavior."
+    }
+   },
+   "additionalProperties": false,
+   "title": "Agent Embedded OpenClaw",
+   "description": "Optional per-agent embedded OpenClaw overrides. Use this to opt specific agents into stricter GPT-5 execution behavior without changing the global default."
+  },
+  "sandbox": {
+   "type": "object",
+   "properties": {
+    "mode": {
+     "anyOf": [
+      {
+       "type": "string",
+       "const": "off"
+      },
+      {
+       "type": "string",
+       "const": "non-main"
+      },
+      {
+       "type": "string",
+       "const": "all"
+      }
+     ]
+    },
+    "backend": {
+     "type": "string",
+     "minLength": 1
+    },
+    "workspaceAccess": {
+     "anyOf": [
+      {
+       "type": "string",
+       "const": "none"
+      },
+      {
+       "type": "string",
+       "const": "ro"
+      },
+      {
+       "type": "string",
+       "const": "rw"
+      }
+     ]
+    },
+    "sessionToolsVisibility": {
+     "anyOf": [
+      {
+       "type": "string",
+       "const": "spawned"
+      },
+      {
+       "type": "string",
+       "const": "all"
+      }
+     ]
+    },
+    "scope": {
+     "anyOf": [
+      {
+       "type": "string",
+       "const": "session"
+      },
+      {
+       "type": "string",
+       "const": "agent"
+      },
+      {
+       "type": "string",
+       "const": "shared"
+      }
+     ]
+    },
+    "workspaceRoot": {
+     "type": "string"
+    },
+    "docker": {
+     "type": "object",
+     "properties": {
+      "image": {
+       "type": "string"
+      },
+      "containerPrefix": {
+       "type": "string"
+      },
+      "workdir": {
+       "type": "string"
+      },
+      "readOnlyRoot": {
+       "type": "boolean"
+      },
+      "tmpfs": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "network": {
+       "type": "string"
+      },
+      "user": {
+       "type": "string"
+      },
+      "capDrop": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "env": {
+       "type": "object",
+       "propertyNames": {
+        "type": "string"
+       },
+       "additionalProperties": {
+        "type": "string"
+       }
+      },
+      "setupCommand": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        }
+       ]
+      },
+      "pidsLimit": {
+       "type": "integer",
+       "exclusiveMinimum": 0,
+       "maximum": 9007199254740991
+      },
+      "memory": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "number"
+        }
+       ]
+      },
+      "memorySwap": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "number"
+        }
+       ]
+      },
+      "cpus": {
+       "type": "number",
+       "exclusiveMinimum": 0
+      },
+      "gpus": {
+       "type": "string",
+       "minLength": 1,
+       "title": "Agent Sandbox Docker GPUs",
+       "description": "Per-agent Docker GPU passthrough override for sandbox containers."
+      },
+      "ulimits": {
+       "type": "object",
+       "propertyNames": {
+        "type": "string"
+       },
+       "additionalProperties": {
+        "anyOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "number"
+         },
+         {
+          "type": "object",
+          "properties": {
+           "soft": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+           },
+           "hard": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+           }
+          },
+          "additionalProperties": false
+         }
+        ]
+       }
+      },
+      "seccompProfile": {
+       "type": "string"
+      },
+      "apparmorProfile": {
+       "type": "string"
+      },
+      "dns": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "extraHosts": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "binds": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "dangerouslyAllowReservedContainerTargets": {
+       "type": "boolean"
+      },
+      "dangerouslyAllowExternalBindSources": {
+       "type": "boolean"
+      },
+      "dangerouslyAllowContainerNamespaceJoin": {
+       "type": "boolean",
+       "title": "Agent Sandbox Docker Allow Container Namespace Join",
+       "description": "Per-agent DANGEROUS override for container namespace joins in sandbox Docker network mode."
+      }
+     },
+     "additionalProperties": false
+    },
+    "ssh": {
+     "type": "object",
+     "properties": {
+      "target": {
+       "type": "string",
+       "minLength": 1
+      },
+      "command": {
+       "type": "string",
+       "minLength": 1
+      },
+      "workspaceRoot": {
+       "type": "string",
+       "minLength": 1
+      },
+      "strictHostKeyChecking": {
+       "type": "boolean"
+      },
+      "updateHostKeys": {
+       "type": "boolean"
+      },
+      "identityFile": {
+       "type": "string",
+       "minLength": 1
+      },
+      "certificateFile": {
+       "type": "string",
+       "minLength": 1
+      },
+      "knownHostsFile": {
+       "type": "string",
+       "minLength": 1
+      },
+      "identityData": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "oneOf": [
+          {
+           "type": "object",
+           "properties": {
+            "source": {
+             "type": "string",
+             "const": "env"
+            },
+            "provider": {
+             "type": "string",
+             "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+            },
+            "id": {
+             "type": "string",
+             "pattern": "^[A-Z][A-Z0-9_]{0,127}$"
+            }
+           },
+           "required": [
+            "source",
+            "provider",
+            "id"
+           ],
+           "additionalProperties": false
+          },
+          {
+           "type": "object",
+           "properties": {
+            "source": {
+             "type": "string",
+             "const": "file"
+            },
+            "provider": {
+             "type": "string",
+             "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+            },
+            "id": {
+             "type": "string"
+            }
+           },
+           "required": [
+            "source",
+            "provider",
+            "id"
+           ],
+           "additionalProperties": false
+          },
+          {
+           "type": "object",
+           "properties": {
+            "source": {
+             "type": "string",
+             "const": "exec"
+            },
+            "provider": {
+             "type": "string",
+             "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+            },
+            "id": {
+             "type": "string"
+            }
+           },
+           "required": [
+            "source",
+            "provider",
+            "id"
+           ],
+           "additionalProperties": false
+          }
+         ]
+        }
+       ]
+      },
+      "certificateData": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "oneOf": [
+          {
+           "type": "object",
+           "properties": {
+            "source": {
+             "type": "string",
+             "const": "env"
+            },
+            "provider": {
+             "type": "string",
+             "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+            },
+            "id": {
+             "type": "string",
+             "pattern": "^[A-Z][A-Z0-9_]{0,127}$"
+            }
+           },
+           "required": [
+            "source",
+            "provider",
+            "id"
+           ],
+           "additionalProperties": false
+          },
+          {
+           "type": "object",
+           "properties": {
+            "source": {
+             "type": "string",
+             "const": "file"
+            },
+            "provider": {
+             "type": "string",
+             "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+            },
+            "id": {
+             "type": "string"
+            }
+           },
+           "required": [
+            "source",
+            "provider",
+            "id"
+           ],
+           "additionalProperties": false
+          },
+          {
+           "type": "object",
+           "properties": {
+            "source": {
+             "type": "string",
+             "const": "exec"
+            },
+            "provider": {
+             "type": "string",
+             "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+            },
+            "id": {
+             "type": "string"
+            }
+           },
+           "required": [
+            "source",
+            "provider",
+            "id"
+           ],
+           "additionalProperties": false
+          }
+         ]
+        }
+       ]
+      },
+      "knownHostsData": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "oneOf": [
+          {
+           "type": "object",
+           "properties": {
+            "source": {
+             "type": "string",
+             "const": "env"
+            },
+            "provider": {
+             "type": "string",
+             "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+            },
+            "id": {
+             "type": "string",
+             "pattern": "^[A-Z][A-Z0-9_]{0,127}$"
+            }
+           },
+           "required": [
+            "source",
+            "provider",
+            "id"
+           ],
+           "additionalProperties": false
+          },
+          {
+           "type": "object",
+           "properties": {
+            "source": {
+             "type": "string",
+             "const": "file"
+            },
+            "provider": {
+             "type": "string",
+             "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+            },
+            "id": {
+             "type": "string"
+            }
+           },
+           "required": [
+            "source",
+            "provider",
+            "id"
+           ],
+           "additionalProperties": false
+          },
+          {
+           "type": "object",
+           "properties": {
+            "source": {
+             "type": "string",
+             "const": "exec"
+            },
+            "provider": {
+             "type": "string",
+             "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+            },
+            "id": {
+             "type": "string"
+            }
+           },
+           "required": [
+            "source",
+            "provider",
+            "id"
+           ],
+           "additionalProperties": false
+          }
+         ]
+        }
+       ]
+      }
+     },
+     "additionalProperties": false
+    },
+    "browser": {
+     "type": "object",
+     "properties": {
+      "enabled": {
+       "type": "boolean"
+      },
+      "image": {
+       "type": "string"
+      },
+      "containerPrefix": {
+       "type": "string"
+      },
+      "network": {
+       "type": "string",
+       "title": "Agent Sandbox Browser Network",
+       "description": "Per-agent override for sandbox browser Docker network."
+      },
+      "cdpPort": {
+       "type": "integer",
+       "exclusiveMinimum": 0,
+       "maximum": 9007199254740991
+      },
+      "cdpSourceRange": {
+       "type": "string",
+       "title": "Agent Sandbox Browser CDP Source Port Range",
+       "description": "Per-agent override for CDP source CIDR allowlist."
+      },
+      "vncPort": {
+       "type": "integer",
+       "exclusiveMinimum": 0,
+       "maximum": 9007199254740991
+      },
+      "noVncPort": {
+       "type": "integer",
+       "exclusiveMinimum": 0,
+       "maximum": 9007199254740991
+      },
+      "headless": {
+       "type": "boolean"
+      },
+      "enableNoVnc": {
+       "type": "boolean"
+      },
+      "allowHostControl": {
+       "type": "boolean"
+      },
+      "autoStart": {
+       "type": "boolean"
+      },
+      "autoStartTimeoutMs": {
+       "type": "integer",
+       "exclusiveMinimum": 0,
+       "maximum": 9007199254740991
+      },
+      "binds": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      }
+     },
+     "additionalProperties": false
+    },
+    "prune": {
+     "type": "object",
+     "properties": {
+      "idleHours": {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 9007199254740991
+      },
+      "maxAgeDays": {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 9007199254740991
+      }
+     },
+     "additionalProperties": false
+    }
+   },
+   "additionalProperties": false
+  },
+  "params": {
+   "type": "object",
+   "propertyNames": {
+    "type": "string"
+   },
+   "additionalProperties": {}
+  },
+  "tools": {
+   "type": "object",
+   "properties": {
+    "profile": {
+     "anyOf": [
+      {
+       "type": "string",
+       "const": "minimal"
+      },
+      {
+       "type": "string",
+       "const": "coding"
+      },
+      {
+       "type": "string",
+       "const": "messaging"
+      },
+      {
+       "type": "string",
+       "const": "full"
+      }
+     ],
+     "title": "Agent Tool Profile",
+     "description": "Per-agent override for tool profile selection when one agent needs a different capability baseline. Use this sparingly so policy differences across agents stay intentional and reviewable."
+    },
+    "allow": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "alsoAllow": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "title": "Agent Tool Allowlist Additions",
+     "description": "Per-agent additive allowlist for tools on top of global and profile policy. Keep narrow to avoid accidental privilege expansion on specialized agents."
+    },
+    "deny": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "byProvider": {
+     "type": "object",
+     "propertyNames": {
+      "type": "string"
+     },
+     "additionalProperties": {
+      "type": "object",
+      "properties": {
+       "allow": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       },
+       "alsoAllow": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       },
+       "deny": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       },
+       "profile": {
+        "anyOf": [
+         {
+          "type": "string",
+          "const": "minimal"
+         },
+         {
+          "type": "string",
+          "const": "coding"
+         },
+         {
+          "type": "string",
+          "const": "messaging"
+         },
+         {
+          "type": "string",
+          "const": "full"
+         }
+        ]
+       }
+      },
+      "additionalProperties": false
+     },
+     "title": "Agent Tool Policy by Provider",
+     "description": "Per-agent provider-specific tool policy overrides for channel-scoped capability control. Use this when a single agent needs tighter restrictions on one provider than others."
+    },
+    "toolsBySender": {
+     "type": "object",
+     "propertyNames": {
+      "type": "string"
+     },
+     "additionalProperties": {
+      "type": "object",
+      "properties": {
+       "allow": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       },
+       "alsoAllow": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       },
+       "deny": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       }
+      },
+      "additionalProperties": false
+     }
+    },
+    "codeMode": {
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "object",
+       "properties": {
+        "enabled": {
+         "type": "boolean"
+        },
+        "runtime": {
+         "type": "string",
+         "const": "quickjs-wasi"
+        },
+        "mode": {
+         "type": "string",
+         "const": "only"
+        },
+        "languages": {
+         "type": "array",
+         "items": {
+          "type": "string",
+          "enum": [
+           "javascript",
+           "typescript"
+          ]
+         }
+        },
+        "timeoutMs": {
+         "type": "integer",
+         "exclusiveMinimum": 0,
+         "maximum": 9007199254740991
+        },
+        "memoryLimitBytes": {
+         "type": "integer",
+         "exclusiveMinimum": 0,
+         "maximum": 9007199254740991
+        },
+        "maxOutputBytes": {
+         "type": "integer",
+         "exclusiveMinimum": 0,
+         "maximum": 9007199254740991
+        },
+        "maxSnapshotBytes": {
+         "type": "integer",
+         "exclusiveMinimum": 0,
+         "maximum": 9007199254740991
+        },
+        "maxPendingToolCalls": {
+         "type": "integer",
+         "exclusiveMinimum": 0,
+         "maximum": 9007199254740991
+        },
+        "snapshotTtlSeconds": {
+         "type": "integer",
+         "exclusiveMinimum": 0,
+         "maximum": 9007199254740991
+        },
+        "searchDefaultLimit": {
+         "type": "integer",
+         "exclusiveMinimum": 0,
+         "maximum": 9007199254740991
+        },
+        "maxSearchLimit": {
+         "type": "integer",
+         "exclusiveMinimum": 0,
+         "maximum": 9007199254740991
+        }
+       },
+       "additionalProperties": false
+      }
+     ],
+     "title": "Agent Code Mode",
+     "description": "Per-agent code mode override. Use this to test or roll out exec/wait tool-surface mode for one agent without enabling it fleet-wide."
+    },
+    "elevated": {
+     "type": "object",
+     "properties": {
+      "enabled": {
+       "type": "boolean"
+      },
+      "allowFrom": {
+       "type": "object",
+       "propertyNames": {
+        "type": "string"
+       },
+       "additionalProperties": {
+        "type": "array",
+        "items": {
+         "anyOf": [
+          {
+           "type": "string"
+          },
+          {
+           "type": "number"
+          }
+         ]
+        }
+       }
+      }
+     },
+     "additionalProperties": false
+    },
+    "exec": {
+     "type": "object",
+     "properties": {
+      "host": {
+       "type": "string",
+       "enum": [
+        "auto",
+        "sandbox",
+        "gateway",
+        "node"
+       ]
+      },
+      "mode": {
+       "type": "string",
+       "enum": [
+        "deny",
+        "allowlist",
+        "ask",
+        "auto",
+        "full"
+       ]
+      },
+      "security": {
+       "type": "string",
+       "enum": [
+        "deny",
+        "allowlist",
+        "full"
+       ]
+      },
+      "ask": {
+       "type": "string",
+       "enum": [
+        "off",
+        "on-miss",
+        "always"
+       ]
+      },
+      "node": {
+       "type": "string"
+      },
+      "pathPrepend": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "safeBins": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "strictInlineEval": {
+       "type": "boolean"
+      },
+      "commandHighlighting": {
+       "type": "boolean"
+      },
+      "safeBinTrustedDirs": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "safeBinProfiles": {
+       "type": "object",
+       "propertyNames": {
+        "type": "string"
+       },
+       "additionalProperties": {
+        "type": "object",
+        "properties": {
+         "minPositional": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+         },
+         "maxPositional": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+         },
+         "allowedValueFlags": {
+          "type": "array",
+          "items": {
+           "type": "string"
+          }
+         },
+         "deniedFlags": {
+          "type": "array",
+          "items": {
+           "type": "string"
+          }
+         }
+        },
+        "additionalProperties": false
+       }
+      },
+      "reviewer": {
+       "type": "object",
+       "properties": {
+        "model": {
+         "anyOf": [
+          {
+           "type": "string"
+          },
+          {
+           "type": "object",
+           "properties": {
+            "primary": {
+             "type": "string"
+            },
+            "fallbacks": {
+             "type": "array",
+             "items": {
+              "type": "string"
+             }
+            }
+           },
+           "additionalProperties": false
+          }
+         ]
+        },
+        "timeoutMs": {
+         "type": "integer",
+         "exclusiveMinimum": 0,
+         "maximum": 9007199254740991
+        }
+       },
+       "additionalProperties": false
+      },
+      "backgroundMs": {
+       "type": "integer",
+       "exclusiveMinimum": 0,
+       "maximum": 9007199254740991
+      },
+      "timeoutSec": {
+       "type": "integer",
+       "exclusiveMinimum": 0,
+       "maximum": 9007199254740991
+      },
+      "cleanupMs": {
+       "type": "integer",
+       "exclusiveMinimum": 0,
+       "maximum": 9007199254740991
+      },
+      "notifyOnExit": {
+       "type": "boolean"
+      },
+      "notifyOnExitEmptySuccess": {
+       "type": "boolean"
+      },
+      "applyPatch": {
+       "type": "object",
+       "properties": {
+        "enabled": {
+         "type": "boolean"
+        },
+        "workspaceOnly": {
+         "type": "boolean"
+        },
+        "allowModels": {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        }
+       },
+       "additionalProperties": false
+      },
+      "approvalRunningNoticeMs": {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 9007199254740991
+      }
+     },
+     "additionalProperties": false
+    },
+    "fs": {
+     "type": "object",
+     "properties": {
+      "workspaceOnly": {
+       "type": "boolean"
+      }
+     },
+     "additionalProperties": false
+    },
+    "loopDetection": {
+     "type": "object",
+     "properties": {
+      "enabled": {
+       "type": "boolean"
+      },
+      "historySize": {
+       "type": "integer",
+       "exclusiveMinimum": 0,
+       "maximum": 9007199254740991
+      },
+      "warningThreshold": {
+       "type": "integer",
+       "exclusiveMinimum": 0,
+       "maximum": 9007199254740991
+      },
+      "unknownToolThreshold": {
+       "type": "integer",
+       "exclusiveMinimum": 0,
+       "maximum": 9007199254740991
+      },
+      "criticalThreshold": {
+       "type": "integer",
+       "exclusiveMinimum": 0,
+       "maximum": 9007199254740991
+      },
+      "globalCircuitBreakerThreshold": {
+       "type": "integer",
+       "exclusiveMinimum": 0,
+       "maximum": 9007199254740991
+      },
+      "detectors": {
+       "type": "object",
+       "properties": {
+        "genericRepeat": {
+         "type": "boolean"
+        },
+        "knownPollNoProgress": {
+         "type": "boolean"
+        },
+        "pingPong": {
+         "type": "boolean"
+        }
+       },
+       "additionalProperties": false
+      },
+      "postCompactionGuard": {
+       "type": "object",
+       "properties": {
+        "windowSize": {
+         "type": "integer",
+         "exclusiveMinimum": 0,
+         "maximum": 9007199254740991
+        }
+       },
+       "additionalProperties": false
+      }
+     },
+     "additionalProperties": false
+    },
+    "message": {
+     "type": "object",
+     "properties": {
+      "allowCrossContextSend": {
+       "type": "boolean"
+      },
+      "crossContext": {
+       "type": "object",
+       "properties": {
+        "allowWithinProvider": {
+         "type": "boolean",
+         "title": "Agent Cross-Context Messaging (Same Provider)",
+         "description": "Per-agent message guard for sending to other conversations on the same provider. Set false for current-conversation-only public agents."
+        },
+        "allowAcrossProviders": {
+         "type": "boolean",
+         "title": "Agent Cross-Context Messaging (Across Providers)",
+         "description": "Per-agent message guard for sending across providers. Keep false for public or sandboxed agents."
+        },
+        "marker": {
+         "type": "object",
+         "properties": {
+          "enabled": {
+           "type": "boolean"
+          },
+          "prefix": {
+           "type": "string"
+          },
+          "suffix": {
+           "type": "string"
+          }
+         },
+         "additionalProperties": false
+        }
+       },
+       "additionalProperties": false
+      },
+      "actions": {
+       "type": "object",
+       "properties": {
+        "allow": {
+         "type": "array",
+         "items": {
+          "type": "string"
+         },
+         "title": "Agent Message Action Allowlist",
+         "description": "Per-agent message action allowlist for the message tool. Set to a minimal list such as [\"send\"] for public sandbox agents so read, edit, delete, reaction, and other provider-specific message actions stay hidden and blocked."
+        }
+       },
+       "additionalProperties": false
+      },
+      "broadcast": {
+       "type": "object",
+       "properties": {
+        "enabled": {
+         "type": "boolean"
+        }
+       },
+       "additionalProperties": false
+      }
+     },
+     "additionalProperties": false
+    },
+    "sandbox": {
+     "type": "object",
+     "properties": {
+      "tools": {
+       "type": "object",
+       "properties": {
+        "allow": {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        },
+        "alsoAllow": {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        },
+        "deny": {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        }
+       },
+       "additionalProperties": false
+      }
+     },
+     "additionalProperties": false
+    }
+   },
+   "additionalProperties": false
+  },
+  "runtime": {
+   "anyOf": [
+    {
+     "type": "object",
+     "properties": {
+      "type": {
+       "type": "string",
+       "const": "embedded",
+       "title": "Agent Runtime Type",
+       "description": "Runtime type for this agent: \"embedded\" (default OpenClaw runtime) or \"acp\" (ACP harness defaults)."
+      }
+     },
+     "required": [
+      "type"
+     ],
+     "additionalProperties": false
+    },
+    {
+     "type": "object",
+     "properties": {
+      "type": {
+       "type": "string",
+       "const": "acp",
+       "title": "Agent Runtime Type",
+       "description": "Runtime type for this agent: \"embedded\" (default OpenClaw runtime) or \"acp\" (ACP harness defaults)."
+      },
+      "acp": {
+       "type": "object",
+       "properties": {
+        "agent": {
+         "type": "string",
+         "title": "Agent ACP Harness Agent",
+         "description": "Optional ACP harness agent id to use for this OpenClaw agent (for example codex, claude, cursor, gemini, openclaw)."
+        },
+        "backend": {
+         "type": "string",
+         "title": "Agent ACP Backend",
+         "description": "Optional ACP backend override for this agent's ACP sessions (falls back to global acp.backend)."
+        },
+        "mode": {
+         "type": "string",
+         "enum": [
+          "persistent",
+          "oneshot"
+         ],
+         "title": "Agent ACP Mode",
+         "description": "Optional ACP session mode default for this agent (persistent or oneshot)."
+        },
+        "cwd": {
+         "type": "string",
+         "title": "Agent ACP Working Directory",
+         "description": "Optional default working directory for this agent's ACP sessions."
+        }
+       },
+       "additionalProperties": false,
+       "title": "Agent ACP Runtime",
+       "description": "ACP runtime defaults for this agent when runtime.type=acp. Binding-level ACP overrides still take precedence per conversation."
+      }
+     },
+     "required": [
+      "type"
+     ],
+     "additionalProperties": false
+    }
+   ],
+   "title": "Agent Runtime",
+   "description": "Optional runtime descriptor for this agent. Use embedded for default OpenClaw execution or acp for external ACP harness defaults."
+  }
+ },
+ "required": [
+  "id"
+ ],
+ "additionalProperties": false
+}
