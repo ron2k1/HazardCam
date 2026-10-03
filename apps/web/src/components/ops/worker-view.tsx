@@ -107,6 +107,9 @@ export function WorkerView(props: WorkerViewProps) {
           </Link>
           <span className="hidden h-4 w-px bg-line-strong sm:block" aria-hidden />
           <span className="hidden text-[14px] text-fg/70 sm:inline">Camera alerts</span>
+          <Link href="/hazards" className="text-[14px] text-fg/70 underline-offset-4 hover:text-fg hover:underline">
+            Safety hazards
+          </Link>
           {tag ? (
             <span className="border border-line-strong px-2 py-0.5 text-[12px] tracking-[0.12em] text-fg/75 uppercase" data-testid="worker-source">
               {tag}

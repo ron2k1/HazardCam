@@ -143,6 +143,9 @@ export function OpsConsole(props: OpsConsoleProps) {
           </Link>
           <span className="h-3.5 w-px shrink-0 bg-line-strong" aria-hidden />
           <span className="tele shrink-0 text-fg/85">OPS</span>
+          <Link href="/hazards" className="tele shrink-0 hover:text-fg">
+            SAFETY HAZARDS
+          </Link>
           <span className="tele truncate">{scenario ? `${scenario.id.toUpperCase()} · ${(scenario.title ?? "").toUpperCase()}` : "NO SCENARIO"}</span>
         </div>
         <div className="flex shrink-0 items-center gap-4">

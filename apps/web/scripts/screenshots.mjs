@@ -51,12 +51,11 @@ async function shot(page, name) {
 
 const browser = await chromium.launch();
 try {
-  // landing
+  // landing: "/" redirects to the Safety hazards screen
   {
     const { ctx, page } = await open(browser, "/");
     await shot(page, "landing-1440x900");
-    report.checks.landingHeadline = (await page.locator("h1").innerText()).replace(/\s+/g, " ").trim();
-    report.checks.enterSystemHref = await page.getByRole("link", { name: "ENTER SYSTEM" }).getAttribute("href");
+    report.checks.landingPath = new URL(page.url()).pathname;
     await ctx.close();
   }
   // ops mock, worker view (the /ops default): plain message cards, no internal ids
