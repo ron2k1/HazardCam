@@ -22,6 +22,7 @@ import { HazardPin, type HazardPinItem } from "@/components/hazards/hazard-pin";
 import { BorderBeam } from "@/components/ui/border-beam";
 import { usePrefersReducedMotion } from "@/components/alerts/use-reduced-motion";
 import { cn } from "@/lib/utils";
+import { HazardText } from "./hazard-terms";
 
 export interface DetectionPopoutItem {
   /** Stable id (e.g. job id + card id); used as the React key and passed to callbacks. */
@@ -282,7 +283,7 @@ export function DetectionPopout({
           <WarningTriangle glyph={item.glyph} tone={tone} size={compact ? 34 : 72} pulse={!compact} />
         </div>
         <div className="min-w-0 flex-1">
-          <div className={cn("leading-[1.05] font-bold tracking-[0.04em] break-words text-warning uppercase", compact ? "text-[18px]" : "text-[26px] sm:text-[32px]")} data-testid="popout-label">
+          <div className={cn("leading-[1.05] font-bold tracking-[0.04em] break-words text-danger uppercase", compact ? "text-[18px]" : "text-[26px] sm:text-[32px]")} data-testid="popout-label">
             {item.label}
           </div>
           {where ? (
@@ -290,7 +291,7 @@ export function DetectionPopout({
               {where}
             </div>
           ) : null}
-          {!compact && item.detail ? <p className="mt-2 text-[13px] leading-snug text-fg/80">{item.detail}</p> : null}
+          {!compact && item.detail ? <p className="mt-2 text-[13px] leading-snug text-fg/80"><HazardText text={item.detail} /></p> : null}
         </div>
         {compact ? <div className="flex shrink-0 gap-2">{view}</div> : null}
       </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { HazardText } from "@/components/alerts/hazard-terms";
 import { CornerTicks } from "@/components/hud/panel";
 import { byTime, priorityKey, type HazardImage, type WorkerHazard } from "@/lib/hazards-v1";
 import { cn } from "@/lib/utils";
@@ -53,7 +54,7 @@ export function HazardCard({ hazard: h, index, active, onShow, onPicture }: Haza
         </span>
       </div>
 
-      <h3 id={headingId} className="pt-2.5 pr-4 text-[20px] leading-[1.25] font-bold text-fg sm:text-[22px]">
+      <h3 id={headingId} className="pt-2.5 pr-4 text-[20px] leading-[1.25] font-bold text-danger sm:text-[22px]">
         {h.title}
       </h3>
 
@@ -62,11 +63,11 @@ export function HazardCard({ hazard: h, index, active, onShow, onPicture }: Haza
       <div className="flex flex-col gap-3 pt-3 pr-4 text-[15px] leading-[23px] text-fg/95">
         <p>
           <span className={LABEL}>What we saw — </span>
-          {h.what_we_saw}
+          <HazardText text={h.what_we_saw} />
         </p>
         <p>
           <span className={LABEL}>Why it matters — </span>
-          {h.why_it_matters}
+          <HazardText text={h.why_it_matters} />
         </p>
         {h.what_to_do.length ? (
           <div>
