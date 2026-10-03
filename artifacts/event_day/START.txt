@@ -1,0 +1,5 @@
+event_day_start_utc=2026-10-03T16:04:07Z
+git_head=7b49d38ee3fc2e6a29873ee7f31417b2f55a5fcb
+git_status_begin
+?? artifacts/event_day/
+git_status_end
