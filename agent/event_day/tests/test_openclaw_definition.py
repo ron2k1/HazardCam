@@ -1,8 +1,9 @@
-"""D00: the OpenClaw agent definition and playbook files.
+"""D00/D01: the OpenClaw agent definition and playbook files.
 
 ``agent.json`` is an ``agents.list[]`` entry for the OpenClaw inside the NemoClaw
 sandbox (2026.7.1). The schema next to it was extracted from that build's
-``openclaw config schema``.
+``openclaw config schema``. D01 registered the seven contract tools as the ``mirror``
+MCP server and removed D00's ``message`` grant (the Telegram alert is switched off).
 """
 
 from __future__ import annotations
@@ -14,7 +15,7 @@ from pathlib import Path
 import jsonschema
 import pytest
 
-from agent.event_day.policy import AGENT_ID, ALERT_ACTION, ALERT_TOOL
+from agent.event_day.policy import AGENT_ID, ALERT_TOOL
 from apps.api.schemas.contracts import def_validator
 from tools.session import TOOL_NAMES
 
@@ -25,9 +26,9 @@ SCHEMA = OPENCLAW / "schema" / "openclaw-2026.7.1.agents-list-entry.schema.json"
 WORKSPACE = OPENCLAW / "workspace"
 PLAYBOOK = (WORKSPACE / "AGENTS.md").read_text(encoding="utf-8")
 
-# Every OpenClaw 2026.7.1 tool group except group:messaging (whose only tool is
-# ``message``), plus the umbrella groups that would re-admit them.
+# Every OpenClaw 2026.7.1 tool group, messaging included (its only tool is ``message``).
 DENIED_GROUPS = {
+    "group:messaging",
     "group:fs",
     "group:runtime",
     "group:web",
@@ -56,22 +57,20 @@ def test_the_brain_is_the_local_inference_route_with_no_fallback():
     assert AGENT["heartbeat"] == {"every": "0m"}
 
 
-def test_only_the_message_tool_is_added_and_every_other_group_is_denied():
+def test_only_the_seven_mirror_tools_are_added_and_every_group_is_denied():
     tools = AGENT["tools"]
     assert tools["profile"] == "minimal"
     assert "allow" not in tools  # OpenClaw rejects allow next to alsoAllow
-    assert tools["alsoAllow"] == [ALERT_TOOL]
+    assert tools["alsoAllow"] == [f"mirror__{name}" for name in TOOL_NAMES]
     assert DENIED_GROUPS <= set(tools["deny"])
     assert "session_status" in tools["deny"]  # the one tool the minimal profile grants
-    assert not {"message", "group:messaging"} & set(tools["deny"])
 
 
-def test_the_message_tool_may_only_send_and_never_fan_out():
-    message = AGENT["tools"]["message"]
-    assert message["actions"] == {"allow": [ALERT_ACTION]}
-    assert message["allowCrossContextSend"] is False
-    assert message["crossContext"] == {"allowWithinProvider": False, "allowAcrossProviders": False}
-    assert message["broadcast"] == {"enabled": False}
+def test_no_messaging_capability_is_granted():
+    tools = AGENT["tools"]
+    assert ALERT_TOOL not in tools["alsoAllow"] and "message" not in tools
+    assert "group:messaging" in tools["deny"]
+    assert "telegram" not in json.dumps(AGENT).lower()
 
 
 def test_loop_detection_is_on_with_ordered_thresholds():
@@ -82,11 +81,19 @@ def test_loop_detection_is_on_with_ordered_thresholds():
     )
 
 
-def test_the_playbook_covers_every_contract_tool_and_the_alert():
-    for name in (*TOOL_NAMES, ALERT_TOOL):
-        assert f"`{name}`" in PLAYBOOK, name
-    for phrase in ("alert.arguments", '"send": true', "never send twice", "FINAL event="):
-        assert phrase in PLAYBOOK, phrase
+def test_the_playbook_covers_every_registered_tool_and_keeps_the_alert_off():
+    for name in TOOL_NAMES:
+        assert f"`mirror__{name}`" in PLAYBOOK, name
+    assert "FINAL event=" in PLAYBOOK
+    # The alert section stays, inert unless the brief arms it.
+    alert = PLAYBOOK.split("## Alert (switched off)", 1)[1].split("\n## ", 1)[0]
+    for phrase in (
+        "only when the RUN BRIEF",
+        "never call it",
+        "alert.arguments",
+        "never send twice",
+    ):
+        assert phrase in alert, phrase
 
 
 def test_the_playbooks_abstention_is_a_valid_submit_call():

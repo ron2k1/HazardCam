@@ -1,7 +1,7 @@
 {
   "id": "urban-mirror",
   "name": "Urban Mirror",
-  "description": "Orchestrates the Ambient Urban Mirror tools for one scenario run: inspects the visible cameras, fuses their cues deterministically, asks the reasoning model for a bounded hypothesis, and submits it or abstains. After a non-abstaining submit it sends the one Telegram alert the policy composed. Never perceives, computes geometry, or concludes on its own.",
+  "description": "Orchestrates the Ambient Urban Mirror tools for one scenario run: inspects the visible cameras, fuses their cues deterministically, asks the reasoning model for a bounded hypothesis, and submits it or abstains. Never perceives, computes geometry, or concludes on its own.",
   "workspace": "/sandbox/.openclaw/workspace-urban-mirror",
   "identity": {
     "name": "Urban Mirror",
@@ -34,10 +34,17 @@
   "tools": {
     "profile": "minimal",
     "alsoAllow": [
-      "message"
+      "mirror__sample_video",
+      "mirror__inspect_camera",
+      "mirror__correlate_observations",
+      "mirror__triangulate_region",
+      "mirror__reason_hypothesis",
+      "mirror__get_supporting_frames",
+      "mirror__submit_hypothesis"
     ],
     "deny": [
       "session_status",
+      "group:messaging",
       "group:fs",
       "group:runtime",
       "group:web",
@@ -49,21 +56,6 @@
       "group:media",
       "group:agents"
     ],
-    "message": {
-      "actions": {
-        "allow": [
-          "send"
-        ]
-      },
-      "allowCrossContextSend": false,
-      "crossContext": {
-        "allowWithinProvider": false,
-        "allowAcrossProviders": false
-      },
-      "broadcast": {
-        "enabled": false
-      }
-    },
     "loopDetection": {
       "enabled": true,
       "historySize": 30,

@@ -1,4 +1,4 @@
-# Urban Mirror agent policy (event day, D00)
+# Urban Mirror agent policy (event day, D00; D01 registration)
 
 Written on 2026-10-03, after the event-day start marker (`artifacts/event_day/START.txt`). This
 is the OpenClaw agent `urban-mirror`: its definition, its playbook, and the bounded policy
@@ -8,7 +8,8 @@ between it and the tested tools.
 |---|---|
 | `openclaw/agent.json` | The `agents.list[]` entry for OpenClaw 2026.7.1 (the build inside the NemoClaw v0.0.124 `ambient-mirror` sandbox) |
 | `openclaw/workspace/AGENTS.md` | The playbook. OpenClaw injects it into the system prompt on every turn, together with `SOUL.md`, `IDENTITY.md`, `USER.md` and `TOOLS.md` |
-| `policy.py` | `AgentPolicy`: the guard every agent tool call goes through, the abstention rules, and the Telegram alert |
+| `policy.py` | `AgentPolicy`: the guard every agent tool call goes through, the abstention rules, and the Telegram alert (switched off by default) |
+| `registration.py`, `mcp_server.py`, `executor.py`, `app.py`, `register.py` | D01: the `mirror` MCP server, its OpenClaw registration, and the run executor (see "Tool registration (D01)") |
 | `openclaw/schema/…agents-list-entry.schema.json` | The `agents.list[]` schema taken from that build's `openclaw config schema`. The tests validate `agent.json` against it |
 | `tests/` | D00 tests (`python -m pytest agent/event_day/tests`) |
 
@@ -25,15 +26,14 @@ search (no embedding calls), no skills, no subagents, no heartbeat.
 
 ## Tool policy (OpenClaw side, `agent.json`)
 
-- Profile `minimal`, minus `session_status`. Every other tool group is denied: `group:fs`,
-  `group:runtime`, `group:web`, `group:ui`, `group:sessions`, `group:memory`, `group:nodes`,
-  `group:automation`, `group:media`, `group:agents`.
-- `alsoAllow: ["message"]` is the one messaging capability, used for the alert. `message` is
-  limited to action `send` (`tools.message.actions.allow`), cross-context sends are off, and
-  broadcast is off.
+- Profile `minimal`, minus `session_status`. Every other tool group is denied: `group:messaging`,
+  `group:fs`, `group:runtime`, `group:web`, `group:ui`, `group:sessions`, `group:memory`,
+  `group:nodes`, `group:automation`, `group:media`, `group:agents`.
+- `alsoAllow` holds exactly the seven registered tools, `mirror__sample_video` …
+  `mirror__submit_hypothesis` (D01). They keep the schemas in `contracts/tools.schema.json`.
+- No messaging capability. D00 granted `message` for the Telegram alert; D01 removed that grant
+  and its `tools.message` block (operator addendum, 2026-10-03: Telegram deferred).
 - Loop detection is on (warning 3, critical 5, circuit breaker 8).
-- D01 adds its registered tool surface (plugin or MCP id) to `alsoAllow`. The seven tools keep
-  the names and schemas in `contracts/tools.schema.json`.
 
 ## Call policy (`AgentPolicy.call`)
 
@@ -82,6 +82,14 @@ submission by abstaining through the same gate.
 
 ## Telegram alert (operator addendum)
 
+**Switched off (operator addendum, 2026-10-03).** The guard below stays in `policy.py`, disarmed
+behind one setting, `AUM_AGENT_TELEGRAM_ALERT` (`1`/`true`/`on`/`yes` arms it; unset is off).
+While it is off, the brief has no alert line, the submit reply has no `alert` key,
+`authorize_alert` refuses every call, and the summary shows `enabled: false`, status `skipped`
+(or `not_due`) with the reason. Turning the alert back on needs the setting, plus three things
+D01 deliberately left out: the `message` grant in `agent.json`, a Telegram channel (D02) and the
+`before_tool_call` hook described below.
+
 - **When.** Only after a successful `submit_hypothesis`, and only if the final (gated)
   hypothesis is a known event type (`inference.vocab.EVENT_TYPES`, so not `unknown` or
   `no_event`) at or above the abstention threshold. Abstentions send nothing.
@@ -92,7 +100,7 @@ submission by abstaining through the same gate.
 - **How.** The submit reply carries `alert: {send: true, tool: "message", arguments: {action:
   "send", channel: "telegram", target, message}}` next to the contract result. The playbook tells
   the agent to call `message` once with exactly those arguments.
-- **At most one per run.** `authorize_alert(params)` is the guard D01 puts in front of
+- **At most one per run.** `authorize_alert(params)` is the guard to put in front of
   OpenClaw's `message` tool, as a `before_tool_call` hook. It grants one `send` to Telegram, only
   while the alert is due, and the granted arguments are always the policy's own.
 - **No extra keys.** OpenClaw 2026.7.1 does not replace a call's params with the hook's. It
@@ -127,25 +135,54 @@ label paths, and it imports nothing from the judge-side package. The run brief (
 lists only visible cameras. The playbook forbids asking for other cameras, labels, expected
 answers or judge data, and the agent has no file, shell or web tools to look for them.
 
-## Hand-off to D01 / D02
+## Tool registration (D01)
 
-D01 (tool registration):
-- Build one `AgentPolicy(session, emit=…, run_id=<run dir name>, alert_route=…)` per run. Expose
-  each contract tool as `policy.call(name, args).to_json()`.
-- Wire `authorize_alert` into a `before_tool_call` hook for `message`. Pass it the call's params
-  exactly as received. Return `{block: true, blockReason: grant.reason}` when `allowed` is false.
-  Otherwise return `{params: grant.arguments}`. OpenClaw merges these over the agent's params
-  rather than replacing them, so safety rests on the guard refusing every non-conforming call,
-  not on replacement. Never strip extra keys and then grant. Wire `after_tool_call` to
-  `record_alert` for the granted call, and call `expire_alert()` when the agent's turn ends.
-- Start the agent with `policy.brief()`, one session per run (for example session key
-  `agent:urban-mirror:<run_id>`). The executor returns `policy.final_hypothesis` as soon as
-  `wait_closed()` returns, or `policy.finalize()` when the turn ends without a submit.
-- Upload `openclaw/workspace/*` to the agent workspace (`/sandbox/.openclaw/workspace-urban-mirror`).
+The seven tools reach OpenClaw as one MCP server, `mirror`, which the API process serves while
+it owns a run. OpenClaw names MCP tools `<server>__<tool>`, hence `mirror__sample_video`.
 
-D02 (channel and runtime):
-- Telegram channel: `actions.sendMessage: true`. Turn off `deleteMessage`, `editMessage`,
-  `reactions`, `sticker`, `poll`, `createForumTopic` and `editForumTopic`. Use DM
-  `allowlist` with no groups.
-- Egress: the Telegram preset only. The alert target comes from operator env, never from a repo
-  file. Show the alert as `skipped` in the UI when Telegram is unreachable.
+- `registration.py`: the `tools/list` entries come from `contracts/tools.schema.json`
+  (`$defs/<tool>_args`, with every `$ref` inlined). `agent_reply` blanks the host paths of a
+  media manifest (`source` becomes `camera:<id>`, `clip_path` and `frames[].path` become
+  `null`, as the contract allows), replaces absolute paths in error text with `<path>`, and
+  withholds any reply that names the ground-truth camera. `merge_registration` writes
+  `mcp.servers.mirror` (`streamable-http`, `toolFilter.include` = the seven tools, bearer token
+  as the `${AUM_TOOLS_TOKEN}` env reference) and the agent entry, and adds `mirror__*` to every
+  other agent's `tools.deny`: NemoClaw's global `tools.alsoAllow: ["bundle-mcp"]` would
+  otherwise hand the tools to `main`.
+- `mcp_server.py`: a stdlib Streamable HTTP server on exactly one path, `POST /mcp`
+  (`initialize`, `ping`, `tools/list`, `tools/call`). Any other path is 404, `GET` is 405,
+  there are no resources or prompts. With a token every request needs the bearer header; a
+  foreign `Origin` is refused. `ToolGateway` binds it to one run at a time. Without a run every
+  call is refused.
+- `executor.py`: `OpenClawAgentExecutor` is the API's `RunExecutor`. Per run it builds the leak
+  guard, reduces the scenario to its model view, opens the `ToolSession` and `AgentPolicy`,
+  takes the gateway lease, emits `run.started`/`orchestrator.started` (harness
+  `openclaw-agent`) and starts one agent turn with `policy.brief()` (session key = run id). It
+  returns the final hypothesis once the policy closes on a submit; a turn that ends without one
+  is finalized as an abstention, and a turn that failed before any call fails the run at stage
+  `agent`. The lease lasts until the turn has ended, so a late call from an old turn can never
+  reach the next run. `OpenClawCliLauncher` runs `openclaw agent --agent urban-mirror …`.
+- `app.py`: `uvicorn --factory agent.event_day.app:create_agent_app` is the API with the agent
+  executor and the tool server in one process. `register.py` merges the registration into an
+  `openclaw.json` (`--fragment` prints only the D01 part, which holds no credential).
+- Tests: `tests/integration/agent/` (schemas, a full API run, least privilege; the live
+  OpenClaw checks run when `AUM_OPENCLAW_CLI` is set).
+
+## Hand-off to D02
+
+D02 wires the runtime (`runtime/nemoclaw/README.md`, `scripts/runtime/`). What it needs from D01:
+
+- Run `create_agent_app` with `AUM_OPENCLAW_CMD` set to the sandboxed CLI (for example
+  `openshell sandbox exec -n ambient-mirror -- openclaw`), `AUM_TOOLS_BIND` set to loopback plus
+  the bridge gateway the sandbox reaches (`127.0.0.1:8090,172.18.0.1:8090`), and
+  `AUM_TOOLS_TOKEN` set to a fresh random token. The token is required once the server listens
+  beyond loopback.
+- Merge the registration with `merge_registration` (or `python -m agent.event_day.register`)
+  into the sandbox's `openclaw.json`, never into the repo, and upload `openclaw/workspace/*` to
+  `/sandbox/.openclaw/workspace-urban-mirror`. The server entry carries the token as the
+  `${AUM_TOOLS_TOKEN}` reference. Where the OpenClaw process does not have that variable (the
+  NemoClaw-started gateway does not), the token has to be written into the private config
+  instead. NemoClaw's managed `mcp add` needs `https://` and rejects `host.openshell.internal`,
+  so the registration uses OpenClaw's own `mcp.servers` entry.
+- Egress: one preset for the tool port on the host (8090, `/mcp`) and nothing else new.
+- Telegram stays deferred (see the alert section): no channel, egress or token.

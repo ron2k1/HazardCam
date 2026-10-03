@@ -1,7 +1,11 @@
 """D00: the bounded policy over a real ``ToolSession`` (fixture profile, test media).
 
-A scripted caller stands in for the OpenClaw agent and follows the playbook order. D01
-replaces it with the real agent through the tool registration.
+A scripted caller stands in for the OpenClaw agent and follows the playbook order. The
+D01 integration tests (``tests/integration/agent``) drive it through the registered
+MCP tool surface instead.
+
+The Telegram alert is switched off by default (D01). The alert tests here arm it
+explicitly (``alerts_on=True``); the tests at the end check the default.
 """
 
 from __future__ import annotations
@@ -17,9 +21,11 @@ from agent.event_day.policy import (
     ALERT_NOT_DUE,
     ALERT_SENT,
     ALERT_SKIPPED,
+    ALERTS_SETTING,
     AgentPolicy,
     AlertRoute,
     Budget,
+    alerts_enabled,
     run_brief,
 )
 from apps.api.schemas import UNKNOWN, Hypothesis
@@ -82,6 +88,7 @@ def run(scenario, make_profile, media_root, tmp_path):
     def make(hypothesis=CLAIM, **policy_kw) -> Run:
         policy_kw.setdefault("run_id", RUN_ID)
         policy_kw.setdefault("alert_route", AlertRoute(CHAT))
+        policy_kw.setdefault("alerts_on", True)
         return Run(scenario, make_profile(hypothesis), media_root, tmp_path / "run", **policy_kw)
 
     return make
@@ -397,3 +404,40 @@ def test_run_brief_lists_only_visible_cameras(scenario):
     assert not any(token in brief for token in GT_TOKENS)
     with pytest.raises(ValueError):
         AgentPolicy(None, run_id="bad id/../x")  # type: ignore[arg-type]  # checked first
+
+
+# -- the alert is switched off by default (D01) -----------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("value", "on"),
+    [(None, False), ("", False), ("0", False), ("off", False), ("1", True), (" ON ", True)],
+)
+def test_the_alert_switch_is_off_unless_set(value, on):
+    env = {} if value is None else {ALERTS_SETTING: value}
+    assert alerts_enabled(env) is on
+
+
+def test_by_default_the_alert_is_off_and_the_agent_never_hears_of_it(run, monkeypatch):
+    monkeypatch.delenv(ALERTS_SETTING, raising=False)
+    r = run(alerts_on=None)  # read the setting, as the executor does
+    assert not r.policy.alerts_on and not r.policy.alert_armed
+    assert "alert" not in r.policy.brief() and "message" not in r.policy.brief()
+    r.through_reasoning()
+    submitted = r.call("submit_hypothesis", {})
+    assert submitted["ok"] and "alert" not in submitted
+    assert submitted["result"]["event_type"] == "vehicle_stop"
+    summary = r.policy.alert_summary()
+    assert summary["enabled"] is False and summary["status"] == ALERT_SKIPPED
+    assert ALERTS_SETTING in summary["reason"] and summary["text"] is None
+    grant = r.policy.authorize_alert({"action": "send", "channel": "telegram"})
+    assert not grant.allowed and "switched off" in grant.reason
+    assert r.alerts and r.alerts[-1]["status"] == ALERT_SKIPPED  # the listener still hears
+
+
+def test_the_setting_arms_the_alert_without_code_changes(run, monkeypatch):
+    monkeypatch.setenv(ALERTS_SETTING, "1")
+    r = run(alerts_on=None)
+    assert r.policy.alert_armed and "Telegram alert armed" in r.policy.brief()
+    r.through_reasoning()
+    assert r.call("submit_hypothesis", {})["alert"]["send"] is True

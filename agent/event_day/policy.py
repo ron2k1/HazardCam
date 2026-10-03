@@ -21,12 +21,16 @@ to the agent:
 * Telegram alert (operator addendum): a run that closes on a known event type at or
   above ``ABSTAIN_BELOW`` gets exactly one alert, composed here from the final
   hypothesis and the evidence bundle. The agent sends it with OpenClaw's ``message``
-  tool; ``authorize_alert`` is the guard D01 wires in front of that tool. OpenClaw
-  2026.7.1 merges a hook's params into the agent's instead of replacing them, so the
-  guard refuses any call that carries a key besides ``action``, ``channel``, ``target``
-  and ``message``. The text that goes out is always the policy's and only one send per
-  run is granted. A failed send is recorded as skipped. It never changes the
-  hypothesis or the run.
+  tool; ``authorize_alert`` is the guard in front of that tool. OpenClaw 2026.7.1
+  merges a hook's params into the agent's instead of replacing them, so the guard
+  refuses any call that carries a key besides ``action``, ``channel``, ``target`` and
+  ``message``. The text that goes out is always the policy's and only one send per run
+  is granted. A failed send is recorded as skipped. It never changes the hypothesis or
+  the run.
+* The alert is switched off (operator decision, 2026-10-03, D01): it is armed only when
+  ``ALERTS_SETTING`` is set to ``1``/``true``/``on``/``yes``. While it is off, the submit
+  reply carries no alert instruction, the brief says nothing about alerts, and the guard
+  refuses every ``message`` call. ``agent.json`` grants no ``message`` tool either.
 
 The policy never computes times, geometry or hypotheses itself: those stay in the
 tested tools. It holds no ``Scenario`` and no path to media or labels, and it imports
@@ -36,11 +40,12 @@ nothing from ``eval/``.
 from __future__ import annotations
 
 import logging
+import os
 import re
 import threading
 import time
 from collections import Counter
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
 from itertools import count
 from typing import Any
@@ -77,7 +82,12 @@ ABSTENTION_CONFIDENCE = 0.2
 CLOSE_MARGIN = 0.1
 
 # -- Telegram alert --------------------------------------------------------------------
-# The one OpenClaw tool, action and channel the alert may use (agent.json allows no other).
+# The one switch for the alert. Off unless set to one of ALERTS_ON. Turning it on also
+# needs the ``message`` grant back in agent.json and a Telegram channel (D02); no code.
+ALERTS_SETTING = "AUM_AGENT_TELEGRAM_ALERT"
+ALERTS_ON = frozenset({"1", "true", "on", "yes"})
+ALERTS_OFF_REASON = f"Telegram alerts are switched off ({ALERTS_SETTING} is not set)"
+# The one OpenClaw tool, action and channel the alert may use.
 ALERT_TOOL = "message"
 ALERT_ACTION = "send"
 ALERT_CHANNEL = "telegram"
@@ -99,6 +109,13 @@ ALERT_DUE = "due"
 ALERT_SENDING = "sending"
 ALERT_SENT = "sent"
 ALERT_SKIPPED = "skipped"
+
+
+def alerts_enabled(env: Mapping[str, str] | None = None) -> bool:
+    """Whether ``ALERTS_SETTING`` switches the Telegram alert on (default: off)."""
+    value = (os.environ if env is None else env).get(ALERTS_SETTING, "")
+    return value.strip().lower() in ALERTS_ON
+
 
 _RUN_ID = re.compile(r"^[A-Za-z0-9_.:-]{1,80}$")
 # A Telegram chat id, @channel username, or forum topic target. A bot token
@@ -142,9 +159,9 @@ DEFAULT_BUDGET = Budget()
 class ToolOutcome:
     """What one agent tool call produced. ``refused`` means the session never ran it.
 
-    ``result`` is exactly the contract's ``$defs/<tool>_result``. The closing
-    ``submit_hypothesis`` also carries ``alert``, the agent's instruction for its one
-    Telegram send, next to the result rather than inside it.
+    ``result`` is exactly the contract's ``$defs/<tool>_result``. When alerts are on,
+    the closing ``submit_hypothesis`` also carries ``alert``, the agent's instruction for
+    its one Telegram send, next to the result rather than inside it.
     """
 
     tool: str
@@ -460,8 +477,12 @@ def run_brief(
     *,
     run_id: str | None = None,
     alert_armed: bool = False,
+    alerts_on: bool = False,
 ) -> str:
-    """The message that starts one agent run. It carries model-view data only."""
+    """The message that starts one agent run. It carries model-view data only.
+
+    The alert line appears only when alerts are switched on (``alerts_on``).
+    """
     lines = ["RUN BRIEF"]
     if run_id:
         lines.append(f"run: {run_id}")
@@ -472,16 +493,17 @@ def run_brief(
     for cam in view.cameras:
         label = f" - {cam.label}" if cam.label else ""
         lines.append(f"  {cam.id}{label}")
-    lines += [
-        (
-            f"budget: {budget.total_calls(len(view.cameras))} tool calls, {budget.deadline_s:.0f} s;"
-            f" at most {budget.per_camera_calls} calls per camera per tool."
-        ),
-        "alert: Telegram alert armed; submit_hypothesis's reply says whether to send it."
-        if alert_armed
-        else "alert: none for this run; never call the message tool.",
-        "Follow the playbook in AGENTS.md. Start with sample_video for the first camera.",
-    ]
+    lines.append(
+        f"budget: {budget.total_calls(len(view.cameras))} tool calls, {budget.deadline_s:.0f} s;"
+        f" at most {budget.per_camera_calls} calls per camera per tool."
+    )
+    if alerts_on:
+        lines.append(
+            "alert: Telegram alert armed; submit_hypothesis's reply says whether to send it."
+            if alert_armed
+            else "alert: none for this run; never call the message tool."
+        )
+    lines.append("Follow the playbook in AGENTS.md. Start with sample_video for the first camera.")
     return "\n".join(lines)
 
 
@@ -501,7 +523,8 @@ class AgentPolicy:
     The run's result is final once the policy closes (``wait_closed``): the runner
     completes the run then, without waiting for the alert or the agent's last reply.
     ``alert_listener`` gets ``alert_summary()`` on every alert state change; it runs
-    outside the policy lock and its errors are logged, never raised.
+    outside the policy lock and its errors are logged, never raised. ``alerts_on``
+    defaults to the ``ALERTS_SETTING`` switch, which is off.
     """
 
     def __init__(
@@ -514,6 +537,7 @@ class AgentPolicy:
         run_id: str | None = None,
         alert_route: AlertRoute | None = None,
         alert_listener: Callable[[dict[str, Any]], None] | None = None,
+        alerts_on: bool | None = None,
     ) -> None:
         if run_id is not None and not _RUN_ID.match(run_id):
             raise ValueError("run id has unexpected characters")
@@ -521,6 +545,7 @@ class AgentPolicy:
         self.budget = budget
         self.run_id = run_id
         self.alert_route = alert_route
+        self.alerts_on = alerts_enabled() if alerts_on is None else alerts_on
         self._emit = emit
         self._clock = clock
         self._started = clock()
@@ -551,7 +576,7 @@ class AgentPolicy:
 
     @property
     def alert_armed(self) -> bool:
-        return self.alert_route is not None and self.run_id is not None
+        return self.alerts_on and self.alert_route is not None and self.run_id is not None
 
     def elapsed_s(self) -> float:
         return self._clock() - self._started
@@ -559,7 +584,11 @@ class AgentPolicy:
     def brief(self) -> str:
         """The run brief for this policy's session (see ``run_brief``)."""
         return run_brief(
-            self.session.view, self.budget, run_id=self.run_id, alert_armed=self.alert_armed
+            self.session.view,
+            self.budget,
+            run_id=self.run_id,
+            alert_armed=self.alert_armed,
+            alerts_on=self.alerts_on,
         )
 
     def wait_closed(self, timeout: float | None = None) -> bool:
@@ -571,6 +600,7 @@ class AgentPolicy:
         alert = self._alert
         return {
             "channel": ALERT_CHANNEL,
+            "enabled": self.alerts_on,
             "armed": self.alert_armed,
             "status": alert.status,
             "reason": alert.reason,
@@ -604,8 +634,10 @@ class AgentPolicy:
 
     def call(self, name: Any, arguments: Any = None) -> ToolOutcome:
         with self._lock:
+            was_closed = self.closed
             outcome = self._call(name, {} if arguments is None else arguments)
-        if outcome.alert is not None:
+            closed_now = self.closed and not was_closed
+        if closed_now:
             self._notify_alert()
         return outcome
 
@@ -807,9 +839,10 @@ class AgentPolicy:
         self._notify_alert()
         return claim
 
-    def _close(self, final: Hypothesis | None = None) -> dict[str, Any]:
+    def _close(self, final: Hypothesis | None = None) -> dict[str, Any] | None:
         """Close the run on its final hypothesis and settle the alert. Caller holds the
-        lock; the result is the agent's alert instruction for the submit reply."""
+        lock; the result is the agent's alert instruction for the submit reply, or
+        ``None`` while alerts are switched off."""
         final = final if final is not None else self.session.hypothesis
         self.closed = True
         alert = self._alert
@@ -818,7 +851,9 @@ class AgentPolicy:
             alert.status = ALERT_NOT_DUE
         else:
             alert.event_type = final.event_type
-            if not self.alert_armed:
+            if not self.alerts_on:
+                why = ALERTS_OFF_REASON
+            elif not self.alert_armed:
                 why = "no alert channel is configured for this run"
             elif self.session.bundle is None:
                 why = "the run has no evidence bundle to cite"
@@ -831,6 +866,8 @@ class AgentPolicy:
         self._closed_event.set()
         if why is not None:
             alert.reason = why
+            if not self.alerts_on:
+                return None
             return {"send": False, "reason": f"No alert for this run: {why}. Do not call message."}
         alert.arguments = {
             "action": ALERT_ACTION,
@@ -846,7 +883,7 @@ class AgentPolicy:
             "whatever it returns; then reply with the final line.",
         }
 
-    # -- the alert send (D01 wires these to OpenClaw's message tool) --------------------
+    # -- the alert send (wired to OpenClaw's message tool only when alerts are on) -------
 
     def authorize_alert(self, params: Any) -> AlertGrant:
         """Decide one ``message`` tool call. Allowed once per run, only for a due alert,
@@ -865,6 +902,8 @@ class AgentPolicy:
 
     def _authorize_alert(self, params: Any) -> AlertGrant:
         alert = self._alert
+        if not self.alerts_on:
+            return AlertGrant(False, reason=ALERTS_OFF_REASON)
         if alert.status == ALERT_PENDING:
             return AlertGrant(False, reason="no alert before submit_hypothesis has succeeded")
         if alert.status in (ALERT_NOT_DUE, ALERT_SKIPPED) and alert.grants == 0:
@@ -931,6 +970,7 @@ __all__ = [
     "ABSTAIN_BELOW",
     "ABSTENTION_CONFIDENCE",
     "AGENT_ID",
+    "ALERTS_SETTING",
     "ALERT_ACTION",
     "ALERT_CHANNEL",
     "ALERT_MIN_CONFIDENCE",
@@ -945,6 +985,7 @@ __all__ = [
     "ToolOutcome",
     "abstain",
     "alert_decision",
+    "alerts_enabled",
     "apply_abstention_rules",
     "cited_spans",
     "compose_alert",
