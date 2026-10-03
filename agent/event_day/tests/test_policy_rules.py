@@ -13,6 +13,7 @@ from agent.event_day.policy import (
     apply_abstention_rules,
     cited_spans,
     compose_alert,
+    normalize_abstention,
     redact,
     unsafe_alert_text,
     weakening_violations,
@@ -119,11 +120,66 @@ def test_only_an_abstention_may_be_submitted_before_the_reasoner_answered():
         ({"evidence_ids": ["e9"]}, "evidence_ids must come from"),
         ({"alternatives": [{"event_type": "object_taken", "confidence": 0.1}]}, "alternatives"),
         ({"alternatives": [{"event_type": "vehicle_turnaround", "confidence": 0.5}]}, "exceed"),
+        ({"alternatives": []}, "keep every one of the reasoner's alternatives"),
+        (
+            {"alternatives": [{"event_type": "vehicle_turnaround", "confidence": 0.1}]},
+            "keep every one of the reasoner's alternatives",
+        ),
     ],
 )
 def test_a_submitted_claim_may_not_replace_or_strengthen_the_reasoners(update, problem):
     problems = weakening_violations(claim(**update), claim())
     assert any(problem in p for p in problems), problems
+
+
+def test_a_submitted_claim_keeps_the_reasoners_limitations():
+    raw = claim(limitations=["Only two cameras saw the cue."])
+    problems = weakening_violations(claim(), raw)
+    assert any("keep every one of the reasoner's limitations" in p for p in problems), problems
+    more = claim(limitations=["Only two cameras saw the cue.", "Low light."])
+    assert weakening_violations(more, raw) == []
+
+
+def test_dropping_the_reasoners_rival_cannot_get_around_the_rival_rule():
+    raw = claim(
+        confidence=0.5, alternatives=[{"event_type": "vehicle_turnaround", "confidence": 0.7}]
+    )
+    assert apply_abstention_rules(raw).abstained
+    for alternatives in ([], [{"event_type": "vehicle_turnaround", "confidence": 0.1}]):
+        assert weakening_violations(claim(confidence=0.5, alternatives=alternatives), raw)
+    # Kept as the reasoner ranked it, the rival still forces the abstention.
+    kept = claim(confidence=0.4, region=UNKNOWN, alternatives=raw.alternatives)
+    assert weakening_violations(kept, raw) == []
+    assert apply_abstention_rules(kept).abstained
+
+
+def test_an_agent_abstention_is_rebuilt_in_the_policys_form():
+    raw = claim()
+    mine = Hypothesis.model_validate(
+        {
+            "event_type": UNKNOWN,
+            "region": UNKNOWN,
+            "confidence": 1.0,
+            "evidence_ids": [],
+            "reason": "The cameras disagree.",
+            "alternatives": [],
+            "limitations": ["The cameras disagree.", "Low light."],
+        }
+    )
+    assert weakening_violations(mine, raw) == []
+    out = normalize_abstention(mine, raw)
+    assert out.abstained and out.region == UNKNOWN and out.confidence == 0.2
+    assert [(a.event_type, a.confidence) for a in out.alternatives] == [
+        ("vehicle_stop", 0.74),
+        ("vehicle_turnaround", 0.39),
+    ]
+    assert out.evidence_ids == raw.evidence_ids
+    assert out.limitations == ["The cameras disagree.", "Low light."]
+    assert "kept as an alternative" in out.reason
+    assert apply_abstention_rules(out) is out
+    early = normalize_abstention(mine, None)
+    assert early.confidence == 0.0 and early.alternatives == [] and early.evidence_ids == []
+    assert early.limitations == ["The cameras disagree.", NOT_DIRECTLY_VISIBLE, "Low light."]
 
 
 def test_softening_is_allowed():

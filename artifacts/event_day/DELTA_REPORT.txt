@@ -1,21 +1,100 @@
-verified_at_utc=2026-10-03T16:35:55Z
+verified_at_utc=2026-10-03T17:14:12Z
 prebuild_commit=68060460060e09f807149ce0785402f655c56bad
-current_commit=98453c9ce13eaf67b4003180872e670a92126c55
+current_commit=bc0b164b8c5a27c79bcc8d6e2f8fbd532f33182c
 
 == current status ==
- M agent/event_day/README.md
-?? agent/event_day/POLICY.md
-?? agent/event_day/openclaw/
-?? agent/event_day/policy.py
-?? agent/event_day/tests/
-?? artifacts/event_day/DELTA_REPORT.txt
-?? artifacts/event_day/workers/
+ M agent/event_day/POLICY.md
+ M agent/event_day/openclaw/workspace/AGENTS.md
+ M agent/event_day/openclaw/workspace/TOOLS.md
+ M agent/event_day/policy.py
+ M agent/event_day/tests/test_policy_rules.py
+ M agent/event_day/tests/test_policy_session.py
+ M apps/api/main.py
+ M apps/api/schemas/__init__.py
+ M apps/api/schemas/run.py
+ M apps/api/services/runs.py
+ M apps/api/services/scenarios.py
+ M apps/api/settings.py
+ M apps/web/README.md
+ M apps/web/scripts/screenshots.mjs
+ M apps/web/scripts/sync-contract-examples.mjs
+ M apps/web/src/app/globals.css
+ M apps/web/src/app/layout.tsx
+ M apps/web/src/app/ops/page.tsx
+ M apps/web/src/app/page.tsx
+ M apps/web/src/components/ops/ops-console.tsx
+ M apps/web/src/components/ops/ops-live.tsx
+ M apps/web/src/components/ops/ops-mock.tsx
+ M apps/web/src/lib/contracts.ts
+ M apps/web/src/lib/run-view.ts
+ M apps/web/src/mocks/mock.ts
+ M artifacts/event_day/DELTA_REPORT.txt
+ M contracts/SSE_EVENTS.md
+ M contracts/sse_envelope.schema.json
+ M tests/e2e/README.md
+ M tests/e2e/fixtures.ts
+ M tests/e2e/ops-races.spec.ts
+ M tests/e2e/ops-resilience.spec.ts
+ M tests/integration/api/test_runs_api.py
+ M tests/integration/harness/test_dev_sequence.py
+ M tests/unit/contracts/test_contracts.py
+?? apps/api/schemas/alert.py
+?? apps/api/services/alert_feed.py
+?? apps/api/services/alert_messages.py
+?? apps/web/src/components/ops/alert-card.tsx
+?? apps/web/src/components/ops/message-feed.tsx
+?? apps/web/src/components/ops/ops-screen.tsx
+?? apps/web/src/components/ops/view-toggle.tsx
+?? apps/web/src/components/ops/worker-camera.tsx
+?? apps/web/src/components/ops/worker-view.tsx
+?? apps/web/src/hooks/use-view-mode.ts
+?? apps/web/src/lib/plain.ts
+?? apps/web/src/lib/view-mode.ts
+?? apps/web/src/mocks/contract-examples/alert_delivery.json
+?? apps/web/src/mocks/contract-examples/alert_message.json
+?? apps/web/src/mocks/contract-examples/alert_message_ping.json
+?? apps/web/src/mocks/contract-examples/alert_message_unconfirmed.json
+?? apps/web/test-results/
+?? artifacts/event_day/workers/D00_review_fixes.md
+?? config/alerts.yaml
+?? contracts/examples/alert_delivery.json
+?? contracts/examples/alert_message.json
+?? contracts/examples/alert_message_ping.json
+?? contracts/examples/alert_message_unconfirmed.json
+?? tests/e2e/ops-worker.spec.ts
+?? tests/unit/api/test_alert_messages.py
 
 == event-agent relevant diff ==
- agent/event_day/README.md | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ agent/event_day/POLICY.md                          |  151 ++
+ agent/event_day/README.md                          |   12 +-
+ agent/event_day/openclaw/agent.json                |   81 +
+ ...openclaw-2026.7.1.agents-list-entry.schema.json | 2623 ++++++++++++++++++++
+ agent/event_day/openclaw/workspace/AGENTS.md       |   97 +
+ agent/event_day/openclaw/workspace/IDENTITY.md     |    5 +
+ agent/event_day/openclaw/workspace/SOUL.md         |   10 +
+ agent/event_day/openclaw/workspace/TOOLS.md        |   20 +
+ agent/event_day/openclaw/workspace/USER.md         |    5 +
+ agent/event_day/policy.py                          |  956 +++++++
+ agent/event_day/tests/conftest.py                  |  121 +
+ agent/event_day/tests/test_openclaw_definition.py  |  111 +
+ agent/event_day/tests/test_policy_rules.py         |  259 ++
+ agent/event_day/tests/test_policy_session.py       |  399 +++
+ 14 files changed, 4846 insertions(+), 4 deletions(-)
 
+A	agent/event_day/POLICY.md
 M	agent/event_day/README.md
+A	agent/event_day/openclaw/agent.json
+A	agent/event_day/openclaw/schema/openclaw-2026.7.1.agents-list-entry.schema.json
+A	agent/event_day/openclaw/workspace/AGENTS.md
+A	agent/event_day/openclaw/workspace/IDENTITY.md
+A	agent/event_day/openclaw/workspace/SOUL.md
+A	agent/event_day/openclaw/workspace/TOOLS.md
+A	agent/event_day/openclaw/workspace/USER.md
+A	agent/event_day/policy.py
+A	agent/event_day/tests/conftest.py
+A	agent/event_day/tests/test_openclaw_definition.py
+A	agent/event_day/tests/test_policy_rules.py
+A	agent/event_day/tests/test_policy_session.py
 
 == imports of the judge-side eval package from agent runtime scripts/runtime ==
 none

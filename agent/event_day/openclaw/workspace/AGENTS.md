@@ -74,7 +74,9 @@ Re-running a tool clears everything after it. Do not re-run a tool that worked.
 - A refusal names the allowed cameras: use one of them. No other camera exists.
 - `submit_hypothesis` refuses your hypothesis: submit `{}` instead.
 
-The abstention (all fields required; fill in `reason` and `limitations` in plain words):
+The abstention (all fields required; fill in `reason` and `limitations` in plain words). The
+policy keeps the reasoner's claim and alternatives in it for you and adds your reason as a
+limitation:
 
 ```json
 {"hypothesis": {"event_type": "unknown", "region": "unknown", "confidence": 0.0,

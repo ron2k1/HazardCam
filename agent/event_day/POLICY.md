@@ -50,11 +50,15 @@ search (no embedding calls), no skills, no subagents, no heartbeat.
    attempts.
 6. **Submission.** An explicit hypothesis may only weaken the reasoner's: same `event_type`
    (or an abstention), the same region or `unknown`, no higher confidence, evidence ids and
-   alternatives taken from the reasoner's. Before `reason_hypothesis` has answered, only an
-   abstention may be submitted.
+   alternatives taken from the reasoner's. It keeps every one of the reasoner's alternatives
+   at the reasoner's confidence, and every one of its limitations: dropping or lowering a
+   rival would strengthen the claim and hide the rival from abstention rule 2. Before
+   `reason_hypothesis` has answered, only an abstention may be submitted.
 7. **Refusals** come back as `{"ok": false, "refused": true, "error": "refused by policy: …"}`,
    and the error says what to do next. When the policy has an `emit`, each refusal also shows
-   in the agent trace as a failed `tool.started`/`tool.completed` pair (`policy_NNN`).
+   in the agent trace as a failed `tool.started`/`tool.completed` pair (`policy_NNN`). After
+   the runner has published `run.complete`, `emit` raises; the refusal is still returned and
+   kept in `summary()`, only not emitted. `call` never raises for a bad call.
 
 D03 may tune the `Budget` numbers. The rules stay as they are.
 
@@ -69,7 +73,10 @@ These rules run on every submission, before the deterministic gate in `tools/sub
 
 An abstention is `event_type`/`region` `unknown`, with confidence at most 0.2. It keeps the
 reasoner's claim as an alternative and the reason as a limitation, so the judge still sees what
-was considered. The gate then adds its own rules (evidence ids, region candidates, confidence
+was considered. An abstention the agent writes itself is rebuilt in this same form
+(`normalize_abstention`): the policy builds `abstain(raw, …)` from the reasoner's hypothesis,
+with the agent's reason and limitations added as limitations. The agent's own confidence,
+evidence ids and alternatives are not used. The gate then adds its own rules (evidence ids, region candidates, confidence
 caps, the not-directly-visible limitation). `finalize()` closes a run the agent left without a
 submission by abstaining through the same gate.
 
@@ -87,9 +94,17 @@ submission by abstaining through the same gate.
   the agent to call `message` once with exactly those arguments.
 - **At most one per run.** `authorize_alert(params)` is the guard D01 puts in front of
   OpenClaw's `message` tool, as a `before_tool_call` hook. It grants one `send` to Telegram, only
-  while the alert is due, and the granted arguments are always the policy's own. Whatever text or
-  target the agent typed is replaced. Any other call is refused (a second send, another action or
-  channel, a send before the submit, a send for an abstention).
+  while the alert is due, and the granted arguments are always the policy's own.
+- **No extra keys.** OpenClaw 2026.7.1 does not replace a call's params with the hook's. It
+  merges them, `{...agentParams, ...hookParams}` (`mergeParamsWithApprovalOverrides` in
+  `dist/agent-tools.before-tool-call-*.js`). Every key the agent typed that the hook does not
+  set would reach the send, for example `media`, `buffer`, `attachments`, `caption`, `filename`,
+  `presentation` buttons, `targets`, `accountId` or `dryRun`. So `authorize_alert` refuses any
+  call whose params hold a key outside `action`, `channel`, `target` and `message`, including
+  `dryRun: false`. The refusal does not echo the keys. For a call it grants, the hook's four
+  keys win the merge, so the call that runs is exactly `grant.arguments`. Any other call is
+  refused as well: a second send, another action or channel, a send before the submit, a send
+  for an abstention. A refused call does not use up the one grant.
 - **Best effort.** The run closes at the submit. `wait_closed()` wakes the runner, which
   completes the run (`run.complete`) right away, so it never waits for Telegram or for the
   agent's last reply. `record_alert(delivered, error)` settles the alert as `sent`, or as
@@ -117,9 +132,12 @@ answers or judge data, and the agent has no file, shell or web tools to look for
 D01 (tool registration):
 - Build one `AgentPolicy(session, emit=…, run_id=<run dir name>, alert_route=…)` per run. Expose
   each contract tool as `policy.call(name, args).to_json()`.
-- Wire `authorize_alert` into a `before_tool_call` hook for `message`: block when
-  `allowed` is false, otherwise replace the params with `grant.arguments`. Wire
-  `after_tool_call` to `record_alert`, and call `expire_alert()` when the agent's turn ends.
+- Wire `authorize_alert` into a `before_tool_call` hook for `message`. Pass it the call's params
+  exactly as received. Return `{block: true, blockReason: grant.reason}` when `allowed` is false.
+  Otherwise return `{params: grant.arguments}`. OpenClaw merges these over the agent's params
+  rather than replacing them, so safety rests on the guard refusing every non-conforming call,
+  not on replacement. Never strip extra keys and then grant. Wire `after_tool_call` to
+  `record_alert` for the granted call, and call `expire_alert()` when the agent's turn ends.
 - Start the agent with `policy.brief()`, one session per run (for example session key
   `agent:urban-mirror:<run_id>`). The executor returns `policy.final_hypothesis` as soon as
   `wait_closed()` returns, or `policy.finalize()` when the turn ends without a submit.

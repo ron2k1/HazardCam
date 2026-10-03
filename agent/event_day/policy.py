@@ -13,15 +13,20 @@ to the agent:
 * Calls are capped per tool, per camera and in total, and the run has a deadline.
   Once a run is out of budget, only ``submit_hypothesis`` is accepted.
 * A successful ``submit_hypothesis`` closes the run. Every later call is refused.
-* A submitted claim may only weaken the reasoner's hypothesis. The abstention rules
+* A submitted claim may only weaken the reasoner's hypothesis, and it keeps every one
+  of the reasoner's alternatives and limitations. An abstention the agent writes is
+  rebuilt in the policy's own form (``normalize_abstention``). The abstention rules
   below run on every submission, before the deterministic gate in ``tools/submit.py``.
 * ``finalize`` closes a run the agent left without a submission by abstaining.
 * Telegram alert (operator addendum): a run that closes on a known event type at or
   above ``ABSTAIN_BELOW`` gets exactly one alert, composed here from the final
   hypothesis and the evidence bundle. The agent sends it with OpenClaw's ``message``
-  tool; ``authorize_alert`` is the guard D01 wires in front of that tool, so the text
-  that goes out is always the policy's and only one send per run is granted. A failed
-  send is recorded as skipped. It never changes the hypothesis or the run.
+  tool; ``authorize_alert`` is the guard D01 wires in front of that tool. OpenClaw
+  2026.7.1 merges a hook's params into the agent's instead of replacing them, so the
+  guard refuses any call that carries a key besides ``action``, ``channel``, ``target``
+  and ``message``. The text that goes out is always the policy's and only one send per
+  run is granted. A failed send is recorded as skipped. It never changes the
+  hypothesis or the run.
 
 The policy never computes times, geometry or hypotheses itself: those stay in the
 tested tools. It holds no ``Scenario`` and no path to media or labels, and it imports
@@ -76,6 +81,10 @@ CLOSE_MARGIN = 0.1
 ALERT_TOOL = "message"
 ALERT_ACTION = "send"
 ALERT_CHANNEL = "telegram"
+# The only keys a granted ``message`` call may carry. OpenClaw merges the hook's params
+# over the agent's ({...agent, ...hook}), so any other key the agent typed (media,
+# attachments, buttons, targets, dryRun, ...) would reach the send: such a call is refused.
+ALERT_PARAM_KEYS = frozenset({"action", "channel", "target", "message"})
 # The same threshold as abstention: anything the agent would assert is worth an alert.
 ALERT_MIN_CONFIDENCE = ABSTAIN_BELOW
 ALERT_MAX_CAMERAS = 6
@@ -174,7 +183,12 @@ class AlertRoute:
 
 @dataclass(frozen=True)
 class AlertGrant:
-    """``authorize_alert``'s answer. When allowed, ``arguments`` replace the agent's."""
+    """``authorize_alert``'s answer.
+
+    When allowed, D01's hook returns ``arguments`` as its params. OpenClaw merges them
+    over the agent's key by key; the guard has already refused any call that carries
+    another key, so the call that runs is exactly ``arguments``.
+    """
 
     allowed: bool
     arguments: dict[str, Any] | None = None
@@ -286,7 +300,12 @@ def weakening_violations(claim: Hypothesis, raw: Hypothesis | None) -> list[str]
     """Why ``claim`` is not a weakening of the reasoner's hypothesis ``raw`` (empty if it is).
 
     The agent coordinates; it does not conclude. An explicit hypothesis may abstain or
-    soften the reasoner's claim, never replace or strengthen it.
+    soften the reasoner's claim, never replace or strengthen it. Dropping or lowering one
+    of the reasoner's alternatives would strengthen the claim against its rivals and hide
+    them from the abstention rules, so a non-abstaining claim keeps every alternative at
+    the reasoner's confidence, and every limitation. An abstention's alternatives are
+    only checked for their source here: ``normalize_abstention`` rebuilds them from
+    ``raw``.
     """
     problems: list[str] = []
     allowed_alts: dict[str, float] = {}
@@ -311,6 +330,19 @@ def weakening_violations(claim: Hypothesis, raw: Hypothesis | None) -> list[str]
             problems.append(f"region must stay {raw.region!r} or become 'unknown'")
         if claim.confidence > raw.confidence:
             problems.append(f"confidence may not exceed the reasoner's {raw.confidence:.2f}")
+        kept: dict[str, float] = {}
+        for alt in claim.alternatives:
+            kept[alt.event_type] = max(kept.get(alt.event_type, 0.0), alt.confidence)
+        if any(
+            kept.get(event_type, -1.0) < confidence
+            for event_type, confidence in allowed_alts.items()
+            if event_type != claim.event_type
+        ):
+            problems.append(
+                "alternatives must keep every one of the reasoner's alternatives at its confidence"
+            )
+        if any(lim not in claim.limitations for lim in raw.limitations):
+            problems.append("limitations must keep every one of the reasoner's limitations")
     else:
         if claim.region != UNKNOWN:
             problems.append("an abstention's region must be 'unknown'")
@@ -331,6 +363,23 @@ def weakening_violations(claim: Hypothesis, raw: Hypothesis | None) -> list[str]
             problems.append("an alternative's confidence may not exceed the reasoner's")
             break
     return problems
+
+
+def normalize_abstention(claim: Hypothesis, raw: Hypothesis | None) -> Hypothesis:
+    """An abstention the agent wrote, rebuilt in the policy's own form ``abstain(raw, …)``.
+
+    The agent says why it abstains; the policy decides what the abstention holds. The
+    result keeps the reasoner's claim (as an alternative), its alternatives, evidence ids
+    and limitations, takes at most ``ABSTENTION_CONFIDENCE``, and adds the agent's reason
+    and limitations as limitations. The agent's confidence, evidence ids and
+    alternatives are not used.
+    """
+    why = " ".join(claim.reason.split()) or "The agent abstained."
+    out = abstain(raw, why)
+    extra = [lim for lim in dict.fromkeys(claim.limitations) if lim not in out.limitations]
+    if not extra:
+        return out
+    return out.model_copy(update={"limitations": [*out.limitations, *extra]})
 
 
 # -- Telegram alert rules (pure) -------------------------------------------------------
@@ -445,7 +494,9 @@ class AgentPolicy:
     ``call`` never raises for a bad call: it returns a ``ToolOutcome`` whose ``error``
     says how to continue. When ``emit`` is given, a refused call still shows in the
     agent trace as a failed ``tool.started`` / ``tool.completed`` pair (call ids
-    ``policy_NNN``), just as the session shows the calls it rejects.
+    ``policy_NNN``), just as the session shows the calls it rejects. Once the runner has
+    completed the run, ``emit`` raises; the refusal is then still returned and kept in
+    ``summary()``, only not emitted.
 
     The run's result is final once the policy closes (``wait_closed``): the runner
     completes the run then, without waiting for the alert or the agent's last reply.
@@ -667,20 +718,25 @@ class AgentPolicy:
             shown = self._shown_camera(arguments)
             if shown is not None:
                 args_summary["camera_id"] = shown
-            self._emit(
-                "tool.started", {"call_id": call_id, "tool": tool, "args_summary": args_summary}
-            )
-            self._emit(
-                "tool.completed",
-                {
-                    "call_id": call_id,
-                    "tool": tool,
-                    "ok": False,
-                    "latency_ms": 0.0,
-                    "result_summary": {},
-                    "error": error,
-                },
-            )
+            try:
+                self._emit(
+                    "tool.started",
+                    {"call_id": call_id, "tool": tool, "args_summary": args_summary},
+                )
+                self._emit(
+                    "tool.completed",
+                    {
+                        "call_id": call_id,
+                        "tool": tool,
+                        "ok": False,
+                        "latency_ms": 0.0,
+                        "result_summary": {},
+                        "error": error,
+                    },
+                )
+            except Exception:  # best effort: e.g. the runner already published run.complete
+                level = logging.DEBUG if self.closed else logging.WARNING
+                logger.log(level, "refusal %s was not emitted", call_id, exc_info=True)
         return self._note(tool, arguments, ToolOutcome(tool, ok=False, error=error, refused=True))
 
     def _forward(
@@ -715,6 +771,8 @@ class AgentPolicy:
                     + ". Submit with no arguments to keep the reasoner's hypothesis, or submit "
                     "event_type 'unknown' with region 'unknown' to abstain."
                 )
+            if claim.abstained:
+                claim = normalize_abstention(claim, raw)
         elif raw is None:
             return arguments  # the session says which tool has to run first
         else:
@@ -792,8 +850,12 @@ class AgentPolicy:
 
     def authorize_alert(self, params: Any) -> AlertGrant:
         """Decide one ``message`` tool call. Allowed once per run, only for a due alert,
-        only ``send`` to Telegram; the granted ``arguments`` are the policy's own, so the
-        agent cannot change the text or the target."""
+        only ``send`` to Telegram, and only when the call carries no key outside
+        ``ALERT_PARAM_KEYS``. The granted ``arguments`` are the policy's own, so the agent
+        cannot change the text or the target. OpenClaw merges the hook's params over the
+        agent's rather than replacing them; refusing every other key is what keeps the
+        call that runs equal to ``arguments`` (no media, buttons, extra targets or
+        ``dryRun``). A refused call does not use up the grant."""
         with self._lock:
             grant = self._authorize_alert(params)
             if not grant.allowed:
@@ -811,6 +873,16 @@ class AgentPolicy:
             return AlertGrant(False, reason="this run's one alert was already sent or tried")
         if not isinstance(params, dict):
             return AlertGrant(False, reason="message arguments must be an object")
+        extra = [key for key in params if key not in ALERT_PARAM_KEYS]
+        if extra:
+            # The keys are not echoed: they are agent text.
+            return AlertGrant(
+                False,
+                reason=(
+                    f"the call carries {len(extra)} key(s) besides action, channel, target "
+                    "and message; call message with exactly alert.arguments and nothing else"
+                ),
+            )
         action = str(params.get("action") or "").strip().lower()
         if action != ALERT_ACTION:
             return AlertGrant(False, reason=f"only action {ALERT_ACTION!r} is allowed")
@@ -862,6 +934,7 @@ __all__ = [
     "ALERT_ACTION",
     "ALERT_CHANNEL",
     "ALERT_MIN_CONFIDENCE",
+    "ALERT_PARAM_KEYS",
     "ALERT_TOOL",
     "CLOSE_MARGIN",
     "HARNESS_ID",
@@ -875,6 +948,7 @@ __all__ = [
     "apply_abstention_rules",
     "cited_spans",
     "compose_alert",
+    "normalize_abstention",
     "redact",
     "run_brief",
     "unsafe_alert_text",

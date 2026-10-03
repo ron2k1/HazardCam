@@ -14,5 +14,7 @@ tool policy in `agent.json` decides what is callable.
   `confidence`, `evidence_ids`, `reason`, `alternatives`, `limitations`. `event_type` `unknown`
   is an abstention.
 - `submit_hypothesis` closes the run. Its reply also carries `alert`.
-- `message` (OpenClaw built-in) only allows action `send`. The alert guard replaces whatever
-  you pass with the policy's own alert text and target, and grants one send per run.
+- `message` (OpenClaw built-in) only allows action `send`. The alert guard grants one send
+  per run, with the policy's own text and target. It refuses a call that passes anything
+  besides `action`, `channel`, `target` and `message`: pass exactly `alert.arguments`, with no
+  media, attachments, buttons, extra targets or `dryRun`.
