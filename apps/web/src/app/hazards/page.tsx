@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
 
 import { HazardsApp, type HazardsMock } from "@/components/hazards/hazards-app";
+import { parseViewMode } from "@/lib/view-mode";
 
 export const metadata: Metadata = {
   title: "Safety hazards · CameraVision",
@@ -15,19 +15,17 @@ function parseMock(v: string | undefined): HazardsMock | null {
 }
 
 /**
- * /hazards: the safety check screen. ?clip=<id> picks the camera; ?job=<id> attaches to an existing
- * check (no automatic check). The technical view lives in its own tab, /hazards/process, so
- * ?view=technical goes there. ?mock[=1|empty] is development data only.
+ * /hazards is the single-camera safety hazard review. /hazards?mock[=1|empty] renders the real
+ * teammate example from src/mocks/hazards without the API; ?clip=<id> preselects a clip. The plain
+ * worker view is the default; ?view=technical shows the raw report, prompts and model metadata.
  */
 export default async function HazardsPage({ searchParams }: PageProps<"/hazards">) {
   const params = await searchParams;
-  const clip = one(params.clip) ?? null;
-  const job = one(params.job) ?? null;
-  if (one(params.view) === "technical") {
-    const q = new URLSearchParams();
-    if (clip) q.set("clip", clip);
-    if (job) q.set("job", job);
-    redirect(`/hazards/process${q.size ? `?${q.toString()}` : ""}`);
-  }
-  return <HazardsApp mock={parseMock(one(params.mock))} initialClipId={clip} initialJobId={job} />;
+  return (
+    <HazardsApp
+      mock={parseMock(one(params.mock))}
+      initialView={parseViewMode(one(params.view))}
+      initialClipId={one(params.clip) ?? null}
+    />
+  );
 }

@@ -11,7 +11,6 @@ import {
   type HazardInstructions,
   type HazardView,
   type JobHandlers,
-  type LatestJob,
 } from "@/lib/hazards";
 import { MOCK_INSTRUCTIONS, MOCK_STEP_MS, MOCK_VIEWS, summarize } from "@/mocks/hazards";
 
@@ -20,25 +19,20 @@ export interface HazardsSource {
   clips: (signal?: AbortSignal) => Promise<ClipSummary[]>;
   view: (clipId: string, signal?: AbortSignal) => Promise<HazardView>;
   instructions: (signal?: AbortSignal) => Promise<HazardInstructions>;
-  /** Starts a review job (or attaches to the one already running) and returns its id. */
-  review: (clipId: string) => Promise<string>;
-  /** Streams the job's events from its start; returns a closer. */
+  /** Starts a review job and returns its id. */
+  review: (clipId: string, refresh: boolean) => Promise<string>;
+  /** Streams the job's progress; returns a closer. */
   subscribe: (jobId: string, handlers: JobHandlers) => () => void;
-  /** The clip's latest job, or null. */
-  latestJob: (clipId: string, signal?: AbortSignal) => Promise<LatestJob | null>;
-  /** The raw report JSON, or null when not available. */
-  report: (clipId: string, signal?: AbortSignal) => Promise<Record<string, unknown> | null>;
 }
 
 export const liveSource: HazardsSource = {
   kind: "live",
-  clips: async (signal) => (await hazardsApi.clips(signal)).clips,
+  // Event day (demo): blind-spot clips (bs_*) stay off this page; hazard clips only.
+  clips: async (signal) => (await hazardsApi.clips(signal)).clips.filter((c) => !c.clip_id.startsWith("bs_")),
   view: (clipId, signal) => hazardsApi.view(clipId, signal),
   instructions: (signal) => hazardsApi.instructions(signal),
-  review: async (clipId) => (await hazardsApi.review(clipId)).job_id,
+  review: async (clipId, refresh) => (await hazardsApi.review(clipId, refresh)).job_id,
   subscribe: subscribeJob,
-  latestJob: (clipId, signal) => hazardsApi.latestJob(clipId, signal),
-  report: (clipId, signal) => hazardsApi.report(clipId, signal),
 };
 
 /**
@@ -49,7 +43,6 @@ export const liveSource: HazardsSource = {
 export function mockSource(variant: "default" | "empty" = "default"): HazardsSource {
   const views: Record<string, HazardView> = variant === "empty" ? {} : { ...MOCK_VIEWS };
   const reviewing = new Set<string>();
-  const lastJob: Record<string, string> = {};
   let jobs = 0;
   const statusOf = (v: HazardView): HazardView =>
     reviewing.has(v.clip.clip_id) ? { ...v, status: "reviewing" } : v;
@@ -67,11 +60,8 @@ export function mockSource(variant: "default" | "empty" = "default"): HazardsSou
       if (!views[clipId]) throw new Error("unknown clip");
       reviewing.add(clipId);
       jobs += 1;
-      lastJob[clipId] = `mock:${clipId}:${jobs}`;
-      return lastJob[clipId];
+      return `mock:${clipId}:${jobs}`;
     },
-    latestJob: async (clipId) => (lastJob[clipId] ? { job_id: lastJob[clipId], state: "done" } : null),
-    report: async () => null,
     subscribe: (jobId, handlers) => {
       const clipId = jobId.split(":")[1] ?? "";
       const timers: ReturnType<typeof setTimeout>[] = [];

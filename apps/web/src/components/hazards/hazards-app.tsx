@@ -1,389 +1,279 @@
 "use client";
 
+import { useReducedMotion } from "motion/react";
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { DetectionPopoutStack, type DetectionPopoutItem } from "@/components/alerts/detection-popout";
+import { StatusDot } from "@/components/hud/barcode";
+import { Panel } from "@/components/hud/panel";
+import { ViewToggle } from "@/components/ops/view-toggle";
+import { useMounted } from "@/hooks/use-animate";
+import { useViewMode, type ViewMode } from "@/hooks/use-view-mode";
+import { ApiError } from "@/lib/api";
 import { API_BASE_URL } from "@/lib/config";
 import {
-  hazardsApi,
+  clock,
   mediaUrl,
   plainError,
   sortHazards,
   sourceVideoPath,
   type ClipSummary,
+  type HazardImage,
+  type HazardInstructions,
   type HazardView,
-  type WallTiles,
   type WorkerHazard,
 } from "@/lib/hazards";
 import { cn } from "@/lib/utils";
-import { MOCK_CLIPS } from "@/mocks/hazards";
+import { MOCK_CLIPS, MOCK_INSTRUCTIONS, MOCK_VIEWS } from "@/mocks/hazards";
 
-import { CctvFeed } from "./cctv-feed";
-import { CheckStatus, initialCheck, type CheckState } from "./check-status";
-import { camLabel, cameraOrder, CameraSelect, CameraStrip, type CameraState } from "./clip-rail";
-import { galleryPictures, isBlindspot, sourceSize, viewZones, type Pic } from "./derive";
+import { ClipRail, ClipSelect } from "./clip-rail";
 import { EvidencePlayer, type SeekRequest } from "./evidence-player";
-import { HazardsHeader } from "./hazards-header";
-import { Lightbox, PictureGallery } from "./picture-grid";
-import { RuntimeLine, useRuntimeStatus } from "./runtime-strip";
+import { InstructionsPanel } from "./instructions-panel";
+import { PictureGrid } from "./picture-grid";
+import { RunControl, type JobState } from "./run-control";
 import { liveSource, mockSource, type HazardsSource } from "./sources";
-import { HazardList } from "./worker-report";
+import { TechnicalDetails, TechnicalFindings } from "./technical-report";
+import { WorkerReport } from "./worker-report";
 
 export type HazardsMock = "default" | "empty";
 
 export interface HazardsAppProps {
-  /** ?mock: development data from src/mocks/hazards (never used for the recording). */
+  /** ?mock: replay src/mocks/hazards without the API. */
   mock: HazardsMock | null;
+  /** ?view= as the server read it. */
+  initialView: ViewMode | null;
   /** ?clip= as the server read it. */
   initialClipId: string | null;
-  /** ?job= : attach to this job (no automatic check). */
-  initialJobId: string | null;
 }
 
 const POLL_MS = 3_000;
-/** The automatic check starts this long after the feed starts playing. */
-const AUTO_CHECK_MS = 2_500;
-/** ...or this long after the camera was picked, if the feed never plays. */
-const AUTO_CHECK_FALLBACK_MS = 7_000;
 
-/**
- * Layout: before a result the feed is large with the check's progress under it. After it, a side
- * column holds the feed tile, the finished check (reasoning link, Check again) and the footnotes;
- * the report (headline, agent summary, hazard cards) is one column so the first hazard sits above
- * the fold; the AI-marked video and its pictures sit beside it. The side column ends in a 1fr row
- * so the report's height never spreads the tile, the check and the footnotes apart.
- */
-const LAYOUT_CSS = `
-.hzw-grid{display:grid;gap:16px;grid-template-columns:minmax(0,1fr);grid-template-areas:"feed" "status" "main" "notes" "evidence";align-items:start}
-.hzw-feed{grid-area:feed}.hzw-status{grid-area:status}.hzw-main{grid-area:main}.hzw-notes{grid-area:notes}.hzw-evidence{grid-area:evidence}
-.hzw-grid:not([data-revealed]) .hzw-feed,.hzw-grid:not([data-revealed]) .hzw-status{width:100%;max-width:calc((100dvh - 15rem) * 16 / 9);min-width:min(100%,640px);justify-self:center}
-.hzw-reveal{animation:hzw-in .45s ease-out both}
-@keyframes hzw-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-@media (min-width:1024px){.hzw-grid[data-revealed]{grid-template-columns:260px minmax(0,1fr);grid-template-rows:auto auto 1fr auto;grid-template-areas:"feed main" "status main" "notes main" "evidence evidence"}}
-@media (min-width:1280px){.hzw-grid[data-revealed]{grid-template-columns:248px minmax(0,1.08fr) minmax(0,1fr);grid-template-rows:auto auto 1fr;grid-template-areas:"feed main evidence" "status main evidence" "notes main evidence"}}
-@media (min-width:1024px){.hzw-grid[data-revealed] .hzw-summary{-webkit-line-clamp:3}}
-`;
-
-function processHref(clipId: string, jobId: string | null): string {
-  const q = new URLSearchParams({ clip: clipId });
-  if (jobId) q.set("job", jobId);
-  return `/hazards/process?${q.toString()}`;
-}
-
-function resultState(view: HazardView, kindWord: string): CameraState {
-  const hz = view.worker?.hazards ?? [];
-  if (!hz.length) return { text: `No ${kindWord.toLowerCase()}s seen`, tone: "muted" };
-  const needs = hz.filter((h) => h.needs_check).length;
-  const base = `${hz.length} ${kindWord.toLowerCase()}${hz.length === 1 ? "" : "s"}`;
-  return { text: needs ? `${base} · ${needs} need${needs === 1 ? "s" : ""} a check` : base, tone: "warning" };
+function localWhen(iso: string | null): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleString([], { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 }
 
 /**
- * /hazards: the safety check screen. A camera's raw feed plays like CCTV; a check starts on its
- * own, its plain progress shows under the feed, and only when the result is in do the structured
- * report, the AI-marked video and the pictures the AI looked at appear. Nothing from a stored
- * report is shown before a check finishes in this browser session.
+ * /hazards: one camera clip at a time, reviewed for safety hazards. The worker view reads like
+ * a short message (no ids, scores or model names); "Technical details" shows the raw report.
  */
-export function HazardsApp({ mock, initialClipId, initialJobId }: HazardsAppProps) {
+export function HazardsApp({ mock, initialView, initialClipId }: HazardsAppProps) {
   const [source] = useState<HazardsSource>(() => (mock ? mockSource(mock) : liveSource));
-  const runtime = useRuntimeStatus(!mock);
+  const [mode, setMode] = useViewMode(initialView);
+  const technical = mode === "technical";
 
   const [clips, setClips] = useState<ClipSummary[] | null>(() => (mock ? (mock === "empty" ? [] : MOCK_CLIPS) : null));
   const [clipsError, setClipsError] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(initialClipId);
-  const [check, setCheck] = useState<CheckState | null>(null);
-  const [result, setResult] = useState<HazardView | null>(null);
-  const [states, setStates] = useState<Record<string, CameraState | undefined>>({});
-  const [seek, setSeek] = useState<SeekRequest | null>(null);
-  const [activeHazard, setActiveHazard] = useState<string | null>(null);
-  const [focusZones, setFocusZones] = useState<number[]>([]);
-  const [lightbox, setLightbox] = useState<Pic | null>(null);
-
-  const token = useRef(0);
-  const closeStream = useRef<(() => void) | null>(null);
-  const autoTimer = useRef<number | null>(null);
-  const pendingJob = useRef<string | null>(initialJobId);
-  const evidenceRef = useRef<HTMLDivElement>(null);
-  const checkRef = useRef<CheckState | null>(null);
-  const feedPlayed = useRef<string | null>(null);
+  const [views, setViews] = useState<Record<string, HazardView>>(() => (mock === "default" ? { ...MOCK_VIEWS } : {}));
+  const [viewErrors, setViewErrors] = useState<Record<string, string>>({});
+  const [viewNonce, setViewNonce] = useState(0);
+  const [job, setJob] = useState<JobState | null>(null);
+  const [refresh, setRefresh] = useState(false);
+  const [instructions, setInstructions] = useState<HazardInstructions | null>(mock ? MOCK_INSTRUCTIONS : null);
+  const closeJob = useRef<(() => void) | null>(null);
+  const viewsRef = useRef(views);
+  // Event day: a finished check pops its hazards out once (the same pop-out as the wall had).
+  const popFor = useRef<string | null>(null);
+  const [popouts, setPopouts] = useState<DetectionPopoutItem[]>([]);
   useEffect(() => {
-    checkRef.current = check;
-  }, [check]);
+    viewsRef.current = views;
+  }, [views]);
 
-  const [wall, setWall] = useState<WallTiles | null>(null);
-  useEffect(() => {
-    if (mock) return;
-    const ctl = new AbortController();
-    hazardsApi.wall(ctl.signal).then(setWall, () => undefined);
-    return () => ctl.abort();
-  }, [mock]);
-  const { ordered, cams } = useMemo(() => cameraOrder(clips ?? [], wall), [clips, wall]);
+  const effectiveId = useMemo(() => {
+    if (!clips?.length) return null;
+    if (selectedId && clips.some((c) => c.clip_id === selectedId)) return selectedId;
+    return (clips.find((c) => c.status === "reviewed") ?? clips[0]).clip_id;
+  }, [clips, selectedId]);
+  const clip = clips?.find((c) => c.clip_id === effectiveId) ?? null;
 
-  const clipId = useMemo(() => {
-    if (!ordered.length) return null;
-    if (selectedId && ordered.some((c) => c.clip_id === selectedId)) return selectedId;
-    return (ordered.find((c) => !isBlindspot(c.kind)) ?? ordered[0]).clip_id;
-  }, [ordered, selectedId]);
-  const clip = ordered.find((c) => c.clip_id === clipId) ?? null;
-  const cam = clip ? cams[clip.clip_id] : undefined;
-  const kindWord = isBlindspot(clip?.kind ?? result?.clip.kind) ? "Blind spot" : "Hazard";
-
-  /* ---------------------------------------------------------------- clip list */
-  const loadClips = useCallback(
-    (signal?: AbortSignal) =>
-      source.clips(signal).then(
-        (list) => {
-          setClips(list);
-          setClipsError(null);
-        },
-        (err) => {
-          if (!signal?.aborted) setClipsError(plainError(err));
-        },
-      ),
+  /** Fetch a clip's view and swap it in when it lands (no flash of the loading state). */
+  const reloadView = useCallback(
+    (clipId: string) => {
+      source.view(clipId).then(
+        (v) => setViews((p) => ({ ...p, [clipId]: v })),
+        () => undefined,
+      );
+    },
     [source],
   );
+
+  const applyClips = useCallback(
+    (list: ClipSummary[]) => {
+      setClips(list);
+      setClipsError(null);
+      setJob((j) => (j?.phase === "watching" && list.find((c) => c.clip_id === j.clipId)?.status !== "reviewing" ? null : j));
+      // a cached view whose status or review time moved on is stale
+      for (const c of list) {
+        const v = viewsRef.current[c.clip_id];
+        if (v && (v.status !== c.status || v.reviewed_at !== c.reviewed_at)) reloadView(c.clip_id);
+      }
+    },
+    [reloadView],
+  );
+  const clipsFailed = useCallback((err: unknown) => setClipsError(plainError(err)), []);
+  const refreshClips = useCallback(() => {
+    source.clips().then(applyClips, clipsFailed);
+  }, [source, applyClips, clipsFailed]);
+
+  // first load (mock data is already in state)
   useEffect(() => {
     if (source.kind === "mock") return;
     const ctl = new AbortController();
-    void loadClips(ctl.signal);
+    source.clips(ctl.signal).then(applyClips, (err) => {
+      if (!ctl.signal.aborted) clipsFailed(err);
+    });
+    source.instructions(ctl.signal).then(setInstructions, () => undefined);
     return () => ctl.abort();
-  }, [source, loadClips]);
-  const offline = source.kind === "live" && clipsError !== null;
+  }, [source, applyClips, clipsFailed]);
+
+  // poll while offline, or while a clip is being checked by a job this screen does not stream
+  const ownStream = job?.phase === "running" || job?.phase === "starting";
+  const needPoll =
+    (source.kind === "live" && clipsError !== null) ||
+    job?.phase === "watching" ||
+    (!ownStream && !!clips?.some((c) => c.status === "reviewing"));
   useEffect(() => {
-    if (!offline) return;
-    const id = window.setInterval(() => void loadClips(), POLL_MS);
+    if (!needPoll) return;
+    const id = window.setInterval(refreshClips, POLL_MS);
     return () => window.clearInterval(id);
-  }, [offline, loadClips]);
+  }, [needPoll, refreshClips]);
 
-  /* ---------------------------------------------------------------- the check */
-  const setState = useCallback((id: string, st: CameraState | undefined) => setStates((p) => ({ ...p, [id]: st })), []);
-
-  const attach = useCallback(
-    (id: string, jobId: string, myToken: number) => {
-      const mine = () => token.current === myToken;
-      closeStream.current?.();
-      setCheck((c) => (c && c.clipId === id ? { ...c, phase: "running", jobId } : c));
-      setState(id, { text: "Checking…", tone: "fg", busy: true });
-      closeStream.current = source.subscribe(jobId, {
-        onProgress: (p) => {
-          if (!mine()) return;
-          setCheck((c) => {
-            if (!c || c.jobId !== jobId) return c;
-            const stepStarted = p.step in c.stepStarted ? c.stepStarted : { ...c.stepStarted, [p.step]: p.received_at ?? Date.now() };
-            return { ...c, phase: "running", progress: p.step >= (c.progress?.step ?? 0) ? p : c.progress, stepStarted };
-          });
-        },
-        onAgent: (line) => {
-          if (!mine()) return;
-          setCheck((c) => {
-            if (!c || c.jobId !== jobId) return c;
-            if (c.agent.some((a) => a.text === line.text && a.t_s === line.t_s)) return c;
-            return { ...c, agent: [...c.agent, line] };
-          });
-        },
-        onDone: () => {
-          if (!mine()) return;
-          closeStream.current = null;
-          source.view(id).then(
-            (v) => {
-              if (!mine()) return;
-              setResult(v);
-              setCheck((c) => (c && c.jobId === jobId ? { ...c, phase: "done" } : c));
-              setState(id, resultState(v, isBlindspot(v.clip.kind) ? "Blind spot" : "Hazard"));
-            },
-            (err) => {
-              if (!mine()) return;
-              setCheck((c) => (c && c.jobId === jobId ? { ...c, phase: "failed", message: plainError(err) } : c));
-              setState(id, { text: "Didn't finish", tone: "danger" });
-            },
-          );
-        },
-        onFailed: (message) => {
-          if (!mine()) return;
-          closeStream.current = null;
-          setCheck((c) => (c && c.jobId === jobId ? { ...c, phase: "failed", message } : c));
-          setState(id, { text: "Didn't finish", tone: "danger" });
-        },
-        onLost: () => {
-          if (!mine()) return;
-          closeStream.current = null;
-          setCheck((c) => (c && c.jobId === jobId ? { ...c, phase: "lost" } : c));
-          setState(id, undefined);
-        },
-      });
-    },
-    [source, setState],
-  );
-
-  const startCheck = useCallback(
-    (id: string) => {
-      const myToken = token.current;
-      if (autoTimer.current !== null) window.clearTimeout(autoTimer.current);
-      autoTimer.current = null;
-      closeStream.current?.();
-      closeStream.current = null;
-      setResult(null);
-      setActiveHazard(null);
-      setFocusZones([]);
-      setCheck({ ...initialCheck(id, "starting") });
-      setState(id, { text: "Checking…", tone: "fg", busy: true });
-      source.review(id).then(
-        (jobId) => {
-          if (token.current !== myToken) return;
-          setCheck((c) => (c && c.clipId === id ? { ...c, jobId } : c));
-          attach(id, jobId, myToken);
-        },
-        (err) => {
-          if (token.current !== myToken) return;
-          setCheck((c) => (c && c.clipId === id ? { ...c, phase: "failed", message: plainError(err) } : c));
-          setState(id, { text: "Didn't finish", tone: "danger" });
-        },
-      );
-    },
-    [source, attach, setState],
-  );
-
-  // a new camera: reset to its live feed; attach to ?job= once, otherwise wait for the feed
+  // the selected clip's view
+  const haveView = effectiveId ? effectiveId in views : true;
   useEffect(() => {
-    if (!clipId) return;
-    token.current += 1;
-    const myToken = token.current;
-    closeStream.current?.();
-    closeStream.current = null;
-    const job = pendingJob.current;
-    pendingJob.current = null;
-    // reset on a timer tick, not in the effect body (the feed for the new camera mounts first)
-    const reset = window.setTimeout(() => {
-      if (token.current !== myToken) return;
-      setResult(null);
-      setActiveHazard(null);
-      setFocusZones([]);
-      setLightbox(null);
-      if (job) {
-        setCheck({ ...initialCheck(clipId, "running"), jobId: job });
-        attach(clipId, job, myToken);
-      } else {
-        const waiting = initialCheck(clipId, "waiting");
-        checkRef.current = waiting;
-        setCheck(waiting);
-        autoTimer.current = window.setTimeout(
-          () => {
-            if (token.current === myToken) startCheck(clipId);
-          },
-          feedPlayed.current === clipId ? AUTO_CHECK_MS : AUTO_CHECK_FALLBACK_MS,
-        );
-      }
-    }, 0);
-    return () => {
-      window.clearTimeout(reset);
-      if (autoTimer.current !== null) window.clearTimeout(autoTimer.current);
-      autoTimer.current = null;
-    };
-  }, [clipId, attach, startCheck]);
+    if (!effectiveId || haveView) return;
+    const ctl = new AbortController();
+    const id = effectiveId;
+    source.view(id, ctl.signal).then(
+      (v) => {
+        setViews((p) => ({ ...p, [id]: v }));
+        setViewErrors((p) => {
+          const n = { ...p };
+          delete n[id];
+          return n;
+        });
+      },
+      (err) => {
+        if (!ctl.signal.aborted) setViewErrors((p) => ({ ...p, [id]: plainError(err) }));
+      },
+    );
+    return () => ctl.abort();
+  }, [effectiveId, haveView, source, viewNonce]);
 
-  useEffect(
-    () => () => {
-      closeStream.current?.();
-      if (autoTimer.current !== null) window.clearTimeout(autoTimer.current);
-    },
-    [],
-  );
-
-  const onFeedPlaying = useCallback(() => {
-    if (!clipId) return;
-    feedPlayed.current = clipId;
-    const c = checkRef.current;
-    if (!c || c.clipId !== clipId || c.phase !== "waiting") return;
-    const myToken = token.current;
-    if (autoTimer.current !== null) window.clearTimeout(autoTimer.current);
-    autoTimer.current = window.setTimeout(() => {
-      if (token.current === myToken) startCheck(clipId);
-    }, AUTO_CHECK_MS);
-  }, [clipId, startCheck]);
+  useEffect(() => () => closeJob.current?.(), []);
 
   const selectClip = useCallback((id: string) => {
     setSelectedId(id);
     try {
       const url = new URL(window.location.href);
       url.searchParams.set("clip", id);
-      url.searchParams.delete("job");
       window.history.replaceState(null, "", url);
     } catch {
       // the URL is a convenience only
     }
   }, []);
 
-  /* ---------------------------------------------------------------- result */
-  const revealed = !!result && check?.phase === "done" && result.clip.clip_id === clipId;
-  const worker = revealed ? result.worker : null;
-  const hazards = useMemo(() => sortHazards(worker?.hazards ?? []), [worker]);
-  const zones = useMemo(() => (revealed ? viewZones(result) : []), [revealed, result]);
-  const gallery = useMemo(() => (revealed ? galleryPictures(result) : []), [revealed, result]);
-  const srcSize = revealed ? sourceSize(result) : null;
-  const tileZones = useMemo(() => zones.filter((z) => z.has_hazard), [zones]);
-
-  const seekTo = useCallback((t: number) => {
-    setSeek((s) => ({ t, nonce: (s?.nonce ?? 0) + 1 }));
+  const retryView = useCallback((id: string) => {
+    setViewErrors((p) => {
+      const n = { ...p };
+      delete n[id];
+      return n;
+    });
+    setViewNonce((n) => n + 1);
   }, []);
-  const revealEvidence = () => {
-    const el = evidenceRef.current;
-    if (!el) return;
-    const r = el.getBoundingClientRect();
-    if (r.top < 0 || r.top > window.innerHeight * 0.6) {
-      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      el.scrollIntoView({ block: "start", behavior: reduce ? "auto" : "smooth" });
-    }
-  };
-  const onShow = (h: WorkerHazard, zoneNumbers: number[]) => {
-    seekTo(h.start_s);
-    setActiveHazard(h.id);
-    setFocusZones(zoneNumbers);
-    revealEvidence();
-  };
-  const onCardPicture = (p: Pic, h: WorkerHazard) => {
-    seekTo(p.time_s);
-    setActiveHazard(h.id);
-    setLightbox(p);
-  };
-  const onGalleryPicture = (p: Pic) => {
-    seekTo(p.time_s);
-    setActiveHazard(null);
-    revealEvidence();
-  };
 
-  const jobId = check?.clipId === clipId ? check.jobId : null;
-  const reasoning = clipId ? processHref(clipId, jobId) : null;
-  const feedUrl = clip
-    ? mediaUrl(source.kind === "mock" ? (clip.clip_id === "hz_00" ? "/mock-hazards/source.mp4" : null) : sourceVideoPath(clip.clip_id))
-    : null;
-  const feedState = !check
-    ? "Watching"
-    : check.phase === "running" || check.phase === "starting"
-      ? "Watching · checking"
-      : revealed && hazards.length
-        ? `${hazards.length} ${kindWord.toLowerCase()}${hazards.length === 1 ? "" : "s"} found`
-        : "Watching";
+  const onCheck = useCallback(() => {
+    if (!effectiveId) return;
+    const clipId = effectiveId;
+    closeJob.current?.();
+    closeJob.current = null;
+    setJob({ phase: "starting", clipId });
+    source.review(clipId, refresh).then(
+      (jobId) => {
+        setJob({ phase: "running", clipId, jobId, progress: null });
+        setClips((cs) => cs?.map((c) => (c.clip_id === clipId ? { ...c, status: "reviewing" } : c)) ?? cs);
+        closeJob.current = source.subscribe(jobId, {
+          onProgress: (p) => setJob((j) => (j?.phase === "running" && j.jobId === jobId ? { ...j, progress: p } : j)),
+          onDone: () => {
+            closeJob.current = null;
+            setJob(null);
+            popFor.current = clipId;
+            reloadView(clipId);
+            refreshClips();
+          },
+          onFailed: (message) => {
+            closeJob.current = null;
+            setJob({ phase: "failed", clipId, message });
+            reloadView(clipId);
+            refreshClips();
+          },
+          onLost: () => {
+            closeJob.current = null;
+            setJob({ phase: "watching", clipId });
+            refreshClips();
+          },
+        });
+      },
+      (err) => {
+        if (err instanceof ApiError && err.status === 409) {
+          setJob({ phase: "watching", clipId });
+          refreshClips();
+          return;
+        }
+        setJob({ phase: "failed", clipId, message: plainError(err) });
+      },
+    );
+  }, [effectiveId, refresh, source, refreshClips, reloadView]);
+
+  const offline = source.kind === "live" && clipsError !== null;
+  useEffect(() => {
+    const id = popFor.current;
+    const v = id ? views[id] : undefined;
+    if (!id || !v || v.status !== "reviewed") return;
+    popFor.current = null;
+    const items = (v.worker?.hazards ?? []).map((h, i): DetectionPopoutItem => {
+      const img = h.evidence[0]?.image_url;
+      return {
+        id: `${id}:${v.reviewed_at ?? ""}:${h.id}`,
+        kicker: `HAZARD ${i + 1} OF ${v.worker?.hazards.length ?? 1} · ${h.priority.toUpperCase()}`,
+        label: h.title,
+        cameraLabel: v.clip.title,
+        zoneName: h.where,
+        detail: [h.what_we_saw, h.what_to_do[0]].filter(Boolean).join(" "),
+        timestamp: h.when,
+        tone: "hazard",
+        imageUrl: img ? (img.startsWith("http") ? img : `${API_BASE_URL}${img}`) : undefined,
+        imageAlt: h.title,
+      };
+    });
+    if (items.length) setPopouts(items);
+  }, [views]);
+
+  const jobHere = job && job.clipId === effectiveId ? job : null;
+  const busyElsewhere = !!job && job.clipId !== effectiveId && (job.phase === "starting" || job.phase === "running");
+  const anyRunning = !!job && job.phase !== "failed";
 
   return (
-    <div className="flex min-h-dvh flex-col bg-bg" data-testid="hazards-app" data-revealed={revealed || undefined}>
-      <style>{LAYOUT_CSS}</style>
-      <HazardsHeader
-        current="/hazards"
-        title="Safety hazards"
-        runtime={runtime}
-        badge={
-          mock ? (
+    <div className="flex min-h-dvh flex-col bg-bg" data-testid="hazards-app" data-view={mode}>
+      <header className="flex min-h-14 shrink-0 flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-line px-4 py-2 lg:px-6">
+        <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
+          <Link href="/" className="shrink-0 text-[17px] font-extrabold tracking-[0.06em] text-fg italic hover:text-fg/80">
+            CameraVision
+          </Link>
+          <span className="h-4 w-px bg-line-strong" aria-hidden />
+          <span className="text-[14px] text-fg/75">Safety hazards</span>
+          {mock ? (
             <span className="border border-line-strong px-2 py-0.5 text-[12px] tracking-[0.12em] text-fg/75 uppercase" data-testid="hazards-source">
-              Development data
+              Demo data
             </span>
-          ) : null
-        }
-      />
-
-      {clips && clips.length > 0 ? (
-        <div className="hidden lg:block">
-          <CameraStrip clips={ordered} selectedId={clipId} onSelect={selectClip} states={states} cams={cams} />
+          ) : null}
         </div>
-      ) : null}
+        <ViewToggle mode={mode} onChange={setMode} />
+      </header>
 
       {offline && clips ? (
         <div role="alert" className="shrink-0 border-b border-danger/50 bg-danger/10 px-4 py-2.5 text-[15px] text-danger lg:px-6">
@@ -391,151 +281,298 @@ export function HazardsApp({ mock, initialClipId, initialJobId }: HazardsAppProp
         </div>
       ) : null}
 
-      <main className="min-w-0 flex-1 px-4 py-4 lg:px-6">
-        {clips === null ? (
-          offline ? (
-            <StateBox tone="danger" title="Can't reach the camera system" testId="hazards-offline">
-              Trying again on its own…
-              <span className="micro mt-3 block normal-case tracking-[0.06em]">API {API_BASE_URL}</span>
-            </StateBox>
-          ) : (
-            <StateBox title="Connecting to the cameras…" testId="hazards-loading" />
-          )
-        ) : clips.length === 0 ? (
-          <StateBox title="No camera clips are ready yet" testId="hazards-empty">
-            When camera clips are added, they will show up here.
-          </StateBox>
-        ) : clip ? (
-          <>
-            <div className="mb-3 lg:hidden">
-              <CameraSelect clips={ordered} selectedId={clipId} onSelect={selectClip} states={states} cams={cams} />
+      <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
+        {clips && clips.length > 0 ? (
+          <aside className="hidden shrink-0 border-r border-line lg:block lg:w-[272px]">
+            <div className="sticky top-0 flex max-h-dvh flex-col">
+              <ClipRail clips={clips} selectedId={effectiveId} onSelect={selectClip} technical={technical} />
             </div>
-            <div className="hzw-grid" data-revealed={revealed || undefined} data-testid="hazard-screen" data-clip-id={clip.clip_id}>
-              <div className="hzw-feed">
-                <CctvFeed
-                  key={clip.clip_id}
-                  src={feedUrl}
-                  cam={camLabel(cam)}
-                  title={clip.title}
-                  state={feedState}
-                  stateTone={revealed && hazards.length ? "warning" : "fg"}
-                  zones={revealed ? tileZones : undefined}
-                  aspect={srcSize ? srcSize.w / srcSize.h : null}
-                  compact={revealed}
-                  onFirstPlay={onFeedPlaying}
-                  className={cn("w-full", "aspect-video")}
-                />
-              </div>
-
-              <div className="hzw-status flex min-w-0 flex-col gap-2">
-                {check ? (
-                  <CheckStatus
-                    check={check}
-                    headline={revealed ? worker?.headline : null}
-                    reasoningHref={reasoning}
-                    onCheckAgain={() => clipId && startCheck(clipId)}
-                    disabled={offline}
-                  />
-                ) : null}
-                <RuntimeLine status={runtime} lead="checked" wrap className="md:hidden" />
-              </div>
-
-              {revealed && worker ? (
-                <>
-                  <div className="hzw-main hzw-reveal flex min-w-0 flex-col gap-3">
-                    <section aria-labelledby="hz-headline" className="flex min-w-0 flex-col gap-3" data-testid="result-head">
-                      <div>
-                        <p className="text-[12px] tracking-[0.14em] text-fg/55 uppercase">
-                          {camLabel(cam)} · {clip.title}
-                        </p>
-                        <h1
-                          id="hz-headline"
-                          className={cn("mt-1 text-[24px] leading-[1.15] font-extrabold tracking-[0.01em] sm:text-[28px]", hazards.length ? "text-warning" : "text-fg")}
-                          data-testid="hazard-headline"
-                        >
-                          {worker.headline}
-                        </h1>
-                      </div>
-                    </section>
-
-                    <div className="flex min-w-0 flex-col gap-3" data-testid="alert-panel">
-                      {hazards.length ? (
-                        <HazardList
-                          view={result}
-                          hazards={hazards}
-                          activeHazardId={activeHazard}
-                          kindWord={kindWord}
-                          reasoningHref={reasoning}
-                          onShow={onShow}
-                          onPicture={onCardPicture}
-                        />
-                      ) : (
-                        <p className="border border-line bg-panel/60 px-4 py-4 text-[16px] leading-[24px] text-fg" data-testid="no-hazards">
-                          Nothing needs attention on this camera right now. This doesn&apos;t mean the area is safe: the AI only looked
-                          at still pictures from the clip.
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  <section
-                    ref={evidenceRef}
-                    aria-labelledby="hz-cv"
-                    className="hzw-evidence hzw-reveal flex min-w-0 scroll-mt-3 flex-col gap-3"
-                    data-testid="cv-section"
-                  >
-                    <h2 id="hz-cv" className="text-[14px] font-bold tracking-[0.14em] text-fg uppercase">
-                      What the computer vision saw
-                    </h2>
-                    <EvidencePlayer
-                      processedUrl={mediaUrl(result.vision?.processed_video_url)}
-                      sourceUrl={mediaUrl(result.vision?.source_video_url ?? sourceVideoPath(clip.clip_id))}
-                      duration={result.vision?.duration_s ?? clip.duration_s}
-                      hazards={hazards}
-                      images={result.vision?.shown_images ?? []}
-                      zones={zones}
-                      source={srcSize}
-                      seek={seek}
-                      activeHazardId={activeHazard}
-                      focusZones={focusZones}
-                      onSeek={(t, hid) => {
-                        seekTo(t);
-                        setActiveHazard(hid);
-                      }}
-                      kindWord={kindWord}
-                    />
-                    {gallery.length ? (
-                      <section aria-labelledby="hz-pictures" className="mt-2 flex flex-col gap-2" data-testid="pictures-section">
-                        <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-                          <h2 id="hz-pictures" className="text-[14px] font-bold tracking-[0.14em] text-fg uppercase">
-                            Pictures the AI looked at ({gallery.length})
-                          </h2>
-                          <p className="text-[12px] text-fg/60">Pick one to see that moment.</p>
-                        </div>
-                        <PictureGallery pics={gallery} onPicture={onGalleryPicture} />
-                      </section>
-                    ) : null}
-                  </section>
-                </>
-              ) : null}
-            </div>
-          </>
+          </aside>
         ) : null}
-      </main>
+
+        <main className="min-w-0 flex-1 px-4 py-4 lg:px-6 lg:py-5">
+          {clips === null ? (
+            offline ? (
+              <StateBox tone="danger" title="Can't reach the camera system" testId="hazards-offline">
+                Trying again on its own…
+                {technical ? <TechLine>API {API_BASE_URL} · {clipsError}</TechLine> : null}
+              </StateBox>
+            ) : (
+              <StateBox title="Loading camera clips…" testId="hazards-loading" />
+            )
+          ) : clips.length === 0 ? (
+            <StateBox title="No camera clips are ready yet" testId="hazards-empty">
+              {technical ? (
+                <>
+                  Prepare the clips (neutral ids, labels kept judge-only), then reload:
+                  <pre className="mt-3 overflow-x-auto border border-line bg-panel px-3 py-2 text-[12px] leading-5 text-fg">
+                    {".venv/bin/python scripts/hazards/prepare_clips.py\n.venv/bin/python scripts/hazards/prepare_clips.py --import-example"}
+                  </pre>
+                </>
+              ) : (
+                "When camera clips are added, they will show up here."
+              )}
+            </StateBox>
+          ) : clip ? (
+            <>
+              <div className="mb-4 lg:hidden">
+                <ClipSelect clips={clips} selectedId={effectiveId} onSelect={selectClip} />
+              </div>
+              <ClipPanel
+                key={clip.clip_id}
+                clip={clip}
+                index={clips.indexOf(clip) + 1}
+                total={clips.length}
+                view={views[clip.clip_id] ?? null}
+                viewError={viewErrors[clip.clip_id] ?? null}
+                onRetryView={() => retryView(clip.clip_id)}
+                technical={technical}
+                live={source.kind === "live"}
+                instructions={instructions}
+                job={jobHere}
+                busyElsewhere={busyElsewhere}
+                offline={offline}
+                onCheck={onCheck}
+                refresh={refresh}
+                onRefreshChange={setRefresh}
+              />
+            </>
+          ) : null}
+        </main>
+      </div>
 
       <footer className="flex min-h-8 shrink-0 flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-line px-4 py-1.5 lg:px-6">
         <span className="text-[12px] text-fg/60">Runs on this computer. Video never leaves it.</span>
-        {reasoning ? (
-          <a href={reasoning} target="_blank" rel="noopener" className="text-[12px] text-fg/70 underline decoration-line-strong underline-offset-2 hover:text-fg">
-            Reasoning and process ↗
-          </a>
-        ) : null}
+        <span className="flex items-center gap-1.5 text-[12px] text-fg/60">
+          <StatusDot tone={anyRunning ? "fg" : "dim"} pulse={anyRunning} />
+          {anyRunning ? "Checking" : "Ready"}
+        </span>
       </footer>
-
-      <Lightbox pic={lightbox} onClose={() => setLightbox(null)} />
+      <DetectionPopoutStack
+        items={popouts}
+        onCollapse={(pid) => setPopouts((prev) => prev.filter((p) => p.id !== pid))}
+        autoCollapseMs={6000}
+        maxVisible={1}
+      />
     </div>
   );
 }
+
+/* --------------------------------------------------------------- the clip */
+
+interface ClipPanelProps {
+  clip: ClipSummary;
+  index: number;
+  total: number;
+  view: HazardView | null;
+  viewError: string | null;
+  onRetryView: () => void;
+  technical: boolean;
+  live: boolean;
+  instructions: HazardInstructions | null;
+  job: JobState | null;
+  busyElsewhere: boolean;
+  offline: boolean;
+  onCheck: () => void;
+  refresh: boolean;
+  onRefreshChange: (v: boolean) => void;
+}
+
+function ClipPanel(props: ClipPanelProps) {
+  const { clip, view, technical } = props;
+  const mounted = useMounted();
+  const reduce = useReducedMotion();
+  const [seek, setSeek] = useState<SeekRequest | null>(null);
+  const [activeHazard, setActiveHazard] = useState<string | null>(null);
+  const playerRef = useRef<HTMLElement>(null);
+
+  const worker = view?.worker ?? null;
+  const vision = view?.vision ?? null;
+  const tech = view?.technical ?? null;
+  const hazards = useMemo(() => sortHazards(worker?.hazards ?? []), [worker]);
+  const status = view?.status ?? clip.status;
+  const reviewedAt = view?.reviewed_at ?? clip.reviewed_at;
+  const duration = vision?.duration_s ?? view?.clip.duration_s ?? clip.duration_s;
+  const processedUrl = mediaUrl(vision?.processed_video_url);
+  const sourceUrl = mediaUrl(vision?.source_video_url ?? (props.live ? sourceVideoPath(clip.clip_id) : null));
+  const images = vision?.shown_images ?? [];
+  const plainInstructions = vision?.instructions ?? props.instructions;
+
+  const showAt = (t: number, hazardId: string | null) => {
+    setSeek((s) => ({ t, nonce: (s?.nonce ?? 0) + 1 }));
+    setActiveHazard(hazardId);
+    const el = playerRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    if (r.top < 0 || r.top > window.innerHeight * 0.5) el.scrollIntoView({ block: "start", behavior: reduce ? "auto" : "smooth" });
+  };
+  const onShow = (h: WorkerHazard) => showAt(h.start_s, h.id);
+  const onPicture = (im: HazardImage, h?: WorkerHazard) => showAt(im.time_s, h?.id ?? null);
+
+  const meta = [
+    technical ? clip.clip_id : `Clip ${props.index} of ${props.total}`,
+    `${clock(duration)} long`,
+    status === "reviewed" && reviewedAt && mounted ? `Checked ${localWhen(reviewedAt)}` : null,
+  ].filter(Boolean);
+
+  const player = (timeline: boolean) => (
+    <EvidencePlayer
+      processedUrl={processedUrl}
+      sourceUrl={sourceUrl}
+      duration={duration}
+      hazards={hazards}
+      images={images}
+      seek={seek}
+      activeHazardId={activeHazard}
+      onSeek={showAt}
+      timeline={timeline}
+    />
+  );
+
+  const evidenceDetails = useMemo(() => {
+    if (!tech || tech.evidence.length !== images.length) return undefined;
+    return tech.evidence.map((e) => [e.evidence_id, e.kind, e.zone_id, `f${e.frame_index}`].filter(Boolean).join(" · "));
+  }, [tech, images.length]);
+
+  let body: React.ReactNode;
+  if (!view && !props.viewError) {
+    body = <StateBox title="Loading the report…" testId="view-loading" />;
+  } else if (!view) {
+    body = (
+      <StateBox tone="danger" title={props.viewError ?? "Something went wrong."} testId="view-error">
+        <button type="button" onClick={props.onRetryView} className="mt-3 h-10 border border-fg/80 px-4 text-[14px] text-fg hover:bg-fg hover:text-bg">
+          Try again
+        </button>
+      </StateBox>
+    );
+  } else if (!technical && worker) {
+    body = (
+      <>
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] xl:items-start">
+          <WorkerReport
+            worker={worker}
+            hazards={hazards}
+            imagesSent={vision?.images_sent ?? images.length}
+            activeHazardId={activeHazard}
+            onShow={onShow}
+            onPicture={onPicture}
+          />
+          <section
+            ref={playerRef}
+            aria-labelledby="hz-cv"
+            className="flex min-w-0 scroll-mt-4 flex-col gap-3 xl:sticky xl:top-4"
+            data-testid="cv-section"
+          >
+            <h2 id="hz-cv" className="text-[15px] font-bold tracking-[0.12em] text-fg uppercase">
+              What the computer vision saw
+            </h2>
+            {vision ? (
+              <p className="text-[13px] leading-5 text-fg/65">
+                Scanned all {vision.frames_scanned} frames · marked {vision.areas_marked} areas to check · sent {vision.images_sent} pictures to the AI
+              </p>
+            ) : null}
+            {player(true)}
+            <p className="text-[13px] leading-5 text-fg/60">
+              Boxes mark the areas the computer picked for a closer look. A box is not a hazard by itself.
+            </p>
+          </section>
+        </div>
+
+        {images.length ? (
+          <section aria-labelledby="hz-pictures" className="mt-8 flex flex-col gap-3" data-testid="pictures-section">
+            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+              <h2 id="hz-pictures" className="text-[15px] font-bold tracking-[0.12em] text-fg uppercase">
+                Pictures the AI looked at ({images.length})
+              </h2>
+              <p className="text-[13px] text-fg/60">In the order the AI saw them. Pick one to see that moment.</p>
+            </div>
+            <PictureGrid images={images} onPicture={(im) => onPicture(im)} />
+          </section>
+        ) : null}
+
+        {plainInstructions ? <InstructionsPanel instructions={plainInstructions} className="mt-8" /> : null}
+      </>
+    );
+  } else if (technical && tech) {
+    body = (
+      <div className="flex flex-col gap-3">
+        <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] xl:items-start">
+          <TechnicalFindings technical={tech} />
+          <section ref={playerRef} aria-label="Processed video" className="min-w-0 scroll-mt-4 xl:sticky xl:top-4">
+            <Panel
+              index="04"
+              title="Processed video · zone overlays"
+              meta={
+                vision ? (
+                  <span className="hidden sm:inline">
+                    {vision.frames_scanned} frames · {vision.areas_marked} zones · {vision.images_sent} images
+                  </span>
+                ) : null
+              }
+              bodyClassName="p-3"
+            >
+              {player(true)}
+            </Panel>
+          </section>
+        </div>
+        {images.length ? (
+          <Panel index="05" title="Evidence sent to the model, in order" meta={<span className="hidden sm:inline">{images.length} images</span>} bodyClassName="p-3">
+            <PictureGrid images={images} onPicture={(im) => onPicture(im)} details={evidenceDetails} />
+          </Panel>
+        ) : null}
+        <TechnicalDetails technical={tech} />
+      </div>
+    );
+  } else {
+    // no report yet (or the technical block is missing): the clip itself, and what will be checked
+    const words =
+      status === "failed"
+        ? { title: "The last check didn't finish", text: "Press Try again to check this clip." }
+        : status === "reviewing"
+          ? { title: "This clip is being checked", text: "The report will show up here when it's ready." }
+          : { title: "Not checked yet", text: "Press Check this clip to look for safety hazards." };
+    body = (
+      <>
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] xl:items-start">
+          <StateBox title={words.title} testId="not-reviewed">
+            {words.text}
+            {technical && view.technical == null ? <TechLine>No hazard_report.json for {clip.clip_id} yet.</TechLine> : null}
+          </StateBox>
+          <section ref={playerRef} aria-label="Clip video" className="min-w-0 scroll-mt-4">
+            {player(false)}
+          </section>
+        </div>
+        {plainInstructions ? <InstructionsPanel instructions={plainInstructions} future className="mt-8" /> : null}
+      </>
+    );
+  }
+
+  return (
+    <article aria-labelledby="hz-clip-title" className="flex min-w-0 flex-col gap-5" data-testid="clip-panel" data-clip-id={clip.clip_id} data-status={status}>
+      <header className="flex flex-col gap-4 border-b border-line pb-5">
+        <div>
+          <p className="text-[12px] tracking-[0.12em] text-fg/55 uppercase tabular-nums">{meta.join(" · ")}</p>
+          <h1 id="hz-clip-title" className="mt-1 text-[24px] leading-[1.2] font-extrabold tracking-[0.02em] text-fg sm:text-[28px]">
+            {clip.title}
+          </h1>
+        </div>
+        <RunControl
+          status={status}
+          job={props.job}
+          busyElsewhere={props.busyElsewhere}
+          offline={props.offline}
+          onCheck={props.onCheck}
+          technical={technical}
+          refresh={props.refresh}
+          onRefreshChange={props.onRefreshChange}
+        />
+      </header>
+      {body}
+    </article>
+  );
+}
+
+/* ------------------------------------------------------------------ states */
 
 function StateBox({
   title,
@@ -558,4 +595,8 @@ function StateBox({
       {children ? <div className="mt-2 max-w-[64ch] text-[15px] leading-[23px] text-fg/80">{children}</div> : null}
     </div>
   );
+}
+
+function TechLine({ children }: { children: React.ReactNode }) {
+  return <span className="micro mt-3 block normal-case tracking-[0.06em]">{children}</span>;
 }

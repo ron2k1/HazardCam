@@ -1,73 +1,59 @@
 "use client";
 
-import type { HazardView, HazardWorker, WorkerHazard } from "@/lib/hazards";
+import type { HazardImage, HazardWorker, WorkerHazard } from "@/lib/hazards";
 import { cn } from "@/lib/utils";
 
-import { hazardPictures, hazardZoneNames, whereLine, type Pic } from "./derive";
 import { HazardCard } from "./hazard-card";
+
+export interface WorkerReportProps {
+  worker: HazardWorker;
+  /** Hazards already sorted for display (highest priority first). */
+  hazards: readonly WorkerHazard[];
+  imagesSent: number;
+  activeHazardId: string | null;
+  onShow: (hazard: WorkerHazard) => void;
+  onPicture: (image: HazardImage, hazard: WorkerHazard) => void;
+}
 
 const SUMMARY = "flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-[15px] font-bold text-fg [&::-webkit-details-marker]:hidden";
 
-/** "Safety agent's summary": headline + "Do this first: …" (only when the agent wrote one). */
-export function AgentSummary({ worker }: { worker: HazardWorker }) {
-  const s = worker.agent_summary;
-  if (!s?.headline) return null;
+/** Headline, summary, hazard messages, then what was ruled out and what could not be told. */
+export function WorkerReport({ worker, hazards, imagesSent, activeHazardId, onShow, onPicture }: WorkerReportProps) {
+  const none = hazards.length === 0;
   return (
-    <section aria-labelledby="hz-agent-summary" className="relative border border-fg/40 bg-fg/[0.04] px-4 py-3" data-testid="agent-summary">
-      <h3 id="hz-agent-summary" className="text-[12px] font-bold tracking-[0.16em] text-fg/70 uppercase">
-        Safety agent&apos;s summary
-      </h3>
-      <p className="mt-1 text-[17px] leading-[24px] font-bold text-fg">{s.headline}</p>
-      {s.first_action ? (
-        <p className="mt-1 text-[15px] leading-[22px] text-fg">
-          <span className="font-semibold">Do this first: </span>
-          {s.first_action}
-        </p>
+    <div className="flex min-w-0 flex-col gap-4" data-testid="worker-report">
+      <section aria-labelledby="hz-headline" className="flex flex-col gap-2">
+        <h2
+          id="hz-headline"
+          className={cn("text-[24px] leading-[1.2] font-extrabold tracking-[0.02em] sm:text-[28px]", none ? "text-fg" : "text-fg")}
+          data-testid="hazard-headline"
+        >
+          {worker.headline}
+        </h2>
+        {worker.summary ? <p className="max-w-[72ch] text-[15px] leading-[23px] text-fg/80">{worker.summary}</p> : null}
+        {none ? (
+          <p className="max-w-[72ch] border-l-2 border-fg/50 pl-3 text-[15px] leading-[23px] text-fg" data-testid="no-hazards-note">
+            This doesn&apos;t mean the area is safe. The AI only looked at {imagesSent} still picture{imagesSent === 1 ? "" : "s"} from
+            this clip.
+          </p>
+        ) : null}
+      </section>
+
+      {!none ? (
+        <section aria-label="Hazards" className="flex flex-col gap-3" data-testid="hazard-list">
+          {hazards.map((h, i) => (
+            <HazardCard
+              key={h.id}
+              hazard={h}
+              index={i + 1}
+              active={activeHazardId === h.id}
+              onShow={() => onShow(h)}
+              onPicture={(im) => onPicture(im, h)}
+            />
+          ))}
+        </section>
       ) : null}
-    </section>
-  );
-}
 
-export interface HazardListProps {
-  view: HazardView;
-  hazards: readonly WorkerHazard[];
-  activeHazardId: string | null;
-  kindWord: string;
-  reasoningHref: string | null;
-  onShow: (hazard: WorkerHazard, zones: number[]) => void;
-  onPicture: (pic: Pic, hazard: WorkerHazard) => void;
-}
-
-/** The hazard messages, highest priority first. */
-export function HazardList({ view, hazards, activeHazardId, kindWord, reasoningHref, onShow, onPicture }: HazardListProps) {
-  return (
-    <section aria-label={`${kindWord}s found`} className="flex flex-col gap-3" data-testid="hazard-list">
-      {hazards.map((h) => {
-        const zones = hazardZoneNames(view, h);
-        const numbers = zones.map((z) => Number(/(\d+)$/.exec(z)?.[1])).filter((n) => Number.isFinite(n));
-        return (
-          <HazardCard
-            key={h.id}
-            hazard={h}
-            zones={zones}
-            where={whereLine(h, zones)}
-            pictures={hazardPictures(view, h)}
-            active={activeHazardId === h.id}
-            kindWord={kindWord}
-            reasoningHref={reasoningHref}
-            onShow={() => onShow(h, numbers)}
-            onPicture={(p) => onPicture(p, h)}
-          />
-        );
-      })}
-    </section>
-  );
-}
-
-/** "Things we checked and ruled out" and "What we could not tell", collapsed. */
-export function ReportFootnotes({ worker, className }: { worker: HazardWorker; className?: string }) {
-  return (
-    <div className={cn("flex flex-col gap-3", className)}>
       <details className="group border border-line bg-panel/60" data-testid="ruled-out">
         <summary className={SUMMARY}>
           <span>Things we checked and ruled out</span>
@@ -77,7 +63,7 @@ export function ReportFootnotes({ worker, className }: { worker: HazardWorker; c
           </span>
         </summary>
         <ul className="flex flex-col border-t border-line">
-          {worker.ruled_out.length === 0 ? <li className="px-4 py-3 text-[14px] text-fg/70">Nothing was ruled out on this camera.</li> : null}
+          {worker.ruled_out.length === 0 ? <li className="px-4 py-3 text-[14px] text-fg/70">Nothing was ruled out in this clip.</li> : null}
           {worker.ruled_out.map((r, i) => (
             <li key={i} className={cn("px-4 py-3 text-[14px] leading-[22px]", i > 0 && "border-t border-line")}>
               <p className="font-semibold text-fg">{r.what}</p>

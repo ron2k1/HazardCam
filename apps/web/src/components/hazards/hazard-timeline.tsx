@@ -14,8 +14,6 @@ export interface HazardTimelineProps {
   currentT: number;
   activeHazardId: string | null;
   onSeek: (t: number, hazardId: string | null) => void;
-  /** "Hazard" | "Blind spot" (row labels). */
-  kindWord?: string;
 }
 
 export const PRIORITY_TONE: Record<"high" | "medium" | "low", { band: string; bandActive: string; badge: string; edge: string; text: string }> = {
@@ -58,10 +56,9 @@ function groupPictures(images: readonly HazardImage[], duration: number): Pictur
     const last = groups[groups.length - 1];
     if (last && im.time_s - last.t <= duration * MERGE_FRACTION) {
       last.count += 1;
-      const kind = im.kind_word ?? im.kind_label ?? "Picture";
-      if (!last.kinds.includes(kind)) last.kinds.push(kind);
+      if (!last.kinds.includes(im.kind_label)) last.kinds.push(im.kind_label);
     } else {
-      groups.push({ t: im.time_s, count: 1, kinds: [im.kind_word ?? im.kind_label ?? "Picture"] });
+      groups.push({ t: im.time_s, count: 1, kinds: [im.kind_label] });
     }
   }
   return groups;
@@ -77,17 +74,11 @@ function tickStep(duration: number): number {
 
 const LABEL = "flex min-w-0 items-center gap-1.5 pr-1 text-[12px] text-fg/80";
 
-/** "MACHINE GUARD" -> "Machine guard" (the card's sign, as a row label). */
-function signWord(label: string | undefined): string {
-  const t = (label ?? "").trim().toLowerCase();
-  return t ? t[0].toUpperCase() + t.slice(1) : "";
-}
-
 /**
  * The clip as a strip: one row per hazard (the span of its pictures), one row of marks for the
  * pictures sent to the AI, and a playhead. Every mark is a button that seeks the video.
  */
-export function HazardTimeline({ duration, hazards, images, currentT, activeHazardId, onSeek, kindWord = "Hazard" }: HazardTimelineProps) {
+export function HazardTimeline({ duration, hazards, images, currentT, activeHazardId, onSeek }: HazardTimelineProps) {
   const d = Math.max(duration, 0.001);
   const frac = (t: number) => Math.min(Math.max(t / d, 0), 1);
   const pct = (t: number) => `${frac(t) * 100}%`;
@@ -99,7 +90,7 @@ export function HazardTimeline({ duration, hazards, images, currentT, activeHaza
     <div
       role="group"
       aria-label="Clip timeline"
-      className="grid grid-cols-[6rem_minmax(0,1fr)] select-none sm:grid-cols-[8rem_minmax(0,1fr)]"
+      className="grid grid-cols-[5rem_minmax(0,1fr)] select-none sm:grid-cols-[6rem_minmax(0,1fr)]"
       data-testid="hazard-timeline"
     >
       {/* labels */}
@@ -116,9 +107,7 @@ export function HazardTimeline({ duration, hazards, images, currentT, activeHaza
             >
               {i + 1}
             </span>
-            <span className="line-clamp-2 leading-[14px] break-words" title={h.short_title || h.title}>
-              {signWord(h.sign?.label) || kindWord}
-            </span>
+            Hazard
           </span>
         ))}
         <span className={cn(LABEL, "h-10")}>Pictures</span>
@@ -153,7 +142,7 @@ export function HazardTimeline({ duration, hazards, images, currentT, activeHaza
               <span aria-hidden className="dot-field absolute inset-x-0 inset-y-2" />
               <button
                 type="button"
-                aria-label={`${kindWord} ${i + 1}: ${h.short_title || h.title}, seen ${clock(start)} to ${clock(end)}. Go to this moment in the video`}
+                aria-label={`Hazard ${i + 1}: ${h.title}, seen ${clock(start)} to ${clock(end)}. Go to this moment in the video`}
                 aria-pressed={active}
                 onClick={() => onSeek(start, h.id)}
                 className={cn("absolute h-5 border transition-colors hover:bg-fg/35", active ? tone.bandActive : tone.band)}

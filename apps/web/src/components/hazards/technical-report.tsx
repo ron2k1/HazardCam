@@ -4,8 +4,6 @@ import { Panel } from "@/components/hud/panel";
 import type { HazardFindingRaw, HazardTechnical, HazardZone } from "@/lib/hazards";
 import { cn } from "@/lib/utils";
 
-import { zoneName } from "./derive";
-
 const fmtNum = (x: unknown, digits = 2): string => {
   if (typeof x !== "number" || !Number.isFinite(x)) return "—";
   return Number.isInteger(x) ? String(x) : x.toFixed(digits);
@@ -13,7 +11,7 @@ const fmtNum = (x: unknown, digits = 2): string => {
 
 const secs = (x: unknown) => (typeof x === "number" && Number.isFinite(x) ? `${x.toFixed(2)}s` : "—");
 
-export function scalar(v: unknown): string {
+function scalar(v: unknown): string {
   if (v == null) return "—";
   if (typeof v === "number") return Number.isFinite(v) ? String(Number(v.toPrecision(6))) : "—";
   if (typeof v === "boolean") return v ? "true" : "false";
@@ -35,7 +33,7 @@ function flatten(obj: Record<string, unknown>, prefix = ""): [string, string][] 
 
 const MODEL_FIRST = ["model", "model_id", "id", "name", "inference_source", "base_url", "profile", "elapsed_seconds", "elapsed_s"];
 
-export function modelRows(model: Record<string, unknown>): [string, string][] {
+function modelRows(model: Record<string, unknown>): [string, string][] {
   const rows = flatten(model);
   const rank = (k: string) => {
     const i = MODEL_FIRST.indexOf(k);
@@ -44,11 +42,11 @@ export function modelRows(model: Record<string, unknown>): [string, string][] {
   return rows.map((r, i) => ({ r, i })).sort((a, b) => rank(a.r[0]) - rank(b.r[0]) || a.i - b.i).map((x) => x.r);
 }
 
-export function Mono({ children, className }: { children: React.ReactNode; className?: string }) {
+function Mono({ children, className }: { children: React.ReactNode; className?: string }) {
   return <span className={cn("font-mono text-[11px] tracking-[0.04em] break-all text-fg/90", className)}>{children}</span>;
 }
 
-export function KV({ rows }: { rows: [string, React.ReactNode][] }) {
+function KV({ rows }: { rows: [string, React.ReactNode][] }) {
   return (
     <dl className="divide-y divide-line">
       {rows.map(([k, v]) => (
@@ -61,7 +59,7 @@ export function KV({ rows }: { rows: [string, React.ReactNode][] }) {
   );
 }
 
-export function StandardLinks({ keys, standards }: { keys: string[]; standards: HazardTechnical["standards"] }) {
+function StandardLinks({ keys, standards }: { keys: string[]; standards: HazardTechnical["standards"] }) {
   if (!keys.length) return <span className="text-muted">none</span>;
   return (
     <span className="flex flex-wrap gap-x-3 gap-y-1">
@@ -79,7 +77,7 @@ export function StandardLinks({ keys, standards }: { keys: string[]; standards: 
   );
 }
 
-export function FindingRaw({ f, standards }: { f: HazardFindingRaw; standards: HazardTechnical["standards"] }) {
+function FindingRaw({ f, standards }: { f: HazardFindingRaw; standards: HazardTechnical["standards"] }) {
   return (
     <article className="border-t border-line px-3 py-3 first:border-t-0" data-testid="finding-raw" aria-labelledby={`raw-${f.finding_id}`}>
       <h3 id={`raw-${f.finding_id}`} className="flex flex-wrap items-baseline gap-x-2 text-[12px] font-bold tracking-[0.06em] text-fg">
@@ -121,13 +119,13 @@ export function FindingRaw({ f, standards }: { f: HazardFindingRaw; standards: H
   );
 }
 
-export function ZonesTable({ zones, found }: { zones: HazardZone[]; found?: Record<string, string> }) {
+function ZonesTable({ zones }: { zones: HazardZone[] }) {
   return (
     <div className="thin-scroll overflow-x-auto">
-      <table className="w-full min-w-[760px] border-collapse text-left text-[11px] tabular-nums" data-testid="zones-table">
+      <table className="w-full min-w-[640px] border-collapse text-left text-[11px] tabular-nums" data-testid="zones-table">
         <thead>
           <tr className="border-b border-line">
-            {["Zone", "Name", "Kind", "BBox (source px)", "Score", "Start", "End", "Peak frame", "What was found there"].map((h) => (
+            {["Zone", "Kind", "BBox (source px)", "Score", "Start", "End", "Peak frame", "Stab / floor / paint"].map((h) => (
               <th key={h} scope="col" className="micro px-3 py-1.5 font-normal whitespace-nowrap">
                 {h}
               </th>
@@ -136,18 +134,19 @@ export function ZonesTable({ zones, found }: { zones: HazardZone[]; found?: Reco
         </thead>
         <tbody>
           {zones.map((z) => (
-            <tr key={z.zone_id} className="border-b border-line align-top last:border-b-0">
+            <tr key={z.zone_id} className="border-b border-line last:border-b-0">
               <th scope="row" className="px-3 py-1.5 font-bold text-fg">
                 {z.zone_id}
               </th>
-              <td className="px-3 py-1.5 whitespace-nowrap text-fg">{zoneName(z.zone_id) ?? "—"}</td>
               <td className="px-3 py-1.5 text-fg/85">{z.kind}</td>
               <td className="px-3 py-1.5 whitespace-nowrap text-fg/85">{z.bbox_source ? `[${z.bbox_source.join(", ")}]` : "—"}</td>
               <td className="px-3 py-1.5 text-fg/85">{fmtNum(z.proposal_score, 3)}</td>
               <td className="px-3 py-1.5 text-fg/85">{secs(z.active_start_s)}</td>
               <td className="px-3 py-1.5 text-fg/85">{secs(z.active_end_s)}</td>
               <td className="px-3 py-1.5 text-fg/85">{fmtNum(z.peak_frame)}</td>
-              <td className="min-w-[16rem] px-3 py-1.5 text-fg/85">{found?.[z.zone_id] ?? "—"}</td>
+              <td className="px-3 py-1.5 whitespace-nowrap text-fg/70">
+                {z.stability != null ? `${fmtNum(z.stability)} / ${fmtNum(z.floor_contact)} / ${fmtNum(z.paint_proximity)}` : "—"}
+              </td>
             </tr>
           ))}
         </tbody>

@@ -13,8 +13,6 @@ export type HazardPriorityKey = "high" | "medium" | "low";
 /** Worker-facing level words, as the API writes them. */
 export type PlainLevel = "High" | "Medium" | "Low";
 export type EvidenceKindLabel = "Whole view" | "Close-up" | "Section";
-/** "hazard" (factory clips) or "blindspot" (warehouse clips); absent means hazard. */
-export type ClipKind = "hazard" | "blindspot" | string;
 
 export interface ClipSummary {
   clip_id: string;
@@ -25,55 +23,18 @@ export interface ClipSummary {
   top_priority: HazardPriorityKey | null;
   needs_check_count: number;
   reviewed_at: string | null;
-  kind?: ClipKind;
 }
 
 export interface ClipList {
   clips: ClipSummary[];
 }
 
-/** One picture sent to the AI (worker copies are clean: no burned-in label strip). */
+/** One picture sent to the AI. */
 export interface HazardImage {
   image_url: string;
   time_s: number;
   time_label: string;
-  kind_label?: EvidenceKindLabel | string;
-  /** "Close-up" | "Whole view" | "Busiest moment" */
-  kind_word?: string | null;
-  /** "Zone 3" | "Whole view" */
-  zone_name?: string | null;
-  /** True when a hazard cites this picture. */
-  cited?: boolean;
-  clean_url?: string | null;
-  /** The labelled picture exactly as sent to the model (process page). */
-  raw_url?: string | null;
-}
-
-/** A picture a hazard cites: caption "Zone 3 · 0:04" or "Whole view · 0:02". */
-export interface HazardPicture {
-  url: string;
-  clean_url?: string | null;
-  caption: string;
-  time_s: number;
-  zone_name?: string | null;
-  time_label?: string | null;
-  kind_word?: string | null;
-}
-
-/** The sign a worker sees for a hazard (config/hazards.yaml `signs`). */
-export interface HazardSign {
-  label: string;
-  glyph: string;
-}
-
-/** A marked area in plain words; box is normalised 0-1 in video coordinates. */
-export interface WorkerZone {
-  number: number;
-  name: string;
-  kind_word: string;
-  box: [number, number, number, number] | number[];
-  has_hazard: boolean;
-  has_pictures: boolean;
+  kind_label: EvidenceKindLabel;
 }
 
 export interface WorkerHazard {
@@ -94,24 +55,11 @@ export interface WorkerHazard {
   safety_rule: string | null;
   not_sure_about: string[];
   evidence: HazardImage[];
-  /** At most 6 words. */
-  short_title?: string | null;
-  sign?: HazardSign | null;
-  /** ["Zone 3"] */
-  zone_names?: string[] | null;
-  /** The exact pictures this hazard cites. */
-  pictures?: HazardPicture[] | null;
 }
 
 export interface RuledOut {
   what: string;
   why: string;
-}
-
-/** The safety agent's own plain summary (only when the OpenClaw agent ran the review). */
-export interface AgentSummaryPlain {
-  headline: string;
-  first_action: string;
 }
 
 export interface HazardWorker {
@@ -121,9 +69,6 @@ export interface HazardWorker {
   hazards: WorkerHazard[];
   ruled_out: RuledOut[];
   cannot_tell: string[];
-  /** Present only when the run dir holds agent_summary.json. */
-  agent_summary?: AgentSummaryPlain | null;
-  zones?: WorkerZone[] | null;
 }
 
 export interface PlainInstructions {
@@ -169,8 +114,6 @@ export interface HazardEvidenceRecord {
   bbox_source?: number[];
   path?: string;
   sha256?: string;
-  /** The labelled picture as sent to the model (API media route). */
-  image_url?: string;
 }
 
 /** A finding exactly as the model returned it (after validation and audit). */
@@ -236,49 +179,10 @@ export interface HazardTechnical {
   /** Optional extras: rendered when the API sends them. */
   dismissed?: HazardDismissed[];
   limitations?: string[];
-  run_id?: string | null;
-  run_status?: string | null;
-  model_error?: string | null;
-  video?: Record<string, unknown> | null;
-  pipeline?: Record<string, unknown> | null;
-  /** Present only when the OpenClaw agent ran the review (agent_trace.json / agent_summary.json). */
-  agent?: HazardAgent | null;
-  /** Present when the API replayed a stored run instead of running the model (demo replay). */
-  replay?: HazardReplayInfo | boolean | null;
-}
-
-/** One line of the agent's recorded trace: a tool call or something it said. */
-export interface AgentTraceItem {
-  t_s: number;
-  kind: "tool" | "say" | string;
-  tool?: string | null;
-  text: string;
-}
-
-export interface HazardAgent {
-  /** "openclaw-agent" | "direct" */
-  runner: string;
-  sandbox?: string;
-  agent_id?: string;
-  trace: AgentTraceItem[];
-  summary: {
-    headline?: string;
-    first_action?: string;
-    priority?: string;
-    confirmed_finding_ids?: string[];
-  } | null;
-}
-
-export interface HazardReplayInfo {
-  /** ISO time of the stored run being replayed. */
-  reviewed_at?: string | null;
-  run_id?: string | null;
-  label?: string | null;
-  [key: string]: unknown;
 }
 
 export interface HazardView {
-  clip: { clip_id: string; title: string; duration_s: number; kind?: ClipKind };
+  clip: { clip_id: string; title: string; duration_s: number };
   status: HazardClipStatus;
   reviewed_at: string | null;
   /** null until a report exists for the clip. */
@@ -290,29 +194,10 @@ export interface HazardView {
 export interface HazardInstructions extends PlainInstructions {
   system_prompt: string;
   audit_prompt: string;
-  /** The strict JSON schema sent with the review, when the API exposes it. */
-  schema?: unknown;
-  /** The standards table sent to the model, when the API exposes it. */
-  standards?: unknown;
-}
-
-/** The "done" event's payload. */
-export interface JobDone {
-  clip_id: string;
-  run_id?: string | null;
-  replay?: boolean | null;
-  reviewed_at?: string | null;
 }
 
 export interface ReviewJob {
   job_id: string;
-  /** True when a check of this clip was already running (409) and we attached to it. */
-  attached?: boolean;
-}
-
-export interface LatestJob {
-  job_id: string;
-  state: string;
 }
 
 export interface HazardProgress {
@@ -320,42 +205,6 @@ export interface HazardProgress {
   total: number;
   message: string;
   plain_message: string;
-  /** Seconds since the job started, when the API records it. */
-  t_s?: number;
-  /** Client receipt time (ms since epoch); set by subscribeJob. */
-  received_at?: number;
-}
-
-/** A narration line from the safety agent (SSE event "agent"). */
-export interface AgentLine {
-  text: string;
-  t_s?: number;
-  tool?: string | null;
-  kind?: string | null;
-  received_at?: number;
-}
-
-/** GET /api/runtime/status */
-export type RuntimeRowStatus = "ok" | "down" | "unknown";
-
-export interface RuntimeRow {
-  key: string;
-  label: string;
-  status: RuntimeRowStatus;
-  value: string | null;
-  detail: string | null;
-}
-
-export interface RuntimeStatus {
-  checked_at: string;
-  local_only: boolean;
-  rows: RuntimeRow[];
-}
-
-/** GET /api/wall: which clips are CAM 1-6 on the home wall (only the numbering is used here). */
-export interface WallTiles {
-  hazard_tiles?: { cam: number; clip_id: string }[];
-  blindspot_tiles?: { cam: number; clip_id: string }[];
 }
 
 /* ------------------------------------------------------------------- fetch */
@@ -396,63 +245,16 @@ async function request<T>(path: string, init: RequestInit = {}, signal?: AbortSi
 
 const enc = encodeURIComponent;
 
-/**
- * POST a review. 202 {job_id} starts one; 409 {job_id} means this clip is already being checked,
- * so we attach to that job instead of failing (the second tab and a reload both rely on it).
- */
-async function postReview(clipId: string, signal?: AbortSignal): Promise<ReviewJob> {
-  const timeout = AbortSignal.timeout(TIMEOUT_MS);
-  let res: Response;
-  try {
-    res = await fetch(apiUrl(`/api/hazards/clips/${enc(clipId)}/review`), {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: "{}",
-      cache: "no-store",
-      signal: signal ? AbortSignal.any([signal, timeout]) : timeout,
-    });
-  } catch (err) {
-    if (signal?.aborted) throw err;
-    throw new ApiError(0, timeout.aborted ? "timeout" : "unreachable");
-  }
-  let body: unknown = null;
-  try {
-    body = await res.json();
-  } catch {
-    body = null;
-  }
-  const jobId = (body as { job_id?: unknown } | null)?.job_id;
-  if ((res.ok || res.status === 409) && typeof jobId === "string" && jobId) {
-    return { job_id: jobId, attached: res.status === 409 };
-  }
-  throw new ApiError(res.status, detailOf(body, res.statusText || "error"));
-}
-
 export const hazardsApi = {
   clips: (signal?: AbortSignal) => request<ClipList>("/api/hazards/clips", {}, signal),
   view: (clipId: string, signal?: AbortSignal) => request<HazardView>(`/api/hazards/clips/${enc(clipId)}`, {}, signal),
-  review: postReview,
-  /** The clip's most recent job, or null when it has none (404). */
-  latestJob: async (clipId: string, signal?: AbortSignal): Promise<LatestJob | null> => {
-    try {
-      return await request<LatestJob>(`/api/hazards/clips/${enc(clipId)}/jobs/latest`, {}, signal);
-    } catch (err) {
-      if (err instanceof ApiError && err.status === 404) return null;
-      throw err;
-    }
-  },
+  review: (clipId: string, refresh = false) =>
+    request<ReviewJob>(`/api/hazards/clips/${enc(clipId)}/review`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refresh }),
+    }),
   instructions: (signal?: AbortSignal) => request<HazardInstructions>("/api/hazards/instructions", {}, signal),
-  runtimeStatus: (signal?: AbortSignal) => request<RuntimeStatus>("/api/runtime/status", {}, signal),
-  wall: (signal?: AbortSignal) => request<WallTiles>("/api/wall", {}, signal),
-  /** The raw hazard_report.json of the clip's current run, or null when the API has no such route. */
-  report: async (clipId: string, signal?: AbortSignal): Promise<Record<string, unknown> | null> => {
-    try {
-      return await request<Record<string, unknown>>(`/api/hazards/clips/${enc(clipId)}/report`, {}, signal);
-    } catch (err) {
-      if (err instanceof ApiError && err.status === 404) return null;
-      throw err;
-    }
-  },
 };
 
 /** The clip's source video, served by the API even before a review exists. */
@@ -473,24 +275,10 @@ export function mediaUrl(path: string | null | undefined): string | null {
 
 export interface JobHandlers {
   onProgress: (p: HazardProgress) => void;
-  /** A safety-agent narration line (event "agent"); optional for sources without an agent. */
-  onAgent?: (line: AgentLine) => void;
-  onDone: (clipId: string, info?: JobDone) => void;
+  onDone: (clipId: string) => void;
   onFailed: (plainMessage: string) => void;
   /** The stream could not be (re)opened; the job's server state is unknown. */
   onLost: () => void;
-}
-
-/** The "agent" event's text, whatever key the API uses for it. */
-function agentLineOf(d: Record<string, unknown>): AgentLine | null {
-  const text = [d.text, d.plain_message, d.message].find((v): v is string => typeof v === "string" && v.trim() !== "");
-  if (!text) return null;
-  return {
-    text: text.trim(),
-    t_s: typeof d.t_s === "number" ? d.t_s : undefined,
-    tool: typeof d.tool === "string" ? d.tool : null,
-    kind: typeof d.kind === "string" ? d.kind : null,
-  };
 }
 
 function parse<T>(data: string): T | null {
@@ -529,19 +317,13 @@ export function subscribeJob(jobId: string, handlers: JobHandlers): () => void {
     es.addEventListener("progress", (e) => {
       if (source !== es) return;
       const p = parse<HazardProgress>((e as MessageEvent<string>).data);
-      if (p) handlers.onProgress({ ...p, received_at: Date.now() });
-    });
-    es.addEventListener("agent", (e) => {
-      if (source !== es) return;
-      const d = parse<Record<string, unknown>>((e as MessageEvent<string>).data);
-      const line = d ? agentLineOf(d) : null;
-      if (line) handlers.onAgent?.({ ...line, received_at: Date.now() });
+      if (p) handlers.onProgress(p);
     });
     es.addEventListener("done", (e) => {
       if (source !== es) return;
-      const d = parse<JobDone>((e as MessageEvent<string>).data);
+      const d = parse<{ clip_id?: string }>((e as MessageEvent<string>).data);
       close();
-      handlers.onDone(d?.clip_id ?? "", d ?? undefined);
+      handlers.onDone(d?.clip_id ?? "");
     });
     es.addEventListener("failed", (e) => {
       if (source !== es) return;
@@ -613,7 +395,7 @@ export function clock(seconds: number | null | undefined): string {
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 }
 
-/** "2 hazards · 1 needs a check" (only for a check finished in this browser session). */
+/** "2 hazards · 1 needs a check" for the clip list. */
 export function countLine(c: Pick<ClipSummary, "status" | "hazard_count" | "needs_check_count">): string {
   if (c.status !== "reviewed") return "";
   if (c.hazard_count === 0) return "No hazards seen";
