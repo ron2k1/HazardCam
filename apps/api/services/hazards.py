@@ -792,12 +792,21 @@ def derive_status(
 # are removed from a finding's citations. A finding whose main (first) rule is hidden is
 # dropped, and so is a blind-corner finding without cross-aisle traffic (no hazard happening
 # at the corner). The stored report keeps everything; /hazards/process still shows it.
+# Blocked-aisle (1910.176(a)) findings were noise too (operator, 15:00): a finding led by it
+# is dropped, and it never picks the sign. A blind-spot camera (its reference set has the
+# cross-aisle rule) only alerts on a high-priority conflict.
 HIDDEN_RULES = frozenset(
-    {"1910.212(a)(3)(ii)", "1910.217(c)(1)(i)", "1910.147(a)(2)", "1910.178(n)(4)"}
+    {
+        "1910.212(a)(3)(ii)",
+        "1910.217(c)(1)(i)",
+        "1910.147(a)(2)",
+        "1910.178(n)(4)",
+        "1910.176(a)",
+    }
 )
 BLIND_CORNER_RULE = "1910.178(n)(4)"
 CROSS_AISLE_RULE = "1910.178(n)(6)"
-MAX_HAZARDS_PER_CAMERA = 2
+MAX_HAZARDS_PER_CAMERA = 1
 # Tests that pin the unfiltered fixture reports switch this off (tests/unit/api/conftest.py).
 SCREEN_FILTER = True
 # One short, complete action per warning sign (OSHA wording, no cut-off sentences).
@@ -834,8 +843,10 @@ def _findings(report: Mapping[str, Any] | None) -> list[dict[str, Any]]:
     if not SCREEN_FILTER:
         return raw
     shown = [s for f in raw if (s := _screened(f)) is not None]
-    if any(f.get("severity") in ("high", "medium") for f in shown):
-        shown = [f for f in shown if f.get("severity") != "low"]
+    standards = report.get("standards")
+    if isinstance(standards, dict) and CROSS_AISLE_RULE in standards:
+        shown = [f for f in shown if f.get("severity") == "high"]
+    shown = [f for f in shown if f.get("severity") != "low"]
     top = sorted(
         range(len(shown)), key=lambda i: (SEVERITY_RANK.get(str(shown[i].get("severity")), 1), i)
     )[:MAX_HAZARDS_PER_CAMERA]

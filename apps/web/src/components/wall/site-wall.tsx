@@ -127,14 +127,16 @@ export function SiteWall() {
   const blindCams = cameras.filter((c) => c.kind === "blindspot");
   const { runs, notifications, toasts, dismissToast, retry, idle, site } = useWallOrchestrator(cameras, loadedAt);
 
-  // Pop-outs: every new notification fires one; its tile keeps an amber frame until acknowledged.
-  const seen = useRef<Set<string>>(new Set());
+  // Pop-outs: every new notification fires one, once (remembered in this tab, so coming back to
+  // the wall does not fire them again); its tile keeps an amber frame until acknowledged.
+  const seen = useRef<Set<string>>(readPopped());
   const [popouts, setPopouts] = useState<DetectionPopoutItem[]>([]);
   const [unacked, setUnacked] = useState<Record<string, WallNotification>>({});
   useEffect(() => {
     const fresh = notifications.filter((n) => !seen.current.has(n.id) && n.detections.length > 0);
     if (!fresh.length) return;
     fresh.forEach((n) => seen.current.add(n.id));
+    writePopped(seen.current);
     setPopouts((prev) => [...fresh.map(popoutItem).reverse(), ...prev].slice(0, 6));
     setUnacked((prev) => ({ ...prev, ...Object.fromEntries(fresh.map((n) => [n.clipId, n])) }));
   }, [notifications]);
@@ -225,18 +227,38 @@ export function SiteWall() {
         </main>
       </div>
 
-      <Toasts items={toasts} onDismiss={dismissToast} />
+      {/* Detections already pop out once; toasts only carry the rest (errors, retries). */}
+      <Toasts items={toasts.filter((t) => !t.detection)} onDismiss={dismissToast} />
       <DetectionPopoutStack
         items={popouts}
         onCollapse={(id) => setPopouts((prev) => prev.filter((p) => p.id !== id))}
-        autoCollapseMs={5000}
-        maxVisible={2}
+        autoCollapseMs={6000}
+        maxVisible={1}
       />
     </div>
   );
 }
 
-/** One pop-out per notification: sign, camera and zone only (no sentences). */
+const POPPED_KEY = "cv-wall-popped-v1";
+
+function readPopped(): Set<string> {
+  try {
+    const raw = typeof window === "undefined" ? null : window.sessionStorage.getItem(POPPED_KEY);
+    return new Set(raw ? (JSON.parse(raw) as string[]) : []);
+  } catch {
+    return new Set();
+  }
+}
+
+function writePopped(ids: Set<string>) {
+  try {
+    window.sessionStorage.setItem(POPPED_KEY, JSON.stringify([...ids]));
+  } catch {
+    /* storage blocked: pop-outs may show again after a reload */
+  }
+}
+
+/** One pop-out per notification: sign, camera, zone and one short paragraph. */
 function popoutItem(n: WallNotification): DetectionPopoutItem {
   const d = n.detections[0];
   const blind = n.kind === "blindspot";
@@ -248,6 +270,7 @@ function popoutItem(n: WallNotification): DetectionPopoutItem {
     tone: blind ? "blindspot" : "hazard",
     cameraLabel: `CAM ${n.cam}`,
     zoneName: d?.zoneNames?.[0],
+    detail: d?.explain || undefined,
     timestamp: new Date(n.at).toLocaleTimeString([], { hour12: false }),
     viewHref: viewHref(n.clipId, n.jobId),
     reasoningHref: reasoningHref(n.clipId, n.jobId),

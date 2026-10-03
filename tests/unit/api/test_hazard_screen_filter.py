@@ -24,8 +24,10 @@ def test_guard_and_lockout_findings_are_dropped() -> None:
     report = _report(
         _f("H01", "high", "1910.212(a)(3)(ii)", "1910.147(a)(2)"),
         _f("H02", "high", "1910.217(c)(1)(i)"),
-        _f("H03", "medium", "1910.176(a)", "1910.22(a)(3)"),
+        _f("H03", "medium", "1910.22(a)(3)", "1910.176(a)"),
+        _f("H04", "high", "1910.176(a)", "1910.22(a)(3)"),
     )
+    # guard/lockout and blocked-aisle-led findings go; the trip hazard stays
     assert [f["finding_id"] for f in hazards._findings(report)] == ["H03"]
 
 
@@ -37,17 +39,28 @@ def test_blind_corner_needs_cross_aisle_traffic() -> None:
     shown = hazards._findings(report)
     assert [f["finding_id"] for f in shown] == ["H02"]
     # the hidden rule is removed, so the sign is CROSS AISLE, never BLIND CORNER
-    assert shown[0]["standards"] == ["1910.178(n)(6)", "1910.176(a)"]
+    assert shown[0]["standards"] == ["1910.178(n)(6)"]
 
 
-def test_at_most_two_per_camera_and_low_dropped_when_higher_exist() -> None:
+def test_at_most_one_per_camera_and_low_dropped_when_higher_exist() -> None:
     report = _report(
         _f("H01", "low", "1910.176(b)"),
         _f("H02", "medium", "1910.176(a)"),
         _f("H03", "high", "1910.22(a)(3)"),
         _f("H04", "medium", "1910.37(a)(3)"),
     )
-    assert [f["finding_id"] for f in hazards._findings(report)] == ["H02", "H03"]
+    assert [f["finding_id"] for f in hazards._findings(report)] == ["H03"]
+
+
+def test_blind_spot_camera_alerts_only_on_high_conflicts() -> None:
+    report = _report(
+        _f("H01", "medium", "1910.178(n)(6)"),
+        _f("H02", "high", "1910.178(n)(4)", "1910.178(n)(6)"),
+    )
+    report["standards"] = {"1910.178(n)(4)": {}, "1910.178(n)(6)": {}}
+    assert [f["finding_id"] for f in hazards._findings(report)] == ["H02"]
+    report["findings"] = [_f("H01", "medium", "1910.178(n)(6)")]
+    assert hazards._findings(report) == []
 
 
 def test_every_shown_sign_has_a_short_complete_action() -> None:
