@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { DetectionPopoutStack, type DetectionPopoutItem } from "@/components/alerts/detection-popout";
+import { ResetDemoButton } from "@/components/wall/reset-demo-button";
 import { StatusDot } from "@/components/hud/barcode";
 import { Panel } from "@/components/hud/panel";
 import { ViewToggle } from "@/components/ops/view-toggle";
@@ -272,7 +273,10 @@ export function HazardsApp({ mock, initialView, initialClipId }: HazardsAppProps
             </span>
           ) : null}
         </div>
-        <ViewToggle mode={mode} onChange={setMode} />
+        <div className="flex items-center gap-3">
+          <ResetDemoButton />
+          <ViewToggle mode={mode} onChange={setMode} />
+        </div>
       </header>
 
       {offline && clips ? (

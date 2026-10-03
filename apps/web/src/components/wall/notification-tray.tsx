@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import { kindWord, reasoningHref, timeOfDay, viewHref, type Detection } from "@/lib/wall";
+import { kindWord, timeOfDay, viewHref, type Detection } from "@/lib/wall";
 import { cn } from "@/lib/utils";
 
 import { BlindSpotTriangle, DetectionSign, WarningTriangle } from "./blind-spot-sign";
@@ -57,15 +57,6 @@ function NotificationCard({ n }: { n: WallNotification }) {
         <Link href={viewHref(n.clipId, n.jobId)} className={cn(linkCls, "border-line-strong")} data-testid="notification-view">
           View
         </Link>
-        <a
-          href={reasoningHref(n.clipId, n.jobId)}
-          target="_blank"
-          rel="noopener"
-          className={cn(linkCls, "border-line")}
-          data-testid="notification-reasoning"
-        >
-          Open reasoning ↗
-        </a>
       </div>
     </li>
   );

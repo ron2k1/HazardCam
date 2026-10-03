@@ -6,6 +6,7 @@ import { StatusDot } from "@/components/hud/barcode";
 import type { StackLine } from "@/lib/wall";
 import { cn } from "@/lib/utils";
 
+import { ResetDemoButton } from "./reset-demo-button";
 import { useNow } from "./use-now";
 
 const NAV = [
@@ -67,6 +68,7 @@ export function WallHeader({ title, agentLine, agentActive, stack, checked, tota
               </Link>
             ))}
           </nav>
+          <ResetDemoButton />
           <p className="flex min-w-0 items-center gap-2 text-[12px] text-fg/75" data-testid="wall-stack-line">
             {stack ? (
               <>
