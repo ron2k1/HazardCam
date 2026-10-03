@@ -1,0 +1,33 @@
+2026-10-03T19:56:51Z
+d4dd22c
+E             {'worker': {'headline': '2 safety hazards found', 'summary': 'The video shows a manufacturing...
+E             
+E             ...Full output truncated (2 lines hidden), use '-vv' to show
+
+tests/unit/contracts/test_hazard_view_contract.py:113: AssertionError
+_____________________ test_probe_reports_late_video_start ______________________
+
+offset_video = PosixPath('/tmp/pytest-of-dell/pytest-232/generated_media0/offset.mp4')
+
+    @pytest.mark.media
+    def test_probe_reports_late_video_start(offset_video):
+        info = probe_video(offset_video)
+>       assert info["start_offset_s"] == pytest.approx(0.5)
+E       assert 0.0 == 0.5 ± 5.0e-07
+E         
+E         comparison failed
+E         Obtained: 0.0
+E         Expected: 0.5 ± 5.0e-07
+
+tests/unit/media/test_probe.py:38: AssertionError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /home/dell/ambient-urban-mirror/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/unit/contracts/test_hazard_view_contract.py::test_examples_match_the_composer
+FAILED tests/unit/media/test_probe.py::test_probe_reports_late_video_start - ...
+2 failed, 1636 passed, 3 skipped, 8 deselected, 1 warning in 98.85s (0:01:38)
+exit=1

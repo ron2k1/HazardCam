@@ -1,3 +1,4 @@
+./scripts/run.sh verify-event-delta
 verified_at_utc=2026-10-03T19:57:05Z
 prebuild_commit=68060460060e09f807149ce0785402f655c56bad
 current_commit=d4dd22cd0141fb1b44f0b665904835be72812af2
