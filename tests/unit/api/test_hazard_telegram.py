@@ -212,7 +212,14 @@ def test_message_is_plain_and_short(service, settings) -> None:
         assert leak not in caption
 
 
-def test_blind_spot_headline_and_more_line(service, settings) -> None:
+def test_blind_spot_headline_and_more_line(service, settings, monkeypatch, tmp_path) -> None:
+    import yaml
+
+    from apps.api.services import wall as wl
+
+    raw = yaml.safe_load(wl.DEFAULT_WALL_CONFIG.read_text("utf-8"))
+    (tmp_path / "wall.yaml").write_text(yaml.safe_dump({**raw, "show_blindspot": True}), "utf-8")
+    monkeypatch.setattr(wl, "DEFAULT_WALL_CONFIG", tmp_path / "wall.yaml")
     sender = FakeSender()
     assert send(service, settings, sender, clip="bs_01", run="run1")["status"] == "sent"
     lines = sender.calls[0][1].splitlines()

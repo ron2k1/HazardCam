@@ -75,6 +75,7 @@ export interface ViewHazard {
   what_we_saw?: string | null;
   why_it_matters?: string | null;
   short_action?: string | null;
+  explain?: string | null;
 }
 
 /** worker.zones[] (box normalised 0-1 in video coordinates). */
@@ -459,7 +460,7 @@ export function checkResult(view: WallHazardView): CheckResult {
     const short = [h.short_title, h.title].find(isPlainText) ?? "";
     const why = (h.why_it_matters ?? "").split(/(?<=[.!?])\s+/)[0] ?? "";
     const act = h.short_action ?? "";
-    const explain = [h.what_we_saw, why, act].filter((t) => t && isPlainText(t)).join(" ");
+    const explain = h.explain && isPlainText(h.explain) ? h.explain : [h.what_we_saw, why, act].filter((t) => t && isPlainText(t)).join(" ");
     return {
       key: h.id || `hazard-${i + 1}`,
       sign: h.sign && h.sign.label ? h.sign : null,

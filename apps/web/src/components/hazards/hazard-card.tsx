@@ -106,6 +106,11 @@ export function HazardCard({ hazard: h, zones, pictures, active, kindWord, onSho
           {action}
         </p>
       ) : null}
+      {(h as WorkerHazard & { explain?: string | null }).explain ? (
+        <p className="pt-1.5 pr-3 text-[14px] leading-[1.5] text-fg/80" data-testid="hazard-explain">
+          {(h as WorkerHazard & { explain?: string | null }).explain}
+        </p>
+      ) : null}
 
       {pictures.length ? (
         <div className="pt-2.5 pr-3">

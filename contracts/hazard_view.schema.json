@@ -282,6 +282,10 @@
             "$ref": "#/$defs/EvidenceImage"
           }
         },
+        "explain": {
+          "description": "Two to four plain sentences: what was seen, why it matters, what to do.",
+          "type": "string"
+        },
         "short_action": {
           "description": "One short complete action for the warning sign (OSHA wording); null when the sign has none.",
           "type": ["string", "null"]

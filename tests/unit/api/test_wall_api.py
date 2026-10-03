@@ -47,10 +47,25 @@ def root(tmp_path: Path) -> Path:
     return data
 
 
+@pytest.fixture(autouse=True)
+def _wall_with_blind_spots(request: pytest.FixtureRequest, monkeypatch, tmp_path: Path):
+    """The repo config hides the blind-spot row for the hazard-only demo; the tests below
+    pin the full six-tile wall (the repo-config test reads the real file)."""
+    if request.node.name == "test_repo_config_matches_the_defaults":
+        return
+    raw = yaml.safe_load((REPO_ROOT / "config" / "wall.yaml").read_text("utf-8"))
+    raw["show_blindspot"] = True
+    path = tmp_path / "wall.yaml"
+    path.write_text(yaml.safe_dump(raw), encoding="utf-8")
+    monkeypatch.setattr(wl, "DEFAULT_WALL_CONFIG", path)
+
+
 def test_repo_config_matches_the_defaults() -> None:
     raw = yaml.safe_load((REPO_ROOT / "config" / "wall.yaml").read_text("utf-8"))
     assert set(raw) == set(wl.DEFAULT_WALL)
-    assert wl.load_wall_config() == wl.DEFAULT_WALL
+    # the demo hides the blind-spot row; everything else is the default
+    assert raw["show_blindspot"] is False
+    assert {**wl.load_wall_config(), "show_blindspot": True} == wl.DEFAULT_WALL
     text = (REPO_ROOT / "config" / "wall.yaml").read_text("utf-8").lower()
     for word in OPS_WORDS:
         assert word not in text

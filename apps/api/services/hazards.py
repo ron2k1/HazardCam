@@ -1058,6 +1058,29 @@ def compose_zones(
     return sorted(out, key=lambda z: z["number"])
 
 
+_SENTENCE_END = re.compile(r"(?<=[.!?])\s+")
+
+
+def explain_text(finding: Mapping[str, Any], action: str | None, zone_template: str) -> str:
+    """Two to four plain sentences for the pop-out and the card: what was seen (up to two
+    sentences), why it matters (one) and what to do (the sign's short action)."""
+
+    def sentences(text: Any) -> list[str]:
+        return [
+            t.strip() for t in _SENTENCE_END.split(plain_text(text, zone_template)) if t.strip()
+        ]
+
+    seen = sentences(finding.get("observation"))[:2]
+    why = sentences(finding.get("risk_interpretation"))[:1]
+    parts = [*seen, *why]
+    if action:
+        parts.append(action)
+    elif finding.get("recommended_actions"):
+        parts.extend(sentences((finding.get("recommended_actions") or [""])[0])[:1])
+    out = [p if p[-1] in ".!?" else f"{p}." for p in parts if p][:4]
+    return " ".join(out)
+
+
 def _hazard(
     finding: Mapping[str, Any],
     position: int,
@@ -1109,6 +1132,9 @@ def _hazard(
         "short_title": short_title(title, int(wording["short_title_max_words"])),
         "sign": (sign := hazard_sign(finding.get("standards"), wording, kind=kind)),
         "short_action": SIGN_ACTIONS.get(sign["label"]),
+        "explain": explain_text(
+            finding, SIGN_ACTIONS.get(sign["label"]), str(wording["zone_name"])
+        ),
         "priority": priority.get(str(finding.get("severity")), priority["medium"]),
         "needs_check": finding.get("status") == "needs_verification",
         "what_we_saw": first_sentence(pt(finding.get("observation"))),

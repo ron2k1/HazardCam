@@ -39,6 +39,8 @@ DEFAULT_WALL: dict[str, Any] = {
     "blindspot_clips": [],
     "hazard_check_after_s": [2.0, 5.0, 8.0],
     "blindspot_check_after_s": [3.5, 6.5, 9.5],
+    # false: no blind-spot row (the hazard-only demo); the clips stay on /hazards.
+    "show_blindspot": True,
 }
 
 
@@ -62,6 +64,8 @@ def load_wall_config(path: Path | None = None) -> dict[str, Any]:
             config[key] = value.strip()
         elif key.endswith("_clips") and isinstance(value, list):
             config[key] = [str(v).strip() for v in value if str(v).strip()]
+        elif isinstance(default, bool) and isinstance(value, bool):
+            config[key] = value
         elif key.endswith("_after_s") and isinstance(value, list):
             nums = [float(v) for v in value if isinstance(v, int | float) and v >= 0]
             if nums:
@@ -112,7 +116,11 @@ def _tiles(
 def compose_wall(clips: Sequence[Mapping[str, Any]], config: Mapping[str, Any]) -> dict[str, Any]:
     """``GET /api/wall``. Pure: ``clips`` are the store's clip records (with ``kind``)."""
     hazard = _pick(clips, "hazard", config["hazard_clips"])
-    blindspot = _pick(clips, "blindspot", config["blindspot_clips"])
+    blindspot = (
+        _pick(clips, "blindspot", config["blindspot_clips"])
+        if config.get("show_blindspot", True)
+        else []
+    )
     return {
         "title": config["title"],
         "hazard_title": config["hazard_title"],

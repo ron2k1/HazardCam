@@ -183,12 +183,12 @@ export function SiteWall() {
           <NotificationTray items={notifications} watching={watching} />
         </div>
 
-        <main className="flex min-h-0 min-w-0 flex-1 flex-col gap-3" data-testid="camera-wall">
+        <main className={cn("flex min-h-0 min-w-0 flex-1 flex-col gap-3", blindCams.length ? "" : "justify-center")} data-testid="camera-wall">
           {config === null ? (
             <RowMessage text={offline ? "Can't reach the camera system. Trying again…" : "Connecting to the cameras…"} />
           ) : (
             <>
-              <section aria-label={hazardTitle} className="flex min-h-0 flex-1 flex-col" data-testid="hazard-row">
+              <section aria-label={hazardTitle} className={cn("flex min-h-0 flex-col", blindCams.length ? "flex-1" : "")} data-testid="hazard-row">
                 <RowTitle title={hazardTitle} cams={hazardCams} className="px-0.5" />
                 {hazardCams.length ? (
                   <div className="grid min-h-0 flex-1 grid-cols-1 gap-2 md:grid-cols-3">
@@ -201,6 +201,7 @@ export function SiteWall() {
                 )}
               </section>
 
+              {blindCams.length ? (
               <section
                 aria-label={blindTitle}
                 className="relative flex min-h-0 flex-1 flex-col border border-line bg-panel/40"
@@ -222,6 +223,7 @@ export function SiteWall() {
                   </div>
                 )}
               </section>
+              ) : null}
             </>
           )}
         </main>

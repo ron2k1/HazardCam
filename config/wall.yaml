@@ -14,6 +14,8 @@ blindspot_watch_label: BLIND SPOT
 # clip in id order (at most three). Ids that are not staged are skipped.
 hazard_clips: []
 blindspot_clips: []
+# false hides the blind-spot row (hazard-only demo); the clips stay on /hazards.
+show_blindspot: false
 
 # When each tile's automatic check starts, in seconds after the wall loads.
 # 1.5 s apart (CAM 1, 4, 2, 5, 3, 6) so all six detections land within about 25 s.

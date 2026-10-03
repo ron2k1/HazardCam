@@ -304,7 +304,9 @@ class SiteService:
             stored = self.latest_completed()
             if stored is None:
                 raise LookupError("no completed site run to replay")
-            run = SiteRun(f"site-{uuid.uuid4().hex[:10]}", stored["cams"], "replay")
+            on_wall = {t["clip_id"] for t in self.tiles()}
+            cams = [c for c in stored["cams"] if c.get("clip_id") in on_wall]
+            run = SiteRun(f"site-{uuid.uuid4().hex[:10]}", cams, "replay")
             target: Callable[[], None] = lambda: self._replay(run, stored)
         else:
             if self.lead_runner is None:
@@ -549,6 +551,8 @@ class SiteService:
                 run.say(data.get("text", ""), data.get("kind", "say"))
             elif event == "checker":
                 cam = int(data["cam"])
+                if cam not in run.checkers:
+                    continue  # not on the wall now
                 if data["state"] == "running" and cam not in jobs:
                     jobs[cam] = self._start_checker(run, cam, data["clip_id"], mode="replay") or ""
                 # terminal checker state arrives through the replay job's watcher
@@ -556,13 +560,16 @@ class SiteService:
                 run.alerts = [
                     {**a, "job_id": jobs.get(int(a["cam"]), a.get("job_id"))}
                     for a in data["alerts"]
+                    if int(a["cam"]) in run.checkers
                 ]
                 run.alerts_source = data.get("alerts_source", "lead")
                 run.emit("alerts", {"alerts": run.alerts, "alerts_source": run.alerts_source})
         if run.alerts is None:
             stored_alerts = stored.get("alerts") or []
             run.alerts = [
-                {**a, "job_id": jobs.get(int(a["cam"]), a.get("job_id"))} for a in stored_alerts
+                {**a, "job_id": jobs.get(int(a["cam"]), a.get("job_id"))}
+                for a in stored_alerts
+                if int(a["cam"]) in run.checkers
             ]
             run.alerts_source = stored.get("alerts_source")
         deadline = time.monotonic() + max(60.0, self.replay_seconds * 4)
