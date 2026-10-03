@@ -36,3 +36,9 @@ This task must be performed on event day. Do not copy a prebuilt finished agent/
 ## Fresh-build requirement
 
 Implement the OpenClaw-specific portion for this task from the current repository state during the event-day session. Reuse already-tested ordinary libraries/interfaces, but do not source or copy a prewritten hidden OpenClaw implementation from outside the event-day working tree. Record commands/tests in `artifacts/event_day/workers/`.
+
+## Operator addendum (added on event day, 2026-10-03)
+
+- The operator registers Telegram with `nemoclaw ambient-mirror channels add telegram` (token typed into a hidden prompt, never into chat or files). Wire the D00 alert to that channel, keep egress to the Telegram preset only, and capture `nemoclaw ambient-mirror channels status --channel telegram` (it prints no secrets) in `artifacts/event_day/`.
+- When Telegram is unreachable the run must still complete and the UI must show the alert as skipped, not failed.
+- Host model servers are published on `127.0.0.1` and on the OpenShell bridge gateway `172.18.0.1` (Qwen :8000 is the agent brain via `inference.local`; Cosmos-Reason2-8B on :8001 fills the reasoning slot, a user-approved deviation from Mistral because the bundle has no Mistral weights). Record this in `config/models/gb10.yaml` and the worker report.
