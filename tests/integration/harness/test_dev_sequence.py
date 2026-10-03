@@ -9,7 +9,13 @@ import json
 
 import pytest
 
-from apps.api.schemas import EVENT_TYPES, TERMINAL_EVENT_TYPES, Hypothesis, validate_json
+from apps.api.schemas import (
+    ALERT_EVENT_TYPES,
+    EVENT_TYPES,
+    TERMINAL_EVENT_TYPES,
+    Hypothesis,
+    validate_json,
+)
 from harness.dev_sequence import HARNESS_ID, SEQUENCE, run_dev_sequence_detailed
 from tools.session import TOOL_NAMES, ToolCallError
 from tools.submit import NOT_DIRECTLY_VISIBLE, submit_hypothesis
@@ -49,7 +55,8 @@ def test_full_sequence_covers_the_catalog_and_declares_no_agent(
 ):
     result, events = _run(scenario, consistent, media_root, tmp_path / "run")
     types = [t for t, _ in events]
-    assert set(types) == set(EVENT_TYPES) - TERMINAL_EVENT_TYPES
+    # Terminal and alert events come from the run manager, not the harness.
+    assert set(types) == set(EVENT_TYPES) - TERMINAL_EVENT_TYPES - ALERT_EVENT_TYPES
     assert types[:2] == ["run.started", "orchestrator.started"]
     assert events[0][1]["harness"] == HARNESS_ID == "dev-sequence"
     assert events[1][1] == {"harness": HARNESS_ID, "agent": False, "sequence": list(SEQUENCE)}

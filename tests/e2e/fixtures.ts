@@ -169,6 +169,10 @@ export const ui = (page: Page) => ({
   traceRows: page.locator("li[data-tool]"),
   plannedTools: page.getByRole("list", { name: "Planned tool sequence" }).locator("li > span:first-child"),
   groundTruth: page.getByTestId("ground-truth"),
+  /** "Technical details" switch, in both views. */
+  viewToggle: page.getByRole("switch", { name: "Technical details" }),
+  worker: page.getByTestId("worker-view"),
+  cards: page.getByTestId("alert-card"),
   healthRow: (k: string) => page.locator(`[data-health-row="${k}"]`),
   video: (cameraId: string) => page.locator(`figure[data-camera-id="${cameraId}"] video`),
 });
@@ -183,11 +187,21 @@ export function meta(panel: Locator, unit: string): Locator {
 }
 
 /**
- * /ops once the API answered and the scenario list loaded, with `profile` chosen for the next
- * run. The page offers fixture plus the API's default profile (MODEL_PROFILE), nothing else.
+ * `query` with the technical console selected (?view=technical), unless it already picks a
+ * view. /ops opens the plain worker view by default; the console checks need the technical one.
+ */
+export function technicalView(query = ""): string {
+  if (/[?&]view=/.test(query)) return query;
+  return query ? `${query}&view=technical` : "?view=technical";
+}
+
+/**
+ * /ops in the technical view once the API answered and the scenario list loaded, with `profile`
+ * chosen for the next run. The page offers fixture plus the API's default profile
+ * (MODEL_PROFILE), nothing else.
  */
 export async function openOps(page: Page, query = "", profile = "fixture"): Promise<void> {
-  await page.goto(`/ops${query}`);
+  await page.goto(`/ops${technicalView(query)}`);
   const u = ui(page);
   await expect(u.healthRow("API")).toHaveAttribute("data-status", "online");
   await expect(u.select).toBeEnabled();

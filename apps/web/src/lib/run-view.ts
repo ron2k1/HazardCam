@@ -2,18 +2,22 @@
  * Pure SSE -> view-state reducer. The mock replays contract examples through it, and the
  * live path (P11) can feed EventSource envelopes through the same function.
  */
-import type {
-  EvidenceCluster,
-  EvidenceItem,
-  Hypothesis,
-  Observation,
-  PublicCamera,
-  Ray,
-  RegionCandidate,
-  RunState,
-  SampledFrame,
-  SseEnvelope,
-  ToolSummary,
+import {
+  normalizeAlertDelivery,
+  normalizeAlertMessage,
+  type AlertDelivery,
+  type AlertMessage,
+  type EvidenceCluster,
+  type EvidenceItem,
+  type Hypothesis,
+  type Observation,
+  type PublicCamera,
+  type Ray,
+  type RegionCandidate,
+  type RunState,
+  type SampledFrame,
+  type SseEnvelope,
+  type ToolSummary,
 } from "./contracts";
 
 export type CameraPhase = "idle" | "sampling" | "analyzing" | "complete";
@@ -74,6 +78,10 @@ export interface RunView {
   hypothesisFinal: boolean;
   durationMs: number | null;
   failure: { stage: string; error: string } | null;
+  /** alert.message, in arrival order; a repeated id replaces the message in place. */
+  messages: AlertMessage[];
+  /** Latest alert.delivery per message id. */
+  deliveries: Record<string, AlertDelivery>;
 }
 
 export const EMPTY_RUN_VIEW: RunView = {
@@ -97,6 +105,8 @@ export const EMPTY_RUN_VIEW: RunView = {
   hypothesisFinal: false,
   durationMs: null,
   failure: null,
+  messages: [],
+  deliveries: {},
 };
 
 function emptyCamera(): CameraRunState {
@@ -258,6 +268,18 @@ export function applyEvent(view: RunView, env: SseEnvelope): RunView {
         hypothesisFinal: true,
         durationMs: env.payload.duration_ms,
       };
+    case "alert.message": {
+      // shape-checked here: parseEnvelope only knows the payload is an object
+      const msg = normalizeAlertMessage((env.payload as { message?: unknown }).message);
+      if (!msg) return base;
+      const at = view.messages.findIndex((m) => m.id === msg.id);
+      const messages = at === -1 ? [...view.messages, msg] : view.messages.map((m, i) => (i === at ? msg : m));
+      return { ...base, messages };
+    }
+    case "alert.delivery": {
+      const d = normalizeAlertDelivery(env.payload);
+      return d ? { ...base, deliveries: { ...view.deliveries, [d.message_id]: d } } : base;
+    }
     case "run.failed":
       return { ...base, phase: "failed", failure: env.payload };
     default:

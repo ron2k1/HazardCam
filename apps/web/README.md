@@ -36,20 +36,26 @@ Turbopack cannot import files outside the app root, so the contract examples are
 ## Routes
 
 - `/`: landing.
-- `/ops`: run console on the local API (`OpsLive`). `?scenario=<id>` preselects a scenario; `?pace=<s>` (0-5) slows a run for a demo.
+- `/ops`: run console on the local API (`OpsLive`). `?scenario=<id>` preselects a scenario; `?pace=<s>` (0-5) slows a run for a demo; `?profile=<name>` preselects the run profile when the API offers it (fixture, or the API's own `MODEL_PROFILE`), otherwise fixture.
+  - The default is the **worker view** (`src/components/ops/worker-view.tsx`): plain-language alert cards from the `alert.message` / `alert.delivery` SSE events, the camera videos with friendly names ("Camera B"), one Run button and a progress line built from camera and tool events. It shows no ids, coordinates, scores or model prose. It has no profile select, so it runs fixture (tagged "Recorded results") unless the profile is chosen with `?profile=` (e.g. `/ops?profile=gb10`) or in the technical view.
+  - A card leads with its kind and, for a heads-up or alert, the urgency in words ("Check soon"), then the headline and "What to do" straight under it. Once the run's final message is in, the heads-up turns quiet ("Checked. See the result below.") and folds its rows away.
+  - A card shows a delivery line only for `sent` or `failed`, in fixed words (the delivery `detail` is never shown); with no Telegram channel connected (`not_connected`, this build) the alert is on screen only and no line is shown (the status stays in the card's `data-delivery`).
+  - `?view=technical` (or the "Technical details" switch, which also remembers the choice in localStorage) opens the full technical console: hypothesis, blind-zone plan, trace, stack health, ground-truth reveal.
 - `/ops?mock`: `OpsMock`, which replays `contracts/examples` through the live reducer with no network (design checks).
   - `/ops?mock=abstain`: the abstain hypothesis.
   - `/ops?mock=idle`: an empty console before any run.
 
 ## How `/ops` uses the API (P11)
 
-`OpsConsole` (`src/components/ops/ops-console.tsx`) is prop-driven. `OpsLive` (`src/components/ops/ops-live.tsx`) feeds it:
+`OpsScreen` (`src/components/ops/ops-screen.tsx`) mounts either `WorkerView` or `OpsConsole` (`src/components/ops/ops-console.tsx`); both are prop-driven from the same props. `OpsLive` (`src/components/ops/ops-live.tsx`) feeds them:
 
 - `scenarios` and `scenario`: from `GET /api/scenarios` (`ScenarioList`) and `GET /api/scenarios/{id}` (`PublicScenario`).
 - `view`: reduce SSE envelopes into a `RunView`:
   - `const env = parseEnvelope(e.data); if (env) view = applyEvent(view, env);` (`parseEnvelope` from `src/lib/contracts.ts` takes the raw `data` string and returns `null` for a malformed envelope; `applyEvent` from `src/lib/run-view.ts`).
   - Start from `EMPTY_RUN_VIEW`.
   - The reducer drops other run ids and `seq <= lastSeq`, so `Last-Event-ID` replays are safe.
+  - `alert.message` messages are kept in arrival order (a repeated id replaces in place) and `alert.delivery` per message id; both are shape-checked (`normalizeAlertMessage` / `normalizeAlertDelivery`), so a malformed one is dropped instead of breaking the view.
+  - Worker text goes through `plainText` (`src/lib/plain.ts`) as a second line of defence. It never rewrites: the server already writes plain text, and a sentence that still holds an id, snake_case name, coordinate, bearing, score, decimal, URL, path or jargon is hidden whole (`plainOr` falls back for a headline or label).
 - `health`: from `GET /api/models/health?profile=` (`ModelsHealth`).
 - `apiStatus` and `apiDetail`: from `GET /healthz` (`ServiceHealth`).
 - `judge`: from `GET /api/judge/scenarios/{id}` (`JudgeGroundTruth`). Fetch it only for the reveal action.

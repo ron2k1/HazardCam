@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import type { ViewMode } from "@/hooks/use-view-mode";
 import { applyEvent, EMPTY_RUN_VIEW, replayEvents, type RunView } from "@/lib/run-view";
 import {
   buildMockEvents,
@@ -13,7 +14,7 @@ import {
   type MockVariant,
 } from "@/mocks/mock";
 
-import { OpsConsole } from "./ops-console";
+import { OpsScreen } from "./ops-screen";
 
 export type OpsMockState = MockVariant | "idle";
 
@@ -23,9 +24,17 @@ const STEP_MS = 140;
 
 /**
  * Standalone /ops: replays the contract-example event log through the same reducer the live
- * SSE path uses. No network. P11 swaps this container for the live one; OpsConsole is shared.
+ * SSE path uses. No network. P11 swaps this container for the live one; OpsScreen (worker view
+ * and technical console) is shared.
  */
-export function OpsMock({ initial = "default" }: { initial?: OpsMockState }) {
+export function OpsMock({
+  initial = "default",
+  initialView = null,
+}: {
+  initial?: OpsMockState;
+  /** ?view= as the server read it (worker by default). */
+  initialView?: ViewMode | null;
+}) {
   const variant: MockVariant = initial === "abstain" ? "abstain" : "default";
   const [view, setView] = useState<RunView>(() =>
     initial === "idle" ? EMPTY_RUN_VIEW : replayEvents(buildMockEvents(variant)),
@@ -57,7 +66,8 @@ export function OpsMock({ initial = "default" }: { initial?: OpsMockState }) {
   };
 
   return (
-    <OpsConsole
+    <OpsScreen
+      initialView={initialView}
       scenarios={mockScenarios}
       scenario={mockScenario}
       view={view}

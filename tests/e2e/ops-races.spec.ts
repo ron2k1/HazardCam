@@ -224,7 +224,7 @@ test("leaving /ops while the run request is in flight [fixture]: no event stream
   await u.run.click();
   await expect.poll(() => post.held.length).toBe(1);
   // client-side navigation: the page's JS (and the pending POST) outlives the /ops tree
-  await page.getByRole("link", { name: "AMBIENT/MIRROR" }).click();
+  await page.getByRole("link", { name: "CameraVision" }).click();
   await expect(page).toHaveURL(`${WEB_URL}/`);
   post.release();
   expect((await answered).status()).toBe(202);

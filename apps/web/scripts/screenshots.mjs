@@ -59,9 +59,36 @@ try {
     report.checks.enterSystemHref = await page.getByRole("link", { name: "ENTER SYSTEM" }).getAttribute("href");
     await ctx.close();
   }
-  // ops mock, default (contract-example replay; /ops itself is the live console)
+  // ops mock, worker view (the /ops default): plain message cards, no internal ids
   {
     const { ctx, page } = await open(browser, "/ops?mock=default");
+    await shot(page, "ops-worker-1440x900");
+    report.checks.workerCards = await page.getByTestId("alert-card").evaluateAll((els) => els.map((e) => e.dataset.kind));
+    const workerText = await page.getByTestId("worker-view").innerText();
+    report.checks.workerLeaks = workerText.match(/cam_|region_|hypothesis|evidence|°|\b\d+\.\d+\b/gi) ?? [];
+    await page.getByTestId("show-on-video").last().click();
+    await page.waitForTimeout(500);
+    report.checks.workerShowOnVideo = await page.locator("figure[data-highlighted]").count();
+    await shot(page, "ops-worker-shown-1440x900");
+    await ctx.close();
+  }
+  for (const [q, name] of [
+    ["abstain", "ops-worker-abstain-1440x900"],
+    ["idle", "ops-worker-idle-1440x900"],
+  ]) {
+    const { ctx, page } = await open(browser, `/ops?mock=${q}`);
+    await shot(page, name);
+    await ctx.close();
+  }
+  {
+    const { ctx, page } = await open(browser, "/ops?mock=default", { width: 390, height: 844 });
+    await shot(page, "ops-worker-390x844");
+    report.checks.overflowX_worker_390 = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
+    await ctx.close();
+  }
+  // ops mock, technical view (contract-example replay; /ops itself is the live console)
+  {
+    const { ctx, page } = await open(browser, "/ops?mock=default&view=technical");
     await shot(page, "ops-1440x900");
     report.checks.cameraTiles = await page.locator("[data-testid=camera-grid] figure").count();
     report.checks.gtLabel = await page.getByText("JUDGE GROUND TRUTH — NOT MODEL INPUT").count();
@@ -97,7 +124,7 @@ try {
     ["abstain", "ops-abstain-1440x900"],
     ["idle", "ops-idle-1440x900"],
   ]) {
-    const { ctx, page } = await open(browser, `/ops?mock=${q}`);
+    const { ctx, page } = await open(browser, `/ops?mock=${q}&view=technical`);
     await shot(page, name);
     await ctx.close();
   }
@@ -106,10 +133,14 @@ try {
     [1920, 1080],
     [1280, 800],
   ]) {
-    const { ctx, page } = await open(browser, "/ops?mock=default", { width: w, height: h });
+    const { ctx, page } = await open(browser, "/ops?mock=default&view=technical", { width: w, height: h });
     await shot(page, `ops-${w}x${h}`);
     report.checks[`overflowX_${w}`] = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
     await ctx.close();
+    const wv = await open(browser, "/ops?mock=default", { width: w, height: h });
+    await shot(wv.page, `ops-worker-${w}x${h}`);
+    report.checks[`overflowX_worker_${w}`] = await wv.page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
+    await wv.ctx.close();
     const l = await open(browser, "/", { width: w, height: h });
     await shot(l.page, `landing-${w}x${h}`);
     await l.ctx.close();

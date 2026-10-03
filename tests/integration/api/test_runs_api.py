@@ -22,6 +22,9 @@ GT_FILE = "data/prepared/scenario_001/" + GT_BASENAME
 FIXTURES_DIR = REPO_ROOT / "data" / "fixtures"
 FIXTURE_HYPOTHESIS = json.loads((FIXTURES_DIR / "final_hypothesis.json").read_text("utf-8"))
 CAMERA_TOOLS = {"sample_video", "inspect_camera"}
+# FIXTURE_HYPOTHESIS is a confident real event: the manager closes it with an alert message
+# and, with no Telegram-capable executor, a not_connected delivery.
+CLOSING_ALERT = ["alert.message", "alert.delivery"]
 
 
 async def _finished_run(start_run, read_events, **body):
@@ -162,8 +165,8 @@ async def test_live_subscriber_gets_events_emitted_after_it_connects(
     gate.set()
     _, messages = await stream
     types = [m["data"]["type"] for m in messages]
-    assert types == ["run.started", *["camera.started"] * 3, "run.complete"]
-    assert [m["data"]["seq"] for m in messages] == [1, 2, 3, 4, 5]
+    assert types == ["run.started", *["camera.started"] * 3, *CLOSING_ALERT, "run.complete"]
+    assert [m["data"]["seq"] for m in messages] == [1, 2, 3, 4, 5, 6, 7]
 
 
 async def test_keepalive_pings_while_idle(app, start_run, read_events):
@@ -181,7 +184,7 @@ async def test_keepalive_pings_while_idle(app, start_run, read_events):
     gate.set()
     response, messages = await stream
     assert ": ping" in response.text
-    assert [m["data"]["type"] for m in messages] == ["run.complete"]
+    assert [m["data"]["type"] for m in messages] == [*CLOSING_ALERT, "run.complete"]
 
 
 async def test_failing_executor_emits_run_failed(app, client, start_run, read_events):
@@ -229,6 +232,11 @@ async def test_executor_cannot_publish_terminal_or_gt_events(app, start_run, rea
             "unknown": ("camera.exploded", {}),
             "gt_id": ("camera.started", {"camera_id": GT_ID}),
             "gt_path": ("camera.frames.sampled", {"camera_id": "cam_01", "src": GT_FILE}),
+            "alert": ("alert.message", {}),
+            "stray_delivery": (
+                "alert.delivery",
+                {"message_id": "msg_01", "channel": "telegram", "status": "sent", "detail": None},
+            ),
         }.items():
             try:
                 emit(*args)
@@ -244,9 +252,15 @@ async def test_executor_cannot_publish_terminal_or_gt_events(app, start_run, rea
         "unknown": "ValueError",
         "gt_id": "GroundTruthAccessError",
         "gt_path": "GroundTruthAccessError",
+        "alert": "ValueError",
+        "stray_delivery": "ValueError",
     }
-    assert [m["data"]["type"] for m in messages] == ["camera.started", "run.complete"]
-    assert [m["data"]["seq"] for m in messages] == [1, 2]
+    assert [m["data"]["type"] for m in messages] == [
+        "camera.started",
+        *CLOSING_ALERT,
+        "run.complete",
+    ]
+    assert [m["data"]["seq"] for m in messages] == [1, 2, 3, 4]
 
 
 async def test_hypothesis_citing_gt_camera_fails_the_run(app, start_run, read_events):

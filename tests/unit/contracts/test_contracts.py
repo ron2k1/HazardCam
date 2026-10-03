@@ -11,7 +11,10 @@ from jsonschema import ValidationError
 from pydantic import ValidationError as PydanticError
 
 from apps.api.schemas import (
+    LINE_LABELS,
     REPO_ROOT,
+    AlertDelivery,
+    AlertMessage,
     EvidenceBundle,
     GroundTruthAccessError,
     Hypothesis,
@@ -22,8 +25,11 @@ from apps.api.schemas import (
     Scenario,
     SseEnvelope,
     is_valid,
+    load_schema,
     validate_json,
 )
+from apps.api.schemas.contracts import def_validator
+from apps.api.services.alert_messages import load_alert_config, render_text
 
 EXAMPLES = REPO_ROOT / "contracts" / "examples"
 
@@ -37,6 +43,13 @@ EXAMPLE_CONTRACTS = {
     "run.json": ("run", RunRecord),
     "sse_event.json": ("sse_envelope", SseEnvelope),
 }
+# Alert payload examples: ``$defs`` of the SSE envelope contract (the web mock imports them).
+ALERT_EXAMPLES = {
+    "alert_message.json": ("alert_message", AlertMessage),
+    "alert_message_ping.json": ("alert_message", AlertMessage),
+    "alert_message_unconfirmed.json": ("alert_message", AlertMessage),
+    "alert_delivery.json": ("alert_delivery", AlertDelivery),
+}
 
 
 def _load(path: Path) -> dict:
@@ -49,7 +62,38 @@ def scenario_doc() -> dict:
 
 
 def test_every_example_is_covered():
-    assert {p.name for p in EXAMPLES.glob("*.json")} == set(EXAMPLE_CONTRACTS)
+    assert {p.name for p in EXAMPLES.glob("*.json")} == set(EXAMPLE_CONTRACTS) | set(ALERT_EXAMPLES)
+
+
+@pytest.mark.parametrize("filename", sorted(ALERT_EXAMPLES))
+def test_alert_example_validates_and_round_trips(filename):
+    def_name, model = ALERT_EXAMPLES[filename]
+    doc = _load(EXAMPLES / filename)
+    def_validator("sse_envelope", def_name).validate(doc)
+    parsed = model.model_validate(doc)
+    def_validator("sse_envelope", def_name).validate(parsed.model_dump(mode="json"))
+    if model is AlertMessage:
+        envelope = {
+            "run_id": "run_example",
+            "seq": 1,
+            "ts": "2026-10-02T12:00:00.000Z",
+            "type": "alert.message",
+            "payload": {"message": doc},
+        }
+        validate_json("sse_envelope", envelope)
+        SseEnvelope.model_validate(envelope)
+        # text = "<URGENCY> — <headline>" (the headline alone when calm), "What to do", the
+        # other "<label>: <value>" rows in order, then "— <product>"
+        config = load_alert_config()
+        rows = doc["text"].split("\n")
+        urgent = doc["kind"] in ("ping", "alert")
+        level_word = config.level_word(doc["level"])
+        assert rows[0] == (f"{level_word} — {doc['headline']}" if urgent else doc["headline"])
+        todo = [line for line in doc["lines"] if line["key"] == "what_to_do"]
+        rest = [line for line in doc["lines"] if line["key"] != "what_to_do"]
+        assert rows[1:-1] == [f"{line['label']}: {line['value']}" for line in [*todo, *rest]]
+        assert rows[-1] == f"— {config.product}"
+        assert doc["text"] == render_text(doc, config)
 
 
 @pytest.mark.parametrize("filename", sorted(EXAMPLE_CONTRACTS))
@@ -207,3 +251,80 @@ def test_sse_envelope_rejects_unknown_type_and_zero_seq():
     assert not is_valid("sse_envelope", {**doc, "seq": 0})
     with pytest.raises(PydanticError):
         SseEnvelope.model_validate({**doc, "type": "agent.thought"})
+
+
+# --- alert payloads ---------------------------------------------------------------------
+
+
+def _alert_envelope(event_type: str, payload: dict) -> dict:
+    return {
+        "run_id": "run_example",
+        "seq": 3,
+        "ts": "2026-10-02T12:00:00.000Z",
+        "type": event_type,
+        "payload": payload,
+    }
+
+
+def _bad_messages() -> dict[str, dict]:
+    good = _load(EXAMPLES / "alert_message.json")
+    cases = {
+        "unknown kind": {**good, "kind": "panic"},
+        "unknown level": {**good, "level": "critical"},
+        "bad id": {**good, "id": "message-2"},
+        "extra field": {**good, "reason": "cam_b.o1 bearing 350.3"},
+        "missing text": {k: v for k, v in good.items() if k != "text"},
+        "no lines": {**good, "lines": []},
+        "label mismatch": {**good, "lines": [{**good["lines"][0], "label": "Where"}]},
+        "unknown line key": {**good, "lines": [{"key": "score", "label": "Score", "value": "1"}]},
+        "local timestamp": {**good, "created_at": "2026-10-02T12:00:07+02:00"},
+    }
+    return cases
+
+
+@pytest.mark.parametrize("case", sorted(_bad_messages()))
+def test_alert_message_violations_rejected_by_schema_and_model(case):
+    bad = _bad_messages()[case]
+    assert not is_valid("sse_envelope", _alert_envelope("alert.message", {"message": bad}))
+    with pytest.raises(PydanticError):
+        AlertMessage.model_validate(bad)
+    with pytest.raises(PydanticError):
+        SseEnvelope.model_validate(_alert_envelope("alert.message", {"message": bad}))
+
+
+def test_alert_message_duplicate_line_keys_and_time_order_rejected():
+    good = _load(EXAMPLES / "alert_message.json")
+    with pytest.raises(PydanticError):
+        AlertMessage.model_validate({**good, "lines": [good["lines"][0], good["lines"][0]]})
+    with pytest.raises(PydanticError):
+        AlertMessage.model_validate({**good, "t_start": 9.0, "t_end": 8.0})
+
+
+@pytest.mark.parametrize(
+    "bad",
+    [
+        {"message_id": "msg_02", "channel": "sms", "status": "sent", "detail": None},
+        {"message_id": "msg_02", "channel": "telegram", "status": "delivered", "detail": None},
+        {"message_id": "msg_02", "channel": "telegram", "status": "sent"},
+        {"message_id": "msg_02", "channel": "telegram", "status": "failed", "detail": "x" * 201},
+    ],
+)
+def test_alert_delivery_violations_rejected(bad):
+    assert not is_valid("sse_envelope", _alert_envelope("alert.delivery", bad))
+    if "detail" in bad:  # pydantic defaults a missing detail to null
+        with pytest.raises(PydanticError):
+            AlertDelivery.model_validate(bad)
+
+
+def test_alert_payload_checks_apply_only_to_alert_types():
+    doc = _load(EXAMPLES / "sse_event.json")
+    assert is_valid("sse_envelope", doc)
+    assert not is_valid("sse_envelope", {**doc, "type": "alert.message"})
+    with pytest.raises(PydanticError):
+        SseEnvelope.model_validate({**doc, "type": "alert.delivery"})
+
+
+def test_line_labels_match_the_schema():
+    one_of = load_schema("sse_envelope")["$defs"]["alert_line"]["oneOf"]
+    pairs = {o["properties"]["key"]["const"]: o["properties"]["label"]["const"] for o in one_of}
+    assert pairs == LINE_LABELS

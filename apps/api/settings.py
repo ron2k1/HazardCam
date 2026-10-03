@@ -21,6 +21,7 @@ _PATH_ENV = {
     "runs_dir": "AUM_RUNS_DIR",
     "media_root": "AUM_MEDIA_ROOT",
     "models_dir": "AUM_MODELS_DIR",
+    "alerts_config": "AUM_ALERTS_CONFIG",
 }
 
 
@@ -35,13 +36,17 @@ class Settings(BaseModel):
     # Scenario camera ``file`` values are resolved against this directory.
     media_root: Path = Path(".")
     models_dir: Path = Path("config/models")
+    # Plain-language alert wording (labels, levels, actions, which cues ping).
+    alerts_config: Path = Path("config/alerts.yaml")
     model_profile: str = "fixture"
     cors_origins: list[str] = Field(default_factory=lambda: list(DEFAULT_CORS_ORIGINS))
     default_pace_s: float = Field(default=0.0, ge=0, le=5)
     sse_ping_s: float = Field(default=15.0, gt=0)
     model_probe_timeout_s: float = Field(default=2.0, gt=0)
 
-    @field_validator("manifests_dir", "prepared_dir", "runs_dir", "media_root", "models_dir")
+    @field_validator(
+        "manifests_dir", "prepared_dir", "runs_dir", "media_root", "models_dir", "alerts_config"
+    )
     @classmethod
     def _anchor_to_repo(cls, value: Path) -> Path:
         value = Path(value).expanduser()

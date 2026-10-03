@@ -25,7 +25,7 @@ const mono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "AMBIENT MIRROR",
+  title: "CameraVision",
   description: "Causal intelligence from distributed visual evidence.",
 };
 

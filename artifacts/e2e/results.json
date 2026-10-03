@@ -1,14 +1,14 @@
 {
   "config": {
     "argv": [
-      "C:\\Program Files\\nodejs\\node.exe",
-      "C:\\Users\\thegr\\OneDrive\\Desktop\\nvidia hackathon\\ambient-mirror-ultracode-prebuild-v3\\apps\\web\\node_modules\\.pnpm\\@playwright+test@1.63.0\\node_modules\\@playwright\\test\\cli.js",
+      "/home/dell/.local/opt/node-v24.21.0-linux-arm64/bin/node",
+      "/home/dell/ambient-urban-mirror/apps/web/node_modules/@playwright/test/cli.js",
       "test",
       "-c",
       "../../tests/e2e/playwright.config.ts"
     ],
-    "configFile": "C:\\Users\\thegr\\OneDrive\\Desktop\\nvidia hackathon\\ambient-mirror-ultracode-prebuild-v3\\tests\\e2e\\playwright.config.ts",
-    "rootDir": "C:/Users/thegr/OneDrive/Desktop/nvidia hackathon/ambient-mirror-ultracode-prebuild-v3/tests/e2e",
+    "configFile": "/home/dell/ambient-urban-mirror/tests/e2e/playwright.config.ts",
+    "rootDir": "/home/dell/ambient-urban-mirror/tests/e2e",
     "failOnFlakyTests": false,
     "forbidOnly": false,
     "fullyParallel": false,
@@ -24,7 +24,7 @@
     "preserveOutput": "always",
     "projects": [
       {
-        "outputDir": "C:/Users/thegr/OneDrive/Desktop/nvidia hackathon/ambient-mirror-ultracode-prebuild-v3/tests/e2e/test-results",
+        "outputDir": "/home/dell/ambient-urban-mirror/tests/e2e/test-results",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
@@ -32,7 +32,7 @@
         },
         "id": "chromium",
         "name": "chromium",
-        "testDir": "C:/Users/thegr/OneDrive/Desktop/nvidia hackathon/ambient-mirror-ultracode-prebuild-v3/tests/e2e",
+        "testDir": "/home/dell/ambient-urban-mirror/tests/e2e",
         "testIgnore": [],
         "testMatch": [
           "**/*.@(spec|test).?(c|m)[jt]s?(x)"
@@ -49,7 +49,7 @@
       [
         "json",
         {
-          "outputFile": "C:\\Users\\thegr\\OneDrive\\Desktop\\nvidia hackathon\\ambient-mirror-ultracode-prebuild-v3\\artifacts\\e2e\\results.json"
+          "outputFile": "/home/dell/ambient-urban-mirror/artifacts/e2e/results.json"
         }
       ]
     ],
@@ -88,12 +88,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3968,
+                  "duration": 3918,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T19:31:59.215Z",
+                  "startTime": "2026-10-03T18:06:13.538Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -122,12 +122,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2593,
+                  "duration": 2579,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T19:32:03.259Z",
+                  "startTime": "2026-10-03T18:06:17.526Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -156,12 +156,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2133,
+                  "duration": 2112,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T19:32:05.858Z",
+                  "startTime": "2026-10-03T18:06:20.110Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -190,12 +190,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 116,
+                  "duration": 140,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T19:32:07.997Z",
+                  "startTime": "2026-10-03T18:06:22.229Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -232,12 +232,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3141,
+                  "duration": 3047,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T19:32:08.124Z",
+                  "startTime": "2026-10-03T18:06:22.382Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -266,12 +266,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3327,
+                  "duration": 2973,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T19:32:11.271Z",
+                  "startTime": "2026-10-03T18:06:25.436Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -300,12 +300,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3807,
+                  "duration": 3539,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T19:32:14.605Z",
+                  "startTime": "2026-10-03T18:06:28.417Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -334,12 +334,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3835,
+                  "duration": 3707,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T19:32:18.418Z",
+                  "startTime": "2026-10-03T18:06:31.964Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -368,12 +368,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3421,
+                  "duration": 3161,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T19:32:22.260Z",
+                  "startTime": "2026-10-03T18:06:35.681Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -402,12 +402,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2169,
+                  "duration": 2069,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T19:32:25.689Z",
+                  "startTime": "2026-10-03T18:06:38.852Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -444,12 +444,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 4812,
+                  "duration": 4650,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T19:32:27.871Z",
+                  "startTime": "2026-10-03T18:06:40.936Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -478,12 +478,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 14756,
+                  "duration": 14720,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T19:32:32.690Z",
+                  "startTime": "2026-10-03T18:06:45.594Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -512,12 +512,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 4759,
+                  "duration": 4679,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T19:32:47.454Z",
+                  "startTime": "2026-10-03T18:07:00.323Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -546,12 +546,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 531,
+                  "duration": 473,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T19:32:52.219Z",
+                  "startTime": "2026-10-03T18:07:05.010Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -580,12 +580,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 546,
+                  "duration": 493,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T19:32:52.757Z",
+                  "startTime": "2026-10-03T18:07:05.490Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -614,12 +614,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 10440,
+                  "duration": 10721,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T19:32:53.309Z",
+                  "startTime": "2026-10-03T18:07:05.991Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -648,12 +648,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2110,
+                  "duration": 1866,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T19:33:03.755Z",
+                  "startTime": "2026-10-03T18:07:16.720Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -682,12 +682,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2461,
+                  "duration": 2064,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T19:33:05.874Z",
+                  "startTime": "2026-10-03T18:07:18.593Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -716,12 +716,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3959,
+                  "duration": 3393,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T19:33:08.342Z",
+                  "startTime": "2026-10-03T18:07:20.661Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -750,12 +750,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 4005,
+                  "duration": 3418,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T19:33:12.309Z",
+                  "startTime": "2026-10-03T18:07:24.058Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -784,12 +784,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3065,
+                  "duration": 2890,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T19:33:16.322Z",
+                  "startTime": "2026-10-03T18:07:27.480Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -803,7 +803,7 @@
           "column": 5
         },
         {
-          "title": "/ops?mock=default still renders the offline mock and never calls the API",
+          "title": "/ops?mock=default&view=technical still renders the offline mock and never calls the API",
           "ok": true,
           "tags": [],
           "tests": [
@@ -818,12 +818,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 397,
+                  "duration": 303,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T19:33:19.393Z",
+                  "startTime": "2026-10-03T18:07:30.374Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -831,19 +831,479 @@
               "status": "expected"
             }
           ],
-          "id": "43873ff4c5a83e3f95e3-36606caf45d56462dc57",
+          "id": "43873ff4c5a83e3f95e3-69108984b6d6b9ab1274",
           "file": "ops-resilience.spec.ts",
           "line": 344,
           "column": 5
+        }
+      ]
+    },
+    {
+      "title": "ops-worker.spec.ts",
+      "file": "ops-worker.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "worker view (mock): plain alert cards by default, no ids or jargon, no API calls",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 459,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T18:07:31.062Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "28f1c3ac58cbc5420ea1-c396ef45e978a9200887",
+          "file": "ops-worker.spec.ts",
+          "line": 250,
+          "column": 5
+        },
+        {
+          "title": "worker view (mock): the Technical details switch flips views, lives in the URL and is remembered",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 713,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T18:07:31.527Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "28f1c3ac58cbc5420ea1-93436a6dd0ac4007e8bb",
+          "file": "ops-worker.spec.ts",
+          "line": 317,
+          "column": 5
+        },
+        {
+          "title": "worker view (mock): Run streams a plain progress line and the heads-up before the alert",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7115,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T18:07:32.246Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "28f1c3ac58cbc5420ea1-4144669c95b41bee5304",
+          "file": "ops-worker.spec.ts",
+          "line": 345,
+          "column": 5
+        },
+        {
+          "title": "worker view (mock abstain): a calm COULDN'T CONFIRM card, never an alarm",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 292,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T18:07:39.368Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "28f1c3ac58cbc5420ea1-8ab31d5ada3423735a89",
+          "file": "ops-worker.spec.ts",
+          "line": 365,
+          "column": 5
+        },
+        {
+          "title": "worker view (mock) at 390 px: one column, no horizontal scroll",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 215,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T18:07:39.668Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "28f1c3ac58cbc5420ea1-62fea67e30504082086b",
+          "file": "ops-worker.spec.ts",
+          "line": 386,
+          "column": 5
+        },
+        {
+          "title": "eval_001 worker view [fixture]: a plain alert card, Show on video seeks, nothing technical or withheld",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2158,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T18:07:39.892Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "28f1c3ac58cbc5420ea1-9e944d3019af463c9cbb",
+          "file": "ops-worker.spec.ts",
+          "line": 430,
+          "column": 5
+        },
+        {
+          "title": "eval_005 worker view [fixture]: the abstention reads COULDN'T CONFIRM with no action needed",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1692,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T18:07:42.058Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "28f1c3ac58cbc5420ea1-71b30df41a56e6522dc6",
+          "file": "ops-worker.spec.ts",
+          "line": 491,
+          "column": 5
+        },
+        {
+          "title": "eval_012 worker view [fixture]: no_event reads ALL CLEAR with nothing to do",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1629,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T18:07:43.756Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "28f1c3ac58cbc5420ea1-efac02bbf75d2cd66989",
+          "file": "ops-worker.spec.ts",
+          "line": 505,
+          "column": 5
+        }
+      ],
+      "suites": [
+        {
+          "title": "worker text and alert reducer (no page)",
+          "file": "ops-worker.spec.ts",
+          "line": 118,
+          "column": 6,
+          "specs": [
+            {
+              "title": "the leak check hides sentences that still leak and never rewrites plain ones",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 84,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T18:07:30.695Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "28f1c3ac58cbc5420ea1-2684a2ddb5edf96840c8",
+              "file": "ops-worker.spec.ts",
+              "line": 119,
+              "column": 7
+            },
+            {
+              "title": "camera names are friendly and never the raw id",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 81,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T18:07:30.786Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "28f1c3ac58cbc5420ea1-0525b17e1b833b149f08",
+              "file": "ops-worker.spec.ts",
+              "line": 173,
+              "column": 7
+            },
+            {
+              "title": "recording names drop dataset codes and read the date in words",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 52,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T18:07:30.871Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "28f1c3ac58cbc5420ea1-74a2b62c78aad82aebea",
+              "file": "ops-worker.spec.ts",
+              "line": 184,
+              "column": 7
+            },
+            {
+              "title": "alert.message keeps arrival order, replaces by id, drops malformed ones; alert.delivery is per message",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 62,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T18:07:30.928Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "28f1c3ac58cbc5420ea1-0f03d71161135a1336a0",
+              "file": "ops-worker.spec.ts",
+              "line": 193,
+              "column": 7
+            },
+            {
+              "title": "the progress line follows camera and tool events in plain words",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 63,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T18:07:30.994Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "28f1c3ac58cbc5420ea1-007a8fedb4e59cbbc4ae",
+              "file": "ops-worker.spec.ts",
+              "line": 223,
+              "column": 7
+            }
+          ]
         }
       ]
     }
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-10-02T19:31:51.944Z",
-    "duration": 88354.446,
-    "expected": 22,
+    "startTime": "2026-10-03T18:06:06.888Z",
+    "duration": 98605.152,
+    "expected": 35,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

@@ -47,6 +47,8 @@ export interface Scenario {
  */
 export interface PublicCamera {
   id: string;
+  /** Friendly name the worker view and alert messages use ("Camera B"); never the raw id. */
+  display_name?: string | null;
   label?: string | null;
   position?: number[] | null;
   heading_deg?: number | null;
@@ -81,6 +83,8 @@ export interface PublicScenario {
   title?: string | null;
   duration_seconds?: number | null;
   coordinate_frame?: string | null;
+  /** Wall-clock time of scenario t = 0 (ISO 8601, as recorded), or null. */
+  start_wallclock?: string | null;
   cameras: PublicCamera[];
   zones: Zone[];
   has_ground_truth?: boolean;
@@ -311,6 +315,118 @@ export interface RunResponse extends RunRecord {
   events_url: string;
 }
 
+/* -------------------------------------------------------------------- alerts */
+
+/**
+ * Plain-language alert for the worker view and Telegram, composed server-side by deterministic
+ * code (no model call). ping: one early unconfirmed heads-up; alert: the final real event;
+ * unconfirmed: the abstention; all_clear: no_event.
+ */
+export type AlertKind = "ping" | "alert" | "unconfirmed" | "all_clear";
+export type AlertLevel = "danger" | "warning" | "info";
+export type AlertLineKey = "what" | "where" | "when" | "how_sure" | "seen_on" | "what_to_do";
+
+export interface AlertLine {
+  key: AlertLineKey | string;
+  /** "What happened", "Where", "When", "How sure", "Seen on", "What to do". */
+  label: string;
+  value: string;
+}
+
+/** alert.message payload.message */
+export interface AlertMessage {
+  id: string;
+  kind: AlertKind;
+  level: AlertLevel;
+  headline: string;
+  lines: AlertLine[];
+  /** For click-to-seek only; never displayed. */
+  evidence_ids: string[];
+  /** Visible cameras only. */
+  camera_ids: string[];
+  /** Scenario seconds. */
+  t_start: number | null;
+  t_end: number | null;
+  /** ISO UTC. */
+  created_at: string;
+  /** Full plain-text rendering, exactly what Telegram receives. */
+  text: string;
+}
+
+export type AlertDeliveryStatus = "sent" | "skipped" | "failed" | "not_connected";
+
+/**
+ * alert.delivery payload. Published after every ping and alert (prebuild: not_connected);
+ * unconfirmed and all_clear messages are not offered to Telegram and get none.
+ */
+export interface AlertDelivery {
+  message_id: string;
+  channel: "telegram" | string;
+  status: AlertDeliveryStatus;
+  /** Short redacted reason, or null. */
+  detail: string | null;
+}
+
+const ALERT_KINDS: ReadonlySet<string> = new Set<AlertKind>(["ping", "alert", "unconfirmed", "all_clear"]);
+const ALERT_LEVELS: ReadonlySet<string> = new Set<AlertLevel>(["danger", "warning", "info"]);
+const DELIVERY_STATUSES: ReadonlySet<string> = new Set<AlertDeliveryStatus>(["sent", "skipped", "failed", "not_connected"]);
+
+const str = (v: unknown): string | null => (typeof v === "string" ? v : null);
+const num = (v: unknown): number | null => (typeof v === "number" && Number.isFinite(v) ? v : null);
+const strList = (v: unknown): string[] => (Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : []);
+
+/**
+ * alert.message payload.message -> AlertMessage, or null when it cannot be shown (no id or
+ * headline). Unknown kinds/levels fall back to the calm "unconfirmed"/"info"; malformed lines are
+ * dropped, so a backend that is a step ahead or behind never breaks the worker view.
+ */
+export function normalizeAlertMessage(raw: unknown): AlertMessage | null {
+  if (!raw || typeof raw !== "object") return null;
+  const m = raw as Record<string, unknown>;
+  const id = str(m.id);
+  const headline = str(m.headline);
+  if (!id || !headline) return null;
+  const kind = str(m.kind);
+  const level = str(m.level);
+  const lines: AlertLine[] = Array.isArray(m.lines)
+    ? m.lines.flatMap((l): AlertLine[] => {
+        if (!l || typeof l !== "object") return [];
+        const r = l as Record<string, unknown>;
+        const label = str(r.label);
+        const value = str(r.value);
+        return label && value ? [{ key: str(r.key) ?? "", label, value }] : [];
+      })
+    : [];
+  return {
+    id,
+    kind: kind && ALERT_KINDS.has(kind) ? (kind as AlertKind) : "unconfirmed",
+    level: level && ALERT_LEVELS.has(level) ? (level as AlertLevel) : "info",
+    headline,
+    lines,
+    evidence_ids: strList(m.evidence_ids),
+    camera_ids: strList(m.camera_ids),
+    t_start: num(m.t_start),
+    t_end: num(m.t_end),
+    created_at: str(m.created_at) ?? "",
+    text: str(m.text) ?? "",
+  };
+}
+
+/** alert.delivery payload -> AlertDelivery, or null without a message id or a known status. */
+export function normalizeAlertDelivery(raw: unknown): AlertDelivery | null {
+  if (!raw || typeof raw !== "object") return null;
+  const d = raw as Record<string, unknown>;
+  const messageId = str(d.message_id);
+  const status = str(d.status);
+  if (!messageId || !status || !DELIVERY_STATUSES.has(status)) return null;
+  return {
+    message_id: messageId,
+    channel: str(d.channel) ?? "telegram",
+    status: status as AlertDeliveryStatus,
+    detail: str(d.detail),
+  };
+}
+
 /* ----------------------------------------------------------------------- SSE */
 
 export const EVENT_TYPES = [
@@ -326,6 +442,8 @@ export const EVENT_TYPES = [
   "tool.started",
   "tool.completed",
   "hypothesis.updated",
+  "alert.message",
+  "alert.delivery",
   "run.complete",
   "run.failed",
 ] as const;
@@ -379,6 +497,10 @@ export interface EventPayloads {
     error?: string | null;
   };
   "hypothesis.updated": { hypothesis: Hypothesis; final: boolean };
+  /** Additive: plain-language message for the worker view and Telegram. */
+  "alert.message": { message: AlertMessage };
+  /** Additive: what happened when the message was offered to Telegram. */
+  "alert.delivery": AlertDelivery;
   "run.complete": { hypothesis: Hypothesis; duration_ms: number };
   "run.failed": { stage: string; error: string };
 }

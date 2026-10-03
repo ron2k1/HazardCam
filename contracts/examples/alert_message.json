@@ -1,0 +1,52 @@
+{
+  "id": "msg_02",
+  "kind": "alert",
+  "level": "warning",
+  "headline": "Traffic obstruction or collision: Intersection core",
+  "lines": [
+    {
+      "key": "what",
+      "label": "What happened",
+      "value": "Camera 1: Several visible vehicles brake abruptly. Not seen directly; pieced together from the other cameras."
+    },
+    {
+      "key": "where",
+      "label": "Where",
+      "value": "Intersection core (near Camera 2)"
+    },
+    {
+      "key": "when",
+      "label": "When",
+      "value": "0:08–0:10 into the clip"
+    },
+    {
+      "key": "how_sure",
+      "label": "How sure",
+      "value": "Likely (74%)"
+    },
+    {
+      "key": "seen_on",
+      "label": "Seen on",
+      "value": "Camera 1, Camera 2 and Camera 3"
+    },
+    {
+      "key": "what_to_do",
+      "label": "What to do",
+      "value": "Check the area and confirm what happened."
+    }
+  ],
+  "evidence_ids": [
+    "obs_a_001",
+    "obs_b_001",
+    "obs_c_001"
+  ],
+  "camera_ids": [
+    "cam_01",
+    "cam_02",
+    "cam_03"
+  ],
+  "t_start": 8.0,
+  "t_end": 10.5,
+  "created_at": "2026-10-02T12:00:07Z",
+  "text": "CHECK SOON — Traffic obstruction or collision: Intersection core\nWhat to do: Check the area and confirm what happened.\nWhat happened: Camera 1: Several visible vehicles brake abruptly. Not seen directly; pieced together from the other cameras.\nWhere: Intersection core (near Camera 2)\nWhen: 0:08–0:10 into the clip\nHow sure: Likely (74%)\nSeen on: Camera 1, Camera 2 and Camera 3\n— CameraVision"
+}

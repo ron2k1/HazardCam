@@ -4,29 +4,41 @@ import { useEffect, useRef, useState } from "react";
 
 import { useRunStream } from "@/hooks/use-run-stream";
 import { useStackHealth } from "@/hooks/use-stack-health";
+import type { ViewMode } from "@/hooks/use-view-mode";
 import { api, ApiError, describeError } from "@/lib/api";
 import { API_BASE_URL, LIVE } from "@/lib/config";
 import type { JudgeGroundTruth, PublicScenario } from "@/lib/contracts";
 
-import { OpsConsole, type OpsNotice } from "./ops-console";
+import type { OpsNotice } from "./ops-console";
+import { OpsScreen } from "./ops-screen";
 
 export interface OpsLiveProps {
   /** ?scenario= deep link; falls back to the first scenario the API lists. */
   initialScenarioId?: string | null;
   /** ?pace= RunRequest.pace_s (0..5) for a watchable demo; null = server default. */
   paceS?: number | null;
+  /** ?view= as the server read it: the worker view unless "technical". */
+  initialView?: ViewMode | null;
+  /** ?profile= deep link; used only if the API offers it (fixture or its MODEL_PROFILE). */
+  initialProfile?: string | null;
 }
 
 /**
  * /ops wired to the local API: scenarios, health, POST /api/runs, the run's SSE stream,
- * and the judge reveal. Rendering lives in OpsConsole, shared with the offline mock.
+ * and the judge reveal. Rendering lives in OpsScreen (worker view or technical console), shared
+ * with the offline mock.
  */
-export function OpsLive({ initialScenarioId = null, paceS = null }: OpsLiveProps) {
+export function OpsLive({
+  initialScenarioId = null,
+  paceS = null,
+  initialView = null,
+  initialProfile = null,
+}: OpsLiveProps) {
   const [scenarios, setScenarios] = useState<PublicScenario[]>([]);
   const [scenarioError, setScenarioError] = useState<string | null>(null);
   const [scenarioAttempt, setScenarioAttempt] = useState(0);
   const [scenarioId, setScenarioId] = useState<string | null>(initialScenarioId);
-  const [profile, setProfile] = useState<string>(LIVE.defaultProfile);
+  const [profile, setProfile] = useState<string>(initialProfile ?? LIVE.defaultProfile);
   const [runError, setRunError] = useState<string | null>(null);
   const [posting, setPosting] = useState(false);
   const [judge, setJudge] = useState<JudgeGroundTruth | null>(null);
@@ -152,7 +164,8 @@ export function OpsLive({ initialScenarioId = null, paceS = null }: OpsLiveProps
   }
 
   return (
-    <OpsConsole
+    <OpsScreen
+      initialView={initialView}
       scenarios={scenarios}
       scenario={scenario}
       view={view}

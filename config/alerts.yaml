@@ -1,0 +1,148 @@
+# Plain-language wording for CameraVision alert messages (worker view + Telegram text).
+#
+# Read by apps/api/services/alert_messages.py on every run start (edits apply to the next
+# run, no restart). All composition is deterministic local code: no model call, no network.
+#
+# events:  final event types (inference/vocab.py HYPOTHESIS_EVENT_TYPES, plus any new ones).
+#          label  - what the worker reads ("What happened")
+#          level  - danger | warning | info (shown in words and colour: see levels)
+#          action - one plain sentence for "What to do"
+# cues:    perception cue types (inference/vocab.py CUE_TYPES, plus any new ones).
+#          label   - short phrase for the early heads-up
+#          ping    - true: the first such observation in a run sends one unconfirmed heads-up
+#          transit - true: ordinary pass-through movement; a transit cue never pings
+#          level   - optional; overrides defaults.ping_level for this cue's heads-up
+#
+# Types missing here still work: "forklift_near_miss" reads "Forklift near miss" with the
+# defaults below. Add an entry to choose its level, action and whether it pings. A type that
+# is not a plain snake_case name (free text, an id like region_01) reads "Something unusual".
+# Labels are checked like model text: one holding an id, number or path is not used.
+
+version: 1
+product: CameraVision
+
+# Urgency in words, shown on the card next to the colour and first in the Telegram text:
+# how fast the worker should react, not how the system rates the event.
+levels:
+  danger: ACT NOW
+  warning: CHECK SOON
+  info: NO RUSH
+
+defaults:
+  level: warning
+  action: Check the area and confirm what happened.
+  # Only an abstention (event type "unknown") is reported calmly as "unconfirmed". A weak
+  # claim is still an alert with its own action; "How sure" reads e.g. "Unsure (25%)".
+  ping_level: warning
+  ping_how_sure: Not confirmed yet
+  ping_action: Be ready to check the area. The other cameras are still being checked.
+  unconfirmed_action: No action needed now. A supervisor can review the footage.
+  all_clear_action: Nothing to do.
+  # Appended to "What happened" for a final alert: the event is worked out, not seen.
+  inferred_note: Not seen directly; pieced together from the other cameras.
+  # Kept upper-case when an unknown snake_case type is turned into words.
+  acronyms: [ppe, id, agv, amr, atm, ev, hvac]
+
+events:
+  passenger_dropoff_pickup:
+    label: Passenger drop-off or pick-up
+    level: info
+    action: No action needed unless the vehicle is blocking the road.
+  vehicle_turnaround:
+    label: Vehicle turning around
+    level: warning
+    action: Watch for a vehicle reversing or turning. Keep people clear of it.
+  vehicle_stop:
+    label: Vehicle stopped
+    level: warning
+    action: Check that the stopped vehicle is not blocking the way.
+  vehicle_departure:
+    label: Vehicle leaving
+    level: info
+    action: No action needed unless something was left behind.
+  vehicle_turn:
+    label: Vehicle turning
+    level: info
+    action: No action needed.
+  vehicle_loading_unloading:
+    label: Vehicle being loaded or unloaded
+    level: info
+    action: Keep the path around the vehicle clear.
+  object_transport:
+    label: Someone moving a large object
+    level: info
+    action: Check that the path is clear for the person carrying it.
+  object_left_behind:
+    label: Object left behind
+    level: danger
+    action: Go and check the object. If it looks suspicious, do not touch it and tell a supervisor.
+  object_taken:
+    label: Object taken
+    level: danger
+    action: Check whether something is missing and tell a supervisor.
+  cyclist_movement:
+    label: Cyclist passing through
+    level: info
+    action: No action needed.
+  # Abstention and no-event wording comes from defaults.unconfirmed_action /
+  # defaults.all_clear_action; these labels are only used if a type is shown by name.
+  unknown:
+    label: Not confirmed
+    level: info
+    action: No action needed now. A supervisor can review the footage.
+  no_event:
+    label: Nothing unusual
+    level: info
+    action: Nothing to do.
+  # Factory / workplace-safety examples (uncomment or adapt when those scenarios land):
+  # forklift_near_miss:
+  #   label: Forklift near miss
+  #   level: danger
+  #   action: Stop forklift traffic in the area and check that everyone is safe.
+  # person_down:
+  #   label: Person on the ground
+  #   level: danger
+  #   action: Go to the person now and call for first aid if needed.
+  # blocked_exit:
+  #   label: Emergency exit blocked
+  #   level: warning
+  #   action: Clear the exit and tell a supervisor.
+
+cues:
+  vehicle_edge_transit:
+    label: Vehicle passing through
+    ping: false
+    transit: true
+  person_edge_transit:
+    label: Person passing through
+    ping: false
+    transit: true
+  vehicle_slowing_or_stopping:
+    label: Vehicle slowing or stopping
+    ping: false
+  vehicle_heading_change:
+    label: Vehicle changing direction
+    ping: false
+  vehicle_backing_or_maneuvering:
+    label: Vehicle reversing or maneuvering
+    ping: true
+  person_vehicle_interaction:
+    label: Person at a vehicle
+    ping: false
+  traffic_reaction:
+    label: Vehicles braking or swerving
+    ping: true
+  human_reaction:
+    label: People reacting to something
+    ping: true
+  other:
+    label: Other activity
+    ping: false
+  # Factory / workplace-safety examples:
+  # person_falling:
+  #   label: Person falling
+  #   ping: true
+  #   level: danger
+  # forklift_sudden_stop:
+  #   label: Forklift stopping suddenly
+  #   ping: true

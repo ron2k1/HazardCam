@@ -8,6 +8,10 @@ import { fileURLToPath } from "node:url";
 
 // keep in step with the imports in src/mocks/mock.ts
 const USED = [
+  "alert_delivery.json",
+  "alert_message.json",
+  "alert_message_ping.json",
+  "alert_message_unconfirmed.json",
   "evidence_bundle.json",
   "hypothesis.json",
   "hypothesis_abstain.json",

@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://ambient-mirror.local/contracts/sse_envelope.schema.json",
   "title": "SseEnvelope",
-  "description": "One server-sent event. seq starts at 1 and increases by 1 per run. Payload shapes per type are documented in SSE_EVENTS.md.",
+  "description": "One server-sent event. seq starts at 1 and increases by 1 per run. Payload shapes per type are documented in SSE_EVENTS.md; alert.message and alert.delivery payloads are also checked here.",
   "type": "object",
   "required": [
     "run_id",
@@ -38,12 +38,286 @@
         "tool.started",
         "tool.completed",
         "hypothesis.updated",
+        "alert.message",
+        "alert.delivery",
         "run.complete",
         "run.failed"
       ]
     },
     "payload": {
       "type": "object"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "alert.message"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/alert_message_payload"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "alert.delivery"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/alert_delivery"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "alert_message_payload": {
+      "type": "object",
+      "required": [
+        "message"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "message": {
+          "$ref": "#/$defs/alert_message"
+        }
+      }
+    },
+    "alert_message": {
+      "description": "Plain-language alert for the worker view and Telegram, composed by deterministic code (no model call). Never contains internal ids, coordinates, bearings, scores or ground-truth data in headline, lines or text.",
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "level",
+        "headline",
+        "lines",
+        "evidence_ids",
+        "camera_ids",
+        "t_start",
+        "t_end",
+        "created_at",
+        "text"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^msg_[0-9]{2,}$",
+          "description": "msg_01, msg_02, ... in publish order within a run."
+        },
+        "kind": {
+          "enum": [
+            "ping",
+            "alert",
+            "unconfirmed",
+            "all_clear"
+          ],
+          "description": "ping: one early unconfirmed heads-up; alert: the final real event; unconfirmed: abstention or low confidence (calm wording); all_clear: no_event."
+        },
+        "level": {
+          "enum": [
+            "danger",
+            "warning",
+            "info"
+          ]
+        },
+        "headline": {
+          "type": "string",
+          "minLength": 1
+        },
+        "lines": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/alert_line"
+          },
+          "description": "In display order; each key at most once."
+        },
+        "evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "For click-to-seek only; never displayed. A ping carries its observation id."
+        },
+        "camera_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Visible cameras only."
+        },
+        "t_start": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "description": "Scenario seconds."
+        },
+        "t_end": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "Z$"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Full plain-text rendering; exactly the Telegram text."
+        }
+      }
+    },
+    "alert_line": {
+      "type": "object",
+      "required": [
+        "key",
+        "label",
+        "value"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "enum": [
+            "what",
+            "where",
+            "when",
+            "how_sure",
+            "seen_on",
+            "what_to_do"
+          ]
+        },
+        "label": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "key": {
+              "const": "what"
+            },
+            "label": {
+              "const": "What happened"
+            }
+          }
+        },
+        {
+          "properties": {
+            "key": {
+              "const": "where"
+            },
+            "label": {
+              "const": "Where"
+            }
+          }
+        },
+        {
+          "properties": {
+            "key": {
+              "const": "when"
+            },
+            "label": {
+              "const": "When"
+            }
+          }
+        },
+        {
+          "properties": {
+            "key": {
+              "const": "how_sure"
+            },
+            "label": {
+              "const": "How sure"
+            }
+          }
+        },
+        {
+          "properties": {
+            "key": {
+              "const": "seen_on"
+            },
+            "label": {
+              "const": "Seen on"
+            }
+          }
+        },
+        {
+          "properties": {
+            "key": {
+              "const": "what_to_do"
+            },
+            "label": {
+              "const": "What to do"
+            }
+          }
+        }
+      ]
+    },
+    "alert_delivery": {
+      "description": "What happened to a ping/alert message's Telegram send.",
+      "type": "object",
+      "required": [
+        "message_id",
+        "channel",
+        "status",
+        "detail"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "message_id": {
+          "type": "string",
+          "pattern": "^msg_[0-9]{2,}$"
+        },
+        "channel": {
+          "const": "telegram"
+        },
+        "status": {
+          "enum": [
+            "sent",
+            "skipped",
+            "failed",
+            "not_connected"
+          ]
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 200,
+          "description": "Short redacted reason (no URLs, no tokens), or null."
+        }
+      }
     }
   }
 }

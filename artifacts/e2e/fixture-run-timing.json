@@ -1,11 +1,11 @@
 {
   "scenario_id": "eval_001",
-  "run_id": "run_20261002T193159Z_224f6c",
+  "run_id": "run_20261003T180614Z_b6964e",
   "profile": "fixture",
   "run_timeout_ms": 60000,
-  "browser_click_to_complete_ms": 1295,
-  "server_created_to_finished_ms": 1195,
-  "sse_events": 51,
+  "browser_click_to_complete_ms": 1378,
+  "server_created_to_finished_ms": 1313,
+  "sse_events": 55,
   "tool_calls": 12,
   "failed_tool_calls": 0,
   "hypothesis": {
@@ -16,14 +16,9 @@
   "trace_row_counts_seen": [
     0,
     1,
-    2,
     3,
-    4,
     5,
-    6,
     7,
-    8,
-    10,
     12
   ],
   "seeks": [
@@ -32,15 +27,15 @@
       "evidence_id": "cam_a.o3",
       "camera_id": "cam_a",
       "target_s": 23,
-      "landed_s": 23.000255
+      "landed_s": 23.000422
     },
     {
       "via": "hypothesis chip",
       "evidence_id": "cam_b.o7",
       "camera_id": "cam_b",
       "target_s": 23,
-      "landed_s": 23.000346
+      "landed_s": 23.00035
     }
   ],
-  "measured_at": "2026-10-02T19:32:03.160Z"
+  "measured_at": "2026-10-03T18:06:17.466Z"
 }

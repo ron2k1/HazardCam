@@ -5,6 +5,8 @@
  */
 import {
   PUBLIC_PROVENANCE_KEYS,
+  type AlertDelivery,
+  type AlertMessage,
   type EvidenceBundle,
   type Hypothesis,
   type JudgeGroundTruth,
@@ -16,7 +18,12 @@ import {
   type ScenarioSummary,
   type SseEnvelope,
 } from "@/lib/contracts";
+import { cameraName } from "@/lib/plain";
 
+import alertDeliveryJson from "./contract-examples/alert_delivery.json";
+import alertMessageJson from "./contract-examples/alert_message.json";
+import alertPingJson from "./contract-examples/alert_message_ping.json";
+import alertUnconfirmedJson from "./contract-examples/alert_message_unconfirmed.json";
 import evidenceJson from "./contract-examples/evidence_bundle.json";
 import hypothesisAbstainJson from "./contract-examples/hypothesis_abstain.json";
 import hypothesisJson from "./contract-examples/hypothesis.json";
@@ -28,6 +35,23 @@ const bundle = evidenceJson as unknown as EvidenceBundle;
 const hypothesis = hypothesisJson as Hypothesis;
 const hypothesisAbstain = hypothesisAbstainJson as Hypothesis;
 const run = runJson as unknown as RunRecord;
+const alertPing = alertPingJson as AlertMessage;
+const alertFinal = alertMessageJson as AlertMessage;
+const alertUnconfirmed = alertUnconfirmedJson as AlertMessage;
+const alertDelivery = alertDeliveryJson as AlertDelivery;
+/** The early heads-up fires on the first observation of this cue (config/alerts.yaml ping: true). */
+const PING_CUE = "traffic_reaction";
+/**
+ * What this build's API reports for every heads-up and alert: no Telegram channel is connected
+ * (alerts are on screen only), so the worker view shows no delivery line. The contract example
+ * keeps the "sent" shape for a connected setup.
+ */
+const delivered = (messageId: string): AlertDelivery => ({
+  ...alertDelivery,
+  message_id: messageId,
+  status: "not_connected",
+  detail: "Telegram is not connected in this setup.",
+});
 
 export const MOCK_SOURCE_LABEL = "MOCK · contracts/examples · ILLUSTRATIVE";
 
@@ -40,8 +64,10 @@ export const mockScenario: PublicScenario = {
   title: scenario.title,
   duration_seconds: scenario.duration_seconds,
   coordinate_frame: scenario.coordinate_frame,
-  cameras: scenario.visible_cameras.map((c) => ({
+  start_wallclock: null,
+  cameras: scenario.visible_cameras.map((c, i) => ({
     id: c.id,
+    display_name: cameraName(c.id, i),
     label: c.label ?? null,
     position: c.position ?? null,
     heading_deg: c.heading_deg ?? null,
@@ -123,6 +149,9 @@ export type MockVariant = "default" | "abstain";
 /** The fixed dev-sequence event log, in the order SSE_EVENTS.md describes. */
 export function buildMockEvents(variant: MockVariant = "default"): SseEnvelope[] {
   const finalHypothesis = variant === "abstain" ? hypothesisAbstain : hypothesis;
+  const finalMessage = variant === "abstain" ? alertUnconfirmed : alertFinal;
+  // an unconfirmed result is not offered to Telegram, so it has no delivery; the alert does
+  const finalDelivery: AlertDelivery | null = variant === "abstain" ? null : delivered(finalMessage.id);
   const runId = run.run_id;
   const t0 = Date.parse(run.created_at);
   const out: SseEnvelope[] = [];
@@ -138,6 +167,12 @@ export function buildMockEvents(variant: MockVariant = "default"): SseEnvelope[]
       payload,
     } as SseEnvelope);
   };
+  // created_at follows the mock clock, so the card's time matches the event's ts
+  const alert = (message: AlertMessage, delivery: AlertDelivery | null) => {
+    push("alert.message", { message: { ...message, created_at: new Date(t0 + (seq + 1) * 180).toISOString() } });
+    if (delivery) push("alert.delivery", delivery);
+  };
+  let pinged = false;
   const tool = (
     name: string,
     args: string,
@@ -207,6 +242,10 @@ export function buildMockEvents(variant: MockVariant = "default"): SseEnvelope[]
             supporting_frames: e.supporting_frames,
           },
         });
+        if (!pinged && e.cue_type === PING_CUE) {
+          pinged = true;
+          alert(alertPing, delivered(alertPing.id));
+        }
       }
       push("camera.complete", {
         camera_id: cam.id,
@@ -246,6 +285,7 @@ export function buildMockEvents(variant: MockVariant = "default"): SseEnvelope[]
   tool("submit_hypothesis", finalHypothesis.event_type, "validated", 3, () =>
     push("hypothesis.updated", { hypothesis: finalHypothesis, final: true }),
   );
+  alert(finalMessage, finalDelivery);
   push("run.complete", { hypothesis: finalHypothesis, duration_ms: seq * 180 });
   return out;
 }

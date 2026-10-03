@@ -20,7 +20,7 @@ export default function LandingPage() {
       {/* top bar */}
       <header className="relative z-10 flex h-14 shrink-0 items-center justify-between border-b border-line px-6 lg:px-10">
         <div className="flex items-center gap-4">
-          <span className="text-[17px] font-extrabold tracking-[0.06em] text-fg italic">AMBIENT/MIRROR</span>
+          <span className="text-[17px] font-extrabold tracking-[0.06em] text-fg italic">CameraVision</span>
           <span className="h-4 w-px bg-line-strong" aria-hidden />
           <span className="tele">EST. 2026</span>
         </div>

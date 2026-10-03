@@ -30,7 +30,7 @@ test("API down: offline notice, RUN disabled, recovers when the API answers agai
   let down = true;
   await page.route(`${API_URL}/**`, (route) => (down ? route.abort("connectionrefused") : route.fallback()));
 
-  await page.goto("/ops?scenario=eval_001");
+  await page.goto("/ops?scenario=eval_001&view=technical");
   await expect(u.notice).toContainText("API OFFLINE");
   await expect(u.notice).toHaveAttribute("role", "alert");
   await expect(u.healthRow("API")).toHaveAttribute("data-status", "offline");
@@ -77,7 +77,7 @@ test("scenario list fails once (500 injected in the browser): the page asks agai
     return route.fulfill({ status: 500, contentType: "application/json", body: JSON.stringify({ detail: "e2e injected" }) });
   });
 
-  await page.goto("/ops?scenario=eval_001");
+  await page.goto("/ops?scenario=eval_001&view=technical");
   await expect(u.notice).toContainText("SCENARIOS UNAVAILABLE · HTTP 500 · e2e injected");
   await expect(u.run).toBeDisabled();
   await expect(u.select).toHaveValue("eval_001", { timeout: 15_000 });
@@ -341,12 +341,12 @@ test("tool failure + run.failed [fixture] (injected in the browser; the backend 
   expect(requests).toBe(1);
 });
 
-test("/ops?mock=default still renders the offline mock and never calls the API", async ({ page }) => {
+test("/ops?mock=default&view=technical still renders the offline mock and never calls the API", async ({ page }) => {
   const apiHits: string[] = [];
   page.on("request", (r) => {
     if (r.url().startsWith(API_URL)) apiHits.push(r.url());
   });
-  await page.goto("/ops?mock=default");
+  await page.goto("/ops?mock=default&view=technical");
   await expect(page.getByTestId("source-label")).toContainText("MOCK");
   await expect(ui(page).hypothesisState).toHaveAttribute("data-hypothesis-state", /FINAL/);
   await expect(ui(page).traceRows.first()).toBeVisible();

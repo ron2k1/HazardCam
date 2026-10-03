@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 
 import { Barcode, StatusDot } from "@/components/hud/barcode";
 import { FrameCounter } from "@/components/hud/frame-counter";
@@ -68,6 +68,8 @@ export interface OpsConsoleProps {
   noSignalNote?: string;
   /** Optional hook for seek telemetry; seeking itself is handled here. */
   onSeek?: (cameraId: string, scenarioT: number) => void;
+  /** Right end of the top bar, e.g. the "Technical details" switch (OpsScreen). */
+  headerAction?: ReactNode;
 }
 
 /** Camera-grid cell: sized by its own aspect when stacked, by the grid from `sm` up. */
@@ -137,16 +139,19 @@ export function OpsConsole(props: OpsConsoleProps) {
       <header className="flex h-9 shrink-0 items-center justify-between gap-3 border-b border-line px-3">
         <div className="flex min-w-0 items-center gap-3">
           <Link href="/" className="shrink-0 text-[13px] font-extrabold tracking-[0.06em] text-fg italic hover:text-fg/80">
-            AMBIENT/MIRROR
+            CameraVision
           </Link>
           <span className="h-3.5 w-px shrink-0 bg-line-strong" aria-hidden />
           <span className="tele shrink-0 text-fg/85">OPS</span>
           <span className="tele truncate">{scenario ? `${scenario.id.toUpperCase()} · ${(scenario.title ?? "").toUpperCase()}` : "NO SCENARIO"}</span>
         </div>
-        <div className="tele hidden shrink-0 items-center gap-4 md:flex">
-          <span>{scenario?.cameras.length ?? 0} INPUT CAM · 1 WITHHELD</span>
-          <span>RUN Δ {timecode(view.durationMs != null ? view.durationMs / 1000 : null)}</span>
-          <span>{wallClock(view.lastTs)} UTC</span>
+        <div className="flex shrink-0 items-center gap-4">
+          <div className="tele hidden shrink-0 items-center gap-4 md:flex">
+            <span>{scenario?.cameras.length ?? 0} INPUT CAM · 1 WITHHELD</span>
+            <span>RUN Δ {timecode(view.durationMs != null ? view.durationMs / 1000 : null)}</span>
+            <span>{wallClock(view.lastTs)} UTC</span>
+          </div>
+          {props.headerAction}
         </div>
       </header>
 

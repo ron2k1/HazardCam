@@ -20,6 +20,7 @@ from pydantic import ValidationError
 
 from apps.api.schemas import Camera, Scenario
 
+from .alert_messages import camera_display_names, scenario_start_wallclock
 from .gt_guard import GtGuard
 
 logger = logging.getLogger(__name__)
@@ -132,9 +133,13 @@ class ScenarioStore:
         scenario = loaded.scenario
         view = scenario.model_view()
         visible = {cam.id: cam for cam in scenario.visible_cameras}
+        names = camera_display_names(cam.id for cam in view.cameras)
+        start = scenario_start_wallclock(scenario.provenance)
         cameras = [
             {
                 "id": cam.id,
+                # The friendly name the worker view and alert messages use ("Camera B").
+                "display_name": names[cam.id],
                 "label": cam.label,
                 "position": cam.position,
                 "heading_deg": cam.heading_deg,
@@ -150,6 +155,8 @@ class ScenarioStore:
             "title": view.title,
             "duration_seconds": view.duration_seconds,
             "coordinate_frame": view.coordinate_frame,
+            # Wall-clock time of scenario t = 0 (ISO 8601, as recorded), or null.
+            "start_wallclock": start.isoformat() if start else None,
             "cameras": cameras,
             "zones": [zone.model_dump(mode="json") for zone in view.zones],
             "has_ground_truth": True,

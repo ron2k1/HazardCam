@@ -8,6 +8,11 @@ event loop happen under one lock, so the loop appends events in seq order even
 when the executor emits from several threads. Terminal events (``run.complete``,
 ``run.failed``) are published only by the manager, and the record's terminal
 state flips in the same loop callback that appends the terminal event.
+
+Alert messages (``alert.message`` / ``alert.delivery``) are also published only here: an
+``AlertFeed`` watches the executor's events and adds at most one early heads-up and one
+closing message right before ``run.complete``. Composing them is best effort; a failure
+is logged and never fails the run.
 """
 
 from __future__ import annotations
@@ -27,14 +32,19 @@ from urllib.parse import quote
 from pydantic_core import to_jsonable_python
 
 from apps.api.schemas import (
+    ALERT_EVENT_TYPES,
     EVENT_TYPES,
     TERMINAL_EVENT_TYPES,
+    AlertDelivery,
+    AlertMessage,
     GroundTruthAccessError,
     Hypothesis,
     RunRecord,
     Scenario,
 )
 
+from .alert_feed import AlertFeed
+from .alert_messages import MessageContext, load_alert_config
 from .gt_guard import GtGuard
 from .scenarios import LoadedScenario
 
@@ -53,6 +63,11 @@ class RunExecutor(Protocol):
     ``run.complete`` / ``run.failed`` from the return value or raised exception. An
     exception may carry a ``stage`` attribute; otherwise the last ``tool.started``
     tool name is reported as the failed stage.
+
+    Optional capability: ``delivers_alerts = True`` means the executor sends alert
+    messages itself (event day: Telegram), either through a ``deliver_alert(message)``
+    method or by emitting ``alert.delivery``. Without it every ``ping`` / ``alert``
+    message gets ``alert.delivery`` with status ``not_connected``.
     """
 
     def __call__(
@@ -91,6 +106,7 @@ class RunHandle:
         guard: GtGuard,
         gt_camera_id: str,
         loop: asyncio.AbstractEventLoop,
+        alerts: AlertFeed | None = None,
     ) -> None:
         self.record = record
         self.run_dir = run_dir
@@ -106,6 +122,7 @@ class RunHandle:
         self._wake = asyncio.Event()
         self._started_at = time.perf_counter()
         self._persist_warned = False
+        self._alerts = alerts
 
     @property
     def run_id(self) -> str:
@@ -124,13 +141,68 @@ class RunHandle:
     # -- executor-facing (any thread) ---------------------------------------------
 
     def emit(self, event_type: str, payload: dict[str, Any] | None = None) -> None:
-        if event_type in TERMINAL_EVENT_TYPES:
+        if event_type in TERMINAL_EVENT_TYPES or event_type == "alert.message":
             raise ValueError(f"{event_type} is emitted by the run manager, not the executor")
-        self._publish(event_type, payload)
+        if event_type == "alert.delivery":
+            self._check_delivery(payload)
+        data = self._publish(event_type, payload)
         if event_type == "tool.started" and isinstance(payload, dict) and payload.get("tool"):
             self.stage = str(payload["tool"])
+        if event_type not in ALERT_EVENT_TYPES:
+            self._observe(event_type, data)
 
-    def _publish(self, event_type: str, payload: dict[str, Any] | None) -> None:
+    def _check_delivery(self, payload: dict[str, Any] | None) -> None:
+        """An executor that delivers alerts itself reports on the manager's messages only."""
+        delivery = AlertDelivery.model_validate(payload or {})
+        if self._alerts is None or not self._alerts.knows(delivery.message_id):
+            raise ValueError(f"alert.delivery for unknown message {delivery.message_id!r}")
+
+    # -- alert messages (best effort) ---------------------------------------------------
+
+    def _observe(self, event_type: str, data: dict[str, Any]) -> None:
+        if self._alerts is None:
+            return
+        try:
+            message = self._alerts.observe(event_type, data)
+            if message is not None:
+                self._send_alert(message)
+        except Exception as exc:  # noqa: BLE001 - a message must never fail a tool call
+            self._alert_failed(exc)
+
+    def publish_final_alert(self, hypothesis: Hypothesis) -> None:
+        """Publish the closing message (call right before ``finish_complete``). Skipped
+        when the hypothesis itself would be refused, so a failing run carries no alert."""
+        if self._alerts is None:
+            return
+        try:
+            if self.guard.leaks(hypothesis.model_dump_json()):
+                return
+            message = self._alerts.final(hypothesis)
+            if message is not None:
+                self._send_alert(message)
+        except Exception as exc:  # noqa: BLE001 - the run completes without its message
+            self._alert_failed(exc)
+
+    def _send_alert(self, message: AlertMessage) -> None:
+        """Publish a message and its delivery status. A message that mentions the withheld
+        camera is skipped, never published as a "[withheld]" copy: that word alone would
+        tell the worker something is being kept from them."""
+        payload = message.model_dump(mode="json")
+        if self.guard.leaks(json.dumps(payload, ensure_ascii=False)):
+            logger.warning("run %s: alert %s skipped (withheld camera)", self.run_id, message.id)
+            return
+        self._publish("alert.message", {"message": payload})
+        delivery = self._alerts.delivery(message) if self._alerts else None
+        if delivery is not None:
+            if self.guard.leaks(json.dumps(delivery, ensure_ascii=False)):
+                delivery = delivery | {"detail": None}
+            self._publish("alert.delivery", delivery)
+
+    def _alert_failed(self, exc: Exception) -> None:
+        logger.warning("run %s: alert message skipped (%s)", self.run_id, type(exc).__name__)
+        logger.debug("run %s alert failure detail", self.run_id, exc_info=exc)
+
+    def _publish(self, event_type: str, payload: dict[str, Any] | None) -> dict[str, Any]:
         if event_type not in EVENT_TYPES:
             raise ValueError(f"unknown SSE event type {event_type!r}")
         data = to_jsonable_python(payload if payload is not None else {})
@@ -158,6 +230,7 @@ class RunHandle:
                 self._closed = True
             self._persist_line(line)
             self._loop.call_soon_threadsafe(self._append, seq, event_type, line, data)
+        return data
 
     # -- loop thread ----------------------------------------------------------------
 
@@ -240,8 +313,9 @@ class RunHandle:
 class RunManager:
     """In-memory run registry. Runs execute in worker threads via ``asyncio.to_thread``."""
 
-    def __init__(self, runs_dir: Path) -> None:
+    def __init__(self, runs_dir: Path, alerts_config: Path | None = None) -> None:
         self.runs_dir = runs_dir
+        self.alerts_config = alerts_config
         self._runs: dict[str, RunHandle] = {}
         self._tasks: set[asyncio.Task[None]] = set()
 
@@ -266,7 +340,12 @@ class RunManager:
             updated_at=now,
         )
         handle = RunHandle(
-            record, run_dir, loaded.guard, loaded.scenario.ground_truth_camera.id, loop
+            record,
+            run_dir,
+            loaded.guard,
+            loaded.scenario.ground_truth_camera.id,
+            loop,
+            alerts=self._alert_feed(loaded, executor),
         )
         handle.persist_record()
         self._runs[run_id] = handle
@@ -278,16 +357,31 @@ class RunManager:
         logger.info("run %s queued (scenario=%s profile=%s)", run_id, loaded.id, profile)
         return handle
 
+    def _alert_feed(self, loaded: LoadedScenario, executor: RunExecutor) -> AlertFeed | None:
+        try:
+            ctx = MessageContext.from_scenario(loaded.scenario)
+            return AlertFeed.for_executor(ctx, executor, load_alert_config(self.alerts_config))
+        except Exception as exc:  # noqa: BLE001 - runs work without alert messages
+            logger.warning("alert messages off for %s (%s)", loaded.id, type(exc).__name__)
+            return None
+
+    @staticmethod
+    def _run_executor(
+        handle: RunHandle, scenario: Scenario, executor: RunExecutor, pace_s: float
+    ) -> Hypothesis:
+        """Worker thread: run the executor, then publish the closing alert message."""
+        result = executor(scenario, handle.record.profile, handle.emit, handle.run_dir, pace_s)
+        hypothesis = result if isinstance(result, Hypothesis) else Hypothesis.model_validate(result)
+        handle.publish_final_alert(hypothesis)
+        return hypothesis
+
     async def _execute(
         self, handle: RunHandle, scenario: Scenario, executor: RunExecutor, pace_s: float
     ) -> None:
         handle.mark_running()
         try:
-            result = await asyncio.to_thread(
-                executor, scenario, handle.record.profile, handle.emit, handle.run_dir, pace_s
-            )
-            hypothesis = (
-                result if isinstance(result, Hypothesis) else Hypothesis.model_validate(result)
+            hypothesis = await asyncio.to_thread(
+                self._run_executor, handle, scenario, executor, pace_s
             )
             handle.finish_complete(hypothesis)
         except asyncio.CancelledError:
