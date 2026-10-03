@@ -30,7 +30,6 @@ export function WorkerReport({ worker, hazards, imagesSent, activeHazardId, onSh
         >
           {worker.headline}
         </h2>
-        {worker.summary ? <p className="max-w-[72ch] text-[15px] leading-[23px] text-fg/80">{worker.summary}</p> : null}
         {none ? (
           <p className="max-w-[72ch] border-l-2 border-fg/50 pl-3 text-[15px] leading-[23px] text-fg" data-testid="no-hazards-note">
             This doesn&apos;t mean the area is safe. The AI only looked at {imagesSent} still picture{imagesSent === 1 ? "" : "s"} from
