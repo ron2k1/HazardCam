@@ -1,0 +1,127 @@
+{
+  "agent": "urban-mirror",
+  "run_id": "run_20261003T175456Z_6db998",
+  "alert": {
+    "channel": "telegram",
+    "enabled": false,
+    "armed": false,
+    "status": "not_due",
+    "reason": "the run abstained",
+    "event_type": null,
+    "text": null,
+    "grants": 0,
+    "refused": 0
+  },
+  "calls": 12,
+  "refusals": 0,
+  "failures": 1,
+  "per_tool": {
+    "sample_video": 3,
+    "inspect_camera": 3,
+    "correlate_observations": 1,
+    "triangulate_region": 1,
+    "reason_hypothesis": 1,
+    "get_supporting_frames": 2
+  },
+  "total_calls_allowed": 24,
+  "deadline_s": 900.0,
+  "elapsed_s": 101.502,
+  "closed": true,
+  "finalized_by_policy": true,
+  "stop_reason": null,
+  "trace": [
+    {
+      "n": 1,
+      "tool": "sample_video",
+      "ok": false,
+      "refused": false,
+      "t_s": 5.11,
+      "error": "ValueError: sample_video: arguments: missing required argument(s): camera_id"
+    },
+    {
+      "n": 2,
+      "tool": "sample_video",
+      "ok": true,
+      "refused": false,
+      "t_s": 7.573,
+      "camera_id": "cam_a"
+    },
+    {
+      "n": 3,
+      "tool": "inspect_camera",
+      "ok": true,
+      "refused": false,
+      "t_s": 12.794,
+      "camera_id": "cam_a"
+    },
+    {
+      "n": 4,
+      "tool": "sample_video",
+      "ok": true,
+      "refused": false,
+      "t_s": 14.664,
+      "camera_id": "cam_b"
+    },
+    {
+      "n": 5,
+      "tool": "inspect_camera",
+      "ok": true,
+      "refused": false,
+      "t_s": 25.56,
+      "camera_id": "cam_b"
+    },
+    {
+      "n": 6,
+      "tool": "sample_video",
+      "ok": true,
+      "refused": false,
+      "t_s": 27.215,
+      "camera_id": "cam_c"
+    },
+    {
+      "n": 7,
+      "tool": "inspect_camera",
+      "ok": true,
+      "refused": false,
+      "t_s": 30.755,
+      "camera_id": "cam_c"
+    },
+    {
+      "n": 8,
+      "tool": "correlate_observations",
+      "ok": true,
+      "refused": false,
+      "t_s": 32.128
+    },
+    {
+      "n": 9,
+      "tool": "triangulate_region",
+      "ok": true,
+      "refused": false,
+      "t_s": 33.775
+    },
+    {
+      "n": 10,
+      "tool": "reason_hypothesis",
+      "ok": true,
+      "refused": false,
+      "t_s": 58.695
+    },
+    {
+      "n": 11,
+      "tool": "get_supporting_frames",
+      "ok": true,
+      "refused": false,
+      "t_s": 63.673,
+      "camera_id": "cam_a"
+    },
+    {
+      "n": 12,
+      "tool": "get_supporting_frames",
+      "ok": true,
+      "refused": false,
+      "t_s": 66.734,
+      "camera_id": "cam_b"
+    }
+  ]
+}

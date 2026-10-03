@@ -1,0 +1,8 @@
+{
+  "harness": "openclaw-agent",
+  "ok": true,
+  "reply": "FINAL event=passenger_dropoff_pickup region=z_north_lot confidence=0.95 alert=none",
+  "error": null,
+  "duration_s": 60.14505973500127,
+  "exit_code": 0
+}

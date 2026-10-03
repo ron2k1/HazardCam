@@ -1,0 +1,30 @@
+# Event day (2026-10-03, D02): sandbox egress to the host-side `mirror` MCP tool server.
+#
+# The tool server (agent.event_day.mcp_server, started by agent.event_day.app) listens on
+# the OpenShell bridge gateway 172.18.0.1:8090 = host.openshell.internal:8090 inside the
+# sandbox. Only the OpenClaw binaries may reach it, only on POST/DELETE /mcp (the server
+# answers GET with 405). No other host or port is opened by this preset.
+#
+#   nemoclaw ambient-mirror policy add --from-file runtime/nemoclaw/mirror-tools.policy.yaml --yes
+
+preset:
+  name: mirror-tools
+  description: "Ambient Urban Mirror tool server (host MCP, bridge gateway :8090)"
+
+network_policies:
+  mirror_tools:
+    name: mirror_tools
+    endpoints:
+      - host: host.openshell.internal
+        port: 8090
+        protocol: rest
+        enforcement: enforce
+        allowed_ips:
+          - 172.18.0.1/32
+        rules:
+          - allow: { method: POST, path: "/mcp" }
+          - allow: { method: DELETE, path: "/mcp" }
+    binaries:
+      - { path: /usr/local/bin/openclaw }
+      - { path: /usr/local/bin/node }
+      - { path: /usr/bin/node }

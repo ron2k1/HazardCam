@@ -1,0 +1,9 @@
+id: 1
+data: {"run_id":"run_20261003T174646Z_001eb6","seq":1,"ts":"2026-10-03T17:46:46.408Z","type":"run.started","payload":{"scenario_id":"eval_001","profile":"gb10","camera_ids":["cam_a","cam_b","cam_c"],"harness":"openclaw-agent"}}
+
+id: 2
+data: {"run_id":"run_20261003T174646Z_001eb6","seq":2,"ts":"2026-10-03T17:46:46.408Z","type":"orchestrator.started","payload":{"harness":"openclaw-agent","agent":true,"sequence":["sample_video","inspect_camera","correlate_observations","triangulate_region","reason_hypothesis","get_supporting_frames","submit_hypothesis"]}}
+
+id: 3
+data: {"run_id":"run_20261003T174646Z_001eb6","seq":3,"ts":"2026-10-03T17:46:46.609Z","type":"run.failed","payload":{"stage":"agent","error":"AgentRunError: the OpenClaw agent did not run (exit code 1: Error: × code: 'Some requested entity was not found', message: \"sandbox not found\")"}}
+

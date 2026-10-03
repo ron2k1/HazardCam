@@ -1,0 +1,8 @@
+{
+  "harness": "openclaw-agent",
+  "ok": true,
+  "reply": "FINAL event=vehicle_stop region=z_north_lot confidence=0.8 alert=none",
+  "error": null,
+  "duration_s": 70.4464612849988,
+  "exit_code": 0
+}

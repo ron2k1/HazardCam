@@ -1,0 +1,8 @@
+{
+  "harness": "openclaw-agent",
+  "ok": true,
+  "reply": "\u26a0\ufe0f Agent couldn't generate a response. Note: some tool actions may have already been executed \u2014 please verify before retrying.",
+  "error": null,
+  "duration_s": 101.4890814850005,
+  "exit_code": 0
+}

@@ -83,9 +83,11 @@ def test_profile_names_cannot_escape_the_config_dir(bad):
         load_profile(bad, env={})
 
 
-def test_selecting_gb10_with_placeholders_fails():
-    with pytest.raises(ProfileError, match=r"perception\.model is a placeholder"):
-        load_profile("gb10", env={})
+def test_gb10_is_filled_on_event_day():
+    # Filled from the live GB10 on 2026-10-03 (D02): selecting it needs no overrides.
+    p = load_profile("gb10", env={})
+    assert p.placeholders() == []
+    assert p.perception.base_url == p.reasoning.base_url == "http://127.0.0.1:8000/v1"
 
 
 def test_gb10_resolves_once_models_are_overridden():
@@ -102,7 +104,7 @@ def test_remote16gb_needs_base_urls_from_env():
 
 
 def test_unselected_profiles_may_keep_placeholders():
-    assert load_profile("gb10", env={}, require_resolved=False).placeholders()
+    assert load_profile("remote16gb", env={}, require_resolved=False).placeholders()
 
 
 # --- secrets ----------------------------------------------------------------------------

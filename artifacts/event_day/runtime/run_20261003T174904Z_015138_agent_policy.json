@@ -1,0 +1,143 @@
+{
+  "agent": "urban-mirror",
+  "run_id": "run_20261003T174904Z_015138",
+  "alert": {
+    "channel": "telegram",
+    "enabled": false,
+    "armed": false,
+    "status": "skipped",
+    "reason": "Telegram alerts are switched off (AUM_AGENT_TELEGRAM_ALERT is not set)",
+    "event_type": "vehicle_stop",
+    "text": null,
+    "grants": 0,
+    "refused": 0
+  },
+  "calls": 14,
+  "refusals": 0,
+  "failures": 1,
+  "per_tool": {
+    "sample_video": 3,
+    "inspect_camera": 3,
+    "correlate_observations": 1,
+    "triangulate_region": 1,
+    "get_supporting_frames": 3,
+    "reason_hypothesis": 1,
+    "submit_hypothesis": 1
+  },
+  "total_calls_allowed": 24,
+  "deadline_s": 900.0,
+  "elapsed_s": 68.927,
+  "closed": true,
+  "finalized_by_policy": false,
+  "stop_reason": null,
+  "trace": [
+    {
+      "n": 1,
+      "tool": "sample_video",
+      "ok": false,
+      "refused": false,
+      "t_s": 5.445,
+      "error": "ValueError: sample_video: arguments: missing required argument(s): camera_id"
+    },
+    {
+      "n": 2,
+      "tool": "sample_video",
+      "ok": true,
+      "refused": false,
+      "t_s": 8.001,
+      "camera_id": "cam_a"
+    },
+    {
+      "n": 3,
+      "tool": "inspect_camera",
+      "ok": true,
+      "refused": false,
+      "t_s": 12.81,
+      "camera_id": "cam_a"
+    },
+    {
+      "n": 4,
+      "tool": "sample_video",
+      "ok": true,
+      "refused": false,
+      "t_s": 14.585,
+      "camera_id": "cam_b"
+    },
+    {
+      "n": 5,
+      "tool": "inspect_camera",
+      "ok": true,
+      "refused": false,
+      "t_s": 26.052,
+      "camera_id": "cam_b"
+    },
+    {
+      "n": 6,
+      "tool": "sample_video",
+      "ok": true,
+      "refused": false,
+      "t_s": 28.113,
+      "camera_id": "cam_c"
+    },
+    {
+      "n": 7,
+      "tool": "inspect_camera",
+      "ok": true,
+      "refused": false,
+      "t_s": 31.955,
+      "camera_id": "cam_c"
+    },
+    {
+      "n": 8,
+      "tool": "correlate_observations",
+      "ok": true,
+      "refused": false,
+      "t_s": 33.341
+    },
+    {
+      "n": 9,
+      "tool": "triangulate_region",
+      "ok": true,
+      "refused": false,
+      "t_s": 34.878
+    },
+    {
+      "n": 10,
+      "tool": "get_supporting_frames",
+      "ok": true,
+      "refused": false,
+      "t_s": 38.649,
+      "camera_id": "cam_a"
+    },
+    {
+      "n": 11,
+      "tool": "get_supporting_frames",
+      "ok": true,
+      "refused": false,
+      "t_s": 41.54,
+      "camera_id": "cam_b"
+    },
+    {
+      "n": 12,
+      "tool": "get_supporting_frames",
+      "ok": true,
+      "refused": false,
+      "t_s": 45.484,
+      "camera_id": "cam_c"
+    },
+    {
+      "n": 13,
+      "tool": "reason_hypothesis",
+      "ok": true,
+      "refused": false,
+      "t_s": 66.364
+    },
+    {
+      "n": 14,
+      "tool": "submit_hypothesis",
+      "ok": true,
+      "refused": false,
+      "t_s": 68.927
+    }
+  ]
+}
