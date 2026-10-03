@@ -1,40 +1,29 @@
-Ambient Mirror preflight — 2026-10-02T04:36:25-04:00
+Ambient Mirror preflight — 2026-10-03T11:00:40-05:00
 \n$ uname -a
-MINGW64_NT-10.0-26200 ron2k 3.6.6-1cdd4371.x86_64 2026-01-15 22:20 UTC x86_64 Msys
+Linux promaxgb10-84ff 7.0.0-1019-nvidia #19~24.04.2-Ubuntu SMP PREEMPT_DYNAMIC Sun Sep  6 18:35:11 UTC 2 aarch64 aarch64 aarch64 GNU/Linux
 \n$ git --version
-git version 2.53.0.windows.1
+git version 2.43.0
 \n$ python3 --version
-Python 3.11.9
+Python 3.12.3
 \n$ node --version
-v24.14.0
+v24.21.0
 \n$ npm --version
-11.9.0
+11.19.0
 \n$ ffmpeg -version
-ffmpeg version 8.1-full_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers
-built with gcc 15.2.0 (Rev11, Built by MSYS2 project)
-configuration: --enable-gpl --enable-version3 --enable-static --disable-w32threads --disable-autodetect --enable-cairo --enable-fontconfig --enable-iconv --enable-gnutls --enable-lcms2 --enable-libxml2 --enable-gmp --enable-bzlib --enable-lzma --enable-libsnappy --enable-zlib --enable-librist --enable-libsrt --enable-libssh --enable-libzmq --enable-avisynth --enable-libbluray --enable-libcaca --enable-libdvdnav --enable-libdvdread --enable-sdl2 --enable-libaribb24 --enable-libaribcaption --enable-libdav1d --enable-libdavs2 --enable-libopenjpeg --enable-libquirc --enable-libuavs3d --enable-libxevd --enable-libzvbi --enable-liboapv --enable-libqrencode --enable-librav1e --enable-libsvtav1 --enable-libvvenc --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxavs2 --enable-libxeve --enable-libxvid --enable-libaom --enable-libjxl --enable-libsvtjpegxs --enable-libvpx --enable-mediafoundation --enable-libass --enable-frei0r --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-liblensfun --enable-libvidstab --enable-libvmaf --enable-libzimg --enable-amf --enable-cuda-llvm --enable-cuvid --enable-dxva2 --enable-d3d11va --enable-d3d12va --enable-ffnvcodec --enable-libvpl --enable-nvdec --enable-nvenc --enable-vaapi --enable-libshaderc --enable-vulkan --enable-libplacebo --enable-opencl --enable-libcdio --enable-openal --enable-libgme --enable-libmodplug --enable-libopenmpt --enable-libopencore-amrwb --enable-libmp3lame --enable-libshine --enable-libtheora --enable-libtwolame --enable-libvo-amrwbenc --enable-libcodec2 --enable-libilbc --enable-libgsm --enable-liblc3 --enable-libopencore-amrnb --enable-libopus --enable-libspeex --enable-libvorbis --enable-ladspa --enable-libbs2b --enable-libflite --enable-libmysofa --enable-librubberband --enable-libsoxr --enable-chromaprint --enable-whisper
-libavutil      60. 26.100 / 60. 26.100
-libavcodec     62. 28.100 / 62. 28.100
-libavformat    62. 12.100 / 62. 12.100
-libavdevice    62.  3.100 / 62.  3.100
-libavfilter    11. 14.100 / 11. 14.100
-libswscale      9.  5.100 /  9.  5.100
-libswresample   6.  3.100 /  6.  3.100
-
-Exiting with exit code 0
+./scripts/preflight.sh: line 7: ffmpeg: command not found
 \n$ claude --version
-2.1.287 (Claude Code)
+2.1.288 (Claude Code)
 \n$ nvidia-smi
-Fri Oct  2 04:36:26 2026       
+Sat Oct  3 11:00:40 2026       
 +-----------------------------------------------------------------------------------------+
-| NVIDIA-SMI 616.92                 KMD Version: 616.92        CUDA UMD Version: 13.4     |
+| NVIDIA-SMI 580.178.04             Driver Version: 580.178.04     CUDA Version: 13.0     |
 +-----------------------------------------+------------------------+----------------------+
-| GPU  Name                  Driver-Model | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
 | Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
 |                                         |                        |               MIG M. |
 |=========================================+========================+======================|
-|   0  NVIDIA GeForce RTX 4060 ...  WDDM  |   00000000:01:00.0  On |                  N/A |
-| N/A   63C    P8              6W /  120W |    1291MiB /   8188MiB |      5%      Default |
+|   0  NVIDIA GB10                    On  |   0000000F:01:00.0  On |                  N/A |
+| N/A   38C    P0             11W /  N/A  | Not Supported          |      0%      Default |
 |                                         |                        |                  N/A |
 +-----------------------------------------+------------------------+----------------------+
 
@@ -43,38 +32,25 @@ Fri Oct  2 04:36:26 2026
 |  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
 |        ID   ID                                                               Usage      |
 |=========================================================================================|
-|    0   N/A  N/A            2680    C+G   ...2p2nqsd0c76g0\app\ChatGPT.exe      N/A      |
-|    0   N/A  N/A            5888    C+G   ...2txyewy\CrossDeviceResume.exe      N/A      |
-|    0   N/A  N/A            9812      C   ...al\Programs\Ollama\ollama.exe      N/A      |
-|    0   N/A  N/A           11956    C+G   ...App_cw5n1h2txyewy\LockApp.exe      N/A      |
-|    0   N/A  N/A           12840    C+G   ..._cw5n1h2txyewy\SearchHost.exe      N/A      |
-|    0   N/A  N/A           12952    C+G   ...5n1h2txyewy\TextInputHost.exe      N/A      |
-|    0   N/A  N/A           15536      C   ...al\Programs\Ollama\ollama.exe      N/A      |
-|    0   N/A  N/A           16164    C+G   ...ta\Okta Verify\OktaVerify.exe      N/A      |
-|    0   N/A  N/A           16700    C+G   ...xyewy\ShellExperienceHost.exe      N/A      |
-|    0   N/A  N/A           17612    C+G   ...indows\System32\ShellHost.exe      N/A      |
-|    0   N/A  N/A           18788    C+G   C:\Windows\explorer.exe               N/A      |
-|    0   N/A  N/A           18900    C+G   ...y\StartMenuExperienceHost.exe      N/A      |
-|    0   N/A  N/A           19480    C+G   ...yb3d8bbwe\WindowsTerminal.exe      N/A      |
-|    0   N/A  N/A           20840    C+G   ....0.4258.53\msedgewebview2.exe      N/A      |
-|    0   N/A  N/A           22944    C+G   ...2p2nqsd0c76g0\app\ChatGPT.exe      N/A      |
-|    0   N/A  N/A           23120    C+G   ...\codex-computer-use-swift.exe      N/A      |
+|    0   N/A  N/A            3355      G   /usr/lib/xorg/Xorg                      167MiB |
+|    0   N/A  N/A            3487      G   /usr/bin/gnome-shell                    137MiB |
+|    0   N/A  N/A           30468      G   /usr/bin/nautilus                        33MiB |
+|    0   N/A  N/A           30559      G   /usr/bin/gnome-text-editor               28MiB |
+|    0   N/A  N/A           44228      G   .../8968/usr/lib/firefox/firefox        243MiB |
+|    0   N/A  N/A           80389      C   VLLM::EngineCore                      36307MiB |
+|    0   N/A  N/A           80450      G   /usr/bin/gnome-control-center            32MiB |
 +-----------------------------------------------------------------------------------------+
 \n$ free -h
-scripts/preflight.sh: line 7: free: command not found
+               total        used        free      shared  buff/cache   available
+Mem:           121Gi        49Gi        25Gi       115Mi        47Gi        71Gi
+Swap:           15Gi       452Ki        15Gi
 \n$ df -h .
 Filesystem      Size  Used Avail Use% Mounted on
-C:              931G  759G  173G  82% /c
+/dev/nvme0n1p2  3.6T  202G  3.3T   6% /
 \n$ bash -lc command -v nemoclaw || true; nemoclaw --version 2>/dev/null || true
-/etc/profile.d/git-prompt.sh: line 28: C:/Program Files/Git/mingw64/share/git/completion/git-completion.bash: No such file or directory
-/c/Users/thegr/.bashrc: line 1: $'\357\273\277alias': command not found
-[?1004l\n$ bash -lc command -v openshell || true; openshell --version 2>/dev/null || true
-/etc/profile.d/git-prompt.sh: line 28: C:/Program Files/Git/mingw64/share/git/completion/git-completion.bash: No such file or directory
-/c/Users/thegr/.bashrc: line 1: $'\357\273\277alias': command not found
-[?1004l\n$ bash -lc command -v openclaw || true; openclaw --version 2>/dev/null || true
-/etc/profile.d/git-prompt.sh: line 28: C:/Program Files/Git/mingw64/share/git/completion/git-completion.bash: No such file or directory
-/c/Users/thegr/.bashrc: line 1: $'\357\273\277alias': command not found
-[?1004l\nImportant files:
+\n$ bash -lc command -v openshell || true; openshell --version 2>/dev/null || true
+\n$ bash -lc command -v openclaw || true; openclaw --version 2>/dev/null || true
+\nImportant files:
 OK reference/theme-reference.jpeg
 OK TASK_GRAPH.json
 OK contracts/scenario.schema.json
