@@ -1,0 +1,43 @@
+{
+  "checked_at": "2026-10-03T18:25:40+00:00",
+  "git_commit": "0db0851a1b15aa16e36eac4a6a364687d7106ef6",
+  "ok": true,
+  "checks": [
+    {
+      "name": "python dependencies",
+      "ok": true,
+      "required": true,
+      "detail": "10 runtime packages import on Python 3.12.3"
+    },
+    {
+      "name": "ffmpeg / ffprobe",
+      "ok": true,
+      "required": true,
+      "detail": "ffmpeg /usr/bin/ffmpeg; ffprobe /usr/bin/ffprobe"
+    },
+    {
+      "name": "scenario data",
+      "ok": true,
+      "required": true,
+      "detail": "22 scenarios, 88 media files, labels and recordings"
+    },
+    {
+      "name": "web install + build",
+      "ok": true,
+      "required": true,
+      "detail": "build siEt70nTtMT6eepEH1li2; 57 source and 18 bundle files name no remote font/CDN host"
+    },
+    {
+      "name": "local models (Ollama)",
+      "ok": false,
+      "required": false,
+      "detail": "ConnectError: [Errno 111] Connection refused"
+    },
+    {
+      "name": "fixture run, network refused",
+      "ok": true,
+      "required": true,
+      "detail": "eval_001 fixture run with non-loopback sockets refused: passenger_dropoff_pickup in 1.2 s, 0 network attempts"
+    }
+  ]
+}

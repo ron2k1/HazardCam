@@ -17,10 +17,14 @@ import pytest
 from jsonschema import Draft202012Validator
 
 from agent.event_day.registration import (
+    HAZARD_TOOL_NAMES,
+    REGISTERED_TOOLS,
     SERVER_NAME,
+    SITE_TOOL_NAMES,
     TOKEN_ENV,
     TOOL_PREFIX,
     agent_entry,
+    lead_agent_entry,
     merge_registration,
     openclaw_name,
     registration,
@@ -58,8 +62,13 @@ def listed(tool_server: ToolServer) -> dict[str, dict]:
 
 
 def test_the_server_lists_exactly_the_seven_contract_tools_in_order(listed):
-    assert list(listed) == list(TOOL_NAMES)
+    # The seven contract tools first and unchanged, then the three hazard tools (event day).
+    assert list(listed) == list(REGISTERED_TOOLS)
+    assert list(listed)[: len(TOOL_NAMES)] == list(TOOL_NAMES)
     assert len(TOOL_NAMES) == 7
+    n = len(TOOL_NAMES) + len(HAZARD_TOOL_NAMES)
+    assert list(listed)[len(TOOL_NAMES) : n] == list(HAZARD_TOOL_NAMES)
+    assert list(listed)[n:] == list(SITE_TOOL_NAMES)  # the site lead's three (event day)
 
 
 @pytest.mark.parametrize("tool", TOOL_NAMES)
@@ -135,13 +144,15 @@ def test_the_corpus_has_both_verdicts_for_every_tool():
 def test_the_openclaw_side_names_the_same_seven_tools():
     fragment = registration(server_url())
     server = fragment["mcp"]["servers"][SERVER_NAME]
-    assert server["toolFilter"]["include"] == list(TOOL_NAMES)
+    assert server["toolFilter"]["include"] == list(REGISTERED_TOOLS)
     assert server["transport"] == "streamable-http"
     assert server["url"] == "http://host.openshell.internal:8090/mcp"
     assert server["headers"] == {"Authorization": f"Bearer ${{{TOKEN_ENV}}}"}
-    assert fragment["agents"]["list"] == [agent_entry()]
+    assert fragment["agents"]["list"] == [agent_entry(), lead_agent_entry()]
     granted = [n for n in agent_entry()["tools"]["alsoAllow"] if n.startswith(TOOL_PREFIX)]
-    assert granted == [openclaw_name(t) for t in TOOL_NAMES]
+    assert granted == [openclaw_name(t) for t in (*TOOL_NAMES, *HAZARD_TOOL_NAMES)]
+    lead = lead_agent_entry()["tools"]["alsoAllow"]
+    assert lead == [openclaw_name(t) for t in SITE_TOOL_NAMES]  # the lead gets only its three
     assert agent_entry()["tools"]["alsoAllow"] == granted  # nothing else is added
 
 
@@ -168,7 +179,7 @@ def test_merging_denies_the_mirror_tools_to_every_other_agent():
     merged = merge_registration(base, server_url(), workspace="/sandbox/ws")
     assert base == before  # the input is not mutated
     agents = {a["id"]: a for a in merged["agents"]["list"]}
-    assert list(agents) == ["main", "helper", "urban-mirror"]
+    assert list(agents) == ["main", "helper", "urban-mirror", "site-lead"]
     assert agents["main"]["tools"]["deny"] == ["group:web", "mirror__*"]
     assert agents["helper"]["tools"]["deny"] == ["mirror__*"]
     assert agents["urban-mirror"]["workspace"] == "/sandbox/ws"
@@ -184,6 +195,7 @@ def test_merging_denies_the_mirror_tools_to_every_other_agent():
 
 def test_merging_into_a_config_without_agents_adds_a_denied_main():
     merged = merge_registration({}, server_url())
-    main, mirror = merged["agents"]["list"]
+    main, mirror, lead = merged["agents"]["list"]
+    assert lead["id"] == "site-lead"
     assert main == {"id": "main", "default": True, "tools": {"deny": ["mirror__*"]}}
     assert mirror["id"] == "urban-mirror"

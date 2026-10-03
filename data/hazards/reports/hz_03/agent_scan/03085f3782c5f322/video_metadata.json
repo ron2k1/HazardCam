@@ -1,0 +1,13 @@
+{
+  "source_name": "hz_03",
+  "source_sha256": "f6b5371af35e9fe3ed010bc9f287fe3dd9f3a3d8a46d60ff0ce2e624abb24ab9",
+  "fps": 24.8,
+  "source_width": 1920,
+  "source_height": 1080,
+  "decoded_frames": 421,
+  "reported_frames": 421,
+  "duration_s": 16.975806451612904,
+  "analysis_width": 768,
+  "analysis_height": 432,
+  "timing_method": "frame_index/source_fps"
+}

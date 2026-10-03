@@ -1,0 +1,81 @@
+{
+  "lead_trace": [
+    {
+      "t_s": 0.0,
+      "kind": "plan",
+      "text": "Lead agent is starting six camera checkers"
+    },
+    {
+      "t_s": 5.01,
+      "kind": "tool",
+      "text": "Lead agent started the six camera checkers"
+    },
+    {
+      "t_s": 21.84,
+      "kind": "tool",
+      "text": "Lead agent checked status: 0/6 checkers finished"
+    },
+    {
+      "t_s": 35.52,
+      "kind": "tool",
+      "text": "Lead agent checked status: 1/6 checkers finished"
+    },
+    {
+      "t_s": 51.58,
+      "kind": "tool",
+      "text": "Lead agent checked status: 2/6 checkers finished"
+    },
+    {
+      "t_s": 57.57,
+      "kind": "tool",
+      "text": "Lead agent checked status: 3/6 checkers finished"
+    },
+    {
+      "t_s": 75.28,
+      "kind": "tool",
+      "text": "Lead agent checked status: 3/6 checkers finished"
+    },
+    {
+      "t_s": 80.61,
+      "kind": "tool",
+      "text": "Lead agent checked status: 4/6 checkers finished"
+    },
+    {
+      "t_s": 92.56,
+      "kind": "tool",
+      "text": "Lead agent checked status: 5/6 checkers finished"
+    },
+    {
+      "t_s": 98.61,
+      "kind": "tool",
+      "text": "Lead agent checked status: 6/6 checkers finished"
+    },
+    {
+      "t_s": 107.33,
+      "kind": "tool",
+      "text": "alerts refused: alert 1 must be an object"
+    },
+    {
+      "t_s": 119.24,
+      "kind": "alerts",
+      "text": "Lead agent sent 6 alert(s)"
+    },
+    {
+      "t_s": 120.44,
+      "kind": "turn",
+      "text": "lead turn ended ok after 120.4 s; FINAL site alerts=6"
+    }
+  ],
+  "lead_turn": {
+    "agent": "site-lead",
+    "wall_s": 120.44,
+    "tool_calls": 11,
+    "turn": {
+      "ok": true,
+      "reply": "FINAL site alerts=6",
+      "error": null,
+      "duration_s": 120.43911863199901,
+      "exit_code": 0
+    }
+  }
+}

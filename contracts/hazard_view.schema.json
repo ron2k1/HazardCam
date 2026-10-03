@@ -1,0 +1,1455 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ambient-mirror.local/contracts/hazard_view.schema.json",
+  "title": "HazardView",
+  "description": "Safety hazard page (/hazards), reasoning tab (/hazards/process) and camera wall (/) API shapes. The document itself is a HazardView (GET /api/hazards/clips/{clip_id}); $defs hold the other payloads: ClipList (GET /api/hazards/clips), Instructions (GET /api/hazards/instructions), ReviewRequest / ReviewAccepted (POST /api/hazards/clips/{clip_id}/review), JobSummary (GET /api/hazards/clips/{clip_id}/jobs/latest), the SSE data of GET /api/hazards/jobs/{job_id}/events (event names progress / agent / done / failed; a late subscriber gets every event from the start of the job), RuntimeStatus (GET /api/runtime/status) and Wall (GET /api/wall). 'worker' is plain text for a frontline worker: no zone/evidence/finding ids, URLs, hashes, model names, schema or legal words (PlainText); zones are named 'Zone 3' (zone Z03) in every view. Times are clip seconds = frame_index / source_fps, as in the source pipeline (astra-1.1); hazard windows span sampled pictures and are not claimed continuous. Zone boxes are normalised 0-1 of the video frame. 'technical' is the judge view and the only place the withheld dataset label appears. Examples: contracts/examples/hazards/.",
+  "$ref": "#/$defs/HazardView",
+  "$defs": {
+    "PlainText": {
+      "type": "string",
+      "not": {
+        "pattern": "\\b[EZH]\\d{2,3}\\b|https?://|needs_verification|visible_concern|hazard_candidate|[Vv]iolation|[Nn]on-?[Cc]ompliant|[Qq][Ww][Ee][Nn]|[Bb][Bb][Oo][Xx]|\\b[Ss][Hh][Aa](-?256)?\\b"
+      }
+    },
+    "Status": {
+      "enum": [
+        "reviewed",
+        "not_reviewed",
+        "reviewing",
+        "failed"
+      ]
+    },
+    "PlainLevel": {
+      "enum": [
+        "High",
+        "Medium",
+        "Low"
+      ]
+    },
+    "Seconds": {
+      "type": "number",
+      "minimum": 0
+    },
+    "TimeLabel": {
+      "description": "m:ss (h:mm:ss past an hour), rounded down to the second.",
+      "type": "string",
+      "pattern": "^\\d+:\\d{2}(:\\d{2})?$"
+    },
+    "ClipId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+    },
+    "VideoUrl": {
+      "description": "API-relative media route; the web app prefixes its API base.",
+      "type": "string",
+      "pattern": "^/api/hazards/clips/[A-Za-z0-9][A-Za-z0-9_.-]*/media/(source|processed)\\.mp4$"
+    },
+    "EvidenceUrl": {
+      "description": "Evidence picture route: evidence/ = raw (burned-in label strip, exactly as sent to the model), evidence_clean/ = worker copy without the label strip and padding.",
+      "type": "string",
+      "pattern": "^/api/hazards/clips/[A-Za-z0-9][A-Za-z0-9_.-]*/media/evidence(_clean)?/E\\d{3}\\.jpg$"
+    },
+    "ClipRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clip_id",
+        "title",
+        "duration_s"
+      ],
+      "properties": {
+        "clip_id": {
+          "$ref": "#/$defs/ClipId"
+        },
+        "title": {
+          "$ref": "#/$defs/PlainText",
+          "minLength": 1
+        },
+        "duration_s": {
+          "$ref": "#/$defs/Seconds"
+        },
+        "kind": {
+          "$ref": "#/$defs/ClipKind"
+        }
+      }
+    },
+    "ClipSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clip_id",
+        "title",
+        "duration_s",
+        "status",
+        "hazard_count",
+        "top_priority",
+        "needs_check_count",
+        "reviewed_at"
+      ],
+      "properties": {
+        "clip_id": {
+          "$ref": "#/$defs/ClipId"
+        },
+        "title": {
+          "$ref": "#/$defs/PlainText",
+          "minLength": 1
+        },
+        "duration_s": {
+          "$ref": "#/$defs/Seconds"
+        },
+        "status": {
+          "$ref": "#/$defs/Status"
+        },
+        "hazard_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "top_priority": {
+          "enum": [
+            "high",
+            "medium",
+            "low",
+            null
+          ]
+        },
+        "needs_check_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reviewed_at": {
+          "description": "generated_at_utc of the latest complete review, else null.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "kind": {
+          "$ref": "#/$defs/ClipKind"
+        }
+      }
+    },
+    "ClipList": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clips"
+      ],
+      "properties": {
+        "clips": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ClipSummary"
+          }
+        }
+      }
+    },
+    "EvidenceImage": {
+      "description": "One picture the AI was sent. time_s = the evidence frame_index / source_fps. image_url is the clean worker copy; raw_url the labelled original.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "image_url",
+        "time_s",
+        "time_label",
+        "kind_label"
+      ],
+      "properties": {
+        "image_url": {
+          "$ref": "#/$defs/EvidenceUrl"
+        },
+        "time_s": {
+          "$ref": "#/$defs/Seconds"
+        },
+        "time_label": {
+          "$ref": "#/$defs/TimeLabel"
+        },
+        "kind_label": {
+          "description": "config/hazards.yaml kind_labels: 'Whole view' (full scene), 'Close-up' (zone crop), 'Section' (scene tile).",
+          "$ref": "#/$defs/PlainText",
+          "minLength": 1
+        },
+        "raw_url": {
+          "$ref": "#/$defs/RawEvidenceUrl"
+        },
+        "kind_word": {
+          "description": "'Whole view', 'Busiest moment' (a full-scene motion peak), 'Close-up' (zone crop) or 'Section' (scene tile).",
+          "$ref": "#/$defs/PlainText",
+          "minLength": 1
+        },
+        "zone_name": {
+          "$ref": "#/$defs/ZoneName"
+        },
+        "caption": {
+          "description": "'Zone 3 · 0:04' for a zone close-up, else '<kind word> · m:ss'.",
+          "$ref": "#/$defs/PlainText",
+          "minLength": 1
+        },
+        "cited": {
+          "description": "True when a hazard card cites this picture ('Used for a hazard').",
+          "type": "boolean"
+        }
+      }
+    },
+    "Hazard": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "priority",
+        "needs_check",
+        "what_we_saw",
+        "why_it_matters",
+        "what_to_do",
+        "where",
+        "when",
+        "start_s",
+        "end_s",
+        "how_sure",
+        "safety_rule",
+        "not_sure_about",
+        "evidence",
+        "short_title",
+        "sign",
+        "zone_names",
+        "pictures"
+      ],
+      "properties": {
+        "id": {
+          "description": "hazard-<n> for finding H<n> (stable across views; never the raw finding id).",
+          "type": "string",
+          "pattern": "^hazard-\\d+$"
+        },
+        "title": {
+          "$ref": "#/$defs/PlainText",
+          "minLength": 1
+        },
+        "priority": {
+          "$ref": "#/$defs/PlainLevel"
+        },
+        "needs_check": {
+          "description": "True when the review could not confirm the hazard from the pictures alone.",
+          "type": "boolean"
+        },
+        "what_we_saw": {
+          "$ref": "#/$defs/PlainText"
+        },
+        "why_it_matters": {
+          "$ref": "#/$defs/PlainText"
+        },
+        "what_to_do": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlainText"
+          }
+        },
+        "where": {
+          "description": "Starts with the zone name(s) when the finding names zones ('Zone 3 · center of the marked aisle').",
+          "$ref": "#/$defs/PlainText",
+          "minLength": 1
+        },
+        "when": {
+          "description": "'0:00–0:12 of the clip': first to last sampled picture showing it.",
+          "$ref": "#/$defs/PlainText",
+          "pattern": "^\\d+:\\d{2}(:\\d{2})?(–\\d+:\\d{2}(:\\d{2})?)? of the clip$"
+        },
+        "start_s": {
+          "$ref": "#/$defs/Seconds"
+        },
+        "end_s": {
+          "$ref": "#/$defs/Seconds"
+        },
+        "how_sure": {
+          "$ref": "#/$defs/PlainLevel"
+        },
+        "safety_rule": {
+          "description": "'<title> (OSHA <key>)', several joined with '; ', or null.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "not_sure_about": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlainText"
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EvidenceImage"
+          }
+        },
+        "short_action": {
+          "description": "One short complete action for the warning sign (OSHA wording); null when the sign has none.",
+          "type": ["string", "null"]
+        },
+        "short_title": {
+          "description": "Concise card title, at most short_title_max_words (6) words.",
+          "$ref": "#/$defs/PlainText",
+          "minLength": 1
+        },
+        "sign": {
+          "$ref": "#/$defs/Sign"
+        },
+        "zone_names": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ZoneName"
+          }
+        },
+        "pictures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CardPicture"
+          }
+        }
+      }
+    },
+    "RuledOut": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "what",
+        "why"
+      ],
+      "properties": {
+        "what": {
+          "$ref": "#/$defs/PlainText"
+        },
+        "why": {
+          "$ref": "#/$defs/PlainText"
+        }
+      }
+    },
+    "Worker": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "headline",
+        "summary",
+        "hazards",
+        "ruled_out",
+        "cannot_tell",
+        "agent_summary",
+        "zones"
+      ],
+      "properties": {
+        "headline": {
+          "$ref": "#/$defs/PlainText",
+          "minLength": 1
+        },
+        "summary": {
+          "$ref": "#/$defs/PlainText"
+        },
+        "hazards": {
+          "description": "Highest priority first; equal priorities keep the review's order.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Hazard"
+          }
+        },
+        "ruled_out": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RuledOut"
+          }
+        },
+        "cannot_tell": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlainText"
+          }
+        },
+        "agent_summary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AgentSummary"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "zones": {
+          "description": "Every marked area, by zone number.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Zone"
+          }
+        }
+      }
+    },
+    "PlainInstructions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "checks",
+        "rules"
+      ],
+      "properties": {
+        "checks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlainText"
+          }
+        },
+        "rules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlainText"
+          }
+        }
+      }
+    },
+    "Vision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "processed_video_url",
+        "source_video_url",
+        "frames_scanned",
+        "duration_s",
+        "images_sent",
+        "areas_marked",
+        "shown_images",
+        "instructions"
+      ],
+      "properties": {
+        "processed_video_url": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VideoUrl"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_video_url": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VideoUrl"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "frames_scanned": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "duration_s": {
+          "$ref": "#/$defs/Seconds"
+        },
+        "images_sent": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "areas_marked": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "shown_images": {
+          "description": "Exactly the images sent to the review model, in the order sent.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EvidenceImage"
+          }
+        },
+        "instructions": {
+          "$ref": "#/$defs/PlainInstructions"
+        }
+      }
+    },
+    "Technical": {
+      "description": "Judge view: the report's raw records. Extra keys are allowed.",
+      "type": "object",
+      "required": [
+        "zones",
+        "evidence",
+        "findings_raw",
+        "zone_reviews",
+        "standards",
+        "model",
+        "request_sha256",
+        "config",
+        "segmentation_method",
+        "quality_warnings",
+        "system_prompt",
+        "audit_prompt",
+        "dataset_label"
+      ],
+      "properties": {
+        "run_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "run_status": {
+          "enum": [
+            "model_review_complete",
+            "model_review_failed",
+            "preprocessing_only",
+            null
+          ]
+        },
+        "model_error": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "zones": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "zone_id",
+              "kind"
+            ],
+            "properties": {
+              "zone_id": {
+                "type": "string",
+                "pattern": "^Z\\d{2}$"
+              },
+              "kind": {
+                "type": "string"
+              },
+              "zone_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "evidence_id",
+              "frame_index",
+              "timestamp_s",
+              "kind",
+              "image_url"
+            ],
+            "properties": {
+              "evidence_id": {
+                "type": "string",
+                "pattern": "^E\\d{3}$"
+              },
+              "frame_index": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "timestamp_s": {
+                "$ref": "#/$defs/Seconds"
+              },
+              "kind": {
+                "enum": [
+                  "full scene",
+                  "zone crop",
+                  "scene tile"
+                ]
+              },
+              "zone_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "image_url": {
+                "$ref": "#/$defs/RawEvidenceUrl"
+              },
+              "clean_url": {
+                "$ref": "#/$defs/CleanEvidenceUrl"
+              },
+              "zone_name": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "findings_raw": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "zone_reviews": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "dismissed": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "standards": {
+          "type": "object"
+        },
+        "model": {
+          "type": "object"
+        },
+        "request_sha256": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "config": {
+          "type": "object"
+        },
+        "segmentation_method": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "quality_warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "video": {
+          "description": "Report video metadata without source_name.",
+          "type": "object",
+          "not": {
+            "required": [
+              "source_name"
+            ]
+          }
+        },
+        "pipeline": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "system_prompt": {
+          "type": "string"
+        },
+        "audit_prompt": {
+          "type": "string"
+        },
+        "dataset_label": {
+          "description": "Withheld from the AI: the dataset label, judge-only, or null.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "runner": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "agent": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Agent"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "replay": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Replay"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "request_schema": {
+          "description": "The strict JSON schema the review request carried (evidence/zone/standard enums).",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "report_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^/api/hazards/clips/[A-Za-z0-9][A-Za-z0-9_.-]*/report$"
+        }
+      }
+    },
+    "HazardView": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clip",
+        "status",
+        "reviewed_at",
+        "worker",
+        "vision",
+        "technical"
+      ],
+      "properties": {
+        "clip": {
+          "$ref": "#/$defs/ClipRef"
+        },
+        "status": {
+          "$ref": "#/$defs/Status"
+        },
+        "reviewed_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "worker": {
+          "$ref": "#/$defs/Worker"
+        },
+        "vision": {
+          "$ref": "#/$defs/Vision"
+        },
+        "technical": {
+          "$ref": "#/$defs/Technical"
+        }
+      }
+    },
+    "Instructions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "checks",
+        "rules",
+        "system_prompt",
+        "audit_prompt"
+      ],
+      "properties": {
+        "checks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlainText"
+          }
+        },
+        "rules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlainText"
+          }
+        },
+        "system_prompt": {
+          "type": "string"
+        },
+        "audit_prompt": {
+          "type": "string"
+        },
+        "standards": {
+          "description": "The bounded safety-rule library the review may cite: key -> {title, summary, url}.",
+          "type": "object"
+        },
+        "schema": {
+          "description": "The review's JSON schema (without the per-run evidence/zone enums).",
+          "type": "object"
+        }
+      }
+    },
+    "ReviewRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "refresh": {
+          "type": "boolean",
+          "default": false
+        },
+        "mode": {
+          "description": "live forces a real run through the review runner even in demo replay mode; replay forces a replay of the stored run. Omitted: replay when HAZARDS_DEMO_REPLAY=1 or in a fixture profile, else live.",
+          "enum": [
+            "live",
+            "replay"
+          ]
+        }
+      }
+    },
+    "ReviewAccepted": {
+      "description": "202 body. A running job for the clip answers 409 {detail, job_id}.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "job_id",
+        "events_url"
+      ],
+      "properties": {
+        "job_id": {
+          "type": "string",
+          "pattern": "^hzjob_[0-9a-f]{12}$"
+        },
+        "events_url": {
+          "type": "string",
+          "pattern": "^/api/hazards/jobs/hzjob_[0-9a-f]{12}/events$"
+        },
+        "mode": {
+          "enum": [
+            "live",
+            "replay"
+          ]
+        },
+        "runner": {
+          "type": "string"
+        }
+      }
+    },
+    "ProgressEvent": {
+      "description": "SSE event 'progress'. step 1..total follows the script's six steps; step 0 means waiting for another review to finish.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "step",
+        "total",
+        "message",
+        "plain_message"
+      ],
+      "properties": {
+        "step": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "message": {
+          "type": "string"
+        },
+        "plain_message": {
+          "$ref": "#/$defs/PlainText",
+          "minLength": 1
+        },
+        "t_s": {
+          "description": "Seconds since the job started.",
+          "$ref": "#/$defs/Seconds"
+        }
+      }
+    },
+    "DoneEvent": {
+      "description": "SSE event 'done': fetch the clip view (the stored run it names).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clip_id"
+      ],
+      "properties": {
+        "clip_id": {
+          "$ref": "#/$defs/ClipId"
+        },
+        "run_id": {
+          "type": "string"
+        },
+        "reviewed_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "runner": {
+          "type": "string"
+        },
+        "replay": {
+          "type": "boolean"
+        },
+        "note": {
+          "description": "Replay of the GB10 run from <reviewed_at> (replays only).",
+          "type": "string"
+        }
+      }
+    },
+    "FailedEvent": {
+      "description": "SSE event 'failed'. Technical details stay in the server log.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "plain_message"
+      ],
+      "properties": {
+        "plain_message": {
+          "$ref": "#/$defs/PlainText",
+          "minLength": 1
+        }
+      }
+    },
+    "JobEvent": {
+      "description": "One SSE message as {event, data} (used by the examples).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event",
+        "data"
+      ],
+      "properties": {
+        "event": {
+          "enum": [
+            "progress",
+            "agent",
+            "done",
+            "failed"
+          ]
+        },
+        "data": {
+          "type": "object"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "event": {
+                "const": "progress"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": {
+                "$ref": "#/$defs/ProgressEvent"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "event": {
+                "const": "agent"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": {
+                "$ref": "#/$defs/AgentEvent"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "event": {
+                "const": "done"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": {
+                "$ref": "#/$defs/DoneEvent"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "event": {
+                "const": "failed"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": {
+                "$ref": "#/$defs/FailedEvent"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "JobEventList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/JobEvent"
+      }
+    },
+    "ClipKind": {
+      "description": "hazard = factory hazard clip; blindspot = warehouse blind-spot clip (clip.json kind).",
+      "enum": [
+        "hazard",
+        "blindspot"
+      ]
+    },
+    "RawEvidenceUrl": {
+      "type": "string",
+      "pattern": "^/api/hazards/clips/[A-Za-z0-9][A-Za-z0-9_.-]*/media/evidence/E\\d{3}\\.jpg$"
+    },
+    "CleanEvidenceUrl": {
+      "type": "string",
+      "pattern": "^/api/hazards/clips/[A-Za-z0-9][A-Za-z0-9_.-]*/media/evidence_clean/E\\d{3}\\.jpg$"
+    },
+    "ZoneName": {
+      "description": "Plain zone name (config/hazards.yaml zone_name, 'Zone {n}' for zone Z0n) or 'Whole view' for pictures that are not a zone close-up.",
+      "$ref": "#/$defs/PlainText",
+      "minLength": 1
+    },
+    "Sign": {
+      "description": "Warning-sign label (config/hazards.yaml signs, keyed by the first cited safety rule in the map's order; fallback HAZARD, or BLIND SPOT for a blind-spot clip).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "label",
+        "glyph"
+      ],
+      "properties": {
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 16,
+          "pattern": "^[A-Z0-9 /&+.'-]+$"
+        },
+        "glyph": {
+          "enum": [
+            "warning",
+            "trip",
+            "forklift",
+            "machine",
+            "eye",
+            "exit",
+            "eye-off"
+          ]
+        }
+      }
+    },
+    "CardPicture": {
+      "description": "A picture a hazard cites, in clip order.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url",
+        "clean_url",
+        "caption",
+        "time_s"
+      ],
+      "properties": {
+        "url": {
+          "$ref": "#/$defs/RawEvidenceUrl"
+        },
+        "clean_url": {
+          "$ref": "#/$defs/CleanEvidenceUrl"
+        },
+        "caption": {
+          "$ref": "#/$defs/PlainText",
+          "minLength": 1
+        },
+        "time_s": {
+          "$ref": "#/$defs/Seconds"
+        },
+        "time_label": {
+          "$ref": "#/$defs/TimeLabel"
+        },
+        "zone_name": {
+          "$ref": "#/$defs/ZoneName"
+        },
+        "kind_word": {
+          "$ref": "#/$defs/PlainText",
+          "minLength": 1
+        }
+      }
+    },
+    "Zone": {
+      "description": "A marked area. box = [x0, y0, x1, y1] normalised 0-1 of the video frame (bbox_normalized).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "number",
+        "name",
+        "kind_word",
+        "box",
+        "has_hazard",
+        "has_pictures"
+      ],
+      "properties": {
+        "number": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "name": {
+          "$ref": "#/$defs/ZoneName"
+        },
+        "kind_word": {
+          "$ref": "#/$defs/PlainText",
+          "minLength": 1
+        },
+        "box": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "has_hazard": {
+          "type": "boolean"
+        },
+        "has_pictures": {
+          "type": "boolean"
+        }
+      }
+    },
+    "AgentSummary": {
+      "description": "The OpenClaw safety agent's plain summary (agent_summary.json); dropped when either line is not plain.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "headline",
+        "first_action"
+      ],
+      "properties": {
+        "headline": {
+          "$ref": "#/$defs/PlainText",
+          "minLength": 1
+        },
+        "first_action": {
+          "$ref": "#/$defs/PlainText",
+          "minLength": 1
+        }
+      }
+    },
+    "TraceEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "t_s",
+        "kind",
+        "text"
+      ],
+      "properties": {
+        "t_s": {
+          "$ref": "#/$defs/Seconds"
+        },
+        "kind": {
+          "enum": [
+            "tool",
+            "say"
+          ]
+        },
+        "tool": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      }
+    },
+    "Agent": {
+      "description": "The OpenClaw agent that made the run (agent_trace.json / agent_summary.json).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runner",
+        "sandbox",
+        "agent_id",
+        "trace",
+        "summary"
+      ],
+      "properties": {
+        "runner": {
+          "type": "string"
+        },
+        "sandbox": {
+          "type": "string"
+        },
+        "agent_id": {
+          "type": "string"
+        },
+        "trace": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TraceEntry"
+          }
+        },
+        "summary": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      }
+    },
+    "Replay": {
+      "description": "Set when the API replays stored runs (HAZARDS_DEMO_REPLAY=1 or a fixture profile).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "note",
+        "reviewed_at",
+        "run_id"
+      ],
+      "properties": {
+        "note": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reviewed_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "run_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "AgentEvent": {
+      "description": "SSE event 'agent': a plain narration line from the OpenClaw safety agent (runner progress(0, 6, text)), live or replayed from agent_trace.json.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "text"
+      ],
+      "properties": {
+        "text": {
+          "$ref": "#/$defs/PlainText",
+          "minLength": 1
+        },
+        "kind": {
+          "const": "say"
+        },
+        "tool": {
+          "type": "string"
+        },
+        "t_s": {
+          "$ref": "#/$defs/Seconds"
+        }
+      }
+    },
+    "JobSummary": {
+      "description": "GET /api/hazards/clips/{clip_id}/jobs/latest (404 when none).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "job_id",
+        "clip_id",
+        "state",
+        "mode",
+        "runner",
+        "started_at",
+        "events_url"
+      ],
+      "properties": {
+        "job_id": {
+          "type": "string",
+          "pattern": "^hzjob_[0-9a-f]{12}$"
+        },
+        "clip_id": {
+          "$ref": "#/$defs/ClipId"
+        },
+        "state": {
+          "enum": [
+            "running",
+            "done",
+            "failed"
+          ]
+        },
+        "mode": {
+          "enum": [
+            "live",
+            "replay"
+          ]
+        },
+        "runner": {
+          "type": "string"
+        },
+        "started_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "events_url": {
+          "type": "string",
+          "pattern": "^/api/hazards/jobs/hzjob_[0-9a-f]{12}/events$"
+        }
+      }
+    },
+    "RuntimeRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "label",
+        "status",
+        "value",
+        "detail"
+      ],
+      "properties": {
+        "key": {
+          "enum": [
+            "nemoclaw",
+            "openclaw",
+            "openshell",
+            "tool_server",
+            "qwen",
+            "detector",
+            "network"
+          ]
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "enum": [
+            "ok",
+            "down",
+            "unknown"
+          ]
+        },
+        "value": {
+          "type": "string"
+        },
+        "detail": {
+          "type": "string"
+        }
+      }
+    },
+    "RuntimeStatus": {
+      "description": "GET /api/runtime/status: the local stack, cached 15 s; never carries tokens, URLs with credentials or env values.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "checked_at",
+        "local_only",
+        "rows"
+      ],
+      "properties": {
+        "checked_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "local_only": {
+          "type": "boolean"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RuntimeRow"
+          }
+        }
+      }
+    },
+    "WallTile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cam",
+        "label",
+        "watch",
+        "kind",
+        "clip_id",
+        "title",
+        "duration_s",
+        "source_url",
+        "check_after_s"
+      ],
+      "properties": {
+        "cam": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6
+        },
+        "label": {
+          "type": "string",
+          "pattern": "^CAM \\d$"
+        },
+        "watch": {
+          "$ref": "#/$defs/PlainText",
+          "minLength": 1
+        },
+        "kind": {
+          "$ref": "#/$defs/ClipKind"
+        },
+        "clip_id": {
+          "$ref": "#/$defs/ClipId"
+        },
+        "title": {
+          "$ref": "#/$defs/PlainText",
+          "minLength": 1
+        },
+        "duration_s": {
+          "$ref": "#/$defs/Seconds"
+        },
+        "source_url": {
+          "description": "Raw footage only (no AI markings).",
+          "type": "string",
+          "pattern": "^/api/hazards/clips/[A-Za-z0-9][A-Za-z0-9_.-]*/media/source\\.mp4$"
+        },
+        "check_after_s": {
+          "description": "When the tile's automatic check starts, seconds after the wall loads.",
+          "$ref": "#/$defs/Seconds"
+        }
+      }
+    },
+    "Wall": {
+      "description": "GET /api/wall (config/wall.yaml): CAM 1-3 factory hazard clips, CAM 4-6 warehouse blind-spot clips.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "title",
+        "hazard_title",
+        "blindspot_title",
+        "hazard_tiles",
+        "blindspot_tiles"
+      ],
+      "properties": {
+        "title": {
+          "$ref": "#/$defs/PlainText",
+          "minLength": 1
+        },
+        "hazard_title": {
+          "$ref": "#/$defs/PlainText",
+          "minLength": 1
+        },
+        "blindspot_title": {
+          "$ref": "#/$defs/PlainText",
+          "minLength": 1
+        },
+        "hazard_tiles": {
+          "type": "array",
+          "maxItems": 3,
+          "items": {
+            "$ref": "#/$defs/WallTile"
+          }
+        },
+        "blindspot_tiles": {
+          "type": "array",
+          "maxItems": 3,
+          "items": {
+            "$ref": "#/$defs/WallTile"
+          }
+        }
+      }
+    }
+  }
+}

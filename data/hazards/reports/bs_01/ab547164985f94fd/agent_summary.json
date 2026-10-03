@@ -1,0 +1,12 @@
+{
+  "headline": "Pedestrian blind spot at the cross-aisle intersection where visibility is blocked by racks and stacked pallets",
+  "first_action": "Install a convex mirror at the cross-aisle corner to improve visibility and mark a stop line at the intersection",
+  "priority": "high",
+  "confirmed_finding_ids": [
+    "H01",
+    "H02",
+    "H03",
+    "H04",
+    "H05"
+  ]
+}

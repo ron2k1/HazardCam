@@ -1,0 +1,527 @@
+[
+  {
+    "evidence_id": "E001",
+    "frame_index": 0,
+    "timestamp_s": 0.0,
+    "kind": "full scene",
+    "zone_id": null,
+    "bbox_source": [
+      0,
+      0,
+      1920,
+      1080
+    ],
+    "path": "evidence/E001.jpg",
+    "sha256": "7e15ec7f637d2135c1263b70ba26771650a3b0864987a7b175b8f75574bbcc80"
+  },
+  {
+    "evidence_id": "E002",
+    "frame_index": 3,
+    "timestamp_s": 0.12004801920768308,
+    "kind": "full scene",
+    "zone_id": null,
+    "bbox_source": [
+      0,
+      0,
+      1920,
+      1080
+    ],
+    "path": "evidence/E002.jpg",
+    "sha256": "cb16a7ea5d1ea9740554fa7dd74b854c7bdffddd3c7c989a07a5a15e5328b912"
+  },
+  {
+    "evidence_id": "E003",
+    "frame_index": 26,
+    "timestamp_s": 1.0404161664665867,
+    "kind": "full scene",
+    "zone_id": null,
+    "bbox_source": [
+      0,
+      0,
+      1920,
+      1080
+    ],
+    "path": "evidence/E003.jpg",
+    "sha256": "f4379d9d25eccc5c28fbedfeb82fa8c684b956f81278c9d37683529e6b4af0cf"
+  },
+  {
+    "evidence_id": "E004",
+    "frame_index": 44,
+    "timestamp_s": 1.7607042817126852,
+    "kind": "full scene",
+    "zone_id": null,
+    "bbox_source": [
+      0,
+      0,
+      1920,
+      1080
+    ],
+    "path": "evidence/E004.jpg",
+    "sha256": "f7ff258347f765122f997e0b1a3ed1c9fee45c7d3e8fda8dea10a70be8e9d453"
+  },
+  {
+    "evidence_id": "E005",
+    "frame_index": 89,
+    "timestamp_s": 3.561424569827931,
+    "kind": "full scene",
+    "zone_id": null,
+    "bbox_source": [
+      0,
+      0,
+      1920,
+      1080
+    ],
+    "path": "evidence/E005.jpg",
+    "sha256": "92c234581520d639d2e896a1aebf7c8a8d4d3bed23a87f51267de804b64b5a82"
+  },
+  {
+    "evidence_id": "E006",
+    "frame_index": 134,
+    "timestamp_s": 5.362144857943178,
+    "kind": "full scene",
+    "zone_id": null,
+    "bbox_source": [
+      0,
+      0,
+      1920,
+      1080
+    ],
+    "path": "evidence/E006.jpg",
+    "sha256": "c95f167e10c4a9de935fa10b10d50c94f75b7382c2b4668ddbb0f0fb50fea377"
+  },
+  {
+    "evidence_id": "E007",
+    "frame_index": 179,
+    "timestamp_s": 7.162865146058424,
+    "kind": "full scene",
+    "zone_id": null,
+    "bbox_source": [
+      0,
+      0,
+      1920,
+      1080
+    ],
+    "path": "evidence/E007.jpg",
+    "sha256": "6c5afefa65576d31b855ea90930592d7570531cf369c95c3c1c957a74cb7b5e2"
+  },
+  {
+    "evidence_id": "E008",
+    "frame_index": 224,
+    "timestamp_s": 8.96358543417367,
+    "kind": "full scene",
+    "zone_id": null,
+    "bbox_source": [
+      0,
+      0,
+      1920,
+      1080
+    ],
+    "path": "evidence/E008.jpg",
+    "sha256": "0017a5bc3af8f2e105e6e1503b7cd0702491ad9479a5d46a7c32f7e90a4bf8b5"
+  },
+  {
+    "evidence_id": "E009",
+    "frame_index": 269,
+    "timestamp_s": 10.764305722288917,
+    "kind": "full scene",
+    "zone_id": null,
+    "bbox_source": [
+      0,
+      0,
+      1920,
+      1080
+    ],
+    "path": "evidence/E009.jpg",
+    "sha256": "677c59e17bc1bd554ab8b1ce097069ba8dd28233a1ed4ebbbde71f29b5368c37"
+  },
+  {
+    "evidence_id": "E010",
+    "frame_index": 312,
+    "timestamp_s": 12.484993997599041,
+    "kind": "full scene",
+    "zone_id": null,
+    "bbox_source": [
+      0,
+      0,
+      1920,
+      1080
+    ],
+    "path": "evidence/E010.jpg",
+    "sha256": "a31169cbcc3158f5e01d4afc3541a8675fdc47406596079204861c89cbbdc5fb"
+  },
+  {
+    "evidence_id": "E011",
+    "frame_index": 314,
+    "timestamp_s": 12.565026010404162,
+    "kind": "full scene",
+    "zone_id": null,
+    "bbox_source": [
+      0,
+      0,
+      1920,
+      1080
+    ],
+    "path": "evidence/E011.jpg",
+    "sha256": "c21f15ca2657c94a5dca9deec7189a6c6d047b1c675643dcd2186bff7757b979"
+  },
+  {
+    "evidence_id": "E012",
+    "frame_index": 0,
+    "timestamp_s": 0.0,
+    "kind": "zone crop",
+    "zone_id": "Z01",
+    "bbox_source": [
+      1285,
+      0,
+      1742,
+      485
+    ],
+    "path": "evidence/E012.jpg",
+    "sha256": "c909fbd695dac7ceb6e998d9428695458eb3c851f5eee059dd9630e292f1cbc9"
+  },
+  {
+    "evidence_id": "E013",
+    "frame_index": 311,
+    "timestamp_s": 12.44497799119648,
+    "kind": "zone crop",
+    "zone_id": "Z01",
+    "bbox_source": [
+      1285,
+      0,
+      1742,
+      485
+    ],
+    "path": "evidence/E013.jpg",
+    "sha256": "4c21be5207518e5242cdb13a7847b287eb2d0031b40c158b2fb258ead1155d64"
+  },
+  {
+    "evidence_id": "E014",
+    "frame_index": 1,
+    "timestamp_s": 0.040016006402561026,
+    "kind": "zone crop",
+    "zone_id": "Z02",
+    "bbox_source": [
+      565,
+      15,
+      782,
+      250
+    ],
+    "path": "evidence/E014.jpg",
+    "sha256": "8f692ede86735977596a97d92c876309cc7ab01769ef6be0e18d02ece0b95bda"
+  },
+  {
+    "evidence_id": "E015",
+    "frame_index": 314,
+    "timestamp_s": 12.565026010404162,
+    "kind": "zone crop",
+    "zone_id": "Z02",
+    "bbox_source": [
+      565,
+      15,
+      782,
+      250
+    ],
+    "path": "evidence/E015.jpg",
+    "sha256": "44626e9c2d1b7f7ef69fe13b4cd9200302ac8722c680ae29111aa7d4eefc7c83"
+  },
+  {
+    "evidence_id": "E016",
+    "frame_index": 15,
+    "timestamp_s": 0.6002400960384154,
+    "kind": "zone crop",
+    "zone_id": "Z03",
+    "bbox_source": [
+      588,
+      652,
+      855,
+      878
+    ],
+    "path": "evidence/E016.jpg",
+    "sha256": "4ecf98e49cdac383ae29271a58248e9cec1292507eac6d3daf51c7911bb7b6a7"
+  },
+  {
+    "evidence_id": "E017",
+    "frame_index": 314,
+    "timestamp_s": 12.565026010404162,
+    "kind": "zone crop",
+    "zone_id": "Z03",
+    "bbox_source": [
+      588,
+      652,
+      855,
+      878
+    ],
+    "path": "evidence/E017.jpg",
+    "sha256": "bb2ea6e7fedf63aca8f008c837f919ec35904a99fee95263b95790010b48192d"
+  },
+  {
+    "evidence_id": "E018",
+    "frame_index": 0,
+    "timestamp_s": 0.0,
+    "kind": "zone crop",
+    "zone_id": "Z04",
+    "bbox_source": [
+      885,
+      115,
+      1050,
+      320
+    ],
+    "path": "evidence/E018.jpg",
+    "sha256": "60d031519b0ce0a18883f1f48e4c8e286c815dcd8acbd3bebb48b3376641b5d8"
+  },
+  {
+    "evidence_id": "E019",
+    "frame_index": 312,
+    "timestamp_s": 12.484993997599041,
+    "kind": "zone crop",
+    "zone_id": "Z04",
+    "bbox_source": [
+      885,
+      115,
+      1050,
+      320
+    ],
+    "path": "evidence/E019.jpg",
+    "sha256": "429ec6e89c1c4b80a1253d426ded7725e007694b9b37db1e45e1f2bbbbf47b1e"
+  },
+  {
+    "evidence_id": "E020",
+    "frame_index": 29,
+    "timestamp_s": 1.1604641856742697,
+    "kind": "zone crop",
+    "zone_id": "Z05",
+    "bbox_source": [
+      448,
+      560,
+      620,
+      755
+    ],
+    "path": "evidence/E020.jpg",
+    "sha256": "3e1c97c034ee2e6eee05114bbc29239750ca1cc9755e8b8a9f300fa7a3f5cac2"
+  },
+  {
+    "evidence_id": "E021",
+    "frame_index": 314,
+    "timestamp_s": 12.565026010404162,
+    "kind": "zone crop",
+    "zone_id": "Z05",
+    "bbox_source": [
+      448,
+      560,
+      620,
+      755
+    ],
+    "path": "evidence/E021.jpg",
+    "sha256": "a61ef3012a7b6124466f96676bf9dd24e6fe60b94eeb718e0ca16b624d8239d3"
+  },
+  {
+    "evidence_id": "E022",
+    "frame_index": 0,
+    "timestamp_s": 0.0,
+    "kind": "zone crop",
+    "zone_id": "Z06",
+    "bbox_source": [
+      1246,
+      0,
+      1920,
+      960
+    ],
+    "path": "evidence/E022.jpg",
+    "sha256": "47954d439d7925ee371d724da3bd5fae5de04b468fd91281539a02e4869f2d59"
+  },
+  {
+    "evidence_id": "E023",
+    "frame_index": 314,
+    "timestamp_s": 12.565026010404162,
+    "kind": "zone crop",
+    "zone_id": "Z06",
+    "bbox_source": [
+      1246,
+      0,
+      1920,
+      960
+    ],
+    "path": "evidence/E023.jpg",
+    "sha256": "53418f3e56787146764ad4a453149260cd322ab7788a68415f7f1acd3c98f727"
+  },
+  {
+    "evidence_id": "E024",
+    "frame_index": 0,
+    "timestamp_s": 0.0,
+    "kind": "zone crop",
+    "zone_id": "Z07",
+    "bbox_source": [
+      0,
+      821,
+      519,
+      1080
+    ],
+    "path": "evidence/E024.jpg",
+    "sha256": "a3eb3ba4a39062eb5b6030e5327b35b9e7d8a8672a57a3bda6d05228a1400266"
+  },
+  {
+    "evidence_id": "E025",
+    "frame_index": 314,
+    "timestamp_s": 12.565026010404162,
+    "kind": "zone crop",
+    "zone_id": "Z07",
+    "bbox_source": [
+      0,
+      821,
+      519,
+      1080
+    ],
+    "path": "evidence/E025.jpg",
+    "sha256": "ea4ea4a22eeb785f90f1d8bccb263fda2bfd1acc3e4e83bee1797b2ad525b9d3"
+  },
+  {
+    "evidence_id": "E026",
+    "frame_index": 0,
+    "timestamp_s": 0.0,
+    "kind": "zone crop",
+    "zone_id": "Z08",
+    "bbox_source": [
+      191,
+      708,
+      514,
+      1012
+    ],
+    "path": "evidence/E026.jpg",
+    "sha256": "32898b756aee95b4a69f226ee13490e6be2d9fc89316845f28c6bf2f3d2f1075"
+  },
+  {
+    "evidence_id": "E027",
+    "frame_index": 314,
+    "timestamp_s": 12.565026010404162,
+    "kind": "zone crop",
+    "zone_id": "Z08",
+    "bbox_source": [
+      191,
+      708,
+      514,
+      1012
+    ],
+    "path": "evidence/E027.jpg",
+    "sha256": "34717cf025968cf3c5cb933ec2272ff34bfdf789c7b95019d59ce3e54d8004f7"
+  },
+  {
+    "evidence_id": "E028",
+    "frame_index": 0,
+    "timestamp_s": 0.0,
+    "kind": "zone crop",
+    "zone_id": "Z09",
+    "bbox_source": [
+      165,
+      262,
+      512,
+      680
+    ],
+    "path": "evidence/E028.jpg",
+    "sha256": "1e89e9778d6cad4d72b1a6a11b2ac775a15871788522062e2183f4c2aacb5bad"
+  },
+  {
+    "evidence_id": "E029",
+    "frame_index": 314,
+    "timestamp_s": 12.565026010404162,
+    "kind": "zone crop",
+    "zone_id": "Z09",
+    "bbox_source": [
+      165,
+      262,
+      512,
+      680
+    ],
+    "path": "evidence/E029.jpg",
+    "sha256": "a4442d72159bef66482d479e73bfc3cf2e94c5dc764ff8891adaac447be13ad9"
+  },
+  {
+    "evidence_id": "E030",
+    "frame_index": 0,
+    "timestamp_s": 0.0,
+    "kind": "zone crop",
+    "zone_id": "Z10",
+    "bbox_source": [
+      478,
+      140,
+      1032,
+      650
+    ],
+    "path": "evidence/E030.jpg",
+    "sha256": "dd877d89a49c3f3b9e8b063178bb0b15cf81d455f4c998a7c9bdadd25a0199a4"
+  },
+  {
+    "evidence_id": "E031",
+    "frame_index": 314,
+    "timestamp_s": 12.565026010404162,
+    "kind": "zone crop",
+    "zone_id": "Z10",
+    "bbox_source": [
+      478,
+      140,
+      1032,
+      650
+    ],
+    "path": "evidence/E031.jpg",
+    "sha256": "174b3ddeb42e574bb2da4d10fec4f759d77ca5bd5ce23359cad6d3520a081a73"
+  },
+  {
+    "evidence_id": "E032",
+    "frame_index": 157,
+    "timestamp_s": 6.282513005202081,
+    "kind": "scene tile",
+    "zone_id": null,
+    "bbox_source": [
+      0,
+      0,
+      1056,
+      594
+    ],
+    "path": "evidence/E032.jpg",
+    "sha256": "fd31d7ab26bbfa17560fdab5209c2a3d07e2206fa59b089763d56bbc81940f32"
+  },
+  {
+    "evidence_id": "E033",
+    "frame_index": 157,
+    "timestamp_s": 6.282513005202081,
+    "kind": "scene tile",
+    "zone_id": null,
+    "bbox_source": [
+      864,
+      0,
+      1920,
+      594
+    ],
+    "path": "evidence/E033.jpg",
+    "sha256": "85ffae6db191ea4d3c855a4247aff8b6063fcb7843fc6221fcdd01a750963ea3"
+  },
+  {
+    "evidence_id": "E034",
+    "frame_index": 157,
+    "timestamp_s": 6.282513005202081,
+    "kind": "scene tile",
+    "zone_id": null,
+    "bbox_source": [
+      0,
+      486,
+      1056,
+      1080
+    ],
+    "path": "evidence/E034.jpg",
+    "sha256": "b43dce8a0382e9c0407504d2ee99b5ac09ea45205e94d052e7842fb5ccd700e2"
+  },
+  {
+    "evidence_id": "E035",
+    "frame_index": 157,
+    "timestamp_s": 6.282513005202081,
+    "kind": "scene tile",
+    "zone_id": null,
+    "bbox_source": [
+      864,
+      486,
+      1920,
+      1080
+    ],
+    "path": "evidence/E035.jpg",
+    "sha256": "f40f20de821691eff660db3df0a7ca052c479817de6b3cdb80b2d6f5b11e58f0"
+  }
+]

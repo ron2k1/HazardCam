@@ -1,0 +1,192 @@
+{
+  "request_sha256": "0bc63427209da658a504c9cfd8bcbbe56a9b0523e7a645bde8edb2376906678e",
+  "model_metadata": {
+    "name": "nvidia/Qwen3.6-35B-A3B-NVFP4",
+    "base_url": "http://127.0.0.1:8000/v1",
+    "profile": "gb10",
+    "api": "openai_compatible /chat/completions",
+    "served_root": "/models/nvidia__Qwen3.6-35B-A3B-NVFP4",
+    "max_model_len": 262144,
+    "fingerprint": "4cf7b96fd10ac6fea848c33621c06808771d3ee1a956ea389a6dc19b5031d469",
+    "thinking": false,
+    "structured_output": "json_schema (strict)",
+    "inference_source": "fresh",
+    "elapsed_seconds": 39.81,
+    "calls": 1,
+    "prompt_tokens": 29364,
+    "completion_tokens": 1498,
+    "finish_reason": "stop"
+  },
+  "created_at": "2026-10-03T19:48:01.290461+00:00",
+  "report": {
+    "scene_summary": "The video shows an industrial manufacturing floor with large machinery, including a blue press, on the left side. A marked aisle with yellow and green painted lines runs along the right side. A worker is observed operating the blue press, and another worker walks through the aisle. A loose metal coil is present on the floor near the machinery.",
+    "findings": [
+      {
+        "title": "Loose material on walking-working surface",
+        "status": "visible_concern",
+        "severity": "medium",
+        "confidence": "high",
+        "zone_ids": [
+          "Z06",
+          "Z10"
+        ],
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E022",
+          "E023",
+          "E030",
+          "E031",
+          "E035"
+        ],
+        "location": "Floor area between the blue press and the marked aisle",
+        "observation": "A loose metal coil is resting on the floor in an open area adjacent to the marked aisle. The object is not contained within a designated storage zone and is situated on the walking-working surface.",
+        "risk_interpretation": "Loose material left on a walking surface outside a marked storage area is a trip hazard under 1910.22(a)(3).",
+        "standards": [
+          "1910.22(a)(3)"
+        ],
+        "applicability_reason": "Loose material (metal coil) is on a walking-working surface outside a marked storage area.",
+        "unknowns": [],
+        "recommended_actions": [
+          "Relocate the metal coil to a designated storage area.",
+          "Ensure all raw materials are stored in marked zones to keep walking surfaces clear."
+        ]
+      }
+    ],
+    "zone_reviews": [
+      {
+        "zone_id": "Z01",
+        "interpretation": "Worker operating a large blue press machine.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E012",
+          "E013"
+        ]
+      },
+      {
+        "zone_id": "Z02",
+        "interpretation": "Worker walking along the marked aisle.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E014",
+          "E015"
+        ]
+      },
+      {
+        "zone_id": "Z03",
+        "interpretation": "Machinery and yellow safety fencing.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E016",
+          "E017"
+        ]
+      },
+      {
+        "zone_id": "Z04",
+        "interpretation": "Aisle area with a worker walking.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E018",
+          "E019"
+        ]
+      },
+      {
+        "zone_id": "Z05",
+        "interpretation": "Machinery with yellow safety guards.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E020",
+          "E021"
+        ]
+      },
+      {
+        "zone_id": "Z06",
+        "interpretation": "Loose metal coil on the floor near the blue press.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E022",
+          "E023"
+        ]
+      },
+      {
+        "zone_id": "Z07",
+        "interpretation": "Machinery and equipment.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E024",
+          "E025"
+        ]
+      },
+      {
+        "zone_id": "Z08",
+        "interpretation": "Aisle area with containers and fire extinguisher.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E026",
+          "E027"
+        ]
+      },
+      {
+        "zone_id": "Z09",
+        "interpretation": "Machinery and safety fencing.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E028",
+          "E029"
+        ]
+      },
+      {
+        "zone_id": "Z10",
+        "interpretation": "Loose metal coil on the floor.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E030",
+          "E031"
+        ]
+      }
+    ],
+    "dismissed": [
+      {
+        "concern": "Machine guarding",
+        "reason": "Machinery is present, but no worker is visibly in danger or reaching into a hazard zone. No immediate violation observed.",
+        "evidence_ids": [
+          "E001",
+          "E016",
+          "E020",
+          "E028"
+        ]
+      },
+      {
+        "concern": "Lockout/Tagout",
+        "reason": "No visible servicing or maintenance activity is occurring. The absence of a lock/tag does not establish a violation.",
+        "evidence_ids": [
+          "E001",
+          "E012",
+          "E022"
+        ]
+      },
+      {
+        "concern": "PPE (Eye protection)",
+        "reason": "No visible eye/face hazard exposure is confirmed in the video frames.",
+        "evidence_ids": [
+          "E001",
+          "E012",
+          "E013"
+        ]
+      }
+    ],
+    "limitations": [
+      "No reliable floor-like mask found; static-zone ranking uses general scene candidates.",
+      "Machine operation status and energy isolation state are inferred from still frames and cannot be confirmed."
+    ]
+  }
+}

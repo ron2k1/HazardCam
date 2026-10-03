@@ -1,0 +1,251 @@
+{
+  "audit_sha256": "951427149dff43b1a3540e324df3e73df21bc61347bfc871e2f23956314602e0",
+  "original_request_sha256": "ca4ba67103241aef55727a6a37825fea601f88694361de7d62380ee871760803",
+  "report": {
+    "scene_summary": "The video shows a warehouse environment with multiple pedestrians walking through aisles and work areas. The scene contains various obstructions including stacked pallets, large wooden crates, and cardboard boxes. Yellow lines mark pedestrian walkways and storage zones. No vehicles (forklifts, pallet jacks) are visible in the provided frames.",
+    "findings": [
+      {
+        "title": "Blind spot at aisle end near stacked pallets",
+        "status": "visible_concern",
+        "severity": "medium",
+        "confidence": "high",
+        "zone_ids": [
+          "Z02"
+        ],
+        "evidence_ids": [
+          "E002",
+          "E003",
+          "E004",
+          "E014",
+          "E015"
+        ],
+        "location": "Zone Z02, left side of warehouse near stacked pallets and work tables",
+        "observation": "A stack of wooden pallets (visible in E014, E015) creates a blind corner where a pedestrian (E002, E003) walks from behind the pallet stack into the open area. The pallet stack blocks the view between the pedestrian's path and any potential vehicle traffic that might approach from the left side of the frame.",
+        "risk_interpretation": "A pedestrian emerging from behind the pallet stack may not be visible to a vehicle operator approaching from the left, and vice versa. This creates a collision risk at the blind corner.",
+        "standards": [
+          "1910.178(n)(4)",
+          "1910.176(a)"
+        ],
+        "applicability_reason": "The pallet stack obstructs vision at a location where pedestrian and potential vehicle paths intersect.",
+        "unknowns": [
+          "Vehicle traffic patterns and frequency in this area",
+          "Whether vehicles operate in Zone Z02"
+        ],
+        "recommended_actions": [
+          "Install a convex mirror at the corner of the pallet stack to provide visibility around the blind corner",
+          "Mark the area with a stop line and require horn signal before entering the blind corner",
+          "Consider relocating the pallet stack to eliminate the blind corner if possible"
+        ]
+      },
+      {
+        "title": "Blind spot at aisle end near stacked boxes and wooden crate",
+        "status": "visible_concern",
+        "severity": "medium",
+        "confidence": "high",
+        "zone_ids": [
+          "Z01",
+          "Z05"
+        ],
+        "evidence_ids": [
+          "E001",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E012",
+          "E013",
+          "E020",
+          "E021",
+          "E030",
+          "E031"
+        ],
+        "location": "Zone Z01/Z05, right foreground area with stacked boxes and wooden crate",
+        "observation": "A large wooden crate and stacked cardboard boxes (visible in E020, E021, E030, E031) create a blind corner where pedestrians walk from behind the obstruction into the open aisle. Pedestrians (E005, E006, E007, E008, E009, E010, E011) are seen emerging from behind these obstructions. The stacked boxes and crate block the view between the pedestrian's path and any potential vehicle traffic approaching from the right.",
+        "risk_interpretation": "A pedestrian emerging from behind the stacked boxes and wooden crate may not be visible to a vehicle operator approaching from the right, and vice versa. This creates a collision risk at the blind corner.",
+        "standards": [
+          "1910.178(n)(4)",
+          "1910.176(a)"
+        ],
+        "applicability_reason": "The stacked boxes and wooden crate obstruct vision at a location where pedestrian and potential vehicle paths intersect.",
+        "unknowns": [
+          "Vehicle traffic patterns and frequency in this area",
+          "Whether vehicles operate in Zone Z01/Z05"
+        ],
+        "recommended_actions": [
+          "Install a convex mirror at the corner of the stacked boxes and wooden crate to provide visibility around the blind corner",
+          "Mark the area with a stop line and require horn signal before entering the blind corner",
+          "Consider relocating the stacked boxes and wooden crate to eliminate the blind corner if possible"
+        ]
+      },
+      {
+        "title": "Blind spot near stacked pallets and work area",
+        "status": "visible_concern",
+        "severity": "medium",
+        "confidence": "high",
+        "zone_ids": [
+          "Z02",
+          "Z03"
+        ],
+        "evidence_ids": [
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E014",
+          "E015",
+          "E016",
+          "E017",
+          "E028"
+        ],
+        "location": "Zone Z02/Z03, left side of warehouse near work tables and stacked pallets",
+        "observation": "A stack of wooden pallets (E014, E015, E028) and work tables create a blind corner where pedestrians walk from behind the obstructions into the open area. Multiple pedestrians (E002, E003, E004, E005, E006, E007, E008, E009, E010, E011) are seen walking in this area. The pallet stack and work tables block the view between the pedestrian's path and any potential vehicle traffic approaching from the left or rear.",
+        "risk_interpretation": "A pedestrian emerging from behind the pallet stack and work tables may not be visible to a vehicle operator approaching from the left or rear, and vice versa. This creates a collision risk at the blind corner.",
+        "standards": [
+          "1910.178(n)(4)",
+          "1910.176(a)"
+        ],
+        "applicability_reason": "The pallet stack and work tables obstruct vision at a location where pedestrian and potential vehicle paths intersect.",
+        "unknowns": [
+          "Vehicle traffic patterns and frequency in this area",
+          "Whether vehicles operate in Zone Z02/Z03"
+        ],
+        "recommended_actions": [
+          "Install a convex mirror at the corner of the pallet stack and work tables to provide visibility around the blind corner",
+          "Mark the area with a stop line and require horn signal before entering the blind corner",
+          "Consider relocating the pallet stack and work tables to eliminate the blind corner if possible"
+        ]
+      }
+    ],
+    "zone_reviews": [
+      {
+        "zone_id": "Z01",
+        "interpretation": "Zone Z01 contains the right foreground area with stacked boxes and a wooden crate. Pedestrians are seen walking in this area, and the stacked boxes and wooden crate create a blind corner where pedestrians emerge from behind the obstruction.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E001",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E012",
+          "E013",
+          "E024",
+          "E025"
+        ]
+      },
+      {
+        "zone_id": "Z02",
+        "interpretation": "Zone Z02 contains the left side of the warehouse with work tables, stacked pallets, and pedestrians. The stacked pallets create a blind corner where pedestrians emerge from behind the obstruction.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E002",
+          "E003",
+          "E004",
+          "E014",
+          "E015",
+          "E028"
+        ]
+      },
+      {
+        "zone_id": "Z03",
+        "interpretation": "Zone Z03 is a small zone in the upper left corner showing work tables and a pedestrian. The area appears to be a work area with limited visibility to the main aisle.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E016",
+          "E017",
+          "E028"
+        ]
+      },
+      {
+        "zone_id": "Z04",
+        "interpretation": "Zone Z04 contains stacked pallets and boxes in the right mid-ground. Pedestrians are seen walking past this area. The stacked pallets and boxes create a potential blind spot.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E018",
+          "E019"
+        ]
+      },
+      {
+        "zone_id": "Z05",
+        "interpretation": "Zone Z05 is a close-up of the stacked boxes and wooden crate in the right foreground. The stacked boxes and wooden crate create a blind corner where pedestrians emerge from behind the obstruction.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E020",
+          "E021",
+          "E030",
+          "E031"
+        ]
+      },
+      {
+        "zone_id": "Z06",
+        "interpretation": "Zone Z06 contains the center area with orange barriers, yellow fencing, and pedestrians. The area appears to be a work zone with barriers and fencing.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E022",
+          "E023"
+        ]
+      },
+      {
+        "zone_id": "Z07",
+        "interpretation": "Zone Z07 is a close-up of the stacked boxes and wooden crate in the right foreground. The stacked boxes and wooden crate create a blind corner where pedestrians emerge from behind the obstruction.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E024",
+          "E025"
+        ]
+      },
+      {
+        "zone_id": "Z08",
+        "interpretation": "Zone Z08 is a close-up of the stacked boxes in the left foreground. The stacked boxes create a potential blind spot.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E026",
+          "E027",
+          "E030"
+        ]
+      }
+    ],
+    "dismissed": [
+      {
+        "concern": "Potential blind spot near orange barriers",
+        "reason": "The orange barriers in Zone Z06 appear to be part of a designated work zone with fencing. While they create a visual obstruction, they are not at an aisle end or cross-aisle where pedestrian and vehicle paths intersect. The barriers are stationary and do not create a blind corner in the same way as the stacked pallets and boxes.",
+        "evidence_ids": [
+          "E022",
+          "E023"
+        ]
+      },
+      {
+        "concern": "Potential blind spot near yellow scaffolding",
+        "reason": "The yellow scaffolding in Zone Z06 is part of a work area and does not create a blind corner at an aisle end or cross-aisle. The scaffolding is stationary and does not obstruct the view between pedestrian and vehicle paths.",
+        "evidence_ids": [
+          "E022",
+          "E023"
+        ]
+      }
+    ],
+    "limitations": [
+      "No vehicles (forklifts, pallet jacks) are visible in the provided frames, so the risk assessment is based on potential vehicle traffic rather than observed vehicle movement.",
+      "The video is a simulation, so the actual risk may differ from the simulated scenario.",
+      "The analysis is based on a limited set of frames (15 frames over 15 seconds), so the findings may not represent the full range of conditions in the warehouse.",
+      "No information is available about vehicle traffic patterns, speed, or horn use, so the risk assessment is based on the presence of blind spots rather than observed vehicle-pedestrian interactions."
+    ]
+  },
+  "metadata": {
+    "elapsed_seconds": 23.37,
+    "prompt_tokens": 30332,
+    "completion_tokens": 2447,
+    "finish_reason": "stop"
+  }
+}

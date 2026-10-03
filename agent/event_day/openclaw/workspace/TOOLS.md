@@ -20,3 +20,9 @@ an error that says what to do next. This file is guidance only. The tool policy 
   turns the alert back on, the alert guard grants one `send` per run, with the policy's own
   text and target, and refuses a call that passes anything besides `action`, `channel`,
   `target` and `message`.
+- Safety hazard jobs (HAZARD BRIEF) use `mirror__hazard_scan_clip`,
+  `mirror__hazard_review_clip` and `mirror__hazard_submit_summary` from the same server,
+  for the one clip the brief names. During a hazard job the seven run tools are refused, and
+  during a run the hazard tools are refused. The review result lists findings with `id`,
+  `severity`, `title`, `start_s`/`end_s`, `confidence`, `audit_verdict` and
+  `recommended_actions`; the summary may only confirm those ids.

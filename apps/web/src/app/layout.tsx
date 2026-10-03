@@ -26,7 +26,7 @@ const mono = localFont({
 
 export const metadata: Metadata = {
   title: "CameraVision",
-  description: "Causal intelligence from distributed visual evidence.",
+  description: "Factory and warehouse safety monitor running on local AI.",
 };
 
 export const viewport: Viewport = {

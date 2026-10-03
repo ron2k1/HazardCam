@@ -1,0 +1,348 @@
+{
+  "method": "local YOLO11s boxes on the temporal background + edge contours",
+  "zones": [
+    {
+      "kind": "movement",
+      "bbox_analysis": [
+        387,
+        69,
+        768,
+        178
+      ],
+      "proposal_score": 1737.249443207127,
+      "peak_frame": 17,
+      "active_start_s": 0.03333333333333333,
+      "active_end_s": 14.966666666666667,
+      "zone_id": "Z01",
+      "bbox_normalized": [
+        0.50391,
+        0.15972,
+        1.0,
+        0.41204
+      ],
+      "bbox_source": [
+        968,
+        172,
+        1920,
+        445
+      ]
+    },
+    {
+      "kind": "movement",
+      "bbox_analysis": [
+        493,
+        166,
+        747,
+        340
+      ],
+      "proposal_score": 1097.9933184855233,
+      "peak_frame": 439,
+      "active_start_s": 3.8,
+      "active_end_s": 14.966666666666667,
+      "zone_id": "Z02",
+      "bbox_normalized": [
+        0.64193,
+        0.38426,
+        0.97266,
+        0.78704
+      ],
+      "bbox_source": [
+        1232,
+        415,
+        1868,
+        850
+      ]
+    },
+    {
+      "kind": "movement",
+      "bbox_analysis": [
+        112,
+        96,
+        334,
+        167
+      ],
+      "proposal_score": 306.5790645879732,
+      "peak_frame": 266,
+      "active_start_s": 0.03333333333333333,
+      "active_end_s": 14.966666666666667,
+      "zone_id": "Z03",
+      "bbox_normalized": [
+        0.14583,
+        0.22222,
+        0.4349,
+        0.38657
+      ],
+      "bbox_source": [
+        280,
+        240,
+        835,
+        418
+      ]
+    },
+    {
+      "kind": "movement",
+      "bbox_analysis": [
+        0,
+        125,
+        87,
+        203
+      ],
+      "proposal_score": 169.641425389755,
+      "peak_frame": 250,
+      "active_start_s": 7.6,
+      "active_end_s": 12.866666666666667,
+      "zone_id": "Z04",
+      "bbox_normalized": [
+        0.0,
+        0.28935,
+        0.11328,
+        0.46991
+      ],
+      "bbox_source": [
+        0,
+        312,
+        218,
+        508
+      ]
+    },
+    {
+      "kind": "movement",
+      "bbox_analysis": [
+        0,
+        76,
+        43,
+        111
+      ],
+      "proposal_score": 77.32739420935413,
+      "peak_frame": 428,
+      "active_start_s": 0.03333333333333333,
+      "active_end_s": 14.966666666666667,
+      "zone_id": "Z05",
+      "bbox_normalized": [
+        0.0,
+        0.17593,
+        0.05599,
+        0.25694
+      ],
+      "bbox_source": [
+        0,
+        190,
+        108,
+        278
+      ]
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        563,
+        84,
+        763,
+        293
+      ],
+      "proposal_score": 0.18806455637355454,
+      "stability": 0.9748809319856091,
+      "paint_proximity": 0.754032634032634,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 14.966666666666667,
+      "zone_id": "Z06",
+      "bbox_normalized": [
+        0.73307,
+        0.19444,
+        0.99349,
+        0.67824
+      ],
+      "bbox_source": [
+        1408,
+        210,
+        1908,
+        732
+      ]
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        52,
+        106,
+        151,
+        195
+      ],
+      "proposal_score": 0.10270533336733825,
+      "stability": 0.9835058960488494,
+      "paint_proximity": 0.9124117053481332,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 14.966666666666667,
+      "zone_id": "Z07",
+      "bbox_normalized": [
+        0.06771,
+        0.24537,
+        0.19661,
+        0.45139
+      ],
+      "bbox_source": [
+        130,
+        265,
+        378,
+        488
+      ]
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        578,
+        244,
+        697,
+        302
+      ],
+      "proposal_score": 0.09756828287189535,
+      "stability": 0.9786745279791402,
+      "paint_proximity": 0.9647535127411289,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 14.966666666666667,
+      "zone_id": "Z08",
+      "bbox_normalized": [
+        0.7526,
+        0.56481,
+        0.90755,
+        0.69907
+      ],
+      "bbox_source": [
+        1445,
+        610,
+        1742,
+        755
+      ]
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        686,
+        204,
+        731,
+        308
+      ],
+      "proposal_score": 0.08280865167057043,
+      "stability": 0.9545909238002779,
+      "paint_proximity": 0.7072649572649573,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 14.966666666666667,
+      "zone_id": "Z09",
+      "bbox_normalized": [
+        0.89323,
+        0.47222,
+        0.95182,
+        0.71296
+      ],
+      "bbox_source": [
+        1715,
+        510,
+        1828,
+        770
+      ]
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        290,
+        62,
+        396,
+        118
+      ],
+      "proposal_score": 0.08200783972571185,
+      "stability": 0.9875613669564385,
+      "paint_proximity": 0.9967741935483871,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 14.966666666666667,
+      "zone_id": "Z10",
+      "bbox_normalized": [
+        0.3776,
+        0.14352,
+        0.51562,
+        0.27315
+      ],
+      "bbox_source": [
+        725,
+        155,
+        990,
+        295
+      ]
+    }
+  ],
+  "candidate_counts": {
+    "movement": 8,
+    "static": 27
+  },
+  "note": "Proposal scores are heuristic rankings within each kind, not hazard probabilities.",
+  "zone_sources": {
+    "Z01": "motion heatmap",
+    "Z02": "motion heatmap",
+    "Z03": "motion heatmap",
+    "Z04": "motion heatmap",
+    "Z05": "motion heatmap",
+    "Z06": "edge contour",
+    "Z07": "edge contour",
+    "Z08": "edge contour",
+    "Z09": "yolo11s: person (0.89)",
+    "Z10": "edge contour"
+  },
+  "region_masks": {
+    "yolo_boxes": 2,
+    "edge_contours": 313
+  },
+  "detector": {
+    "url": "http://127.0.0.1:8003",
+    "status": "ok",
+    "error": null,
+    "device": "cuda:0 (NVIDIA GB10)",
+    "requested_models": [
+      "yolo11s"
+    ],
+    "used_models": [
+      "yolo11s"
+    ],
+    "models_sha256": {
+      "yolo11s": "85a76fe86dd8afe384648546b56a7a78580c7cb7b404fc595f97969322d502d5"
+    },
+    "conf": 0.25,
+    "image": "temporal background (analysis resolution, PNG)",
+    "image_size": [
+      768,
+      432
+    ],
+    "boxes": 2,
+    "elapsed_ms": 17.2,
+    "objects": [
+      {
+        "model": "yolo11s",
+        "label": "person",
+        "conf": 0.8931,
+        "box": [
+          686.0,
+          204.0,
+          731.0,
+          307.5
+        ]
+      },
+      {
+        "model": "yolo11s",
+        "label": "person",
+        "conf": 0.7505,
+        "box": [
+          390.0,
+          125.0,
+          404.0,
+          176.75
+        ]
+      }
+    ]
+  }
+}

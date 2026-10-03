@@ -20,6 +20,7 @@ from agent.event_day.app import create_agent_app
 from agent.event_day.executor import HARNESS_ID, OpenClawCliLauncher
 from agent.event_day.mcp_server import NO_RUN
 from agent.event_day.policy import AGENT_ID
+from agent.event_day.registration import REGISTERED_TOOLS
 from apps.api.schemas import validate_json
 from tools.session import TOOL_NAMES
 
@@ -98,10 +99,11 @@ async def test_without_a_run_every_tool_call_is_refused(agent_api: AgentApi):
     client = agent_api.mcp_client()
     try:
         client.initialize()
-        assert [t["name"] for t in client.list_tools()] == list(TOOL_NAMES)
+        assert [t["name"] for t in client.list_tools()] == list(REGISTERED_TOOLS)
         for tool, arguments in [
             ("sample_video", {"camera_id": "cam_01"}),
             ("submit_hypothesis", {}),
+            ("hazard_scan_clip", {"clip_id": "hz_01"}),
         ]:
             assert client.call(tool, arguments) == {"ok": False, "error": NO_RUN, "refused": True}
     finally:

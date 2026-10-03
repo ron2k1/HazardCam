@@ -1,0 +1,10 @@
+{
+  "headline": "Blind corner at aisle intersection blocked by barriers and stacked materials obscures visibility for pedestrians and forklifts",
+  "first_action": "Install a convex mirror at the aisle corner to restore visibility and require horn signals before proceeding",
+  "priority": "high",
+  "confirmed_finding_ids": [
+    "H01",
+    "H02",
+    "H03"
+  ]
+}

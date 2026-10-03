@@ -13,5 +13,9 @@ in `tools/`, `contracts/` and `apps/api/schemas`.
 - `executor.py`: D01. `OpenClawAgentExecutor`, the API's run executor for the agent
 - `app.py`: D01. The API with the agent executor (`uvicorn --factory agent.event_day.app:create_agent_app`)
 - `register.py`: D01. Merges the registration into an `openclaw.json`
+- `hazard_tools.py`: hazard agent task. `HazardJobSession`, the three `mirror__hazard_*` tools
+  for one leased clip (contract: `contracts/hazard_tools.schema.json`)
+- `hazard_runner.py`: hazard agent task. `AgentHazardRunner`, the `/hazards` review seam
+  (`app.state.hazard_review_runner`, name `openclaw-agent`): one OpenClaw turn per clip review
 - `tests/`: D00 tests (`.venv/bin/python -m pytest agent/event_day/tests`); D01's are in
   `tests/integration/agent/`

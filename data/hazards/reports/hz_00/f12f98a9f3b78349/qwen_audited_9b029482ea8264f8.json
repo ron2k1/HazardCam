@@ -1,0 +1,174 @@
+{
+  "audit_sha256": "9b029482ea8264f84c98680d02301c3c44922cb6cdf662221e08029af4049ccf",
+  "original_request_sha256": "8d8d2096cd5b99cfe8e09c38fbb7a215f0494d21011cb46ef0c703bc86e00ca9",
+  "report": {
+    "scene_summary": "The video shows an industrial manufacturing area with a large blue press machine on the left and a marked pedestrian walkway on the right. A worker is seated at the machine, appearing to be in a stationary position near the point of operation. A large metal coil is stored on a pallet in the central area, adjacent to a marked yellow line. A worker is observed walking along the marked green walkway in the background.",
+    "findings": [
+      {
+        "title": "Trip hazard from loose material on walking surface",
+        "status": "visible_concern",
+        "severity": "medium",
+        "confidence": "high",
+        "zone_ids": [
+          "Z10"
+        ],
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E030",
+          "E031"
+        ],
+        "location": "Central floor area, adjacent to the yellow aisle marking",
+        "observation": "A large metal coil is resting on a wooden pallet on the floor. The coil and pallet are positioned immediately adjacent to a yellow painted line, with the coil encroaching across the boundary of the marked path/aisle. This loose material on a walking surface constitutes a trip hazard.",
+        "risk_interpretation": "The coil presents a tripping hazard for personnel moving through the area. Its placement on the walking surface is a violation of walking-working surface standards.",
+        "standards": [
+          "1910.22(a)(3)"
+        ],
+        "applicability_reason": "The object is a loose material (coil) left on a walking surface outside a marked storage area, creating a trip hazard.",
+        "unknowns": [
+          "Applicability of 1910.176(a) regarding mechanical handling equipment and intended aisle clearance requires site verification."
+        ],
+        "recommended_actions": [
+          "Relocate the metal coil to a designated storage area that does not obstruct marked aisles or walking surfaces.",
+          "Ensure all materials are stored in a manner that does not create hazards on walking-working surfaces."
+        ]
+      }
+    ],
+    "zone_reviews": [
+      {
+        "zone_id": "Z01",
+        "interpretation": "A marked pedestrian walkway (green with yellow borders) is visible. A worker is seen walking along this path in the background.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E012",
+          "E013",
+          "E022",
+          "E023"
+        ]
+      },
+      {
+        "zone_id": "Z02",
+        "interpretation": "A yellow industrial fan is visible in the background. It is stationary and not encroaching on the main walkway.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E014",
+          "E015"
+        ]
+      },
+      {
+        "zone_id": "Z03",
+        "interpretation": "A worker is seated at a large blue press machine. The worker is positioned close to the machine's controls and point of operation. The worker's hands are near the machine opening.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E016",
+          "E017",
+          "E034"
+        ]
+      },
+      {
+        "zone_id": "Z04",
+        "interpretation": "An orange machine (possibly a shear or cutter) is visible. No personnel are in the immediate danger zone.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E018",
+          "E019"
+        ]
+      },
+      {
+        "zone_id": "Z05",
+        "interpretation": "Close-up of the blue press machine's control panel and warning labels.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E020",
+          "E021"
+        ]
+      },
+      {
+        "zone_id": "Z06",
+        "interpretation": "The marked pedestrian walkway is clear of obstructions. A worker is seen walking along it.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E022",
+          "E023"
+        ]
+      },
+      {
+        "zone_id": "Z07",
+        "interpretation": "A purple bin containing metal shavings is located near the machine. It is stationary and does not obstruct the main path.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E024",
+          "E025"
+        ]
+      },
+      {
+        "zone_id": "Z08",
+        "interpretation": "A yellow safety cage/guard is visible near the machine base.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E026",
+          "E027"
+        ]
+      },
+      {
+        "zone_id": "Z09",
+        "interpretation": "Close-up of the blue press machine's warning labels and structure.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E028",
+          "E029"
+        ]
+      },
+      {
+        "zone_id": "Z10",
+        "interpretation": "A large metal coil on a pallet is stored on the floor, encroaching on a marked yellow line/aisle.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E030",
+          "E031"
+        ]
+      }
+    ],
+    "dismissed": [
+      {
+        "concern": "Machine guarding/LOTO for the blue press",
+        "reason": "The worker is seated at the machine, but the machine's energy state (running vs. stopped) and whether the worker is performing active operation or maintenance cannot be determined from the still frames. Without visible movement or clear servicing activity, a guarding or LOTO violation cannot be confirmed.",
+        "evidence_ids": [
+          "E001",
+          "E016",
+          "E017",
+          "E034"
+        ]
+      },
+      {
+        "concern": "Eye protection for the worker",
+        "reason": "The worker's face is partially obscured by their hand and the angle. It is not possible to confirm if they are wearing safety glasses or if they are exposed to eye hazards.",
+        "evidence_ids": [
+          "E016",
+          "E017",
+          "E034"
+        ]
+      }
+    ],
+    "limitations": [
+      "No reliable floor-like mask found; static-zone ranking uses general scene candidates.",
+      "Machine operation status is unknown; no continuous movement is visible to confirm active cycles.",
+      "PPE compliance cannot be fully verified due to image resolution and occlusion."
+    ]
+  },
+  "metadata": {
+    "elapsed_seconds": 28.75,
+    "prompt_tokens": 30802,
+    "completion_tokens": 1712,
+    "finish_reason": "stop"
+  }
+}

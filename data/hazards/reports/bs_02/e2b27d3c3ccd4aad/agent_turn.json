@@ -1,0 +1,26 @@
+{
+  "harness": "openclaw-agent",
+  "job": "hazard-bs_02-25ee1010",
+  "clip_id": "bs_02",
+  "submitted": true,
+  "session": {
+    "calls": 3,
+    "refusals": 0,
+    "per_tool": {
+      "hazard_scan_clip": 1,
+      "hazard_review_clip": 1,
+      "hazard_submit_summary": 1
+    },
+    "scanned": true,
+    "reviewed": true,
+    "review_status": "complete",
+    "submitted": true
+  },
+  "turn": {
+    "ok": true,
+    "reply": "FINAL hazard clip=bs_02 priority=high confirmed=2",
+    "error": null,
+    "duration_s": 75.40016927000033,
+    "exit_code": 0
+  }
+}

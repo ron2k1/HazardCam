@@ -1,0 +1,212 @@
+{
+  "audit_sha256": "84a77dd979f98cdf571d3aef61123bb0f4ff281942096a566aed30596f8edcae",
+  "original_request_sha256": "cadabc39c68fcfa7de14c12a7d548a1a3a3a8fcba52be4840c83413009e99121",
+  "report": {
+    "scene_summary": "The video shows an industrial manufacturing floor with hydraulic presses and a forklift transporting stacked orange bins. A worker is seated at a station on the right. The forklift moves through the central aisle, passing the machinery. The floor has painted yellow and green lines marking paths or boundaries. The scene is well-lit.",
+    "findings": [
+      {
+        "title": "Forklift encroaching on marked aisle boundary",
+        "status": "visible_concern",
+        "severity": "medium",
+        "confidence": "high",
+        "zone_ids": [
+          "Z01"
+        ],
+        "evidence_ids": [
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E012",
+          "E013",
+          "E029"
+        ],
+        "location": "Central aisle, Zone Z01",
+        "observation": "A forklift carrying a stack of orange bins is observed moving through the facility. In frames E003 through E011, the forklift's position is consistently adjacent to or overlapping the painted yellow line on the floor. Specifically, in E029 (frame 125), the forklift's rear wheels and the load appear to be crossing or directly on the yellow line. The forklift is operating in a zone marked by floor paint, suggesting a designated path or boundary.",
+        "risk_interpretation": "The forklift's encroachment on the marked line may indicate a deviation from the designated travel path or a potential hazard if the line demarcates a pedestrian zone or a safety clearance area. This could lead to collisions with pedestrians or other equipment if the path is not strictly adhered to.",
+        "standards": [
+          "1910.176(a)"
+        ],
+        "applicability_reason": "The forklift is a mechanical handling equipment using an aisle marked with paint. The observation of the vehicle's position relative to the marking is relevant to the requirement for safe clearances and keeping aisles clear.",
+        "unknowns": [
+          "Whether the yellow line is a strict travel path boundary or a general marking.",
+          "The width of the forklift and load relative to the line's intended clearance.",
+          "Whether the marked area is an exit route (status unknown)."
+        ],
+        "recommended_actions": [
+          "Verify the meaning of the yellow line (e.g., travel path, safety zone).",
+          "Ensure forklift operators are trained to stay within designated paths.",
+          "Inspect the forklift's path to ensure it does not obstruct pedestrian walkways or emergency exits."
+        ]
+      },
+      {
+        "title": "Worker proximity to operating machinery",
+        "status": "needs_verification",
+        "severity": "medium",
+        "confidence": "medium",
+        "zone_ids": [
+          "Z01"
+        ],
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E012",
+          "E013"
+        ],
+        "location": "Right side of the scene, near blue machinery",
+        "observation": "A worker is seated at a workstation adjacent to a large blue machine (visible in E001-E013). The machine appears to be in operation or ready for operation, given the worker's position. The worker is close to the machine's potential point of operation. The worker's hands and head position relative to the machine opening cannot be fully determined from the provided crops.",
+        "risk_interpretation": "If the machine is a power press or similar hazardous equipment, the worker's proximity could pose a risk of injury if the machine operates unexpectedly or if guarding is insufficient. The static nature of the video makes it difficult to confirm if the machine is actively cycling or if the worker is performing a task that requires close proximity.",
+        "standards": [
+          "1910.212(a)(3)(ii)"
+        ],
+        "applicability_reason": "The worker is in close proximity to machinery that could have a point of operation hazard. The standard requires guarding of such points.",
+        "unknowns": [
+          "Whether the machine is a mechanical power press (1910.217) or another type of machine.",
+          "The current state of the machine (running, stopped, in setup).",
+          "The effectiveness of the machine's existing guards.",
+          "Whether the worker is performing a task that requires entering the danger zone.",
+          "The worker's PPE status (e.g., eye protection) is uncertain due to image resolution."
+        ],
+        "recommended_actions": [
+          "Verify the machine type and its specific safeguarding requirements.",
+          "Inspect the machine's guards to ensure they are in place and effective.",
+          "Confirm the machine's energy state and whether lockout/tagout procedures are applicable.",
+          "Observe the worker's interaction with the machine to determine if PPE or additional safeguards are needed."
+        ]
+      }
+    ],
+    "zone_reviews": [
+      {
+        "zone_id": "Z01",
+        "interpretation": "Central aisle and machinery area. Forklift movement and worker at station are observed.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E012",
+          "E013",
+          "E026",
+          "E027",
+          "E029"
+        ]
+      },
+      {
+        "zone_id": "Z02",
+        "interpretation": "Top right corner, mostly out of frame or obscured. No significant activity or hazards observed.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E014",
+          "E015"
+        ]
+      },
+      {
+        "zone_id": "Z03",
+        "interpretation": "Area near a red bin and machinery. No clear hazards observed.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E016",
+          "E017"
+        ]
+      },
+      {
+        "zone_id": "Z04",
+        "interpretation": "Bottom left corner, showing floor and part of a blue structure. No hazards.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E018",
+          "E019"
+        ]
+      },
+      {
+        "zone_id": "Z05",
+        "interpretation": "Close-up of a machine control panel with warning labels. Labels are visible but not readable.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E020",
+          "E021"
+        ]
+      },
+      {
+        "zone_id": "Z06",
+        "interpretation": "Close-up of another machine with warning labels. Labels are visible but not readable.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E022",
+          "E023"
+        ]
+      },
+      {
+        "zone_id": "Z07",
+        "interpretation": "Area near a machine and shelving. No clear hazards.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E024",
+          "E025"
+        ]
+      }
+    ],
+    "dismissed": [
+      {
+        "concern": "Spill on floor",
+        "reason": "Dark patches on the floor in Z04 (E018, E019) are likely oil stains or wear, not a fresh spill requiring immediate cleanup. No evidence of active leaking.",
+        "evidence_ids": [
+          "E018",
+          "E019",
+          "E028"
+        ]
+      },
+      {
+        "concern": "Obstruction in aisle",
+        "reason": "The forklift is moving through the aisle, not obstructing it in a stationary manner. The bins are on the forklift, not stored in the aisle.",
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011"
+        ]
+      }
+    ],
+    "limitations": [
+      "No reliable floor-like mask found; static-zone ranking uses general scene candidates.",
+      "Machine operation state is unknown from still frames.",
+      "Worker's PPE (e.g., eye protection) cannot be confirmed due to image resolution.",
+      "Machine guarding effectiveness cannot be fully assessed from the provided crops."
+    ]
+  },
+  "metadata": {
+    "elapsed_seconds": 56.14,
+    "prompt_tokens": 25730,
+    "completion_tokens": 1803,
+    "finish_reason": "stop"
+  }
+}

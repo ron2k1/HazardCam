@@ -7,7 +7,10 @@ reaches that run's ``AgentPolicy`` and its events reach the run's SSE stream.
 
 * ``ToolGateway`` binds the server to at most one run at a time. A lease holds the run's
   ``AgentPolicy`` until the agent's turn has ended, so an old turn's late calls can never
-  reach the next run. Without a lease every call is refused.
+  reach the next run. Without a lease every call is refused. A safety hazard job leases
+  the surface the same way with its ``HazardJobSession`` (``hazard_tools.py``). A lease
+  serves only its own tool set: the seven run tools during a run, the three
+  ``hazard_*`` tools during a hazard job.
 * ``McpServer`` serves exactly one path, ``POST /mcp``: JSON-RPC ``initialize``,
   ``ping``, ``tools/list`` and ``tools/call``. ``GET`` answers 405 (no server-initiated
   stream). Any other path is 404, so the server is no file server. It offers no
@@ -26,19 +29,19 @@ import logging
 import secrets
 import sys
 import threading
+import time
 from collections import OrderedDict
 from collections.abc import Iterable, Iterator, Sequence
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from typing import Any, Self
+from typing import Any, Protocol, Self
 
 from apps.api.services.gt_guard import GtGuard
 from tools.session import TOOL_NAMES
 
-from .policy import AgentPolicy
-from .registration import MCP_PATH, SERVER_NAME, agent_reply, tool_specs
+from .registration import MCP_PATH, REGISTERED_TOOLS, SERVER_NAME, agent_reply, tool_specs
 
 logger = logging.getLogger(__name__)
 
@@ -57,6 +60,10 @@ NO_RUN = (
     "the runner started; end your turn."
 )
 UNEXPECTED = "the tool failed unexpectedly ({}). Continue with the next playbook step, or submit."
+OTHER_JOB = (
+    "refused by the tool surface: {} is not part of the current job. Use only the tools "
+    "your brief names."
+)
 
 # JSON-RPC error codes
 PARSE_ERROR = -32700
@@ -74,13 +81,32 @@ class GatewayBusyError(RuntimeError):
 # -- run binding ----------------------------------------------------------------------
 
 
+class _Outcome(Protocol):
+    def to_json(self) -> dict[str, Any]: ...
+
+
+class ToolPolicy(Protocol):
+    """What a lease holds: ``AgentPolicy`` for a run, ``HazardJobSession`` for a hazard
+    job. ``tool_names`` (optional, default the seven run tools) is the set it serves."""
+
+    @property
+    def run_id(self) -> str | None: ...
+
+    def call(self, name: Any, arguments: Any = None) -> _Outcome: ...
+
+
+def served_tools(policy: ToolPolicy) -> tuple[str, ...]:
+    return tuple(getattr(policy, "tool_names", TOOL_NAMES))
+
+
 @dataclass
 class Lease:
     """One run's hold on the tool surface. ``release`` is idempotent."""
 
     gateway: ToolGateway
-    policy: AgentPolicy
+    policy: ToolPolicy
     guard: GtGuard | None = None
+    key: str | None = None  # set for a keyed (concurrent) lease, see ToolGateway.acquire_keyed
     released: bool = field(default=False, init=False)
 
     @property
@@ -98,6 +124,10 @@ class ToolGateway:
         self._lock = threading.Lock()
         self._slot = threading.Lock()  # held from acquire to release
         self._lease: Lease | None = None
+        # Keyed leases run side by side with the slot lease: one per camera checker
+        # (key = clip_id) or site lead (key = site_run_id). A call goes to the keyed lease
+        # named by its ``clip_id`` / ``site_run_id`` argument when that lease serves it.
+        self._keyed: dict[str, Lease] = {}
 
     @property
     def active_run_id(self) -> str | None:
@@ -105,7 +135,7 @@ class ToolGateway:
         return lease.run_id if lease is not None else None
 
     def acquire(
-        self, policy: AgentPolicy, *, guard: GtGuard | None = None, timeout: float = 60.0
+        self, policy: ToolPolicy, *, guard: GtGuard | None = None, timeout: float = 60.0
     ) -> Lease:
         """Bind the surface to ``policy``. Waits up to ``timeout`` for the previous lease."""
         if not self._slot.acquire(timeout=timeout):
@@ -117,9 +147,31 @@ class ToolGateway:
             self._lease = lease
         return lease
 
+    def acquire_keyed(
+        self, policy: ToolPolicy, key: str, *, timeout: float = 60.0, poll_s: float = 0.2
+    ) -> Lease:
+        """A concurrent lease for ``key``. Waits up to ``timeout`` while ``key`` is held."""
+        deadline = time.monotonic() + timeout
+        while True:
+            with self._lock:
+                if key not in self._keyed:
+                    lease = Lease(self, policy, None, key)
+                    self._keyed[key] = lease
+                    return lease
+            if time.monotonic() > deadline:
+                raise GatewayBusyError(
+                    f"a previous agent turn still holds {key}; try again shortly"
+                )
+            time.sleep(poll_s)
+
+    @property
+    def keyed_run_ids(self) -> list[str]:
+        with self._lock:
+            return [lease.run_id or "" for lease in self._keyed.values()]
+
     @contextmanager
     def bind(
-        self, policy: AgentPolicy, *, guard: GtGuard | None = None, timeout: float = 60.0
+        self, policy: ToolPolicy, *, guard: GtGuard | None = None, timeout: float = 60.0
     ) -> Iterator[Lease]:
         lease = self.acquire(policy, guard=guard, timeout=timeout)
         try:
@@ -132,6 +184,10 @@ class ToolGateway:
             if lease.released:
                 return
             lease.released = True
+            if lease.key is not None:
+                if self._keyed.get(lease.key) is lease:
+                    del self._keyed[lease.key]
+                return
             if self._lease is lease:
                 self._lease = None
         self._slot.release()
@@ -140,8 +196,16 @@ class ToolGateway:
         """Run contract tool ``tool`` for the active run; the agent-facing reply."""
         with self._lock:
             lease = self._lease
+            if self._keyed and isinstance(arguments, dict):
+                for arg in ("clip_id", "site_run_id"):
+                    keyed = self._keyed.get(str(arguments.get(arg)))
+                    if keyed is not None and tool in served_tools(keyed.policy):
+                        lease = keyed
+                        break
         if lease is None:
             return {"ok": False, "error": NO_RUN, "refused": True}
+        if tool not in served_tools(lease.policy):
+            return {"ok": False, "error": OTHER_JOB.format(tool), "refused": True}
         try:
             outcome = lease.policy.call(tool, arguments).to_json()
         except Exception as exc:
@@ -195,9 +259,9 @@ def handle_message(gateway: ToolGateway, message: Any) -> dict[str, Any] | None:
     if method == "tools/list":
         return _result(msg_id, {"tools": tool_specs()})
     if method == "tools/call":
-        if not isinstance(params, dict) or params.get("name") not in TOOL_NAMES:
+        if not isinstance(params, dict) or params.get("name") not in REGISTERED_TOOLS:
             return _error(
-                msg_id, INVALID_PARAMS, "unknown tool; tools are: " + ", ".join(TOOL_NAMES)
+                msg_id, INVALID_PARAMS, "unknown tool; tools are: " + ", ".join(REGISTERED_TOOLS)
             )
         arguments = params.get("arguments")
         reply = gateway.call(params["name"], {} if arguments is None else arguments)
@@ -493,6 +557,7 @@ __all__ = [
     "Lease",
     "McpServer",
     "ToolGateway",
+    "ToolPolicy",
     "handle_message",
     "parse_binds",
 ]

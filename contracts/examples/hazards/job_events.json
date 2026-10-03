@@ -1,0 +1,73 @@
+[
+  {
+    "event": "progress",
+    "data": {
+      "step": 1,
+      "total": 6,
+      "message": "[1/6] Scanning video frames...",
+      "plain_message": "Reading the video",
+      "t_s": 0.0
+    }
+  },
+  {
+    "event": "progress",
+    "data": {
+      "step": 2,
+      "total": 6,
+      "message": "[2/6] Measuring motion...",
+      "plain_message": "Looking for movement",
+      "t_s": 0.8
+    }
+  },
+  {
+    "event": "progress",
+    "data": {
+      "step": 3,
+      "total": 6,
+      "message": "[3/6] Finding movement and obstruction zones...",
+      "plain_message": "Marking areas to check",
+      "t_s": 1.6
+    }
+  },
+  {
+    "event": "progress",
+    "data": {
+      "step": 4,
+      "total": 6,
+      "message": "[4/6] Exporting annotated video and evidence...",
+      "plain_message": "Preparing pictures for the AI",
+      "t_s": 2.4
+    }
+  },
+  {
+    "event": "progress",
+    "data": {
+      "step": 5,
+      "total": 6,
+      "message": "[5/6] Running Qwen 3.6 hazard review...",
+      "plain_message": "AI is reviewing the pictures",
+      "t_s": 3.2
+    }
+  },
+  {
+    "event": "progress",
+    "data": {
+      "step": 6,
+      "total": 6,
+      "message": "[6/6] Writing and validating reports...",
+      "plain_message": "Writing the report",
+      "t_s": 10.65
+    }
+  },
+  {
+    "event": "done",
+    "data": {
+      "clip_id": "hz_00",
+      "run_id": "ed487eb3f1181f38",
+      "reviewed_at": "2026-10-03T16:55:57.560131+00:00",
+      "runner": "direct",
+      "replay": true,
+      "note": "Replay of the stored run from 2026-10-03 16:55 UTC"
+    }
+  }
+]

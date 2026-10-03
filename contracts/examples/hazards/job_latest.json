@@ -1,0 +1,9 @@
+{
+  "job_id": "hzjob_0123456789ab",
+  "clip_id": "hz_02",
+  "state": "done",
+  "mode": "replay",
+  "runner": "openclaw-agent",
+  "started_at": "2026-10-03T18:54:37.478067+00:00",
+  "events_url": "/api/hazards/jobs/hzjob_0123456789ab/events"
+}

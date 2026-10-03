@@ -1,0 +1,310 @@
+{
+  "movement": [],
+  "static": [
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        60,
+        157,
+        88,
+        236
+      ],
+      "proposal_score": 0.069592099303383,
+      "stability": 0.9405852668376984,
+      "paint_proximity": 0.9977396021699819,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 14.966666666666667,
+      "zone_id": "Z02",
+      "bbox_normalized": [
+        0.07812,
+        0.36343,
+        0.11458,
+        0.5463
+      ],
+      "bbox_source": [
+        150,
+        392,
+        220,
+        590
+      ]
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        62,
+        195,
+        114,
+        231
+      ],
+      "proposal_score": 0.03791289302907826,
+      "stability": 0.9123510559093538,
+      "paint_proximity": 0.9985652797704447,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 14.966666666666667
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        86,
+        128,
+        180,
+        172
+      ],
+      "proposal_score": 0.08440640676134738,
+      "stability": 0.9433794306037534,
+      "paint_proximity": 1.0,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 14.966666666666667,
+      "zone_id": "Z01",
+      "bbox_normalized": [
+        0.11198,
+        0.2963,
+        0.23438,
+        0.39815
+      ],
+      "bbox_source": [
+        215,
+        320,
+        450,
+        430
+      ]
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        462,
+        124,
+        506,
+        146
+      ],
+      "proposal_score": 0.04161853166187062,
+      "stability": 0.9652097377052105,
+      "paint_proximity": 1.0,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 14.966666666666667
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        67,
+        124,
+        129,
+        152
+      ],
+      "proposal_score": 0.038550593096539236,
+      "stability": 0.8075128026896288,
+      "paint_proximity": 0.9808917197452229,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 14.966666666666667
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        303,
+        109,
+        354,
+        133
+      ],
+      "proposal_score": 0.0422756601996054,
+      "stability": 1.0,
+      "paint_proximity": 1.0,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 14.966666666666667
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        427,
+        91,
+        596,
+        131
+      ],
+      "proposal_score": 0.05710451837006765,
+      "stability": 0.9497916828917582,
+      "paint_proximity": 0.376906829382774,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 14.966666666666667,
+      "zone_id": "Z03",
+      "bbox_normalized": [
+        0.55599,
+        0.21065,
+        0.77604,
+        0.30324
+      ],
+      "bbox_source": [
+        1068,
+        228,
+        1490,
+        328
+      ]
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        681,
+        73,
+        721,
+        96
+      ],
+      "proposal_score": 0.044729255665520454,
+      "stability": 1.0,
+      "paint_proximity": 1.0,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 14.966666666666667,
+      "zone_id": "Z05",
+      "bbox_normalized": [
+        0.88672,
+        0.16898,
+        0.9388,
+        0.22222
+      ],
+      "bbox_source": [
+        1702,
+        182,
+        1802,
+        240
+      ]
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        635,
+        52,
+        704,
+        96
+      ],
+      "proposal_score": 0.0481759132036953,
+      "stability": 1.0,
+      "paint_proximity": 1.0,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 14.966666666666667,
+      "zone_id": "Z04",
+      "bbox_normalized": [
+        0.82682,
+        0.12037,
+        0.91667,
+        0.22222
+      ],
+      "bbox_source": [
+        1588,
+        130,
+        1760,
+        240
+      ]
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        516,
+        41,
+        542,
+        67
+      ],
+      "proposal_score": 0.013563313888780732,
+      "stability": 1.0,
+      "paint_proximity": 0.0,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 14.966666666666667
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        585,
+        40,
+        613,
+        66
+      ],
+      "proposal_score": 0.019418987330208422,
+      "stability": 1.0,
+      "paint_proximity": 0.19828815977175462,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 14.966666666666667
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        556,
+        40,
+        584,
+        66
+      ],
+      "proposal_score": 0.013755138049468442,
+      "stability": 1.0,
+      "paint_proximity": 0.0,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 14.966666666666667
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        315,
+        34,
+        421,
+        69
+      ],
+      "proposal_score": 0.027419897141440983,
+      "stability": 1.0,
+      "paint_proximity": 0.0,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 14.966666666666667
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        188,
+        33,
+        305,
+        70
+      ],
+      "proposal_score": 0.0271469549649606,
+      "stability": 1.0,
+      "paint_proximity": 0.0,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 14.966666666666667
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        120,
+        0,
+        285,
+        29
+      ],
+      "proposal_score": 0.016731540025789523,
+      "stability": 1.0,
+      "paint_proximity": 0.0,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 14.966666666666667
+    }
+  ]
+}

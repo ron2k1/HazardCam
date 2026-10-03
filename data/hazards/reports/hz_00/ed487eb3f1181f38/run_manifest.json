@@ -1,0 +1,81 @@
+{
+  "status": "model_review_complete",
+  "source": {
+    "source_name": "hz_00",
+    "source_sha256": "d80a7143104dcce23c1c1c9cd6ec881cebcafd0c07173dd290945ef51a53d5eb",
+    "fps": 24.99,
+    "source_width": 1920,
+    "source_height": 1080,
+    "decoded_frames": 315,
+    "reported_frames": 315,
+    "duration_s": 12.605042016806724,
+    "analysis_width": 768,
+    "analysis_height": 432,
+    "timing_method": "frame_index/source_fps"
+  },
+  "config": {
+    "analysis_width": 768,
+    "max_frames": 15000,
+    "background_samples": 21,
+    "difference_threshold": 18,
+    "motion_frequency_threshold": 0.012,
+    "minimum_zone_fraction": 0.0008,
+    "max_motion_zones": 5,
+    "max_static_zones": 5,
+    "overview_frames": 8,
+    "peak_frames": 3,
+    "crop_width": 768,
+    "image_width": 1024,
+    "max_total_images": 40,
+    "max_payload_mb": 30,
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 65536,
+    "num_predict": 6000,
+    "request_timeout_s": 900,
+    "pipeline_version": "astra-1.1"
+  },
+  "model": {
+    "name": "qwen3.6:35b-a3b",
+    "digest": "a7eb95c53bcf96b4bdd008d0fab4a5dac88047d9c1a7a9ab88ed453423fbd87c",
+    "base_url": "http://localhost:11434",
+    "capabilities": [
+      "completion",
+      "vision",
+      "tools",
+      "thinking"
+    ],
+    "elapsed_seconds": 68.95,
+    "prompt_eval_count": 27500,
+    "eval_count": 1790,
+    "audit": {
+      "elapsed_seconds": 27.79,
+      "prompt_eval_count": 29234,
+      "eval_count": 1670
+    },
+    "audit_sha256": "743f6aae6b27011dd089b38db60d90c11037c8b4bc62ae4d247810a398167887"
+  },
+  "request_sha256": "1c52395194440a85a49878e400f384251fe6ef2c58d44e444d3d7a6d4b0d60e4",
+  "python": "3.10.16 (main, Mar  6 2025, 10:18:03) [Clang 16.0.0 (clang-1600.0.26.6)]",
+  "platform": "macOS-26.6.2-x86_64-i386-64bit",
+  "versions": {
+    "numpy": "1.26.4",
+    "opencv-python": "4.12.0.88",
+    "pandas": "2.1.3",
+    "matplotlib": "3.8.2",
+    "requests": "2.34.2",
+    "pydantic": "2.12.5",
+    "ultralytics": "8.4.172",
+    "nbformat": "5.10.4",
+    "nbclient": "0.10.2"
+  },
+  "source_sha256": "d80a7143104dcce23c1c1c9cd6ec881cebcafd0c07173dd290945ef51a53d5eb",
+  "weights_sha256": "c9f78716a81c7aff0d608ccc73e1b82ab3aaad86005049f6a92106a0be6d0844",
+  "quality_warnings": [],
+  "validation": "Decoded all available frames; checked output video count, evidence hashes, IDs, bounds, schema and report files.",
+  "imported": {
+    "from": "teammate example_output (verbatim model output)",
+    "original_report_sha256": "f3dac3afb72313442f57bf9781454aa9dfae30703f729ba28e8104a91ad8eb33",
+    "processed_video": "re-encoded to browser H.264 (yuv420p, faststart)"
+  }
+}

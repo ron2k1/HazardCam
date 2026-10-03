@@ -1,0 +1,200 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ambient-mirror.local/contracts/hazard_tools.schema.json",
+  "title": "HazardToolCall",
+  "description": "One call to a safety hazard review tool (event day, 2026-10-03). The OpenClaw agent urban-mirror reaches these as mirror__hazard_* on the mirror MCP server, for exactly one leased clip per job (agent/event_day/hazard_tools.py). Arguments name only the neutral clip id; dataset labels, original file names and host paths never appear in arguments or results. Each tool's result schema is $defs/<tool>_result. A tool's description is its oneOf branch's description.",
+  "type": "object",
+  "required": ["name", "arguments"],
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "enum": ["hazard_scan_clip", "hazard_review_clip", "hazard_submit_summary"]
+    },
+    "arguments": { "type": "object" }
+  },
+  "oneOf": [
+    {
+      "description": "Run the computer-vision scan of the clip: decode every frame, measure motion, find movement and possible-obstruction zones, and export evidence pictures. Returns a compact summary (duration, zone counts, evidence picture count, quality warnings). Call it first.",
+      "properties": {
+        "name": { "const": "hazard_scan_clip" },
+        "arguments": { "$ref": "#/$defs/hazard_scan_clip_args" }
+      }
+    },
+    {
+      "description": "Run the local Qwen hazard review and its audit pass on the scanned clip and write the real report. Returns the audited findings (id, severity, title, standards, zones, evidence ids, start/end seconds, confidence, audit verdict), the dismissed count and the review status. Requires hazard_scan_clip. A failed review returns status failed and no findings.",
+      "properties": {
+        "name": { "const": "hazard_review_clip" },
+        "arguments": { "$ref": "#/$defs/hazard_review_clip_args" }
+      }
+    },
+    {
+      "description": "Submit the plain-words summary for frontline workers and finish the job. Finding ids must come from the review. headline and first_action are plain text, at most 160 characters, with no ids, boxes, hashes, links or model names. Requires hazard_review_clip. A bad summary is refused with the reason; fix it and submit again.",
+      "properties": {
+        "name": { "const": "hazard_submit_summary" },
+        "arguments": { "$ref": "#/$defs/hazard_submit_summary_args" }
+      }
+    }
+  ],
+  "$defs": {
+    "clip_id": {
+      "type": "string",
+      "description": "The neutral clip id from the brief, for example hz_01.",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$"
+    },
+    "finding_id": {
+      "type": "string",
+      "pattern": "^H[0-9]{2,3}$"
+    },
+    "level": {
+      "enum": ["high", "medium", "low"]
+    },
+    "priority": {
+      "description": "How urgent the summary is for the floor. none when nothing was confirmed or the review did not finish.",
+      "enum": ["high", "medium", "low", "none"]
+    },
+    "plain_text": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "hazard_scan_clip_args": {
+      "description": "The clip to scan.",
+      "type": "object",
+      "required": ["clip_id"],
+      "additionalProperties": false,
+      "properties": {
+        "clip_id": { "$ref": "#/$defs/clip_id" }
+      }
+    },
+    "hazard_review_clip_args": {
+      "description": "The clip to review.",
+      "type": "object",
+      "required": ["clip_id"],
+      "additionalProperties": false,
+      "properties": {
+        "clip_id": { "$ref": "#/$defs/clip_id" }
+      }
+    },
+    "hazard_submit_summary_args": {
+      "description": "The worker-facing summary.",
+      "type": "object",
+      "required": ["clip_id", "headline", "first_action", "priority", "confirmed_finding_ids"],
+      "additionalProperties": false,
+      "properties": {
+        "clip_id": { "$ref": "#/$defs/clip_id" },
+        "headline": { "$ref": "#/$defs/plain_text" },
+        "first_action": { "$ref": "#/$defs/plain_text" },
+        "priority": { "$ref": "#/$defs/priority" },
+        "confirmed_finding_ids": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/finding_id" },
+          "uniqueItems": true,
+          "maxItems": 50
+        }
+      }
+    },
+    "hazard_scan_clip_result": {
+      "type": "object",
+      "required": [
+        "clip_id",
+        "status",
+        "duration_s",
+        "frames",
+        "zones",
+        "evidence_pictures",
+        "quality_warnings",
+        "next"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "clip_id": { "$ref": "#/$defs/clip_id" },
+        "status": { "const": "scanned" },
+        "duration_s": { "type": "number", "minimum": 0 },
+        "frames": { "type": "integer", "minimum": 0 },
+        "zones": {
+          "type": "object",
+          "required": ["movement", "static", "total"],
+          "additionalProperties": false,
+          "properties": {
+            "movement": { "type": "integer", "minimum": 0 },
+            "static": { "type": "integer", "minimum": 0 },
+            "total": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "evidence_pictures": { "type": "integer", "minimum": 0 },
+        "quality_warnings": { "type": "array", "items": { "type": "string" } },
+        "next": { "type": "string" }
+      }
+    },
+    "hazard_finding": {
+      "type": "object",
+      "required": [
+        "id",
+        "severity",
+        "priority",
+        "title",
+        "standard_ids",
+        "zone_ids",
+        "evidence_ids",
+        "start_s",
+        "end_s",
+        "confidence",
+        "audit_verdict",
+        "location",
+        "recommended_actions"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/finding_id" },
+        "severity": { "$ref": "#/$defs/level" },
+        "priority": { "$ref": "#/$defs/level" },
+        "title": { "type": "string" },
+        "standard_ids": { "type": "array", "items": { "type": "string" } },
+        "zone_ids": { "type": "array", "items": { "type": "string" } },
+        "evidence_ids": { "type": "array", "items": { "type": "string" } },
+        "start_s": { "type": "number", "minimum": 0 },
+        "end_s": { "type": "number", "minimum": 0 },
+        "confidence": { "$ref": "#/$defs/level" },
+        "audit_verdict": {
+          "description": "The audited report's status for the finding: visible_concern (seen in the pictures) or needs_verification (depends on something the pictures cannot show).",
+          "enum": ["visible_concern", "needs_verification"]
+        },
+        "location": { "type": "string" },
+        "recommended_actions": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "hazard_review_clip_result": {
+      "type": "object",
+      "required": ["clip_id", "status", "findings", "dismissed_count", "audit", "next"],
+      "additionalProperties": false,
+      "properties": {
+        "clip_id": { "$ref": "#/$defs/clip_id" },
+        "status": { "enum": ["complete", "failed"] },
+        "findings": { "type": "array", "items": { "$ref": "#/$defs/hazard_finding" } },
+        "dismissed_count": { "type": "integer", "minimum": 0 },
+        "audit": {
+          "type": "object",
+          "required": ["ran", "draft_findings"],
+          "additionalProperties": false,
+          "properties": {
+            "ran": { "type": "boolean" },
+            "draft_findings": { "type": ["integer", "null"], "minimum": 0 }
+          }
+        },
+        "next": { "type": "string" }
+      }
+    },
+    "hazard_submit_summary_result": {
+      "type": "object",
+      "required": ["clip_id", "status", "priority", "confirmed", "next"],
+      "additionalProperties": false,
+      "properties": {
+        "clip_id": { "$ref": "#/$defs/clip_id" },
+        "status": { "const": "submitted" },
+        "priority": { "$ref": "#/$defs/priority" },
+        "confirmed": { "type": "integer", "minimum": 0 },
+        "next": { "type": "string" }
+      }
+    }
+  }
+}

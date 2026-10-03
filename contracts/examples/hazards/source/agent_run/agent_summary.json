@@ -1,0 +1,9 @@
+{
+  "headline": "Worker near operating machinery on the left side without confirmed guards or LOTO procedures",
+  "first_action": "Stop work near the machine, verify it is off and LOTO is applied before anyone approaches",
+  "priority": "high",
+  "confirmed_finding_ids": [
+    "H01",
+    "H02"
+  ]
+}

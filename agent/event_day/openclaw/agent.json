@@ -1,7 +1,7 @@
 {
   "id": "urban-mirror",
   "name": "Urban Mirror",
-  "description": "Orchestrates the Ambient Urban Mirror tools for one scenario run: inspects the visible cameras, fuses their cues deterministically, asks the reasoning model for a bounded hypothesis, and submits it or abstains. Never perceives, computes geometry, or concludes on its own.",
+  "description": "Orchestrates the Ambient Urban Mirror tools for one scenario run: inspects the visible cameras, fuses their cues deterministically, asks the reasoning model for a bounded hypothesis, and submits it or abstains. For a safety hazard job it runs the scan, the local review and a plain-words worker summary for one clip. Never perceives, computes geometry, or concludes on its own.",
   "workspace": "/sandbox/.openclaw/workspace-urban-mirror",
   "identity": {
     "name": "Urban Mirror",
@@ -40,7 +40,10 @@
       "mirror__triangulate_region",
       "mirror__reason_hypothesis",
       "mirror__get_supporting_frames",
-      "mirror__submit_hypothesis"
+      "mirror__submit_hypothesis",
+      "mirror__hazard_scan_clip",
+      "mirror__hazard_review_clip",
+      "mirror__hazard_submit_summary"
     ],
     "deny": [
       "session_status",

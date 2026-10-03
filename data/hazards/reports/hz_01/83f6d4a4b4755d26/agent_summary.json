@@ -1,0 +1,9 @@
+{
+  "headline": "Forklift operating near seated worker in central aisle; unsecured bin near hydraulic press.",
+  "first_action": "Verify aisle clearance and keep forklifts at safe distance from pedestrians; secure the red bin.",
+  "priority": "medium",
+  "confirmed_finding_ids": [
+    "H01",
+    "H02"
+  ]
+}

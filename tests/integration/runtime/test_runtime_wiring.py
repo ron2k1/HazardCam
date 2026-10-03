@@ -21,7 +21,7 @@ import pytest
 import yaml
 
 from agent.event_day.app import create_agent_app
-from agent.event_day.registration import SERVER_NAME, TOOL_PREFIX
+from agent.event_day.registration import REGISTERED_TOOLS, SERVER_NAME, TOOL_PREFIX
 from apps.api.schemas import REPO_ROOT
 from apps.api.settings import Settings
 from inference.profiles import load_profile
@@ -105,7 +105,8 @@ def test_the_deploy_merge_adds_the_agent_and_tool_server_and_no_model_route():
     server = merged["mcp"]["servers"][SERVER_NAME]
     assert server["url"] == "http://host.openshell.internal:8090/mcp"
     assert server["headers"] == {"Authorization": "Bearer test-token"}
-    assert server["toolFilter"]["include"] == list(TOOL_NAMES)
+    assert server["toolFilter"]["include"] == list(REGISTERED_TOOLS)
+    assert server["toolFilter"]["include"][: len(TOOL_NAMES)] == list(TOOL_NAMES)
     agents = {a["id"]: a for a in merged["agents"]["list"]}
     mirror = agents["urban-mirror"]
     assert mirror["model"]["primary"] == "inference/nvidia/Qwen3.6-35B-A3B-NVFP4"

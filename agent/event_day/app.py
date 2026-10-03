@@ -15,6 +15,11 @@
 - ``AUM_TOOLS_TOKEN``: the bearer token the server requires. Required for any listener
   beyond loopback. It is never logged or written.
 
+It also sets the safety hazard review seam: ``app.state.hazard_review_runner`` is an
+``AgentHazardRunner`` (``hazard_runner.py``) on the same launcher and tool gateway, and
+``app.state.hazard_review_runner_name`` is ``"openclaw-agent"``, so every live
+``/hazards`` review runs as an OpenClaw turn with the ``mirror__hazard_*`` tools.
+
 The dev-sequence app (``apps.api.main:app``) stays the fallback.
 """
 
@@ -27,13 +32,29 @@ from collections.abc import Mapping, Sequence
 from fastapi import FastAPI
 
 from apps.api.main import create_app
+from apps.api.services.hazards import HazardService
 from apps.api.settings import Settings
 
 from .executor import AgentLauncher, OpenClawAgentExecutor, OpenClawCliLauncher
+from .hazard_runner import RUNNER_NAME, AgentHazardRunner
 from .mcp_server import McpServer, ToolGateway, parse_binds
-from .registration import DEFAULT_PORT, TOKEN_ENV
+from .registration import DEFAULT_PORT, LEAD_AGENT_ID, TOKEN_ENV
+from .site_lead import AgentSiteLead
 
 LOOPBACK = frozenset({"127.0.0.1", "localhost", "::1"})
+
+
+def lead_launcher_for(launcher: AgentLauncher, env: Mapping[str, str]) -> AgentLauncher:
+    """The same launcher, pointed at the ``site-lead`` agent."""
+    if isinstance(launcher, OpenClawCliLauncher):
+        return OpenClawCliLauncher(
+            launcher.command,
+            agent_id=LEAD_AGENT_ID,
+            local=launcher.local,
+            env=launcher.env,
+            cwd=launcher.cwd,
+        )
+    return launcher
 
 
 def create_agent_app(
@@ -65,6 +86,19 @@ def create_agent_app(
     app.state.executor = OpenClawAgentExecutor(
         launcher, gateway, media_root=app.state.settings.media_root
     )
+    # Site runs (event day 14:30): one site-lead turn over six concurrent checkers.
+    # AUM_CHECKERS_PARALLEL (default 6) reviews may run at once; 1 keeps the old
+    # one-at-a-time behaviour for the per-camera endpoints too.
+    parallel = max(1, int(env.get("AUM_CHECKERS_PARALLEL", "6") or 1))
+    hazards = HazardService.from_settings(app.state.settings)
+    hazards.set_max_parallel(parallel)
+    app.state.hazards = hazards
+    app.state.hazard_review_runner = AgentHazardRunner(
+        launcher, gateway, profile=app.state.settings.model_profile, concurrent=parallel > 1
+    )
+    app.state.hazard_review_runner_name = RUNNER_NAME
+    lead_launcher = lead_launcher_for(launcher, env)
+    app.state.site_lead_runner = AgentSiteLead(lead_launcher, gateway)
     app.router.add_event_handler("shutdown", server.close)
     return app
 

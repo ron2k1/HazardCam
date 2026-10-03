@@ -1,0 +1,75 @@
+{
+  "title": "Site cameras · Factory floor",
+  "hazard_title": "Hazard watch",
+  "blindspot_title": "Blind spot watch · Warehouse",
+  "hazard_tiles": [
+    {
+      "cam": 1,
+      "label": "CAM 1",
+      "watch": "HAZARD WATCH",
+      "kind": "hazard",
+      "clip_id": "hz_00",
+      "title": "Press line camera",
+      "duration_s": 12.605,
+      "source_url": "/api/hazards/clips/hz_00/media/source.mp4",
+      "check_after_s": 2.0
+    },
+    {
+      "cam": 2,
+      "label": "CAM 2",
+      "watch": "HAZARD WATCH",
+      "kind": "hazard",
+      "clip_id": "hz_01",
+      "title": "Floor camera 01",
+      "duration_s": 14.982,
+      "source_url": "/api/hazards/clips/hz_01/media/source.mp4",
+      "check_after_s": 5.0
+    },
+    {
+      "cam": 3,
+      "label": "CAM 3",
+      "watch": "HAZARD WATCH",
+      "kind": "hazard",
+      "clip_id": "hz_02",
+      "title": "Floor camera 02",
+      "duration_s": 14.982,
+      "source_url": "/api/hazards/clips/hz_02/media/source.mp4",
+      "check_after_s": 8.0
+    }
+  ],
+  "blindspot_tiles": [
+    {
+      "cam": 4,
+      "label": "CAM 4",
+      "watch": "BLIND SPOT",
+      "kind": "blindspot",
+      "clip_id": "bs_01",
+      "title": "Aisle camera 1",
+      "duration_s": 15.0,
+      "source_url": "/api/hazards/clips/bs_01/media/source.mp4",
+      "check_after_s": 3.5
+    },
+    {
+      "cam": 5,
+      "label": "CAM 5",
+      "watch": "BLIND SPOT",
+      "kind": "blindspot",
+      "clip_id": "bs_02",
+      "title": "Aisle camera 2",
+      "duration_s": 15.0,
+      "source_url": "/api/hazards/clips/bs_02/media/source.mp4",
+      "check_after_s": 6.5
+    },
+    {
+      "cam": 6,
+      "label": "CAM 6",
+      "watch": "BLIND SPOT",
+      "kind": "blindspot",
+      "clip_id": "bs_03",
+      "title": "Aisle camera 3",
+      "duration_s": 15.0,
+      "source_url": "/api/hazards/clips/bs_03/media/source.mp4",
+      "check_after_s": 9.5
+    }
+  ]
+}

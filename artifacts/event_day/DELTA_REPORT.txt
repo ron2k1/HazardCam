@@ -1,13 +1,16 @@
-verified_at_utc=2026-10-03T17:14:12Z
+verified_at_utc=2026-10-03T17:52:56Z
 prebuild_commit=68060460060e09f807149ce0785402f655c56bad
-current_commit=bc0b164b8c5a27c79bcc8d6e2f8fbd532f33182c
+current_commit=abb10a0a6a8fab5c86240b4e8f293d20f947a160
 
 == current status ==
+ M .gitignore
  M agent/event_day/POLICY.md
+ M agent/event_day/README.md
+ M agent/event_day/openclaw/agent.json
  M agent/event_day/openclaw/workspace/AGENTS.md
  M agent/event_day/openclaw/workspace/TOOLS.md
  M agent/event_day/policy.py
- M agent/event_day/tests/test_policy_rules.py
+ M agent/event_day/tests/test_openclaw_definition.py
  M agent/event_day/tests/test_policy_session.py
  M apps/api/main.py
  M apps/api/schemas/__init__.py
@@ -29,8 +32,10 @@ current_commit=bc0b164b8c5a27c79bcc8d6e2f8fbd532f33182c
  M apps/web/src/lib/run-view.ts
  M apps/web/src/mocks/mock.ts
  M artifacts/event_day/DELTA_REPORT.txt
+ M config/models/gb10.yaml
  M contracts/SSE_EVENTS.md
  M contracts/sse_envelope.schema.json
+ M runtime/nemoclaw/README.md
  M tests/e2e/README.md
  M tests/e2e/fixtures.ts
  M tests/e2e/ops-races.spec.ts
@@ -38,9 +43,19 @@ current_commit=bc0b164b8c5a27c79bcc8d6e2f8fbd532f33182c
  M tests/integration/api/test_runs_api.py
  M tests/integration/harness/test_dev_sequence.py
  M tests/unit/contracts/test_contracts.py
+?? agent/event_day/app.py
+?? agent/event_day/executor.py
+?? agent/event_day/mcp_server.py
+?? agent/event_day/register.py
+?? agent/event_day/registration.py
+?? apps/api/routes/hazards.py
 ?? apps/api/schemas/alert.py
 ?? apps/api/services/alert_feed.py
 ?? apps/api/services/alert_messages.py
+?? apps/api/services/hazards.py
+?? apps/web/public/
+?? apps/web/src/app/hazards/
+?? apps/web/src/components/hazards/
 ?? apps/web/src/components/ops/alert-card.tsx
 ?? apps/web/src/components/ops/message-feed.tsx
 ?? apps/web/src/components/ops/ops-screen.tsx
@@ -48,38 +63,60 @@ current_commit=bc0b164b8c5a27c79bcc8d6e2f8fbd532f33182c
 ?? apps/web/src/components/ops/worker-camera.tsx
 ?? apps/web/src/components/ops/worker-view.tsx
 ?? apps/web/src/hooks/use-view-mode.ts
+?? apps/web/src/lib/hazards.ts
 ?? apps/web/src/lib/plain.ts
 ?? apps/web/src/lib/view-mode.ts
 ?? apps/web/src/mocks/contract-examples/alert_delivery.json
 ?? apps/web/src/mocks/contract-examples/alert_message.json
 ?? apps/web/src/mocks/contract-examples/alert_message_ping.json
 ?? apps/web/src/mocks/contract-examples/alert_message_unconfirmed.json
-?? apps/web/test-results/
-?? artifacts/event_day/workers/D00_review_fixes.md
+?? apps/web/src/mocks/hazards/
+?? artifacts/event_day/runtime/
+?? artifacts/event_day/workers/D01_PROMPT.md
+?? artifacts/event_day/workers/D02.md
+?? artifacts/event_day/workers/D02_PROMPT.md
 ?? config/alerts.yaml
+?? config/hazards.yaml
 ?? contracts/examples/alert_delivery.json
 ?? contracts/examples/alert_message.json
 ?? contracts/examples/alert_message_ping.json
 ?? contracts/examples/alert_message_unconfirmed.json
+?? contracts/examples/hazards/
+?? contracts/hazard_view.schema.json
+?? hazards/
+?? runtime/nemoclaw/mirror-tools.policy.yaml
+?? scripts/hazards/
+?? scripts/runtime/
 ?? tests/e2e/ops-worker.spec.ts
+?? tests/integration/agent/
+?? tests/integration/api/test_alert_messages_api.py
+?? tests/integration/runtime/
+?? tests/unit/api/test_alert_feed.py
 ?? tests/unit/api/test_alert_messages.py
+?? tests/unit/api/test_hazards_api.py
+?? tests/unit/api/test_run_alerts.py
+?? tests/unit/contracts/test_hazard_view_contract.py
+?? tests/unit/hazards/
+?? third_party/
 
 == event-agent relevant diff ==
- agent/event_day/POLICY.md                          |  151 ++
- agent/event_day/README.md                          |   12 +-
- agent/event_day/openclaw/agent.json                |   81 +
+ agent/event_day/POLICY.md                          |  185 ++
+ agent/event_day/README.md                          |   18 +-
+ agent/event_day/openclaw/agent.json                |   73 +
  ...openclaw-2026.7.1.agents-list-entry.schema.json | 2623 ++++++++++++++++++++
- agent/event_day/openclaw/workspace/AGENTS.md       |   97 +
+ agent/event_day/openclaw/workspace/AGENTS.md       |  106 +
  agent/event_day/openclaw/workspace/IDENTITY.md     |    5 +
  agent/event_day/openclaw/workspace/SOUL.md         |   10 +
- agent/event_day/openclaw/workspace/TOOLS.md        |   20 +
+ agent/event_day/openclaw/workspace/TOOLS.md        |   22 +
  agent/event_day/openclaw/workspace/USER.md         |    5 +
- agent/event_day/policy.py                          |  956 +++++++
+ agent/event_day/policy.py                          |  997 ++++++++
  agent/event_day/tests/conftest.py                  |  121 +
- agent/event_day/tests/test_openclaw_definition.py  |  111 +
+ agent/event_day/tests/test_openclaw_definition.py  |  118 +
  agent/event_day/tests/test_policy_rules.py         |  259 ++
- agent/event_day/tests/test_policy_session.py       |  399 +++
- 14 files changed, 4846 insertions(+), 4 deletions(-)
+ agent/event_day/tests/test_policy_session.py       |  443 ++++
+ config/models/gb10.yaml                            |   36 +-
+ runtime/nemoclaw/README.md                         |   78 +-
+ 16 files changed, 5077 insertions(+), 22 deletions(-)
 
 A	agent/event_day/POLICY.md
 M	agent/event_day/README.md
@@ -95,6 +132,8 @@ A	agent/event_day/tests/conftest.py
 A	agent/event_day/tests/test_openclaw_definition.py
 A	agent/event_day/tests/test_policy_rules.py
 A	agent/event_day/tests/test_policy_session.py
+M	config/models/gb10.yaml
+M	runtime/nemoclaw/README.md
 
 == imports of the judge-side eval package from agent runtime scripts/runtime ==
 none

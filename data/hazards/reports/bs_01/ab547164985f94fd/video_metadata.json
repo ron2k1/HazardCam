@@ -1,0 +1,13 @@
+{
+  "source_name": "bs_01",
+  "source_sha256": "6af1e4b77bb7c4587b340b3a3ce7289b57f5cd028885006df29de1c3448b617d",
+  "fps": 30.0,
+  "source_width": 1920,
+  "source_height": 1080,
+  "decoded_frames": 450,
+  "reported_frames": 450,
+  "duration_s": 15.0,
+  "analysis_width": 768,
+  "analysis_height": 432,
+  "timing_method": "frame_index/source_fps"
+}

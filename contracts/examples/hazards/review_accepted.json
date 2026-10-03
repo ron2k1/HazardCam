@@ -1,0 +1,6 @@
+{
+  "job_id": "hzjob_0123456789ab",
+  "events_url": "/api/hazards/jobs/hzjob_0123456789ab/events",
+  "mode": "replay",
+  "runner": "openclaw-agent"
+}

@@ -1,0 +1,11 @@
+{
+  "clip_id": "bs_02",
+  "title": "Aisle camera 2",
+  "duration_s": 15.0,
+  "fps": 30.0,
+  "width": 1920,
+  "height": 1080,
+  "source_sha256": "a1acff08dacb1d9606268cfecbc1670ac05637b9ea58bf9886accee7168f4562",
+  "kind": "blindspot",
+  "review_mode": "blindspot"
+}

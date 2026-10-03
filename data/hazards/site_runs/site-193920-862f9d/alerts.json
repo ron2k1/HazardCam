@@ -1,0 +1,82 @@
+{
+  "alerts": [
+    {
+      "cam": 1,
+      "clip_id": "hz_00",
+      "kind": "hazard",
+      "job_id": "hzjob_8facf866b59a",
+      "severity": "high",
+      "finding_ids": [
+        "H01",
+        "H02"
+      ],
+      "line": "CAM 1: worker exposed to press point of operation (high)"
+    },
+    {
+      "cam": 3,
+      "clip_id": "hz_02",
+      "kind": "hazard",
+      "job_id": "hzjob_96078f20bed1",
+      "severity": "high",
+      "finding_ids": [
+        "H01",
+        "H02",
+        "H03"
+      ],
+      "line": "CAM 3: potential energy isolation during worker proximity (high)"
+    },
+    {
+      "cam": 4,
+      "clip_id": "bs_01",
+      "kind": "blindspot",
+      "job_id": "hzjob_902f8b6c2be1",
+      "severity": "high",
+      "finding_ids": [
+        "H01",
+        "H02",
+        "H03",
+        "H04",
+        "H05"
+      ],
+      "line": "CAM 4: pedestrian blind spot at cross-aisle intersection (high)"
+    },
+    {
+      "cam": 5,
+      "clip_id": "bs_02",
+      "kind": "blindspot",
+      "job_id": "hzjob_502f11a2cfe8",
+      "severity": "high",
+      "finding_ids": [
+        "H01",
+        "H02"
+      ],
+      "line": "CAM 5: blind spot at aisle intersection with forklift (high)"
+    },
+    {
+      "cam": 6,
+      "clip_id": "bs_03",
+      "kind": "blindspot",
+      "job_id": "hzjob_add71bc95a2c",
+      "severity": "high",
+      "finding_ids": [
+        "H01",
+        "H02",
+        "H03"
+      ],
+      "line": "CAM 6: blind corner at aisle end near yellow barriers (high)"
+    },
+    {
+      "cam": 2,
+      "clip_id": "hz_01",
+      "kind": "hazard",
+      "job_id": "hzjob_291fd3284b0c",
+      "severity": "medium",
+      "finding_ids": [
+        "H01",
+        "H02"
+      ],
+      "line": "CAM 2: forklift operating near seated worker (medium)"
+    }
+  ],
+  "source": "lead"
+}

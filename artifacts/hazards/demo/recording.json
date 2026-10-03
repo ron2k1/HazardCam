@@ -1,0 +1,43 @@
+{
+ "marks": {
+  "wall_open": 0.94,
+  "first_popout": 16.52,
+  "all_done": 23.27,
+  "wall_end": 23.27,
+  "reasoning_tab_open": 33.01,
+  "reasoning_tab_close": 50.04,
+  "hazards_open": 53.06,
+  "hazard_pins": 56.07,
+  "show_on_video": 66.65,
+  "video_play": 69.31,
+  "picture_2": 75.83,
+  "picture_7": 80,
+  "hazards_end": 82.2,
+  "wall2_open": 82.99,
+  "blindspot_open": 107.59,
+  "bs_reasoning_open": 121.79,
+  "bs_reasoning_close": 130.32,
+  "wall_final": 132.08,
+  "end": 135.09
+ },
+ "hzCam": "1",
+ "bsCam": "5",
+ "hzUrl": "http://127.0.0.1:3000/hazards?clip=hz_00&job=hzjob_ab12ea087b85",
+ "bsUrl": "http://127.0.0.1:3000/hazards?clip=bs_03&job=hzjob_eb6b698ed52b",
+ "main": "/home/dell/ambient-urban-mirror/artifacts/hazards/demo/raw/main_raw.webm",
+ "tabs": [
+  {
+   "file": "/home/dell/ambient-urban-mirror/artifacts/hazards/demo/raw/tab1_raw.webm",
+   "offset_s": 32.266,
+   "in": 33.01,
+   "out": 50.04
+  },
+  {
+   "file": "/home/dell/ambient-urban-mirror/artifacts/hazards/demo/raw/tab2_raw.webm",
+   "offset_s": 120.938,
+   "in": 121.79,
+   "out": 130.32
+  }
+ ],
+ "errors": []
+}

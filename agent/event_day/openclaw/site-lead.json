@@ -1,0 +1,69 @@
+{
+  "id": "site-lead",
+  "name": "Site Lead",
+  "description": "Leads one site run on the camera wall: starts six concurrent camera checkers (one urban-mirror agent turn per camera), reads their validated reports, and submits the alert list for the floor team. Never inspects video or invents findings.",
+  "workspace": "/sandbox/.openclaw/workspace-site-lead",
+  "identity": {
+    "name": "Site Lead",
+    "theme": "terse shift lead who triages six camera checkers"
+  },
+  "model": {
+    "primary": "inference/nvidia/Qwen3.6-35B-A3B-NVFP4",
+    "fallbacks": []
+  },
+  "params": {
+    "temperature": 0.2
+  },
+  "thinkingDefault": "off",
+  "reasoningDefault": "off",
+  "verboseDefault": "off",
+  "contextInjection": "always",
+  "skills": [],
+  "memorySearch": {
+    "enabled": false
+  },
+  "heartbeat": {
+    "every": "0m"
+  },
+  "sandbox": {
+    "mode": "off"
+  },
+  "subagents": {
+    "allowAgents": []
+  },
+  "tools": {
+    "profile": "minimal",
+    "alsoAllow": [
+      "mirror__site_start_checks",
+      "mirror__site_check_status",
+      "mirror__site_submit_alerts"
+    ],
+    "deny": [
+      "session_status",
+      "group:messaging",
+      "group:fs",
+      "group:runtime",
+      "group:web",
+      "group:ui",
+      "group:sessions",
+      "group:memory",
+      "group:nodes",
+      "group:automation",
+      "group:media",
+      "group:agents"
+    ],
+    "loopDetection": {
+      "enabled": true,
+      "historySize": 30,
+      "warningThreshold": 12,
+      "unknownToolThreshold": 3,
+      "criticalThreshold": 20,
+      "globalCircuitBreakerThreshold": 30,
+      "detectors": {
+        "genericRepeat": true,
+        "knownPollNoProgress": true,
+        "pingPong": true
+      }
+    }
+  }
+}

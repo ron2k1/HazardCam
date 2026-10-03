@@ -47,7 +47,16 @@ for (const [k,v] of Object.entries(p)) console.log(\"models.providers.\"+k+\": b
 "'
 
   section "local model health (host)"
-  for port in 8000 8001; do
+  # the ports the gb10 profile's two slots use (both are Qwen on 8000 since D02; Cosmos on
+  # 8001 is stopped on purpose), falling back to both historical ports
+  ports="$(.venv/bin/python -c '
+from urllib.parse import urlparse
+from inference.profiles import load_profile
+p = load_profile("gb10")
+print(" ".join(sorted({str(urlparse(getattr(p, s).base_url).port) for s in ("perception", "reasoning")})))
+' 2>/dev/null || echo "8000 8001")"
+  echo "gb10 profile ports: $ports"
+  for port in $ports; do
     printf 'http://127.0.0.1:%s/v1/models -> ' "$port"
     curl -s -m 5 "http://127.0.0.1:$port/v1/models" \
       | python3 -c 'import json,sys; print(", ".join(f"{m["id"]} (max_model_len {m.get("max_model_len")})" for m in json.load(sys.stdin)["data"]))' \

@@ -1,0 +1,21 @@
+# Home camera wall ("/", "Site cameras"): which clips fill the six CCTV tiles.
+# Read by apps/api/services/wall.py (GET /api/wall); editable without code.
+#
+# Clips come from the /hazards clip store (data/hazards/clips/<clip_id>/clip.json). The
+# tiles play the raw source.mp4 (no AI markings); results appear only after a check.
+
+title: Site cameras · Factory floor
+hazard_title: Hazard watch                   # CAM 1-3: factory clips (kind "hazard")
+blindspot_title: Blind spot watch · Warehouse  # CAM 4-6: warehouse clips (kind "blindspot")
+hazard_watch_label: HAZARD WATCH
+blindspot_watch_label: BLIND SPOT
+
+# Clip ids, in tile order. Empty: the first three hazard clips by id / every blind-spot
+# clip in id order (at most three). Ids that are not staged are skipped.
+hazard_clips: []
+blindspot_clips: []
+
+# When each tile's automatic check starts, in seconds after the wall loads.
+# 1.5 s apart (CAM 1, 4, 2, 5, 3, 6) so all six detections land within about 25 s.
+hazard_check_after_s: [2, 5, 8]
+blindspot_check_after_s: [3.5, 6.5, 9.5]

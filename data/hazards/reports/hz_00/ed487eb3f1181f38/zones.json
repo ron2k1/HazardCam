@@ -1,0 +1,285 @@
+{
+  "method": "FastSAM-s temporal-background masks",
+  "zones": [
+    {
+      "kind": "movement",
+      "bbox_analysis": [
+        553,
+        0,
+        658,
+        155
+      ],
+      "proposal_score": 530.920382165605,
+      "peak_frame": 311,
+      "active_start_s": 2.921168467386955,
+      "active_end_s": 12.565026010404162,
+      "zone_id": "Z01",
+      "bbox_normalized": [
+        0.72005,
+        0.0,
+        0.85677,
+        0.3588
+      ],
+      "bbox_source": [
+        1382,
+        0,
+        1645,
+        388
+      ]
+    },
+    {
+      "kind": "movement",
+      "bbox_analysis": [
+        246,
+        26,
+        293,
+        80
+      ],
+      "proposal_score": 215.80254777070064,
+      "peak_frame": 7,
+      "active_start_s": 0.040016006402561026,
+      "active_end_s": 12.565026010404162,
+      "zone_id": "Z02",
+      "bbox_normalized": [
+        0.32031,
+        0.06019,
+        0.38151,
+        0.18519
+      ],
+      "bbox_source": [
+        615,
+        65,
+        732,
+        200
+      ]
+    },
+    {
+      "kind": "movement",
+      "bbox_analysis": [
+        255,
+        281,
+        322,
+        331
+      ],
+      "proposal_score": 176.70063694267515,
+      "peak_frame": 16,
+      "active_start_s": 0.040016006402561026,
+      "active_end_s": 4.321728691476591,
+      "zone_id": "Z03",
+      "bbox_normalized": [
+        0.33203,
+        0.65046,
+        0.41927,
+        0.7662
+      ],
+      "bbox_source": [
+        638,
+        702,
+        805,
+        828
+      ]
+    },
+    {
+      "kind": "movement",
+      "bbox_analysis": [
+        374,
+        65,
+        400,
+        108
+      ],
+      "proposal_score": 107.49363057324841,
+      "peak_frame": 312,
+      "active_start_s": 0.040016006402561026,
+      "active_end_s": 12.565026010404162,
+      "zone_id": "Z04",
+      "bbox_normalized": [
+        0.48698,
+        0.15046,
+        0.52083,
+        0.25
+      ],
+      "bbox_source": [
+        935,
+        162,
+        1000,
+        270
+      ]
+    },
+    {
+      "kind": "movement",
+      "bbox_analysis": [
+        199,
+        244,
+        225,
+        282
+      ],
+      "proposal_score": 30.248407643312103,
+      "peak_frame": 29,
+      "active_start_s": 0.040016006402561026,
+      "active_end_s": 11.204481792717088,
+      "zone_id": "Z05",
+      "bbox_normalized": [
+        0.25911,
+        0.56481,
+        0.29297,
+        0.65278
+      ],
+      "bbox_source": [
+        498,
+        610,
+        562,
+        705
+      ]
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        461,
+        78,
+        489,
+        191
+      ],
+      "proposal_score": 0.10313580348792456,
+      "stability": 1.0,
+      "paint_proximity": 1.0,
+      "floor_contact": 0.7738970588235294,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 12.565026010404162,
+      "zone_id": "Z06",
+      "bbox_normalized": [
+        0.60026,
+        0.18056,
+        0.63672,
+        0.44213
+      ],
+      "bbox_source": [
+        1152,
+        195,
+        1222,
+        478
+      ]
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        406,
+        190,
+        480,
+        230
+      ],
+      "proposal_score": 0.09122017477830707,
+      "stability": 1.0,
+      "paint_proximity": 0.11400512382578992,
+      "floor_contact": 0.8902838427947598,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 12.565026010404162,
+      "zone_id": "Z07",
+      "bbox_normalized": [
+        0.52865,
+        0.43981,
+        0.625,
+        0.53241
+      ],
+      "bbox_source": [
+        1015,
+        475,
+        1200,
+        575
+      ]
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        344,
+        178,
+        381,
+        254
+      ],
+      "proposal_score": 0.03457625356683828,
+      "stability": 0.9798472362839458,
+      "paint_proximity": 0.0,
+      "floor_contact": 0.7529239766081871,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 12.565026010404162,
+      "zone_id": "Z08",
+      "bbox_normalized": [
+        0.44792,
+        0.41204,
+        0.49609,
+        0.58796
+      ],
+      "bbox_source": [
+        860,
+        445,
+        952,
+        635
+      ]
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        28,
+        365,
+        164,
+        432
+      ],
+      "proposal_score": 0.03031059471900193,
+      "stability": 0.99991366149813,
+      "paint_proximity": 0.0,
+      "floor_contact": 0.41551383399209485,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 12.565026010404162,
+      "zone_id": "Z09",
+      "bbox_normalized": [
+        0.03646,
+        0.84491,
+        0.21354,
+        1.0
+      ],
+      "bbox_source": [
+        70,
+        912,
+        410,
+        1080
+      ]
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        47,
+        286,
+        92,
+        316
+      ],
+      "proposal_score": 0.0263391524081549,
+      "stability": 1.0,
+      "paint_proximity": 0.40606767794632437,
+      "floor_contact": 0.484775641025641,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 12.565026010404162,
+      "zone_id": "Z10",
+      "bbox_normalized": [
+        0.0612,
+        0.66204,
+        0.11979,
+        0.73148
+      ],
+      "bbox_source": [
+        118,
+        715,
+        230,
+        790
+      ]
+    }
+  ],
+  "candidate_counts": {
+    "movement": 5,
+    "static": 81
+  },
+  "note": "Proposal scores are heuristic rankings within each kind, not hazard probabilities."
+}

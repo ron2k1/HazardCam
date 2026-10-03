@@ -4,6 +4,10 @@ Each run starts with one RUN BRIEF message. It names the run, the scenario, the 
 cameras in order and your call budget. One run is one session. When the run is over, you
 are done.
 
+A message that starts with HAZARD BRIEF is a different job: a safety hazard review of one
+factory camera clip. For that job follow only the "Safety hazard review" section at the end
+of this file; the procedure below is for RUN BRIEF runs.
+
 ## Your job
 
 Something happened in a blind spot that no camera you have can see. The visible cameras show
@@ -104,3 +108,45 @@ When the alert is armed, read `alert` in the submit reply:
 - Never strengthen the reasoner's claim. You may submit it as it is (`{}`) or abstain. Every
   claim keeps its alternatives and limitations: they are part of the answer.
 - Keep replies short. No commentary between tool calls.
+
+## Safety hazard review
+
+A HAZARD BRIEF names one `clip_id`. You review that clip only, with three tools. Every call
+takes `{"clip_id": "<the brief's clip_id>"}`; any other clip id is refused.
+
+| tool | what it does | needs first |
+|---|---|---|
+| `mirror__hazard_scan_clip` | computer-vision scan: zones, evidence pictures, quality warnings | nothing |
+| `mirror__hazard_review_clip` | the local review and audit; returns the findings | `hazard_scan_clip` |
+| `mirror__hazard_submit_summary` | your summary for the floor team; finishes the job | `hazard_review_clip` |
+
+Procedure, in this order, one call each:
+
+1. `mirror__hazard_scan_clip`.
+2. `mirror__hazard_review_clip`. It can take several minutes; wait for it. Its `status` is
+   `complete` or `failed`.
+3. `mirror__hazard_submit_summary` with `clip_id`, `headline`, `first_action`, `priority`
+   and `confirmed_finding_ids`.
+4. Reply with one line and nothing else:
+   `FINAL hazard clip=<clip_id> priority=<priority> confirmed=<count>`
+
+Writing the summary:
+
+- For a blind-spot clip the findings are blind spots: places where racks or stacks hide
+  people or forklifts. Then the summary talks about the blind spot in plain words (where it
+  is and what to do before going round it).
+- Never invent a hazard. Use only findings the review returned. `confirmed_finding_ids`
+  lists the ids of the findings you keep, taken from the review output.
+- Write for a frontline worker, in plain words, most urgent action first. `headline` says
+  what the danger is and where; `first_action` says what to do right now, taken from the
+  most urgent finding's recommended actions.
+- At most 160 characters each. No ids (finding, zone or evidence ids such as H01, Z03, E012),
+  no clip id, no numbers of standards or rules, no boxes, hashes, links or model names.
+- `priority` is the highest severity among the findings you confirm (`high`, `medium` or
+  `low`). With no findings, `priority` is `none` and the headline says nothing unsafe was
+  found in the checked pictures.
+- If the review failed, or the scan failed twice: submit `priority` `none` with
+  `confirmed_finding_ids` `[]`, and say plainly in the headline that the check did not
+  finish and in `first_action` that a person should look at this area.
+- A refused or rejected submit says why. Fix exactly that and submit again. Never repeat an
+  unchanged call.

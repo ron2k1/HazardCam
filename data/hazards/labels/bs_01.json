@@ -1,0 +1,24 @@
+{
+  "dataset_label": "Warehouse_000 Camera_0003, 172-187 s",
+  "dataset_split": "Warehouse_000",
+  "original_name": "Camera_0003.mp4",
+  "source_sha256": "6af1e4b77bb7c4587b340b3a3ce7289b57f5cd028885006df29de1c3448b617d",
+  "kind": "blindspot",
+  "segment": {
+    "start_s": 172.0,
+    "start_frame": 5160,
+    "frames": 450,
+    "end_s": 187.0,
+    "sync_group": "warehouse_000_t172",
+    "source_file_sha256": "7668fc49c5903174626894ceb7cc2fd30a69c362a9a2734d7e75a3f2b4eb15db"
+  },
+  "ground_truth": {
+    "in_view": {
+      "Forklift": 5,
+      "PalletTruck": 1,
+      "Person": 16
+    },
+    "enter_or_leave_view_events": 156,
+    "note": "objects with a visible box of at least 1600 px in this camera"
+  }
+}

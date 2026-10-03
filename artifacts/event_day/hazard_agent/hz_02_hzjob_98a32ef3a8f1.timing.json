@@ -1,0 +1,49 @@
+{
+  "clip_id": "hz_02",
+  "job_id": "hzjob_98a32ef3a8f1",
+  "started": "2026-10-03T13:53:40-05:00",
+  "total_s": 94.3,
+  "outcome": "done",
+  "narration": [
+    {
+      "t_s": 0.01,
+      "event": "progress",
+      "step": 0,
+      "total": 6,
+      "message": "waiting for the running review",
+      "plain_message": "Waiting for another check to finish"
+    }
+  ],
+  "steps": [
+    {
+      "t_s": 62.17,
+      "step": 1,
+      "message": "[1/6] Scanning video frames..."
+    },
+    {
+      "t_s": 64.12,
+      "step": 2,
+      "message": "[2/6] Measuring motion..."
+    },
+    {
+      "t_s": 64.65,
+      "step": 3,
+      "message": "[3/6] Finding movement and obstruction zones..."
+    },
+    {
+      "t_s": 64.92,
+      "step": 4,
+      "message": "[4/6] Exporting annotated video and evidence..."
+    },
+    {
+      "t_s": 88.2,
+      "step": 5,
+      "message": "[5/6] Running Qwen 3.6 hazard review..."
+    },
+    {
+      "t_s": 88.25,
+      "step": 6,
+      "message": "[6/6] Writing and validating reports..."
+    }
+  ]
+}

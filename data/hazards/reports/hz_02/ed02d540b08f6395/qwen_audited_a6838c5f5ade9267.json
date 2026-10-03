@@ -1,0 +1,164 @@
+{
+  "audit_sha256": "a6838c5f5ade9267432ecbf06bfb18f9a6a3389abb0cb331245312cf04f5dc56",
+  "original_request_sha256": "4faa57e58d50b3db6f4783333e8da1abb2b323be9557f884cc678b53f46677aa",
+  "report": {
+    "scene_summary": "The video shows a manufacturing floor with large industrial machinery (presses) on the left and a marked pedestrian aisle on the right. Workers are observed walking in the aisle and standing near the machinery. A large circular metal object is stored on the floor in an open area adjacent to the marked aisle. The scene is generally well-lit, though some areas near the machinery are cluttered.",
+    "findings": [
+      {
+        "title": "Trip hazard from loose material on walking-working surface",
+        "status": "visible_concern",
+        "severity": "medium",
+        "confidence": "high",
+        "zone_ids": [
+          "Z03"
+        ],
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E029"
+        ],
+        "location": "Center of the scene, on the floor adjacent to the yellow aisle marking",
+        "observation": "A large circular metal object is resting directly on the concrete floor. It is positioned outside of any marked storage area and encroaches upon the space adjacent to the marked yellow aisle line. The object is a loose item on a walking-working surface.",
+        "risk_interpretation": "The object presents a tripping hazard for workers moving through the area or near the aisle. Its placement outside a designated storage zone is a potential violation of walking-working surface requirements.",
+        "standards": [
+          "1910.22(a)(3)"
+        ],
+        "applicability_reason": "The object is a loose material left on a walking surface outside a marked storage area.",
+        "unknowns": [
+          "Applicability of 1910.176(a) regarding mechanical handling equipment and intended aisle clearance requires site verification.",
+          "The specific identity of the object (e.g., coil, die) is uncertain but does not negate the trip hazard."
+        ],
+        "recommended_actions": [
+          "Relocate the object to a designated storage area.",
+          "Ensure the aisle and surrounding walking surfaces are kept clear of stored materials."
+        ]
+      }
+    ],
+    "zone_reviews": [
+      {
+        "zone_id": "Z01",
+        "interpretation": "Pedestrian aisle with workers walking and standing.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E012",
+          "E013"
+        ]
+      },
+      {
+        "zone_id": "Z02",
+        "interpretation": "Machinery area with workers standing near equipment.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E014",
+          "E015"
+        ]
+      },
+      {
+        "zone_id": "Z03",
+        "interpretation": "Floor area containing a large circular metal object stored on the ground.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E016",
+          "E017"
+        ]
+      },
+      {
+        "zone_id": "Z04",
+        "interpretation": "Storage area along the wall with bins and containers.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E018",
+          "E019"
+        ]
+      },
+      {
+        "zone_id": "Z05",
+        "interpretation": "Machinery area with workers.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E020",
+          "E021"
+        ]
+      },
+      {
+        "zone_id": "Z06",
+        "interpretation": "Close-up of machinery side.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E022",
+          "E023"
+        ]
+      },
+      {
+        "zone_id": "Z07",
+        "interpretation": "Close-up of machinery component.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E024",
+          "E025"
+        ]
+      }
+    ],
+    "dismissed": [
+      {
+        "concern": "Machine guarding",
+        "reason": "While workers are near machinery, there is no visible evidence of them reaching into a danger zone or operating the machine in a way that suggests immediate guarding failure. The machinery appears to have guards in place.",
+        "evidence_ids": [
+          "E014",
+          "E015",
+          "E020",
+          "E021"
+        ]
+      },
+      {
+        "concern": "Lockout/Tagout",
+        "reason": "No visible servicing or maintenance activity is occurring that would require lockout/tagout. The absence of locks does not indicate a violation.",
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011"
+        ]
+      },
+      {
+        "concern": "PPE (Eye Protection)",
+        "reason": "Workers are visible, but their eye protection status is not clearly discernible in the provided frames. No obvious eye hazard exposure is confirmed.",
+        "evidence_ids": [
+          "E012",
+          "E013",
+          "E014",
+          "E015",
+          "E020",
+          "E021"
+        ]
+      }
+    ],
+    "limitations": [
+      "No reliable floor-like mask found; static-zone ranking uses general scene candidates.",
+      "Video is a still-frame sequence; continuous motion or activity changes are not fully captured.",
+      "PPE compliance cannot be definitively assessed due to image resolution and distance."
+    ]
+  },
+  "metadata": {
+    "elapsed_seconds": 21.12,
+    "prompt_tokens": 27466,
+    "completion_tokens": 1133,
+    "finish_reason": "stop"
+  }
+}

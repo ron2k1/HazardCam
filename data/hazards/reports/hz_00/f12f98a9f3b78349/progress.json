@@ -1,0 +1,32 @@
+[
+  {
+    "step": 1,
+    "total": 6,
+    "message": "[1/6] Scanning video frames..."
+  },
+  {
+    "step": 2,
+    "total": 6,
+    "message": "[2/6] Measuring motion..."
+  },
+  {
+    "step": 3,
+    "total": 6,
+    "message": "[3/6] Finding movement and obstruction zones..."
+  },
+  {
+    "step": 4,
+    "total": 6,
+    "message": "[4/6] Exporting annotated video and evidence..."
+  },
+  {
+    "step": 5,
+    "total": 6,
+    "message": "[5/6] Running Qwen 3.6 hazard review..."
+  },
+  {
+    "step": 6,
+    "total": 6,
+    "message": "[6/6] Writing and validating reports..."
+  }
+]

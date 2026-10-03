@@ -1,0 +1,33 @@
+2026-10-03T18:37:18Z
+0db0851
+E             
+E             ...Full output truncated (2 lines hidden), use '-vv' to show
+
+tests/unit/contracts/test_hazard_view_contract.py:89: AssertionError
+_____________________ test_probe_reports_late_video_start ______________________
+
+offset_video = PosixPath('/tmp/pytest-of-dell/pytest-141/generated_media0/offset.mp4')
+
+    @pytest.mark.media
+    def test_probe_reports_late_video_start(offset_video):
+        info = probe_video(offset_video)
+>       assert info["start_offset_s"] == pytest.approx(0.5)
+E       assert 0.0 == 0.5 ± 5.0e-07
+E         
+E         comparison failed
+E         Obtained: 0.0
+E         Expected: 0.5 ± 5.0e-07
+
+tests/unit/media/test_probe.py:38: AssertionError
+=========================== short test summary info ============================
+FAILED tests/unit/api/test_hazards_api.py::test_view_of_real_report_matches_contract
+FAILED tests/unit/api/test_hazards_api.py::test_worker_block_does_not_leak - ...
+FAILED tests/unit/api/test_hazards_api.py::test_not_reviewed_view - jsonschem...
+FAILED tests/unit/api/test_hazards_api.py::test_model_review_failed_report_fails_the_job
+FAILED tests/unit/api/test_hazards_api.py::test_zero_hazards_reads_calmly - j...
+FAILED tests/unit/api/test_hazards_api.py::test_preprocessing_only_is_not_reviewed
+FAILED tests/unit/api/test_hazards_api.py::test_repo_wording_has_every_default_key
+FAILED tests/unit/contracts/test_hazard_view_contract.py::test_examples_match_the_composer
+FAILED tests/unit/media/test_probe.py::test_probe_reports_late_video_start - ...
+9 failed, 1488 passed, 3 skipped, 8 deselected in 95.98s (0:01:35)
+exit=1

@@ -1,0 +1,230 @@
+{
+  "audit_sha256": "7f34b82aec19646e37f1b5e199c681cb6eab9ec7388e0a76d79d9b0cad055711",
+  "original_request_sha256": "9011905fd5397bdf91f3368e46fbe3ba16b8e7d44fec723047136d7a2dacd0fa",
+  "report": {
+    "scene_summary": "The video shows a warehouse interior with multiple pedestrians and a forklift. Pedestrians are walking in various areas, some near marked yellow lines. A forklift is visible in the background, maneuvering near stacked goods. The scene includes storage racks, palletized loads, and marked pedestrian walkways. Potential blind spots exist where stacked goods or rack ends obscure visibility between pedestrians and vehicles.",
+    "findings": [
+      {
+        "title": "Blind Spot at Aisle Intersection with Forklift Activity",
+        "status": "visible_concern",
+        "severity": "high",
+        "confidence": "high",
+        "zone_ids": [
+          "Z03"
+        ],
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E015",
+          "E016",
+          "E022"
+        ],
+        "location": "Center-right aisle intersection near stacked goods",
+        "observation": "At sampled times (e.g., E001, E007, E015, E016), a forklift is visible in the background near stacked goods and a cross-aisle. Pedestrians are walking in the foreground and mid-ground (e.g., E003, E005, E007, E009). The stacked goods and rack ends create potential blind spots where a pedestrian could emerge suddenly in front of the forklift or vice versa. Specifically, at E007 and E016, a pedestrian is walking near the aisle where the forklift is operating, and the stacked goods obscure the view between the pedestrian's path and the forklift's potential path.",
+        "risk_interpretation": "High risk of collision between pedestrian and forklift due to limited visibility at the intersection. The forklift driver may not see a pedestrian stepping out from behind stacked goods, and the pedestrian may not see the approaching forklift.",
+        "standards": [
+          "1910.178(n)(4)",
+          "1910.178(n)(6)",
+          "1910.176(a)"
+        ],
+        "applicability_reason": "The area involves mechanical handling equipment (forklift) and pedestrian traffic in close proximity with potential vision obstruction.",
+        "unknowns": [
+          "Forklift speed",
+          "Horn usage by forklift operator",
+          "Pedestrian awareness of forklift presence",
+          "Site-specific traffic rules"
+        ],
+        "recommended_actions": [
+          "Install convex mirrors at the aisle intersection to improve visibility",
+          "Implement a stop line with horn signal requirement for forklifts at the intersection",
+          "Designate and mark clear pedestrian walkways separate from vehicle paths",
+          "Establish a slow zone with reduced speed limits for forklifts in this area",
+          "Consider using a spotter for forklift operations in this high-traffic area"
+        ]
+      },
+      {
+        "title": "Pedestrian Walking Near Vehicle Path with Potential Obscured Visibility",
+        "status": "visible_concern",
+        "severity": "medium",
+        "confidence": "high",
+        "zone_ids": [
+          "Z01",
+          "Z02"
+        ],
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E012",
+          "E013",
+          "E014",
+          "E021",
+          "E023"
+        ],
+        "location": "Left side of warehouse near rack rows and stacked goods",
+        "observation": "At sampled times (e.g., E001, E004, E005, E007, E011, E012, E013, E014, E021, E023), multiple pedestrians are walking in the left portion of the warehouse, some in close proximity to where vehicles might operate. While there are yellow painted lines on the floor, the separation between pedestrian and vehicle paths is not always clear or enforced. Pedestrians are seen walking near rack ends and stacked goods that could obscure visibility. For example, at E011 and E012, pedestrians are walking near rack ends where visibility to approaching vehicles could be limited.",
+        "risk_interpretation": "Medium risk of pedestrian-vehicle incident due to shared space and potential for obscured visibility. Pedestrians may not be aware of approaching vehicles, and vehicle operators may not see pedestrians near rack ends.",
+        "standards": [
+          "1910.176(a)",
+          "1910.22(a)(3)"
+        ],
+        "applicability_reason": "The area involves pedestrian walking surfaces and potential vehicle traffic with inadequate physical separation.",
+        "unknowns": [
+          "Vehicle traffic frequency in this area",
+          "Pedestrian training on awareness",
+          "Site-specific pedestrian routing rules"
+        ],
+        "recommended_actions": [
+          "Install physical barriers or guardrails to separate pedestrian and vehicle paths",
+          "Improve marking of pedestrian walkways with higher visibility paint or tape",
+          "Add warning signs at entry points to pedestrian zones",
+          "Implement designated pedestrian crossing points with clear visibility",
+          "Conduct regular safety briefings for both pedestrians and vehicle operators"
+        ]
+      }
+    ],
+    "zone_reviews": [
+      {
+        "zone_id": "Z01",
+        "interpretation": "Zone shows rack ends and stacked goods on the left side. Pedestrians are visible walking near this area (e.g., E011, E012). The zone contains potential blind spots where pedestrians could be hidden from vehicle operators by the rack ends and stacked goods.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E012",
+          "E021",
+          "E023"
+        ]
+      },
+      {
+        "zone_id": "Z02",
+        "interpretation": "Zone shows the left edge of the warehouse with rack structures. Pedestrians are seen walking in this area (e.g., E013, E014). The zone has potential for pedestrian-vehicle interaction with limited visibility due to rack ends.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E013",
+          "E014",
+          "E021",
+          "E023"
+        ]
+      },
+      {
+        "zone_id": "Z03",
+        "interpretation": "Zone shows the center-right area with stacked goods and a forklift operating in the background (e.g., E015, E016). This is a high-risk area with potential blind spots at the aisle intersection where pedestrians and vehicles could interact. The stacked goods obscure the view between the pedestrian's path and the forklift's potential path.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E015",
+          "E016",
+          "E022"
+        ]
+      },
+      {
+        "zone_id": "Z04",
+        "interpretation": "Zone shows the upper right portion of the warehouse with tall rack structures. No pedestrians or vehicles are clearly visible in this zone. The zone appears to be primarily storage area.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E017",
+          "E018"
+        ]
+      },
+      {
+        "zone_id": "Z05",
+        "interpretation": "Zone shows the far right edge with rack structures. No pedestrians or vehicles are clearly visible in this zone. The zone appears to be primarily storage area with limited activity.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E019",
+          "E020"
+        ]
+      }
+    ],
+    "dismissed": [
+      {
+        "concern": "Potential obstruction in Z04 and Z05",
+        "reason": "These zones show only rack structures with no visible pedestrians or vehicles. The proposed obstructions are part of the static warehouse infrastructure and do not create dynamic blind spots in the observed timeframe.",
+        "evidence_ids": [
+          "E017",
+          "E018",
+          "E019",
+          "E020"
+        ]
+      }
+    ],
+    "limitations": [
+      "No reliable floor-like mask found; static-zone ranking uses general scene candidates.",
+      "Analysis is based on sampled frames only; continuous behavior cannot be determined.",
+      "Vehicle speed, horn usage, and site-specific traffic rules are unknown.",
+      "Pedestrian awareness and training levels are not observable from video evidence.",
+      "Mirror presence and condition cannot be determined from still frames."
+    ]
+  },
+  "metadata": {
+    "elapsed_seconds": 31.4,
+    "prompt_tokens": 22228,
+    "completion_tokens": 2584,
+    "finish_reason": "stop"
+  }
+}

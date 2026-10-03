@@ -1,0 +1,26 @@
+{
+  "harness": "openclaw-agent",
+  "job": "hazard-hz_03-f703c04c",
+  "clip_id": "hz_03",
+  "submitted": true,
+  "session": {
+    "calls": 3,
+    "refusals": 0,
+    "per_tool": {
+      "hazard_scan_clip": 1,
+      "hazard_review_clip": 1,
+      "hazard_submit_summary": 1
+    },
+    "scanned": true,
+    "reviewed": true,
+    "review_status": "complete",
+    "submitted": true
+  },
+  "turn": {
+    "ok": true,
+    "reply": "FINAL hazard clip=hz_03 priority=medium confirmed=1",
+    "error": null,
+    "duration_s": 110.7962010529991,
+    "exit_code": 0
+  }
+}

@@ -1,0 +1,28 @@
+site_run_id=site-193920-862f9d mode=live state=done total_wall_s=120.44
+lead agent=site-lead turn_wall_s=120.44 tool_calls=11 ok=True reply='FINAL site alerts=6'
+CAM 1 hz_00  hazard    done  job=hzjob_8facf866b59a start=5.01s end=92.56s dur=87.55s priority=high findings=2
+CAM 2 hz_01  hazard    done  job=hzjob_291fd3284b0c start=5.02s end=35.52s dur=30.5s priority=medium findings=2
+CAM 3 hz_02  hazard    done  job=hzjob_96078f20bed1 start=5.03s end=51.58s dur=46.55s priority=high findings=3
+CAM 4 bs_01  blindspot done  job=hzjob_902f8b6c2be1 start=5.03s end=57.57s dur=52.54s priority=high findings=5
+CAM 5 bs_02  blindspot done  job=hzjob_502f11a2cfe8 start=5.04s end=80.61s dur=75.57s priority=high findings=2
+CAM 6 bs_03  blindspot done  job=hzjob_add71bc95a2c start=5.05s end=98.61s dur=93.56s priority=high findings=3
+alerts_source=lead
+  ALERT CAM 1 high ['H01', 'H02'] CAM 1: worker exposed to press point of operation (high)
+  ALERT CAM 3 high ['H01', 'H02', 'H03'] CAM 3: potential energy isolation during worker proximity (high)
+  ALERT CAM 4 high ['H01', 'H02', 'H03', 'H04', 'H05'] CAM 4: pedestrian blind spot at cross-aisle intersection (high)
+  ALERT CAM 5 high ['H01', 'H02'] CAM 5: blind spot at aisle intersection with forklift (high)
+  ALERT CAM 6 high ['H01', 'H02', 'H03'] CAM 6: blind corner at aisle end near yellow barriers (high)
+  ALERT CAM 2 medium ['H01', 'H02'] CAM 2: forklift operating near seated worker (medium)
+     0.00s Lead agent is starting six camera checkers
+     5.01s Lead agent started the six camera checkers
+    21.84s Lead agent checked status: 0/6 checkers finished
+    35.52s Lead agent checked status: 1/6 checkers finished
+    51.58s Lead agent checked status: 2/6 checkers finished
+    57.57s Lead agent checked status: 3/6 checkers finished
+    75.28s Lead agent checked status: 3/6 checkers finished
+    80.61s Lead agent checked status: 4/6 checkers finished
+    92.56s Lead agent checked status: 5/6 checkers finished
+    98.61s Lead agent checked status: 6/6 checkers finished
+   107.33s alerts refused: alert 1 must be an object
+   119.24s Lead agent sent 6 alert(s)
+   120.44s lead turn ended ok after 120.4 s; FINAL site alerts=6

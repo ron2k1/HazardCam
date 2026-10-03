@@ -20,3 +20,13 @@ def scenario_doc() -> dict[str, Any]:
 @pytest.fixture
 def scenario(scenario_doc: dict[str, Any]) -> Scenario:
     return Scenario.model_validate(scenario_doc)
+
+
+@pytest.fixture(autouse=True)
+def _unfiltered_hazard_findings(request: pytest.FixtureRequest, monkeypatch: pytest.MonkeyPatch):
+    """The hazard tests below pin the full fixture reports; the worker-screen filter has its
+    own tests (test_hazard_screen_filter.py, marked ``screen_filter``)."""
+    if request.node.get_closest_marker("screen_filter") is None:
+        from apps.api.services import hazards
+
+        monkeypatch.setattr(hazards, "SCREEN_FILTER", False)

@@ -1,0 +1,62 @@
+[
+  {
+    "t_s": 0.07,
+    "kind": "say",
+    "text": "The safety agent picked up this clip and is planning its check"
+  },
+  {
+    "t_s": 0.07,
+    "kind": "tool",
+    "tool": "turn",
+    "text": "agent turn started: hazard-bs_03-3c322f7c (timeout 600 s)"
+  },
+  {
+    "t_s": 55.8,
+    "kind": "say",
+    "text": "The safety agent asked for the camera scan"
+  },
+  {
+    "t_s": 68.93,
+    "kind": "tool",
+    "tool": "hazard_scan_clip",
+    "text": "hazard_scan_clip ok in 13.1 s: 8 zones (3 movement, 5 static), 31 evidence pictures, 1 quality warnings"
+  },
+  {
+    "t_s": 68.93,
+    "kind": "say",
+    "text": "The safety agent has the camera scan"
+  },
+  {
+    "t_s": 71.54,
+    "kind": "say",
+    "text": "The safety agent asked the local AI to review the pictures and check them"
+  },
+  {
+    "t_s": 84.84,
+    "kind": "tool",
+    "tool": "hazard_review_clip",
+    "text": "hazard_review_clip ok in 13.3 s: 3 findings (H01 high, H02 medium, H03 medium), 2 dismissed, audit ran"
+  },
+  {
+    "t_s": 84.84,
+    "kind": "say",
+    "text": "The safety agent is reading the review and writing a summary"
+  },
+  {
+    "t_s": 92.09,
+    "kind": "tool",
+    "tool": "hazard_submit_summary",
+    "text": "hazard_submit_summary ok: priority high, confirmed H01, H02, H03"
+  },
+  {
+    "t_s": 92.09,
+    "kind": "say",
+    "text": "The safety agent wrote its summary for the floor team"
+  },
+  {
+    "t_s": 93.38,
+    "kind": "tool",
+    "tool": "turn",
+    "text": "agent turn ended ok after 93.3 s; reply: FINAL hazard clip=bs_03 priority=high confirmed=3"
+  }
+]

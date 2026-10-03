@@ -1,0 +1,188 @@
+{
+  "scene_summary": "The video shows a manufacturing floor with a large blue mechanical press on the left, where a worker is seated at the controls. A marked aisle runs through the center of the scene, containing a stationary circular metal object. Another worker walks along a designated green path on the right side of the frame.",
+  "findings": [
+    {
+      "title": "Obstruction in Marked Aisle",
+      "status": "visible_concern",
+      "severity": "medium",
+      "confidence": "high",
+      "zone_ids": [
+        "Z07"
+      ],
+      "evidence_ids": [
+        "E024",
+        "E025",
+        "E035"
+      ],
+      "location": "Center of the marked aisle, Z07",
+      "observation": "A large circular metal object is resting on the floor directly across the yellow painted boundary line of the main aisle. The object remains stationary in sampled frames (E024, E025).",
+      "risk_interpretation": "The object encroaches upon a marked path for movement or material handling. While the specific clearance requirements depend on site verification and intended use, the visible encroachment presents a potential obstruction.",
+      "standards": [
+        "1910.176(a)"
+      ],
+      "applicability_reason": "The object is located within a marked aisle; 1910.176(a) applies where mechanical handling equipment is used and requires safe clearances.",
+      "unknowns": [
+        "Whether the path is designated for mechanical handling equipment",
+        "Intended clearance width for this specific aisle",
+        "Whether the object is an emergency exit route (exit status unknown)"
+      ],
+      "recommended_actions": [
+        "Verify if the object is required in this location.",
+        "Remove or relocate the object to a designated storage area outside of all walkways and operational zones using appropriate handling methods."
+      ]
+    },
+    {
+      "title": "Worker Proximity to Machine Point of Operation",
+      "status": "needs_verification",
+      "severity": "medium",
+      "confidence": "medium",
+      "zone_ids": [
+        "Z03"
+      ],
+      "evidence_ids": [
+        "E016",
+        "E017",
+        "E034"
+      ],
+      "location": "Machine control station, Z03",
+      "observation": "A worker is seated at the controls of a mechanical press. The worker's hands are positioned near the machine interface, and their head is close to the machinery opening (E016, E034).",
+      "risk_interpretation": "The worker's position suggests potential interaction with the point of operation. It is unknown if the machine is in an active operating cycle or if the worker is performing maintenance.",
+      "standards": [
+        "1910.217(c)(1)(i)"
+      ],
+      "applicability_reason": "The machine appears to be a mechanical power press, which requires specific safeguarding at the point of operation.",
+      "unknowns": [
+        "Machine energy state (active vs. idle)",
+        "Whether the worker is performing production or maintenance",
+        "Functionality of the point-of-operation guard",
+        "Applicability of 1910.217 to this specific machine type"
+      ],
+      "recommended_actions": [
+        "Verify if the machine is active; if so, ensure the worker is using the required safeguarding device.",
+        "If maintenance is being performed, confirm that Lockout/Tagout (LOTO) procedures are followed by qualified personnel."
+      ]
+    }
+  ],
+  "zone_reviews": [
+    {
+      "zone_id": "Z01",
+      "interpretation": "A designated walkway marked with green paint and yellow borders. A worker is seen walking within this zone.",
+      "disposition": "ordinary_scene",
+      "evidence_ids": [
+        "E012",
+        "E013"
+      ]
+    },
+    {
+      "zone_id": "Z02",
+      "interpretation": "Background area containing a yellow industrial fan and other equipment.",
+      "disposition": "ordinary_scene",
+      "evidence_ids": [
+        "E014",
+        "E015"
+      ]
+    },
+    {
+      "zone_id": "Z03",
+      "interpretation": "The control station of the mechanical press where a worker is seated.",
+      "disposition": "hazard_candidate",
+      "evidence_ids": [
+        "E016",
+        "E017"
+      ]
+    },
+    {
+      "zone_id": "Z04",
+      "interpretation": "Area containing an orange machine and associated safety fencing.",
+      "disposition": "ordinary_scene",
+      "evidence_ids": [
+        "E018",
+        "E019"
+      ]
+    },
+    {
+      "zone_id": "Z05",
+      "interpretation": "Lower section of the blue press, showing a warning label and electrical components.",
+      "disposition": "ordinary_scene",
+      "evidence_ids": [
+        "E020",
+        "E021"
+      ]
+    },
+    {
+      "zone_id": "Z06",
+      "interpretation": "Section of the floor adjacent to the yellow aisle line.",
+      "disposition": "ordinary_scene",
+      "evidence_ids": [
+        "E022",
+        "E023"
+      ]
+    },
+    {
+      "zone_id": "Z07",
+      "interpretation": "The center of the marked aisle containing a stationary circular metal object.",
+      "disposition": "hazard_candidate",
+      "evidence_ids": [
+        "E024",
+        "E025"
+      ]
+    },
+    {
+      "zone_id": "Z08",
+      "interpretation": "A blue stand holding documents or manuals.",
+      "disposition": "ordinary_scene",
+      "evidence_ids": [
+        "E026",
+        "E027"
+      ]
+    },
+    {
+      "zone_id": "Z09",
+      "interpretation": "A purple bin filled with metal shavings located near the press.",
+      "disposition": "ordinary_scene",
+      "evidence_ids": [
+        "E028",
+        "E029"
+      ]
+    },
+    {
+      "zone_id": "Z10",
+      "interpretation": "A wooden pallet with a blue container located near the press.",
+      "disposition": "ordinary_scene",
+      "evidence_ids": [
+        "E030",
+        "E031"
+      ]
+    }
+  ],
+  "dismissed": [
+    {
+      "concern": "Potential slip hazard from dark area on floor",
+      "reason": "The dark area in Z06 is likely a shadow or surface variation; no liquid spill is visible.",
+      "evidence_ids": [
+        "E022",
+        "E023"
+      ]
+    },
+    {
+      "concern": "Circular object is a rubber tire",
+      "reason": "The object in Z07 appears to be a heavy metal component based on its rigidity and context, not a rubber tire.",
+      "evidence_ids": [
+        "E024",
+        "E025"
+      ]
+    },
+    {
+      "concern": "Aisle is an emergency exit route",
+      "reason": "The path is marked with yellow lines; while this does not exclude it from being an exit, the specific designation cannot be confirmed from visual evidence alone.",
+      "evidence_ids": [
+        "E035"
+      ]
+    }
+  ],
+  "limitations": [
+    "Machine operation status (active/idle) cannot be determined from still frames.",
+    "PPE compliance (specifically eye protection) is uncertain due to image resolution and distance.",
+    "Energy isolation status of the machine is unknown."
+  ]
+}

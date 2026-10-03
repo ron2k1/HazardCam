@@ -1,0 +1,312 @@
+{
+  "audit_sha256": "4d9bd5b39173715896476fb02e048dd8a31a80d33dee4dd9f6d84c8b377553ad",
+  "original_request_sha256": "b2b9517da9a2576ad7cfe801ab1afae1244939a9532fdf0a5ddbeb55cff6f2fc",
+  "report": {
+    "scene_summary": "The video shows a warehouse environment with high-bay racking, open aisles, and staged goods. Pedestrians and material handling equipment (forklifts) are present. The scene is well-lit, but visual obstructions caused by stacked goods and racking structures create potential blind spots where pedestrians and vehicles may not see each other.",
+    "findings": [
+      {
+        "title": "Pedestrian-Vehicle Blind Spot at Aisle End",
+        "status": "visible_concern",
+        "severity": "high",
+        "confidence": "high",
+        "zone_ids": [
+          "Z03"
+        ],
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E016",
+          "E017",
+          "E032"
+        ],
+        "location": "Zone Z03, specifically the intersection of the main aisle and the cross-aisle on the left side.",
+        "observation": "A pedestrian in a white suit is observed standing or walking near the end of a rack row in Zone Z03 (E016, E017). A forklift is visible further down the main aisle. The rack structure and stacked boxes at the end of the aisle create a blind corner. A pedestrian entering the main aisle from this cross-aisle, or a forklift turning into this aisle, would not have a clear view of the other until they are very close.",
+        "risk_interpretation": "This is a classic blind corner scenario. A pedestrian stepping out from behind the rack or a forklift turning the corner could collide with the other party who cannot see them in time to stop. This relates to the requirement for a clear view of the path of travel.",
+        "standards": [
+          "1910.178(n)(4)",
+          "1910.178(n)(6)",
+          "1910.176(a)"
+        ],
+        "applicability_reason": "The obstruction (racks/boxes) hides pedestrians and vehicles from each other at a travel path intersection.",
+        "unknowns": [
+          "Forklift speed at the intersection",
+          "Pedestrian awareness of traffic"
+        ],
+        "recommended_actions": [
+          "Install a convex mirror at the aisle end to provide a view of the intersecting path.",
+          "Mark a stop line for vehicles and pedestrians at the intersection.",
+          "Implement a 'horn at blind corners' policy.",
+          "Consider physical separation (guardrails) if traffic volume is high."
+        ]
+      },
+      {
+        "title": "Obstructed View of Path of Travel by Staged Goods",
+        "status": "visible_concern",
+        "severity": "medium",
+        "confidence": "high",
+        "zone_ids": [
+          "Z02",
+          "Z06"
+        ],
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E014",
+          "E015",
+          "E022",
+          "E023",
+          "E035"
+        ],
+        "location": "Zone Z02 and Z06, the area with stacked pallets of boxes on the right side of the main aisle.",
+        "observation": "Multiple pallets of boxes are staged in Zone Z02/Z06, enclosed by yellow floor markings. A pedestrian is seen standing near these stacks (E014, E022). A forklift is also present in this zone (E026, E027). The height of the stacked boxes can obstruct the view of a forklift driver looking forward or to the side, and can hide a pedestrian from the forklift driver's view.",
+        "risk_interpretation": "If a forklift is moving through this zone with a load, its forward view may be blocked by the boxes. Even without a load, the stacked goods create a visual barrier between the forklift and pedestrians in or near the zone.",
+        "standards": [
+          "1910.178(n)(4)",
+          "1910.178(n)(6)"
+        ],
+        "applicability_reason": "Stacked goods obstruct the driver's view of the path of travel and potential pedestrians.",
+        "unknowns": [
+          "Height of loads on forklifts",
+          "Pedestrian movement patterns within the zone"
+        ],
+        "recommended_actions": [
+          "Ensure stacked goods do not exceed a safe height that obstructs the driver's view.",
+          "If loads obstruct view, require travel with the load trailing.",
+          "Mark pedestrian walkways clearly around the staging area.",
+          "Use spotters if visibility is consistently poor."
+        ]
+      },
+      {
+        "title": "Pedestrian Walking Near Vehicle Path",
+        "status": "visible_concern",
+        "severity": "medium",
+        "confidence": "high",
+        "zone_ids": [
+          "Z01",
+          "Z02"
+        ],
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E012",
+          "E013",
+          "E015",
+          "E033",
+          "E035"
+        ],
+        "location": "Zone Z01 and Z02, along the main aisle and near the staged goods.",
+        "observation": "Pedestrians are observed walking in the main aisle (Z01) and near the staged goods (Z02). For example, a pedestrian in a yellow vest walks along the yellow line in Z02 (E015, E035). Another pedestrian in white walks in the main aisle (E012, E013). While they are near marked lines, they are in close proximity to where forklifts would travel.",
+        "risk_interpretation": "Pedestrians sharing the same space as vehicles without physical separation are at risk of collision. The marked lines may not be sufficient to prevent accidental encroachment.",
+        "standards": [
+          "1910.176(a)",
+          "1910.22(a)(3)"
+        ],
+        "applicability_reason": "Aisles and passageways must be kept clear and appropriately marked to separate pedestrian and vehicle traffic.",
+        "unknowns": [
+          "Pedestrian compliance with marked walkways",
+          "Forklift driver adherence to right-of-way"
+        ],
+        "recommended_actions": [
+          "Enforce strict separation of pedestrian and vehicle traffic where possible.",
+          "Ensure pedestrian walkways are clearly marked and unobstructed.",
+          "Train pedestrians to stay within marked zones.",
+          "Train forklift operators to be aware of pedestrians and yield when necessary."
+        ]
+      }
+    ],
+    "zone_reviews": [
+      {
+        "zone_id": "Z01",
+        "interpretation": "Main aisle with pedestrian traffic and potential vehicle traffic. Blind spot at the intersection with the left cross-aisle (Z03).",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E012",
+          "E013",
+          "E033"
+        ]
+      },
+      {
+        "zone_id": "Z02",
+        "interpretation": "Staging area with stacked boxes. Pedestrians and forklifts present. Obstructed views due to stacked goods.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E014",
+          "E015",
+          "E035"
+        ]
+      },
+      {
+        "zone_id": "Z03",
+        "interpretation": "Left side of the warehouse with rack rows and stacked boxes. Blind corner at the aisle end where it meets the main aisle.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E016",
+          "E017",
+          "E032"
+        ]
+      },
+      {
+        "zone_id": "Z04",
+        "interpretation": "Close-up of stacked boxes and an IBC tote. Pedestrian observed walking past.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E018",
+          "E019"
+        ]
+      },
+      {
+        "zone_id": "Z05",
+        "interpretation": "Close-up of rack end and stacked boxes. No significant activity observed.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E020",
+          "E021"
+        ]
+      },
+      {
+        "zone_id": "Z06",
+        "interpretation": "Staging area with stacked boxes. Pedestrians and forklifts present. Obstructed views.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E022",
+          "E023"
+        ]
+      },
+      {
+        "zone_id": "Z07",
+        "interpretation": "Close-up of stacked boxes and an IBC tote. Pedestrian observed standing nearby.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E024",
+          "E025"
+        ]
+      },
+      {
+        "zone_id": "Z08",
+        "interpretation": "Close-up of stacked boxes and a forklift. Pedestrian observed nearby.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E026",
+          "E027"
+        ]
+      },
+      {
+        "zone_id": "Z09",
+        "interpretation": "Close-up of a pedestrian standing near a wall and a red cabinet.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E028",
+          "E029"
+        ]
+      },
+      {
+        "zone_id": "Z10",
+        "interpretation": "Close-up of rack rows and stacked boxes. Pedestrian observed walking past.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E030",
+          "E031"
+        ]
+      }
+    ],
+    "dismissed": [
+      {
+        "concern": "False positive for obstruction in Z04/Z07",
+        "reason": "The zone is a static stack of goods. No dynamic hazard like a moving vehicle or pedestrian entering a blind spot is identified within the zone itself, other than a pedestrian walking past.",
+        "evidence_ids": [
+          "E018",
+          "E019",
+          "E024",
+          "E025"
+        ]
+      },
+      {
+        "concern": "False positive for obstruction in Z05",
+        "reason": "The zone shows a static rack end and boxes. No significant activity or blind spot hazard is evident.",
+        "evidence_ids": [
+          "E020",
+          "E021"
+        ]
+      },
+      {
+        "concern": "False positive for obstruction in Z09",
+        "reason": "The zone shows a pedestrian standing near a wall. No vehicle interaction or blind spot is present.",
+        "evidence_ids": [
+          "E028",
+          "E029"
+        ]
+      }
+    ],
+    "limitations": [
+      "No reliable floor-like mask found; static-zone ranking uses general scene candidates.",
+      "Analysis is based on sampled frames; continuous movement and speed are not fully captured.",
+      "Traffic rules and specific site protocols are unknown."
+    ]
+  },
+  "metadata": {
+    "elapsed_seconds": 30.34,
+    "prompt_tokens": 32202,
+    "completion_tokens": 2552,
+    "finish_reason": "stop"
+  }
+}

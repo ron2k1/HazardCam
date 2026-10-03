@@ -1,0 +1,331 @@
+{
+  "audit_sha256": "7a877aa4219228c40ba9c2136514b0edcbe7cc1bfa4c8c015c01179288739efc",
+  "original_request_sha256": "172dc13be7c64086629ee67047c76433e08eb86f520dfabd6ff13f8269704194",
+  "report": {
+    "scene_summary": "The video shows a warehouse environment with multiple pedestrians walking through aisles and open areas. The scene contains various obstructions including stacked pallets, large wooden crates, and cardboard boxes. Yellow painted lines mark pedestrian walkways and vehicle zones. There are no forklifts or other motorized vehicles visible in the sampled frames, but the layout is designed for mixed pedestrian and vehicle traffic. Pedestrians are seen walking in various directions, some crossing marked lines and moving behind obstructions.",
+    "findings": [
+      {
+        "title": "Pedestrian blind spot at aisle intersection near pallet stacks",
+        "status": "visible_concern",
+        "severity": "medium",
+        "confidence": "high",
+        "zone_ids": [
+          "Z02"
+        ],
+        "evidence_ids": [
+          "E002",
+          "E003",
+          "E004",
+          "E014",
+          "E015"
+        ],
+        "location": "left side of warehouse near stacked pallets and work tables",
+        "observation": "Pedestrians are observed walking behind and around large stacks of wooden pallets (visible in E002, E003, E004, E014, E015). The pallet stacks create a blind corner where a pedestrian could emerge suddenly from behind the stack or where a vehicle approaching the intersection would not see a pedestrian until they are already in the path. In E002, a pedestrian walks from behind the pallet stack area. In E003 and E004, pedestrians are visible near the pallet stacks. The yellow painted line on the floor suggests a designated path, but the physical obstruction of the pallets blocks visibility.",
+        "risk_interpretation": "A pedestrian could step out from behind the pallet stack into the path of a vehicle without either party seeing the other until it is too late to avoid a collision. This is a classic blind corner scenario.",
+        "standards": [
+          "1910.178(n)(4)",
+          "1910.176(a)"
+        ],
+        "applicability_reason": "The pallet stacks obstruct vision at an intersection where pedestrians and potential vehicles may cross paths.",
+        "unknowns": [
+          "Vehicle traffic patterns and frequency",
+          "Site-specific traffic rules for this intersection"
+        ],
+        "recommended_actions": [
+          "Install a convex mirror at the corner of the pallet stack to provide visibility around the blind corner",
+          "Mark a stop line with a horn signal requirement before entering the intersection",
+          "Consider relocating the pallet stack to improve sight lines",
+          "Implement a designated pedestrian crossing point with enhanced visibility"
+        ]
+      },
+      {
+        "title": "Pedestrian blind spot near large wooden crate and box stacks",
+        "status": "visible_concern",
+        "severity": "medium",
+        "confidence": "high",
+        "zone_ids": [
+          "Z01",
+          "Z05",
+          "Z07"
+        ],
+        "evidence_ids": [
+          "E001",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E012",
+          "E013",
+          "E020",
+          "E021",
+          "E024",
+          "E025",
+          "E030",
+          "E031"
+        ],
+        "location": "right side of warehouse near large wooden crate and stacked cardboard boxes",
+        "observation": "Multiple pedestrians are observed walking near and behind large wooden crates and stacks of cardboard boxes (visible in E001, E005, E006, E007, E008, E009, E010, E011, E012, E013, E020, E021, E024, E025, E030, E031). In E001, a pedestrian walks past the wooden crate. In E005-E011, multiple pedestrians are seen walking in the area between the wooden crate, box stacks, and pallet stacks. The large wooden crate and box stacks create significant visual obstructions. In E020 and E021, the close-up view shows how the wooden crate and boxes block the view of the area behind them. In E024 and E025, the box stacks are shown to be tall enough to completely obscure a person standing behind them.",
+        "risk_interpretation": "Pedestrians can disappear behind the large wooden crate and box stacks, making them invisible to vehicle operators approaching from certain angles. A vehicle operator would not see a pedestrian until they emerge from behind the obstruction, potentially leading to a collision.",
+        "standards": [
+          "1910.178(n)(4)",
+          "1910.178(n)(6)",
+          "1910.176(a)"
+        ],
+        "applicability_reason": "The wooden crate and box stacks obstruct the path of travel and create blind spots where pedestrians and vehicles cannot see each other.",
+        "unknowns": [
+          "Vehicle traffic patterns and frequency",
+          "Site-specific traffic rules for this area"
+        ],
+        "recommended_actions": [
+          "Install convex mirrors at key intersection points near the wooden crate and box stacks",
+          "Mark pedestrian walkways with clear signage and floor markings",
+          "Implement a slow zone with reduced speed limits in this area",
+          "Consider relocating the wooden crate and box stacks to improve sight lines",
+          "Add spotter or flagger for pedestrian crossings in this area"
+        ]
+      },
+      {
+        "title": "Pedestrian blind spot near yellow safety barriers and equipment",
+        "status": "visible_concern",
+        "severity": "medium",
+        "confidence": "high",
+        "zone_ids": [
+          "Z06"
+        ],
+        "evidence_ids": [
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E022",
+          "E023",
+          "E028",
+          "E029"
+        ],
+        "location": "center-left area near yellow safety barriers and orange equipment",
+        "observation": "Pedestrians are observed walking near and behind yellow safety barriers and orange equipment (visible in E002, E003, E004, E005, E006, E007, E008, E009, E010, E011, E022, E023, E028, E029). In E022 and E023, the yellow barriers and orange equipment create a visual obstruction. In E002-E011, pedestrians are seen walking in the area near these barriers. The barriers and equipment block the view of pedestrians who may be behind them. In E028 and E029, the scene shows the layout with barriers and equipment creating potential blind spots.",
+        "risk_interpretation": "Pedestrians behind the yellow barriers and orange equipment are not visible to vehicle operators approaching from certain angles. This creates a risk of collision if a vehicle enters the area without being able to see pedestrians.",
+        "standards": [
+          "1910.178(n)(4)",
+          "1910.176(a)"
+        ],
+        "applicability_reason": "The yellow barriers and orange equipment obstruct vision at locations where pedestrians and potential vehicles may cross paths.",
+        "unknowns": [
+          "Vehicle traffic patterns and frequency",
+          "Site-specific traffic rules for this area"
+        ],
+        "recommended_actions": [
+          "Install convex mirrors at key intersection points near the barriers and equipment",
+          "Mark pedestrian walkways with clear signage and floor markings",
+          "Implement a slow zone with reduced speed limits in this area",
+          "Consider relocating the barriers and equipment to improve sight lines",
+          "Add stop lines with horn signal requirements before entering the area"
+        ]
+      },
+      {
+        "title": "Pedestrian blind spot near work tables and shelving",
+        "status": "visible_concern",
+        "severity": "low",
+        "confidence": "medium",
+        "zone_ids": [
+          "Z03"
+        ],
+        "evidence_ids": [
+          "E002",
+          "E003",
+          "E004",
+          "E016",
+          "E017",
+          "E028"
+        ],
+        "location": "far left area near work tables and blue shelving",
+        "observation": "Pedestrians are observed near work tables and blue shelving (visible in E002, E003, E004, E016, E017, E028). In E016 and E017, the work tables and shelving create visual obstructions. In E002-E004 and E028, pedestrians are seen in the area near the work tables. The work tables and shelving block the view of pedestrians who may be behind them.",
+        "risk_interpretation": "Pedestrians behind the work tables and shelving are not visible to vehicle operators approaching from certain angles. This creates a risk of collision if a vehicle enters the area without being able to see pedestrians.",
+        "standards": [
+          "1910.178(n)(4)",
+          "1910.176(a)"
+        ],
+        "applicability_reason": "The work tables and shelving obstruct vision at locations where pedestrians and potential vehicles may cross paths.",
+        "unknowns": [
+          "Vehicle traffic patterns and frequency",
+          "Site-specific traffic rules for this area"
+        ],
+        "recommended_actions": [
+          "Install convex mirrors at key intersection points near the work tables and shelving",
+          "Mark pedestrian walkways with clear signage and floor markings",
+          "Implement a slow zone with reduced speed limits in this area",
+          "Consider relocating the work tables and shelving to improve sight lines"
+        ]
+      }
+    ],
+    "zone_reviews": [
+      {
+        "zone_id": "Z01",
+        "interpretation": "Right side of warehouse with large wooden crate and box stacks. Pedestrians walk near and behind these obstructions, creating blind spots for vehicle operators.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E001",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E012",
+          "E013",
+          "E020",
+          "E021",
+          "E024",
+          "E025",
+          "E030",
+          "E031"
+        ]
+      },
+      {
+        "zone_id": "Z02",
+        "interpretation": "Left side of warehouse near stacked pallets and work tables. Pedestrians walk behind and around the pallet stacks, creating blind corners.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E002",
+          "E003",
+          "E004",
+          "E014",
+          "E015"
+        ]
+      },
+      {
+        "zone_id": "Z03",
+        "interpretation": "Far left area near work tables and blue shelving. Pedestrians are seen near these obstructions, which block visibility.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E002",
+          "E003",
+          "E004",
+          "E016",
+          "E017",
+          "E028"
+        ]
+      },
+      {
+        "zone_id": "Z04",
+        "interpretation": "Right side near pallet stacks and box stacks. Pedestrians walk near these obstructions, creating potential blind spots.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E001",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E018",
+          "E019",
+          "E030",
+          "E031"
+        ]
+      },
+      {
+        "zone_id": "Z05",
+        "interpretation": "Right side near wooden crate and box stacks. Close-up views show how these obstructions block visibility.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E001",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E020",
+          "E021",
+          "E030",
+          "E031"
+        ]
+      },
+      {
+        "zone_id": "Z06",
+        "interpretation": "Center-left area near yellow safety barriers and orange equipment. Pedestrians walk near these obstructions, creating blind spots.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E022",
+          "E023",
+          "E028",
+          "E029"
+        ]
+      },
+      {
+        "zone_id": "Z07",
+        "interpretation": "Right side near box stacks. Close-up views show how the box stacks block visibility.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E001",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E024",
+          "E025",
+          "E030",
+          "E031"
+        ]
+      },
+      {
+        "zone_id": "Z08",
+        "interpretation": "Close-up view of box stacks. The boxes create significant visual obstructions.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E001",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E026",
+          "E027",
+          "E030",
+          "E031"
+        ]
+      }
+    ],
+    "dismissed": [],
+    "limitations": [
+      "No forklifts or other motorized vehicles were visible in the sampled frames, so vehicle traffic patterns and speeds are unknown.",
+      "Site-specific traffic rules and procedures are not known.",
+      "The video is a simulation, so real-world conditions may differ.",
+      "No reliable floor-like mask was found, so static-zone ranking uses general scene candidates."
+    ]
+  },
+  "metadata": {
+    "elapsed_seconds": 33.83,
+    "prompt_tokens": 31015,
+    "completion_tokens": 3794,
+    "finish_reason": "stop"
+  }
+}

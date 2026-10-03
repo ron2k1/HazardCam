@@ -1,0 +1,490 @@
+{
+  "audit_sha256": "1596b62f514c87c56d9c86712c19d854fd56b4a60e04afc0fbc03ebdc67a484b",
+  "original_request_sha256": "cb289ccf2957213b20224a5fd93b1162a1fb4452bcecaa98886e43424978b68d",
+  "report": {
+    "scene_summary": "The video shows a warehouse environment with tall racks, stacked pallets, and an IBC tote. Pedestrians are visible in various locations, including walking in aisles and standing near vehicle areas. A forklift is visible in the background and parked in a designated area. The scene is well-lit.",
+    "findings": [
+      {
+        "title": "Pedestrian blind spot at cross-aisle intersection",
+        "status": "visible_concern",
+        "severity": "high",
+        "confidence": "high",
+        "zone_ids": [
+          "Z01"
+        ],
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E012",
+          "E013",
+          "E033"
+        ],
+        "location": "Center of the main aisle where it intersects with the cross-aisle on the right",
+        "observation": "A pedestrian in a white suit is seen walking in the main aisle. At the intersection with the cross-aisle (right side of the frame), the view of the cross-aisle is partially blocked by stacked pallets and the end of the rack row on the left. A forklift is visible further down the main aisle. A pedestrian in a yellow vest is seen walking near the intersection. The pedestrian in the white suit is at risk of not seeing a vehicle or pedestrian coming from the cross-aisle, and vice-versa.",
+        "risk_interpretation": "A pedestrian or vehicle could emerge from the cross-aisle without being seen by the other party, leading to a collision. This is a classic blind spot scenario at an intersection.",
+        "standards": [
+          "1910.178(n)(4)",
+          "1910.176(a)"
+        ],
+        "applicability_reason": "The intersection is a location where vision is obstructed for both pedestrians and potential vehicles. Safe clearances and visibility are required.",
+        "unknowns": [
+          "Vehicle traffic rules at the intersection",
+          "Speed of any vehicles"
+        ],
+        "recommended_actions": [
+          "Install a convex mirror at the corner of the cross-aisle to improve visibility.",
+          "Mark a stop line for pedestrians and vehicles at the intersection.",
+          "Implement a horn-signal protocol for vehicles approaching the intersection.",
+          "Consider a designated pedestrian crossing with high-visibility markings."
+        ]
+      },
+      {
+        "title": "Pedestrian walking in vehicle travel lane",
+        "status": "visible_concern",
+        "severity": "medium",
+        "confidence": "high",
+        "zone_ids": [
+          "Z02",
+          "Z06"
+        ],
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E014",
+          "E015",
+          "E022",
+          "E023",
+          "E035"
+        ],
+        "location": "Right side of the main aisle, within the yellow-lined area designated for vehicle/pallet storage",
+        "observation": "A pedestrian in a yellow vest is seen walking along the yellow line that demarcates a vehicle/pallet storage area. A forklift is parked within this area. Another pedestrian in a white shirt is standing near the edge of this area. The pedestrian in the yellow vest is walking in close proximity to where a forklift would operate.",
+        "risk_interpretation": "A pedestrian walking in a vehicle travel lane is at high risk of being struck by a forklift or other vehicle, especially if the vehicle is reversing or turning.",
+        "standards": [
+          "1910.176(a)",
+          "1910.22(a)(3)"
+        ],
+        "applicability_reason": "Aisles and passageways must be kept clear and appropriately marked. Walking-working surfaces must be free of hazards.",
+        "unknowns": [
+          "Whether the area is exclusively for vehicles",
+          "If pedestrians are authorized to walk there"
+        ],
+        "recommended_actions": [
+          "Clearly mark pedestrian walkways separate from vehicle lanes.",
+          "Enforce a policy that pedestrians must use designated walkways.",
+          "Install physical barriers (e.g., guardrails) to separate pedestrian and vehicle areas if possible.",
+          "Train pedestrians on the importance of staying out of vehicle lanes."
+        ]
+      },
+      {
+        "title": "Obstructed view of pedestrian in rack aisle",
+        "status": "visible_concern",
+        "severity": "medium",
+        "confidence": "high",
+        "zone_ids": [
+          "Z03",
+          "Z07"
+        ],
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E016",
+          "E017",
+          "E024",
+          "E025",
+          "E032"
+        ],
+        "location": "Left side of the main aisle, in the area with tall racks and stacked pallets",
+        "observation": "A pedestrian in a white vest is seen standing among stacked pallets and racks. The tall racks and pallet stacks create significant blind spots. A pedestrian in a yellow hard hat is seen moving behind the pallets. It is difficult to see if a vehicle is approaching from the end of the aisle or if a pedestrian is about to step out.",
+        "risk_interpretation": "A vehicle or pedestrian could emerge from behind the racks or pallets without being seen, leading to a collision. The pedestrian is also at risk of being struck by a vehicle if they step out unexpectedly.",
+        "standards": [
+          "1910.178(n)(4)",
+          "1910.178(n)(6)",
+          "1910.176(a)"
+        ],
+        "applicability_reason": "Vision is obstructed by racks and stacked goods. Drivers must keep a clear view of the path of travel and slow down where vision is obstructed.",
+        "unknowns": [
+          "Vehicle traffic in the rack aisles",
+          "Pedestrian movement patterns in the rack aisles"
+        ],
+        "recommended_actions": [
+          "Install convex mirrors at the ends of the rack aisles.",
+          "Implement a horn-signal protocol for vehicles entering and exiting the rack aisles.",
+          "Mark pedestrian walkways within the rack aisles if pedestrians are present.",
+          "Consider using spotters for vehicles operating in these areas."
+        ]
+      },
+      {
+        "title": "Pedestrian near forklift operating area",
+        "status": "visible_concern",
+        "severity": "medium",
+        "confidence": "high",
+        "zone_ids": [
+          "Z08",
+          "Z09"
+        ],
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E014",
+          "E015",
+          "E022",
+          "E023",
+          "E026",
+          "E027",
+          "E028",
+          "E029",
+          "E035"
+        ],
+        "location": "Right side of the main aisle, near the parked forklift and stacked pallets",
+        "observation": "A pedestrian in a white shirt is standing very close to a parked forklift and stacked pallets. Another pedestrian in a yellow vest is seen walking near the forklift. The forklift is within a yellow-lined area, but the pedestrian is standing just outside the line, in a position where they could be obscured by the forklift or pallets if the forklift were to move.",
+        "risk_interpretation": "A pedestrian standing too close to a forklift is at risk of being struck if the forklift moves unexpectedly. The pedestrian may also be in the forklift driver's blind spot.",
+        "standards": [
+          "1910.178(n)(6)",
+          "1910.176(a)"
+        ],
+        "applicability_reason": "Drivers must keep a clear view of the path of travel. Aisles and passageways must be kept clear.",
+        "unknowns": [
+          "If the forklift is operational",
+          "If the pedestrian is authorized to be in that area"
+        ],
+        "recommended_actions": [
+          "Enforce a minimum safe distance between pedestrians and forklifts.",
+          "Mark a no-entry zone around the forklift when it is in operation.",
+          "Train forklift operators to check for pedestrians before moving.",
+          "Train pedestrians to maintain a safe distance from forklifts."
+        ]
+      },
+      {
+        "title": "Obstructed view at end of rack row",
+        "status": "visible_concern",
+        "severity": "medium",
+        "confidence": "high",
+        "zone_ids": [
+          "Z04",
+          "Z05",
+          "Z10"
+        ],
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E018",
+          "E019",
+          "E020",
+          "E021",
+          "E030",
+          "E031",
+          "E032",
+          "E034"
+        ],
+        "location": "Left side of the main aisle, at the end of the rack row where stacked pallets and an IBC tote are located",
+        "observation": "The end of the rack row on the left is blocked by stacked pallets and an IBC tote. This creates a blind spot for anyone looking down the main aisle from the right, and for anyone looking from the main aisle towards the end of the rack row. A pedestrian is seen walking behind the stacked pallets.",
+        "risk_interpretation": "A vehicle or pedestrian could emerge from behind the stacked pallets without being seen, leading to a collision. The stacked pallets also obstruct the view of the end of the rack row.",
+        "standards": [
+          "1910.178(n)(4)",
+          "1910.176(a)"
+        ],
+        "applicability_reason": "Vision is obstructed by stacked goods. Aisles and passageways must be kept clear.",
+        "unknowns": [
+          "Vehicle traffic near the end of the rack row",
+          "Pedestrian movement near the end of the rack row"
+        ],
+        "recommended_actions": [
+          "Remove or relocate the stacked pallets and IBC tote to improve visibility.",
+          "Install a convex mirror at the end of the rack row.",
+          "Mark a stop line for vehicles and pedestrians at the end of the rack row.",
+          "Implement a horn-signal protocol for vehicles approaching the end of the rack row."
+        ]
+      }
+    ],
+    "zone_reviews": [
+      {
+        "zone_id": "Z01",
+        "interpretation": "Main aisle and cross-aisle intersection. High pedestrian and potential vehicle traffic. Blind spots at the intersection.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E012",
+          "E013",
+          "E033"
+        ]
+      },
+      {
+        "zone_id": "Z02",
+        "interpretation": "Right side of the main aisle, near a parked forklift and stacked pallets. Pedestrians are seen walking in this area.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E014",
+          "E015",
+          "E022",
+          "E023",
+          "E035"
+        ]
+      },
+      {
+        "zone_id": "Z03",
+        "interpretation": "Left side of the main aisle, with tall racks and stacked pallets. Pedestrians are seen in this area.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E016",
+          "E017",
+          "E024",
+          "E025",
+          "E032"
+        ]
+      },
+      {
+        "zone_id": "Z04",
+        "interpretation": "End of the rack row on the left, blocked by stacked pallets and an IBC tote. Creates a blind spot.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E018",
+          "E019",
+          "E032",
+          "E034"
+        ]
+      },
+      {
+        "zone_id": "Z05",
+        "interpretation": "Corner of the rack row on the left. Obstructed view.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E020",
+          "E021",
+          "E032",
+          "E034"
+        ]
+      },
+      {
+        "zone_id": "Z06",
+        "interpretation": "Right side of the main aisle, near a parked forklift and stacked pallets. Pedestrians are seen walking in this area.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E014",
+          "E015",
+          "E022",
+          "E023",
+          "E035"
+        ]
+      },
+      {
+        "zone_id": "Z07",
+        "interpretation": "Left side of the main aisle, with tall racks and stacked pallets. Pedestrians are seen in this area.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E016",
+          "E017",
+          "E024",
+          "E025",
+          "E032"
+        ]
+      },
+      {
+        "zone_id": "Z08",
+        "interpretation": "Right side of the main aisle, near a parked forklift and stacked pallets. Pedestrians are seen standing near the forklift.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E014",
+          "E015",
+          "E022",
+          "E023",
+          "E026",
+          "E027",
+          "E035"
+        ]
+      },
+      {
+        "zone_id": "Z09",
+        "interpretation": "Right side of the main aisle, near a parked forklift and stacked pallets. Pedestrians are seen standing near the forklift.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E014",
+          "E015",
+          "E022",
+          "E023",
+          "E028",
+          "E029",
+          "E035"
+        ]
+      },
+      {
+        "zone_id": "Z10",
+        "interpretation": "End of the rack row on the left, blocked by stacked pallets and an IBC tote. Creates a blind spot.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E018",
+          "E019",
+          "E030",
+          "E031",
+          "E032",
+          "E034"
+        ]
+      }
+    ],
+    "dismissed": [],
+    "limitations": [
+      "No reliable floor-like mask found; static-zone ranking uses general scene candidates.",
+      "Vehicle speed, horn use, and traffic rules are unknown.",
+      "Continuity between sampled frames is not claimed."
+    ]
+  },
+  "metadata": {
+    "elapsed_seconds": 36.1,
+    "prompt_tokens": 33563,
+    "completion_tokens": 3906,
+    "finish_reason": "stop"
+  }
+}

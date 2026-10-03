@@ -34,6 +34,7 @@ addopts = "-q --import-mode=importlib"
 markers = [
     "live_model: needs a running local model endpoint (skipped when the endpoint is unreachable or the model is not served)",
     "media: needs ffmpeg/ffprobe on PATH",
+    "screen_filter: runs with the hazard worker-screen filter on (apps/api/services/hazards.py)",
 ]
 
 [tool.ruff]

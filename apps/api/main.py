@@ -11,7 +11,7 @@ from __future__ import annotations
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from apps.api.routes import health, judge, media, runs, scenarios
+from apps.api.routes import hazards, health, judge, media, runs, runtime, scenarios, wall
 from apps.api.services.pipeline import DevSequenceExecutor
 from apps.api.services.runs import RunManager
 from apps.api.services.scenarios import ScenarioStore
@@ -34,9 +34,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.scenarios = ScenarioStore(
         settings.manifests_dir, settings.media_root, settings.prepared_dir
     )
-    app.state.runs = RunManager(settings.runs_dir)
+    app.state.runs = RunManager(settings.runs_dir, settings.alerts_config)
     app.state.executor = DevSequenceExecutor(settings.media_root)
-    for module in (health, scenarios, runs, media, judge):
+    for module in (health, scenarios, runs, media, judge, hazards, runtime, wall):
         app.include_router(module.router)
     return app
 

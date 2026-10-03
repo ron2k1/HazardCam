@@ -1,0 +1,21 @@
+# Telegram ping when a hazard / blind-spot check finishes with at least one finding.
+#
+# Read by apps/api/services/hazard_telegram.py on every finished check (edits apply to the
+# next check, no restart). Best effort only: the ping is sent on a background thread and
+# never delays or breaks a check; with no internet it just logs one line.
+#
+# Secrets never live in the repo:
+#   bot token: one line in ~/.config/ambient-mirror/telegram.token (chmod 600), or the file
+#              named by AUM_TELEGRAM_TOKEN_FILE
+#   chat id:   one line in ~/.config/ambient-mirror/telegram.chat (chmod 600), or the
+#              AUM_TELEGRAM_CHAT_ID environment variable. Find it by pressing Start in the
+#              bot chat, then: .venv/bin/python scripts/hazards/telegram_check.py --discover-chat
+#
+# Turn it off: set enabled: false here, or delete the token file (then revoke the token
+# with @BotFather).
+
+enabled: true
+# At most one ping per camera check result in this many seconds (per API process).
+repeat_after_s: 60
+# Attach one full-frame picture of the first finding (else the marked-zones overview).
+include_photo: true

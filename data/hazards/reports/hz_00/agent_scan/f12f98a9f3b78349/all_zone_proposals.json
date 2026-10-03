@@ -1,0 +1,601 @@
+{
+  "movement": [
+    {
+      "kind": "movement",
+      "bbox_analysis": [
+        553,
+        0,
+        658,
+        155
+      ],
+      "proposal_score": 530.9872611464968,
+      "peak_frame": 311,
+      "active_start_s": 2.921168467386955,
+      "active_end_s": 12.565026010404162,
+      "zone_id": "Z01",
+      "bbox_normalized": [
+        0.72005,
+        0.0,
+        0.85677,
+        0.3588
+      ],
+      "bbox_source": [
+        1382,
+        0,
+        1645,
+        388
+      ]
+    },
+    {
+      "kind": "movement",
+      "bbox_analysis": [
+        246,
+        26,
+        293,
+        80
+      ],
+      "proposal_score": 215.3375796178344,
+      "peak_frame": 1,
+      "active_start_s": 0.040016006402561026,
+      "active_end_s": 12.565026010404162,
+      "zone_id": "Z02",
+      "bbox_normalized": [
+        0.32031,
+        0.06019,
+        0.38151,
+        0.18519
+      ],
+      "bbox_source": [
+        615,
+        65,
+        732,
+        200
+      ]
+    },
+    {
+      "kind": "movement",
+      "bbox_analysis": [
+        374,
+        66,
+        400,
+        108
+      ],
+      "proposal_score": 107.0828025477707,
+      "peak_frame": 312,
+      "active_start_s": 0.040016006402561026,
+      "active_end_s": 12.565026010404162,
+      "zone_id": "Z04",
+      "bbox_normalized": [
+        0.48698,
+        0.15278,
+        0.52083,
+        0.25
+      ],
+      "bbox_source": [
+        935,
+        165,
+        1000,
+        270
+      ]
+    },
+    {
+      "kind": "movement",
+      "bbox_analysis": [
+        199,
+        244,
+        228,
+        282
+      ],
+      "proposal_score": 30.242038216560513,
+      "peak_frame": 29,
+      "active_start_s": 0.040016006402561026,
+      "active_end_s": 11.204481792717088,
+      "zone_id": "Z05",
+      "bbox_normalized": [
+        0.25911,
+        0.56481,
+        0.29688,
+        0.65278
+      ],
+      "bbox_source": [
+        498,
+        610,
+        570,
+        705
+      ]
+    },
+    {
+      "kind": "movement",
+      "bbox_analysis": [
+        255,
+        281,
+        322,
+        331
+      ],
+      "proposal_score": 176.0732484076433,
+      "peak_frame": 15,
+      "active_start_s": 0.040016006402561026,
+      "active_end_s": 4.361744697879152,
+      "zone_id": "Z03",
+      "bbox_normalized": [
+        0.33203,
+        0.65046,
+        0.41927,
+        0.7662
+      ],
+      "bbox_source": [
+        638,
+        702,
+        805,
+        828
+      ]
+    }
+  ],
+  "static": [
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        264,
+        278,
+        343,
+        371
+      ],
+      "proposal_score": 0.04475483547410816,
+      "stability": 0.9779792263231494,
+      "paint_proximity": 0.00830270858853954,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 12.565026010404162
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        72,
+        47,
+        96,
+        81
+      ],
+      "proposal_score": 0.03640181234065003,
+      "stability": 1.0,
+      "paint_proximity": 0.7132352941176471,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 12.565026010404162
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        26,
+        365,
+        171,
+        432
+      ],
+      "proposal_score": 0.0732527832739718,
+      "stability": 0.9999344371924694,
+      "paint_proximity": 0.2076170869788986,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 12.565026010404162,
+      "zone_id": "Z07",
+      "bbox_normalized": [
+        0.03385,
+        0.84491,
+        0.22266,
+        1.0
+      ],
+      "bbox_source": [
+        65,
+        912,
+        428,
+        1080
+      ]
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        72,
+        47,
+        102,
+        88
+      ],
+      "proposal_score": 0.041928407846339784,
+      "stability": 1.0,
+      "paint_proximity": 0.6382113821138211,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 12.565026010404162
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        404,
+        191,
+        480,
+        231
+      ],
+      "proposal_score": 0.04423421401549678,
+      "stability": 1.0,
+      "paint_proximity": 0.2638157894736842,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 12.565026010404162
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        34,
+        371,
+        154,
+        431
+      ],
+      "proposal_score": 0.03465451801339208,
+      "stability": 0.9998723911331117,
+      "paint_proximity": 0.060247910060536175,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 12.565026010404162
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        162,
+        369,
+        221,
+        417
+      ],
+      "proposal_score": 0.059073929895116256,
+      "stability": 1.0,
+      "paint_proximity": 0.8770983213429256,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 12.565026010404162
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        85,
+        343,
+        126,
+        382
+      ],
+      "proposal_score": 0.026253742203849254,
+      "stability": 1.0,
+      "paint_proximity": 0.28884462151394424,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 12.565026010404162
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        98,
+        305,
+        184,
+        383
+      ],
+      "proposal_score": 0.07074161264174743,
+      "stability": 1.0,
+      "paint_proximity": 0.7725812209925027,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 12.565026010404162,
+      "zone_id": "Z08",
+      "bbox_normalized": [
+        0.1276,
+        0.70602,
+        0.23958,
+        0.88657
+      ],
+      "bbox_source": [
+        245,
+        762,
+        460,
+        958
+      ]
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        175,
+        294,
+        206,
+        360
+      ],
+      "proposal_score": 0.04841625419971601,
+      "stability": 1.0,
+      "paint_proximity": 0.8164763458401305,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 12.565026010404162
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        129,
+        258,
+        161,
+        299
+      ],
+      "proposal_score": 0.014620214581215988,
+      "stability": 1.0,
+      "paint_proximity": 0.0,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 12.565026010404162
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        128,
+        257,
+        161,
+        299
+      ],
+      "proposal_score": 0.01652420190476411,
+      "stability": 1.0,
+      "paint_proximity": 0.0,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 12.565026010404162
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        86,
+        251,
+        129,
+        302
+      ],
+      "proposal_score": 0.046144917760751476,
+      "stability": 1.0,
+      "paint_proximity": 0.5693127962085308,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 12.565026010404162
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        276,
+        173,
+        304,
+        209
+      ],
+      "proposal_score": 0.020405488224249896,
+      "stability": 1.0,
+      "paint_proximity": 0.2342857142857143,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 12.565026010404162
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        94,
+        133,
+        177,
+        244
+      ],
+      "proposal_score": 0.06788391711905375,
+      "stability": 1.0,
+      "paint_proximity": 0.2923053802224226,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 12.565026010404162,
+      "zone_id": "Z09",
+      "bbox_normalized": [
+        0.1224,
+        0.30787,
+        0.23047,
+        0.56481
+      ],
+      "bbox_source": [
+        235,
+        332,
+        442,
+        610
+      ]
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        337,
+        129,
+        392,
+        163
+      ],
+      "proposal_score": 0.01620396773511739,
+      "stability": 1.0,
+      "paint_proximity": 0.0,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 12.565026010404162
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        188,
+        124,
+        238,
+        224
+      ],
+      "proposal_score": 0.048322411393699666,
+      "stability": 1.0,
+      "paint_proximity": 0.37083482622715874,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 12.565026010404162
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        228,
+        93,
+        376,
+        223
+      ],
+      "proposal_score": 0.06676813416013268,
+      "stability": 1.0,
+      "paint_proximity": 0.3923152709359606,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 12.565026010404162,
+      "zone_id": "Z10",
+      "bbox_normalized": [
+        0.29688,
+        0.21528,
+        0.48958,
+        0.5162
+      ],
+      "bbox_source": [
+        570,
+        232,
+        940,
+        558
+      ]
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        119,
+        90,
+        243,
+        315
+      ],
+      "proposal_score": 0.062444926687590246,
+      "stability": 1.0,
+      "paint_proximity": 0.18571238526007716,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 12.565026010404162
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        33,
+        79,
+        98,
+        129
+      ],
+      "proposal_score": 0.02756495767962523,
+      "stability": 1.0,
+      "paint_proximity": 0.06545961002785515,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 12.565026010404162
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        333,
+        73,
+        379,
+        96
+      ],
+      "proposal_score": 0.020163433002845236,
+      "stability": 0.9995592092213431,
+      "paint_proximity": 0.1522491349480969,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 12.565026010404162
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        114,
+        67,
+        186,
+        136
+      ],
+      "proposal_score": 0.05826414349608976,
+      "stability": 1.0,
+      "paint_proximity": 0.6076555023923444,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 12.565026010404162
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        636,
+        34,
+        661,
+        86
+      ],
+      "proposal_score": 0.020664997362866068,
+      "stability": 0.9999444526736779,
+      "paint_proximity": 0.17093023255813952,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 12.565026010404162
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        595,
+        29,
+        650,
+        100
+      ],
+      "proposal_score": 0.043379530489110155,
+      "stability": 0.8808949589358964,
+      "paint_proximity": 0.5080906148867314,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 12.565026010404162
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        575,
+        0,
+        768,
+        307
+      ],
+      "proposal_score": 0.14208924098620515,
+      "stability": 0.9706467954932031,
+      "paint_proximity": 0.629060838747785,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 12.565026010404162,
+      "zone_id": "Z06",
+      "bbox_normalized": [
+        0.7487,
+        0.0,
+        1.0,
+        0.71065
+      ],
+      "bbox_source": [
+        1438,
+        0,
+        1920,
+        768
+      ]
+    }
+  ]
+}

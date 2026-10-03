@@ -1,0 +1,158 @@
+{
+  "recorded_at": "2026-10-03T18:29:48.268Z",
+  "web": "http://127.0.0.1:3000",
+  "api": "http://127.0.0.1:8088",
+  "scenario": "eval_001",
+  "profile": "gb10",
+  "run_id": "run_20261003T183005Z_fa3d1d",
+  "phase": "complete",
+  "click_to_end_s": 36.28,
+  "marks_video_s": {
+    "page_ready": 14.9,
+    "run_clicked": 17.4,
+    "run_ended": 53.68,
+    "first_card": 53.99,
+    "worker_shown": 59.69,
+    "technical_on": 59.79,
+    "end": 68.8
+  },
+  "vllm_before": {
+    "running": 0,
+    "waiting": 0
+  },
+  "vllm_samples": [
+    {
+      "t": 19.41,
+      "running": 1,
+      "waiting": 0
+    },
+    {
+      "t": 21.41,
+      "running": 0,
+      "waiting": 0
+    },
+    {
+      "t": 23.41,
+      "running": 0,
+      "waiting": 0
+    },
+    {
+      "t": 25.41,
+      "running": 1,
+      "waiting": 0
+    },
+    {
+      "t": 27.41,
+      "running": 1,
+      "waiting": 0
+    },
+    {
+      "t": 29.41,
+      "running": 0,
+      "waiting": 0
+    },
+    {
+      "t": 31.41,
+      "running": 1,
+      "waiting": 0
+    },
+    {
+      "t": 33.41,
+      "running": 1,
+      "waiting": 0
+    },
+    {
+      "t": 35.41,
+      "running": 1,
+      "waiting": 0
+    },
+    {
+      "t": 37.41,
+      "running": 1,
+      "waiting": 0
+    },
+    {
+      "t": 39.41,
+      "running": 0,
+      "waiting": 0
+    },
+    {
+      "t": 41.41,
+      "running": 1,
+      "waiting": 0
+    },
+    {
+      "t": 43.41,
+      "running": 1,
+      "waiting": 0
+    },
+    {
+      "t": 45.41,
+      "running": 0,
+      "waiting": 0
+    },
+    {
+      "t": 47.41,
+      "running": 0,
+      "waiting": 0
+    },
+    {
+      "t": 49.41,
+      "running": 1,
+      "waiting": 0
+    },
+    {
+      "t": 51.41,
+      "running": 1,
+      "waiting": 0
+    },
+    {
+      "t": 53.41,
+      "running": 1,
+      "waiting": 0
+    }
+  ],
+  "vllm_max_running": 1,
+  "vllm_max_waiting": 0,
+  "worker_leak_hits": [],
+  "worker_text": "CameraVision\nCamera alerts\nSafety hazards\nTechnical details\nOFF\n▶\nRUN AGAIN\n\nDone. All cameras checked.\n\nRecording\nBus station, 7 Mar 2018, 10:58:26\nBus station, 7 Mar 2018, 17:02:20\nBus station, 7 Mar 2018, 17:02:48\nBus station, 7 Mar 2018, 17:04:25\nBus station, 12 Mar 2018, 10:55:08\nBus station, 12 Mar 2018, 10:56:00\nBus station, 12 Mar 2018, 10:56:44\nBus station, 12 Mar 2018, 11:01:00\nBus station, 12 Mar 2018, 11:01:29\nBus station, 12 Mar 2018, 11:03:46\nBus station, 12 Mar 2018, 11:04:22\nBus station, 13 Mar 2018, 16:05:48\nBus station, 13 Mar 2018, 16:06:40\nBus station, 13 Mar 2018, 16:08:40\nBus station, 15 Mar 2018, 14:57:20\nBus station, 15 Mar 2018, 14:57:43\nBus station, 15 Mar 2018, 15:03:26\nBus station, 15 Mar 2018, 15:35:08\nBus station, 15 Mar 2018, 15:41:02\nBus station, 15 Mar 2018, 15:41:28\nBus station, 15 Mar 2018, 15:43:06\nBus station, 7 Mar 2018, 17:01:24\nMESSAGES\n1 message\nNOTICE\nNo rush\nSent 01:30 PM\nPassenger drop-off or pick-up in the blind spot east of Camera C\nWhat to do\nNo action needed unless the vehicle is blocking the road.\nHow sure\nLikely (60%)\nWhere\nIn the blind spot about 30 m east of Camera C\nWhen\n10:58:26–10:58:53 on 7 Mar 2018\nSeen on\nCamera A, Camera B and Camera C\nWhat happened\nCamera B: A person wearing dark clothing and carrying a white bag comes into view from the bottom edge and walks… Not seen directly; pieced together from the other cameras.\n▶\nShow on video\nCamera A\nChecked\n0:03\nCamera B\nChecked\n0:03\nCamera C\nChecked\n0:03\nRuns on this computer. Video never leaves it.\nReady",
+  "run_record": {
+    "run_id": "run_20261003T183005Z_fa3d1d",
+    "scenario_id": "eval_001",
+    "profile": "gb10",
+    "state": "complete",
+    "created_at": "2026-10-03T18:30:05.700351Z",
+    "updated_at": "2026-10-03T18:30:41.907105Z",
+    "finished_at": "2026-10-03T18:30:41.907105Z",
+    "hypothesis": {
+      "event_type": "passenger_dropoff_pickup",
+      "region": "region_01",
+      "confidence": 0.6,
+      "evidence_ids": [
+        "cam_b.o1",
+        "cam_c.o1",
+        "cam_a.o1"
+      ],
+      "reason": "Multiple cameras (cam_a, cam_b, cam_c) observe pedestrians carrying bags or walking in directions that converge toward the blind zone area defined in region_01 between t=7 and t=10. The presence of bags and the specific trajectory of individuals entering the frame from the periphery towards the center suggests a drop-off or pickup event occurring just out of view.",
+      "alternatives": [
+        {
+          "event_type": "object_transport",
+          "confidence": 0.4
+        },
+        {
+          "event_type": "no_event",
+          "confidence": 0.3
+        }
+      ],
+      "limitations": [
+        "No camera directly observed the blind zone, so the specific interaction (e.g., getting into a car) is inferred rather than seen.",
+        "The exact nature of the 'bags' and whether they were loaded from or unloaded into a vehicle cannot be confirmed.",
+        "The event itself is not directly visible to any model input camera."
+      ]
+    },
+    "error": null,
+    "last_seq": 44,
+    "run_url": "/api/runs/run_20261003T183005Z_fa3d1d",
+    "events_url": "/api/runs/run_20261003T183005Z_fa3d1d/events"
+  }
+}

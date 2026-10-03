@@ -1,0 +1,9 @@
+final state at 2026-10-03T14:17:56-05:00
+hz_00 | status reviewed | run f12f98a9f3b78349 | runner openclaw-agent | trace 11 | priority high | confirmed ['H01', 'H02'] | subset_of_report True | report model_review_complete fresh | turn_s 74.5 | job hazard-hz_00-af3c5eaf
+hz_01 | status reviewed | run 83f6d4a4b4755d26 | runner openclaw-agent | trace 11 | priority medium | confirmed ['H01', 'H02'] | subset_of_report True | report model_review_complete fresh | turn_s 62.5 | job hazard-hz_01-fef779c8
+hz_02 | status reviewed | run ed02d540b08f6395 | runner openclaw-agent | trace 11 | priority high | confirmed ['H01', 'H02', 'H03'] | subset_of_report True | report model_review_complete fresh | turn_s 71.0 | job hazard-hz_02-19ec8d4d
+hz_03 | status reviewed | run 03085f3782c5f322 | runner openclaw-agent | trace 11 | priority high | confirmed ['H01', 'H02'] | subset_of_report True | report model_review_complete fresh | turn_s 87.4 | job hazard-hz_03-565cac70
+bs_01 | status reviewing | run ab547164985f94fd | runner openclaw-agent | trace 11 | priority high | confirmed ['H01', 'H02', 'H03', 'H04', 'H05'] | subset_of_report True | report model_review_complete fresh | turn_s 116.3 | job hazard-bs_01-dd88d92f
+bs_02 | status reviewed | run e2b27d3c3ccd4aad | runner openclaw-agent | trace 11 | priority high | confirmed ['H01', 'H02'] | subset_of_report True | report model_review_complete fresh | turn_s 80.2 | job hazard-bs_02-f14a88ea
+bs_03 | status reviewing | run 4d233e56fc45a9bc | runner openclaw-agent | trace 11 | priority high | confirmed ['H01', 'H02', 'H03'] | subset_of_report True | report model_review_complete fresh | turn_s 97.6 | job hazard-bs_03-477482bd
+vLLM POST /v1/chat/completions in the last 30 min (docker logs --since 30m qwen): 66

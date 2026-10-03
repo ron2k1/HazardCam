@@ -1,0 +1,217 @@
+{
+  "audit_sha256": "3a579cdeb633231c36af69765fe715237701233f31691609fd57fd636a5c88f2",
+  "original_request_sha256": "f2dee4678dc44c2bd72db8bd67c6a20186be8135775b5f414152e794017431bf",
+  "report": {
+    "scene_summary": "The video shows a manufacturing floor with a large blue mechanical press on the left and a material handling area on the right. A worker is seated at the press, leaning into the machine's point of operation. A large coil of metal is stored on a pallet in the center of the floor, adjacent to a marked yellow aisle. A worker is seen walking on a marked green pedestrian path on the right side.",
+    "findings": [
+      {
+        "title": "Worker Exposure to Press Point of Operation",
+        "status": "visible_concern",
+        "severity": "high",
+        "confidence": "high",
+        "zone_ids": [
+          "Z03",
+          "Z05"
+        ],
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E016",
+          "E017",
+          "E020",
+          "E021",
+          "E034"
+        ],
+        "location": "Left side of the scene, at the blue mechanical press",
+        "observation": "A worker is seated on a stool directly in front of the press, leaning forward with their head and hands inside the machine's point of operation. This position is observed in the sampled frames (e.g., E016, E017, E034).",
+        "risk_interpretation": "The worker is exposed to potential crushing or entanglement hazards if the machine were to activate unexpectedly. This is a critical guarding concern.",
+        "standards": [
+          "1910.212(a)(3)(ii)",
+          "1910.147(a)(2)"
+        ],
+        "applicability_reason": "The worker is in the danger zone of a mechanical power press. The energy state is unknown; if the machine is active, it is a direct violation. If it is being serviced or set up, Lockout/Tagout (LOTO) procedures should be verified.",
+        "unknowns": [
+          "Machine energy state (active vs. de-energized)",
+          "Presence of a physical point-of-operation guard",
+          "Whether LOTO procedures are in effect"
+        ],
+        "recommended_actions": [
+          "Verify the machine's energy state immediately.",
+          "Ensure the worker is not reaching into the danger zone while the machine is active.",
+          "Confirm that appropriate point-of-operation guarding is installed and functional.",
+          "If servicing is occurring, verify that Lockout/Tagout (LOTO) procedures are followed."
+        ]
+      },
+      {
+        "title": "Material Storage Obstructing Aisle",
+        "status": "visible_concern",
+        "severity": "medium",
+        "confidence": "medium",
+        "zone_ids": [
+          "Z10"
+        ],
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E030",
+          "E031"
+        ],
+        "location": "Center of the floor, adjacent to the yellow painted aisle line",
+        "observation": "A large coil of metal on a wooden pallet is stored on the floor. The pallet and coil are positioned immediately adjacent to a yellow painted line, which marks an aisle or walkway. The material appears to be encroaching on the marked path.",
+        "risk_interpretation": "The stored material obstructs the marked aisle, creating a trip hazard and potentially blocking the path for material handling equipment or emergency egress.",
+        "standards": [
+          "1910.176(a)",
+          "1910.22(a)(3)"
+        ],
+        "applicability_reason": "The material is stored in a manner that creates a hazard by obstructing a marked aisle/walkway.",
+        "unknowns": [
+          "Intended clearance width of the marked aisle",
+          "Whether the coil is intended to be stored there permanently or temporarily"
+        ],
+        "recommended_actions": [
+          "Move the coil and pallet completely outside the yellow painted boundary.",
+          "Designate a specific storage area for materials and ensure aisles remain clear."
+        ]
+      }
+    ],
+    "zone_reviews": [
+      {
+        "zone_id": "Z01",
+        "interpretation": "A marked green pedestrian path with yellow borders. A worker is seen walking on this path in the later frames.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E012",
+          "E013"
+        ]
+      },
+      {
+        "zone_id": "Z02",
+        "interpretation": "A yellow industrial fan or ventilation unit on a stand.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E014",
+          "E015"
+        ]
+      },
+      {
+        "zone_id": "Z03",
+        "interpretation": "A worker seated at a machine, leaning into the point of operation.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E016",
+          "E017"
+        ]
+      },
+      {
+        "zone_id": "Z04",
+        "interpretation": "An orange machine with a conveyor belt.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E018",
+          "E019"
+        ]
+      },
+      {
+        "zone_id": "Z05",
+        "interpretation": "The control panel and lower section of the blue press where the worker is positioned.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E020",
+          "E021"
+        ]
+      },
+      {
+        "zone_id": "Z06",
+        "interpretation": "The green marked pedestrian path and adjacent wall area.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E022",
+          "E023"
+        ]
+      },
+      {
+        "zone_id": "Z07",
+        "interpretation": "A purple bin filled with metal shavings.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E024",
+          "E025"
+        ]
+      },
+      {
+        "zone_id": "Z08",
+        "interpretation": "A yellow safety cage guarding a lower part of the machinery.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E026",
+          "E027"
+        ]
+      },
+      {
+        "zone_id": "Z09",
+        "interpretation": "The upper section of the blue press with warning labels.",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E028",
+          "E029"
+        ]
+      },
+      {
+        "zone_id": "Z10",
+        "interpretation": "A large metal coil on a pallet stored next to a marked aisle.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E030",
+          "E031"
+        ]
+      }
+    ],
+    "dismissed": [
+      {
+        "concern": "Worker PPE (Eye Protection)",
+        "reason": "The worker's eyewear is not clearly visible in the provided crops. Cannot confirm if safety glasses are being worn. No visible eye hazard (e.g., flying debris) is confirmed in the static frames.",
+        "evidence_ids": [
+          "E016",
+          "E017"
+        ]
+      },
+      {
+        "concern": "Circular Object on Floor",
+        "reason": "A circular object is visible on the floor near the aisle. Its identity (e.g., rubber mat, metal ring) is uncertain. It does not appear to be a spill or a significant obstruction.",
+        "evidence_ids": [
+          "E001",
+          "E035"
+        ]
+      }
+    ],
+    "limitations": [
+      "No reliable floor-like mask found; static-zone ranking uses general scene candidates.",
+      "Machine energy state and LOTO status are unknown.",
+      "PPE compliance cannot be fully verified due to image resolution."
+    ]
+  },
+  "metadata": {
+    "elapsed_seconds": 16.51,
+    "prompt_tokens": 30938,
+    "completion_tokens": 1619,
+    "finish_reason": "stop"
+  }
+}

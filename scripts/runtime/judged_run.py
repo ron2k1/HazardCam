@@ -226,6 +226,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--turn-wait", type=float, default=180.0, help="s to wait for the turn")
     parser.add_argument("--run-id", help="re-verify a finished run instead of starting one")
     args = parser.parse_args(argv)
+    args.out = args.out.resolve()  # the report paths are written relative to REPO
     args.out.mkdir(parents=True, exist_ok=True)
 
     scenario = Scenario.model_validate_json(

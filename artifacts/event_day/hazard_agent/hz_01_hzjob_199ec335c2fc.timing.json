@@ -1,0 +1,40 @@
+{
+  "clip_id": "hz_01",
+  "job_id": "hzjob_199ec335c2fc",
+  "started": "2026-10-03T13:53:38-05:00",
+  "total_s": 59.0,
+  "outcome": "done",
+  "narration": [],
+  "steps": [
+    {
+      "t_s": 5.6,
+      "step": 1,
+      "message": "[1/6] Scanning video frames..."
+    },
+    {
+      "t_s": 6.81,
+      "step": 2,
+      "message": "[2/6] Measuring motion..."
+    },
+    {
+      "t_s": 7.07,
+      "step": 3,
+      "message": "[3/6] Finding movement and obstruction zones..."
+    },
+    {
+      "t_s": 7.29,
+      "step": 4,
+      "message": "[4/6] Exporting annotated video and evidence..."
+    },
+    {
+      "t_s": 19.68,
+      "step": 5,
+      "message": "[5/6] Running Qwen 3.6 hazard review..."
+    },
+    {
+      "t_s": 19.71,
+      "step": 6,
+      "message": "[6/6] Writing and validating reports..."
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "headline": "Blind spot at the main aisle intersection where forklifts cannot see pedestrians approaching from the cross-aisle.",
+  "first_action": "Install a convex mirror at the intersection to provide a view of the cross-aisle for both the forklift driver and the pedestrian.",
+  "priority": "high",
+  "confirmed_finding_ids": [
+    "H01",
+    "H02"
+  ]
+}

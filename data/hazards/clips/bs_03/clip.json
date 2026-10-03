@@ -1,0 +1,11 @@
+{
+  "clip_id": "bs_03",
+  "title": "Aisle camera 3",
+  "duration_s": 15.0,
+  "fps": 30.0,
+  "width": 1920,
+  "height": 1080,
+  "source_sha256": "6b54811195ac40ead82c6254d13045ccd6e7e355e0680182169fadfa1d9e3cbf",
+  "kind": "blindspot",
+  "review_mode": "blindspot"
+}

@@ -16,6 +16,7 @@ import jsonschema
 import pytest
 
 from agent.event_day.policy import AGENT_ID, ALERT_TOOL
+from agent.event_day.registration import HAZARD_TOOL_NAMES
 from apps.api.schemas.contracts import def_validator
 from tools.session import TOOL_NAMES
 
@@ -61,7 +62,8 @@ def test_only_the_seven_mirror_tools_are_added_and_every_group_is_denied():
     tools = AGENT["tools"]
     assert tools["profile"] == "minimal"
     assert "allow" not in tools  # OpenClaw rejects allow next to alsoAllow
-    assert tools["alsoAllow"] == [f"mirror__{name}" for name in TOOL_NAMES]
+    # The seven run tools, then the three safety hazard tools (event day, hazard agent).
+    assert tools["alsoAllow"] == [f"mirror__{name}" for name in (*TOOL_NAMES, *HAZARD_TOOL_NAMES)]
     assert DENIED_GROUPS <= set(tools["deny"])
     assert "session_status" in tools["deny"]  # the one tool the minimal profile grants
 
@@ -94,6 +96,16 @@ def test_the_playbook_covers_every_registered_tool_and_keeps_the_alert_off():
         "never send twice",
     ):
         assert phrase in alert, phrase
+
+
+def test_the_playbook_has_the_safety_hazard_review_section():
+    section = PLAYBOOK.split("## Safety hazard review", 1)[1]
+    for name in HAZARD_TOOL_NAMES:
+        assert f"`mirror__{name}`" in section, name
+    for phrase in ("Never invent a hazard", "plain words", "most urgent action first", "`none`"):
+        assert phrase in section, phrase
+    assert section.index("hazard_scan_clip") < section.index("hazard_review_clip")
+    assert "FINAL hazard clip=" in section
 
 
 def test_the_playbooks_abstention_is_a_valid_submit_call():

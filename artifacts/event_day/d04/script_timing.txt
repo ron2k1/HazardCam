@@ -1,0 +1,7 @@
+0:00-0:32 The camera wall              slot  32s words  60 ~25.7s @140wpm OK
+0:32-0:48 How it decided               slot  16s words  31 ~13.3s @140wpm OK
+0:48-1:20 One factory hazard           slot  32s words  66 ~28.3s @140wpm OK
+1:20-1:34 Back on the wall             slot  14s words   7 ~ 3.0s @140wpm OK
+1:34-1:50 One warehouse blind spot     slot  16s words  27 ~11.6s @140wpm OK
+1:50-2:01 Close                        slot  11s words  21 ~ 9.0s @140wpm OK
+total narration 212 words ~91s over the 121 s video (time codes from artifacts/hazards/demo/hazards_demo.mp4)

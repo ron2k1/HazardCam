@@ -1,0 +1,62 @@
+[
+  {
+    "t_s": 0.1,
+    "kind": "say",
+    "text": "The safety agent picked up this clip and is planning its check"
+  },
+  {
+    "t_s": 0.1,
+    "kind": "tool",
+    "tool": "turn",
+    "text": "agent turn started: hazard-hz_01-3a403183 (timeout 600 s)"
+  },
+  {
+    "t_s": 8.39,
+    "kind": "say",
+    "text": "The safety agent asked for the camera scan"
+  },
+  {
+    "t_s": 14.82,
+    "kind": "tool",
+    "tool": "hazard_scan_clip",
+    "text": "hazard_scan_clip ok in 6.4 s: 7 zones (2 movement, 5 static), 29 evidence pictures, 1 quality warnings"
+  },
+  {
+    "t_s": 14.82,
+    "kind": "say",
+    "text": "The safety agent has the camera scan"
+  },
+  {
+    "t_s": 16.55,
+    "kind": "say",
+    "text": "The safety agent asked the local AI to review the pictures and check them"
+  },
+  {
+    "t_s": 23.79,
+    "kind": "tool",
+    "tool": "hazard_review_clip",
+    "text": "hazard_review_clip ok in 7.2 s: 2 findings (H01 medium, H02 low), 2 dismissed, audit ran"
+  },
+  {
+    "t_s": 23.79,
+    "kind": "say",
+    "text": "The safety agent is reading the review and writing a summary"
+  },
+  {
+    "t_s": 28.77,
+    "kind": "tool",
+    "tool": "hazard_submit_summary",
+    "text": "hazard_submit_summary ok: priority medium, confirmed H01, H02"
+  },
+  {
+    "t_s": 28.77,
+    "kind": "say",
+    "text": "The safety agent wrote its summary for the floor team"
+  },
+  {
+    "t_s": 30.12,
+    "kind": "tool",
+    "tool": "turn",
+    "text": "agent turn ended ok after 30.0 s; reply: FINAL hazard clip=hz_01 priority=medium confirmed=2"
+  }
+]

@@ -38,6 +38,8 @@ sys.path.insert(0, str(REPO))
 
 from agent.event_day.registration import (
     AGENT_FILE,
+    LEAD_AGENT_FILE,
+    LEAD_WORKSPACE_DIR,
     SERVER_NAME,
     TOKEN_ENV,
     WORKSPACE_DIR,
@@ -85,10 +87,10 @@ def tools_token() -> str:
     return TOKEN_FILE.read_text().strip()
 
 
-def workspace_tar() -> bytes:
+def workspace_tar(directory: Path = WORKSPACE_DIR) -> bytes:
     buf = io.BytesIO()
     with tarfile.open(fileobj=buf, mode="w") as tar:
-        for path in sorted(WORKSPACE_DIR.glob("*.md")):
+        for path in sorted(directory.glob("*.md")):
             info = tar.gettarinfo(str(path), arcname=path.name)
             info.uid = info.gid = 0
             info.uname = info.gname = ""
@@ -148,6 +150,13 @@ def main(argv: list[str] | None = None) -> int:
 
     sandbox_sh(args.sandbox, f"mkdir -p {workspace} && tar -C {workspace} -xf -", workspace_tar())
     print(f"workspace: {len(list(WORKSPACE_DIR.glob('*.md')))} files -> {workspace}")
+    lead_ws = json.loads(LEAD_AGENT_FILE.read_text())["workspace"]
+    sandbox_sh(
+        args.sandbox,
+        f"mkdir -p {lead_ws} && tar -C {lead_ws} -xf -",
+        workspace_tar(LEAD_WORKSPACE_DIR),
+    )
+    print(f"lead workspace: {len(list(LEAD_WORKSPACE_DIR.glob('*.md')))} files -> {lead_ws}")
 
     body = (json.dumps(merged, indent=2) + "\n").encode()
     digest = hashlib.sha256(body).hexdigest()

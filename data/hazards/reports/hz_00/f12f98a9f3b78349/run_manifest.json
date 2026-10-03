@@ -1,0 +1,113 @@
+{
+  "status": "model_review_complete",
+  "run_id": "f12f98a9f3b78349",
+  "source": {
+    "source_name": "hz_00",
+    "source_sha256": "d80a7143104dcce23c1c1c9cd6ec881cebcafd0c07173dd290945ef51a53d5eb",
+    "fps": 24.99,
+    "source_width": 1920,
+    "source_height": 1080,
+    "decoded_frames": 315,
+    "reported_frames": 315,
+    "duration_s": 12.605042016806724,
+    "analysis_width": 768,
+    "analysis_height": 432,
+    "timing_method": "frame_index/source_fps"
+  },
+  "config": {
+    "analysis_width": 768,
+    "max_frames": 15000,
+    "background_samples": 21,
+    "difference_threshold": 18,
+    "motion_frequency_threshold": 0.012,
+    "minimum_zone_fraction": 0.0008,
+    "max_motion_zones": 5,
+    "max_static_zones": 5,
+    "overview_frames": 8,
+    "peak_frames": 3,
+    "crop_width": 768,
+    "image_width": 1024,
+    "max_total_images": 40,
+    "max_payload_mb": 30,
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 65536,
+    "num_predict": 6000,
+    "request_timeout_s": 900,
+    "pipeline_version": "astra-1.1"
+  },
+  "model": {
+    "name": "nvidia/Qwen3.6-35B-A3B-NVFP4",
+    "base_url": "http://127.0.0.1:8000/v1",
+    "profile": "gb10",
+    "api": "openai_compatible /chat/completions",
+    "served_root": "/models/nvidia__Qwen3.6-35B-A3B-NVFP4",
+    "max_model_len": 262144,
+    "fingerprint": "4cf7b96fd10ac6fea848c33621c06808771d3ee1a956ea389a6dc19b5031d469",
+    "thinking": false,
+    "structured_output": "json_schema (strict)",
+    "inference_source": "fresh",
+    "elapsed_seconds": 54.11,
+    "calls": 1,
+    "prompt_tokens": 29063,
+    "completion_tokens": 1682,
+    "finish_reason": "stop",
+    "audit_source": "fresh",
+    "audit": {
+      "elapsed_seconds": 28.75,
+      "prompt_tokens": 30802,
+      "completion_tokens": 1712,
+      "finish_reason": "stop"
+    },
+    "audit_sha256": "9b029482ea8264f84c98680d02301c3c44922cb6cdf662221e08029af4049ccf"
+  },
+  "request_sha256": "8d8d2096cd5b99cfe8e09c38fbb7a215f0494d21011cb46ef0c703bc86e00ca9",
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "platform": "Linux-7.0.0-1019-nvidia-aarch64-with-glibc2.39",
+  "versions": {
+    "numpy": "2.5.3",
+    "opencv-python-headless": "5.0.0.93",
+    "pydantic": "2.13.5",
+    "httpx": "0.28.1",
+    "PyYAML": "6.0.3"
+  },
+  "source_sha256": "d80a7143104dcce23c1c1c9cd6ec881cebcafd0c07173dd290945ef51a53d5eb",
+  "weights_sha256": {
+    "yolo11s": "85a76fe86dd8afe384648546b56a7a78580c7cb7b404fc595f97969322d502d5"
+  },
+  "detector": {
+    "url": "http://127.0.0.1:8003",
+    "status": "ok",
+    "error": null,
+    "device": "cuda:0 (NVIDIA GB10)",
+    "requested_models": [
+      "yolo11s"
+    ],
+    "used_models": [
+      "yolo11s"
+    ],
+    "models_sha256": {
+      "yolo11s": "85a76fe86dd8afe384648546b56a7a78580c7cb7b404fc595f97969322d502d5"
+    },
+    "conf": 0.25,
+    "image": "temporal background (analysis resolution, PNG)",
+    "image_size": [
+      768,
+      432
+    ],
+    "boxes": 5,
+    "elapsed_ms": 19.4
+  },
+  "segmentation_method": "local YOLO11s boxes on the temporal background + edge contours",
+  "quality_warnings": [
+    "No reliable floor-like mask found; static-zone ranking uses general scene candidates."
+  ],
+  "pipeline_version": "astra-1.1-gb10",
+  "ported_from_sha256": "ae92565bdd6daff3332f2fe4d3c6669533b7eee16d32ce6fef23e42986eba132",
+  "timings_s": {
+    "scan": 10.34,
+    "review": 82.9,
+    "total": 93.24
+  },
+  "validation": "Decoded all available frames; checked output video count, evidence hashes, IDs, bounds, schema and report files. Processed video verified as browser H.264 (yuv420p, faststart)."
+}

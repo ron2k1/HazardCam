@@ -1,0 +1,55 @@
+{
+  "checked_at": "2026-10-03T19:02:24.569408+00:00",
+  "local_only": true,
+  "rows": [
+    {
+      "key": "nemoclaw",
+      "label": "NemoClaw sandbox",
+      "status": "ok",
+      "value": "Ready",
+      "detail": "sandbox ambient-mirror"
+    },
+    {
+      "key": "openclaw",
+      "label": "OpenClaw agent",
+      "status": "ok",
+      "value": "agent",
+      "detail": "agent urban-mirror · safety checks: openclaw-agent"
+    },
+    {
+      "key": "openshell",
+      "label": "OpenShell gateway",
+      "status": "ok",
+      "value": "listening",
+      "detail": "127.0.0.1:8080"
+    },
+    {
+      "key": "tool_server",
+      "label": "Tool server",
+      "status": "ok",
+      "value": "listening",
+      "detail": "127.0.0.1:8090"
+    },
+    {
+      "key": "qwen",
+      "label": "Qwen (local AI)",
+      "status": "ok",
+      "value": "nvidia/Qwen3.6-35B-A3B-NVFP4",
+      "detail": "profile gb10"
+    },
+    {
+      "key": "detector",
+      "label": "Detector",
+      "status": "ok",
+      "value": "yolo11s, yolov8s-worldv2",
+      "detail": "cuda:0 (NVIDIA GB10)"
+    },
+    {
+      "key": "network",
+      "label": "Network",
+      "status": "ok",
+      "value": "local only",
+      "detail": "no internet needed"
+    }
+  ]
+}

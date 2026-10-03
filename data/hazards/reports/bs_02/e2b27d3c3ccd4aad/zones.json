@@ -1,0 +1,213 @@
+{
+  "method": "local YOLO11s boxes on the temporal background + edge contours",
+  "zones": [
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        86,
+        128,
+        180,
+        172
+      ],
+      "proposal_score": 0.08440640676134738,
+      "stability": 0.9433794306037534,
+      "paint_proximity": 1.0,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 14.966666666666667,
+      "zone_id": "Z01",
+      "bbox_normalized": [
+        0.11198,
+        0.2963,
+        0.23438,
+        0.39815
+      ],
+      "bbox_source": [
+        215,
+        320,
+        450,
+        430
+      ]
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        60,
+        157,
+        88,
+        236
+      ],
+      "proposal_score": 0.069592099303383,
+      "stability": 0.9405852668376984,
+      "paint_proximity": 0.9977396021699819,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 14.966666666666667,
+      "zone_id": "Z02",
+      "bbox_normalized": [
+        0.07812,
+        0.36343,
+        0.11458,
+        0.5463
+      ],
+      "bbox_source": [
+        150,
+        392,
+        220,
+        590
+      ]
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        427,
+        91,
+        596,
+        131
+      ],
+      "proposal_score": 0.05710451837006765,
+      "stability": 0.9497916828917582,
+      "paint_proximity": 0.376906829382774,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 14.966666666666667,
+      "zone_id": "Z03",
+      "bbox_normalized": [
+        0.55599,
+        0.21065,
+        0.77604,
+        0.30324
+      ],
+      "bbox_source": [
+        1068,
+        228,
+        1490,
+        328
+      ]
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        635,
+        52,
+        704,
+        96
+      ],
+      "proposal_score": 0.0481759132036953,
+      "stability": 1.0,
+      "paint_proximity": 1.0,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 14.966666666666667,
+      "zone_id": "Z04",
+      "bbox_normalized": [
+        0.82682,
+        0.12037,
+        0.91667,
+        0.22222
+      ],
+      "bbox_source": [
+        1588,
+        130,
+        1760,
+        240
+      ]
+    },
+    {
+      "kind": "possible_obstruction",
+      "bbox_analysis": [
+        681,
+        73,
+        721,
+        96
+      ],
+      "proposal_score": 0.044729255665520454,
+      "stability": 1.0,
+      "paint_proximity": 1.0,
+      "floor_contact": 0.5,
+      "peak_frame": 0,
+      "active_start_s": 0.0,
+      "active_end_s": 14.966666666666667,
+      "zone_id": "Z05",
+      "bbox_normalized": [
+        0.88672,
+        0.16898,
+        0.9388,
+        0.22222
+      ],
+      "bbox_source": [
+        1702,
+        182,
+        1802,
+        240
+      ]
+    }
+  ],
+  "candidate_counts": {
+    "movement": 0,
+    "static": 15
+  },
+  "note": "Proposal scores are heuristic rankings within each kind, not hazard probabilities.",
+  "zone_sources": {
+    "Z01": "edge contour",
+    "Z02": "yolo11s: person (0.80)",
+    "Z03": "edge contour",
+    "Z04": "edge contour",
+    "Z05": "edge contour"
+  },
+  "region_masks": {
+    "yolo_boxes": 2,
+    "edge_contours": 217
+  },
+  "detector": {
+    "url": "http://127.0.0.1:8003",
+    "status": "ok",
+    "error": null,
+    "device": "cuda:0 (NVIDIA GB10)",
+    "requested_models": [
+      "yolo11s"
+    ],
+    "used_models": [
+      "yolo11s"
+    ],
+    "models_sha256": {
+      "yolo11s": "85a76fe86dd8afe384648546b56a7a78580c7cb7b404fc595f97969322d502d5"
+    },
+    "conf": 0.25,
+    "image": "temporal background (analysis resolution, PNG)",
+    "image_size": [
+      768,
+      432
+    ],
+    "boxes": 2,
+    "elapsed_ms": 42.1,
+    "objects": [
+      {
+        "model": "yolo11s",
+        "label": "person",
+        "conf": 0.7983,
+        "box": [
+          60.91,
+          157.25,
+          87.88,
+          235.75
+        ]
+      },
+      {
+        "model": "yolo11s",
+        "label": "person",
+        "conf": 0.6489,
+        "box": [
+          545.0,
+          130.5,
+          557.0,
+          170.0
+        ]
+      }
+    ]
+  }
+}

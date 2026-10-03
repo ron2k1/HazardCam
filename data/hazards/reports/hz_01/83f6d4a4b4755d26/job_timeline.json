@@ -1,0 +1,120 @@
+{
+  "job_id": "hzjob_291fd3284b0c",
+  "clip_id": "hz_01",
+  "runner": "openclaw-agent",
+  "mode": "live",
+  "started_at_utc": "2026-10-03T19:39:25.382697+00:00",
+  "finished_at_utc": "2026-10-03T19:39:55.506830+00:00",
+  "run_status": "model_review_complete",
+  "total_s": 30.13,
+  "events": [
+    {
+      "t_s": 0.11,
+      "event": "agent",
+      "data": {
+        "text": "The safety agent picked up this clip and is planning its check",
+        "kind": "say"
+      }
+    },
+    {
+      "t_s": 8.39,
+      "event": "agent",
+      "data": {
+        "text": "The safety agent asked for the camera scan",
+        "kind": "say"
+      }
+    },
+    {
+      "t_s": 8.43,
+      "event": "progress",
+      "data": {
+        "step": 1,
+        "total": 6,
+        "message": "[1/6] Scanning video frames...",
+        "plain_message": "Reading the video"
+      }
+    },
+    {
+      "t_s": 9.76,
+      "event": "progress",
+      "data": {
+        "step": 2,
+        "total": 6,
+        "message": "[2/6] Measuring motion...",
+        "plain_message": "Looking for movement"
+      }
+    },
+    {
+      "t_s": 10.02,
+      "event": "progress",
+      "data": {
+        "step": 3,
+        "total": 6,
+        "message": "[3/6] Finding movement and obstruction zones...",
+        "plain_message": "Marking areas to check"
+      }
+    },
+    {
+      "t_s": 10.27,
+      "event": "progress",
+      "data": {
+        "step": 4,
+        "total": 6,
+        "message": "[4/6] Exporting annotated video and evidence...",
+        "plain_message": "Preparing pictures for the AI"
+      }
+    },
+    {
+      "t_s": 14.82,
+      "event": "agent",
+      "data": {
+        "text": "The safety agent has the camera scan",
+        "kind": "say"
+      }
+    },
+    {
+      "t_s": 16.55,
+      "event": "agent",
+      "data": {
+        "text": "The safety agent asked the local AI to review the pictures and check them",
+        "kind": "say"
+      }
+    },
+    {
+      "t_s": 23.74,
+      "event": "progress",
+      "data": {
+        "step": 5,
+        "total": 6,
+        "message": "[5/6] Running Qwen 3.6 hazard review...",
+        "plain_message": "AI is reviewing the pictures"
+      }
+    },
+    {
+      "t_s": 23.78,
+      "event": "progress",
+      "data": {
+        "step": 6,
+        "total": 6,
+        "message": "[6/6] Writing and validating reports...",
+        "plain_message": "Writing the report"
+      }
+    },
+    {
+      "t_s": 23.79,
+      "event": "agent",
+      "data": {
+        "text": "The safety agent is reading the review and writing a summary",
+        "kind": "say"
+      }
+    },
+    {
+      "t_s": 28.77,
+      "event": "agent",
+      "data": {
+        "text": "The safety agent wrote its summary for the floor team",
+        "kind": "say"
+      }
+    }
+  ]
+}

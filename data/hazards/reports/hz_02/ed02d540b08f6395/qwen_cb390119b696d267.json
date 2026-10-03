@@ -1,0 +1,211 @@
+{
+  "request_sha256": "cb390119b696d267e43ffe63100cd9b8fd35ba48a0ea10869994804a914e9ace",
+  "model_metadata": {
+    "name": "nvidia/Qwen3.6-35B-A3B-NVFP4",
+    "base_url": "http://127.0.0.1:8000/v1",
+    "profile": "gb10",
+    "api": "openai_compatible /chat/completions",
+    "served_root": "/models/nvidia__Qwen3.6-35B-A3B-NVFP4",
+    "max_model_len": 262144,
+    "fingerprint": "4cf7b96fd10ac6fea848c33621c06808771d3ee1a956ea389a6dc19b5031d469",
+    "thinking": false,
+    "structured_output": "json_schema (strict)",
+    "inference_source": "fresh",
+    "elapsed_seconds": 23.33,
+    "calls": 1,
+    "prompt_tokens": 25831,
+    "completion_tokens": 1780,
+    "finish_reason": "stop"
+  },
+  "created_at": "2026-10-03T19:15:24.070189+00:00",
+  "report": {
+    "scene_summary": "The video shows an industrial manufacturing floor with large machinery (presses) on the left and a marked pedestrian aisle on the right. Workers are observed moving through the aisle and standing near the machinery. A metal coil is stored on the floor near the machinery, and a pallet of materials is placed in the aisle. The scene is generally well-lit, though some areas near the machinery are darker.",
+    "findings": [
+      {
+        "title": "Obstruction of marked pedestrian aisle",
+        "status": "visible_concern",
+        "severity": "medium",
+        "confidence": "high",
+        "zone_ids": [
+          "Z01"
+        ],
+        "evidence_ids": [
+          "E001",
+          "E012",
+          "E029"
+        ],
+        "location": "Right side of the facility, marked pedestrian aisle",
+        "observation": "A metal pallet loaded with materials is positioned directly on the marked pedestrian aisle (green painted path with yellow borders). The pallet obstructs the clear width of the designated walkway.",
+        "risk_interpretation": "Obstructed aisles can impede safe movement, create trip hazards, and block emergency egress routes.",
+        "standards": [
+          "1910.176(a)",
+          "1910.22(a)(3)"
+        ],
+        "applicability_reason": "The object is a stationary obstruction within a marked pedestrian path.",
+        "unknowns": [],
+        "recommended_actions": [
+          "Relocate the pallet to a designated storage area outside of marked walkways.",
+          "Ensure all aisles remain clear of stored materials at all times."
+        ]
+      },
+      {
+        "title": "Uncovered rotating machinery component",
+        "status": "visible_concern",
+        "severity": "medium",
+        "confidence": "high",
+        "zone_ids": [
+          "Z07"
+        ],
+        "evidence_ids": [
+          "E024",
+          "E025"
+        ],
+        "location": "Foreground machine, left side",
+        "observation": "A large gear or sprocket on the side of the blue machine is exposed and lacks a physical guard. The component is located near the walkway where workers are present.",
+        "risk_interpretation": "Exposed rotating parts present a severe entanglement hazard to workers passing by or operating the machine.",
+        "standards": [
+          "1910.212(a)(3)(ii)"
+        ],
+        "applicability_reason": "The machine has a point of operation or rotating part that is accessible to workers.",
+        "unknowns": [
+          "Machine energy state (operation vs. stopped)",
+          "Presence of interlocked guards"
+        ],
+        "recommended_actions": [
+          "Install a fixed guard over the exposed gear.",
+          "Verify that all rotating parts are guarded before machine operation."
+        ]
+      },
+      {
+        "title": "Potential energy isolation during worker proximity",
+        "status": "needs_verification",
+        "severity": "high",
+        "confidence": "medium",
+        "zone_ids": [
+          "Z02",
+          "Z05"
+        ],
+        "evidence_ids": [
+          "E014",
+          "E015",
+          "E020",
+          "E021"
+        ],
+        "location": "Machinery area, left side",
+        "observation": "Workers are observed standing immediately adjacent to or inside the guarding of large presses. The energy state of the machines is unknown.",
+        "risk_interpretation": "If the machines are energized or in a cycle, workers are at risk of crushing or entanglement. If servicing, lack of visible lockout/tagout (LOTO) is a concern.",
+        "standards": [
+          "1910.147(a)(2)",
+          "1910.212(a)(3)(ii)"
+        ],
+        "applicability_reason": "Worker proximity to hazardous machinery requires verification of energy control and guarding.",
+        "unknowns": [
+          "Machine operational status",
+          "Presence of LOTO devices",
+          "Function of safety interlocks"
+        ],
+        "recommended_actions": [
+          "Verify if machines are running or being serviced.",
+          "Ensure LOTO procedures are followed if maintenance is occurring.",
+          "Confirm guards are in place and functional."
+        ]
+      }
+    ],
+    "zone_reviews": [
+      {
+        "zone_id": "Z01",
+        "interpretation": "Pedestrian aisle with obstruction",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E012",
+          "E013"
+        ]
+      },
+      {
+        "zone_id": "Z02",
+        "interpretation": "Machinery area with workers",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E014",
+          "E015"
+        ]
+      },
+      {
+        "zone_id": "Z03",
+        "interpretation": "Large press machine",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E016",
+          "E017"
+        ]
+      },
+      {
+        "zone_id": "Z04",
+        "interpretation": "Storage area near wall",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E018",
+          "E019"
+        ]
+      },
+      {
+        "zone_id": "Z05",
+        "interpretation": "Machinery area with workers",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E020",
+          "E021"
+        ]
+      },
+      {
+        "zone_id": "Z06",
+        "interpretation": "Machine side panel",
+        "disposition": "ordinary_scene",
+        "evidence_ids": [
+          "E022",
+          "E023"
+        ]
+      },
+      {
+        "zone_id": "Z07",
+        "interpretation": "Exposed rotating gear",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E024",
+          "E025"
+        ]
+      }
+    ],
+    "dismissed": [
+      {
+        "concern": "Dark area interpreted as spill",
+        "reason": "Dark areas near machinery are likely shadows or unpolished concrete, not confirmed spills.",
+        "evidence_ids": [
+          "E001",
+          "E029"
+        ]
+      },
+      {
+        "concern": "Circular metal object interpreted as rubber",
+        "reason": "The object is a metal coil, not a rubber hazard.",
+        "evidence_ids": [
+          "E001",
+          "E029"
+        ]
+      },
+      {
+        "concern": "Aisle interpreted as emergency exit",
+        "reason": "The path is a marked pedestrian aisle, not explicitly an emergency exit route.",
+        "evidence_ids": [
+          "E001",
+          "E012"
+        ]
+      }
+    ],
+    "limitations": [
+      "No reliable floor-like mask found; static-zone ranking uses general scene candidates.",
+      "Machine energy state and servicing status cannot be determined from still frames.",
+      "PPE compliance (e.g., eye protection) cannot be verified due to image resolution."
+    ]
+  }
+}

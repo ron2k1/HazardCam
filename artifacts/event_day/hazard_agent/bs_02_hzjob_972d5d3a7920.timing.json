@@ -1,0 +1,80 @@
+{
+  "clip_id": "bs_02",
+  "job_id": "hzjob_972d5d3a7920",
+  "request": {
+    "mode": "live"
+  },
+  "started": "2026-10-03T13:58:06-05:00",
+  "total_s": 32.5,
+  "outcome": "done",
+  "narration": [
+    {
+      "t_s": 0.01,
+      "event": "agent",
+      "text": "The safety agent picked up this clip and is planning its check",
+      "kind": "say"
+    },
+    {
+      "t_s": 2.95,
+      "event": "agent",
+      "text": "The safety agent asked for the camera scan",
+      "kind": "say"
+    },
+    {
+      "t_s": 13.86,
+      "event": "agent",
+      "text": "The safety agent has the camera scan",
+      "kind": "say"
+    },
+    {
+      "t_s": 14.9,
+      "event": "agent",
+      "text": "The safety agent asked the local AI to review the pictures and check them",
+      "kind": "say"
+    },
+    {
+      "t_s": 25.75,
+      "event": "agent",
+      "text": "The safety agent is reading the review and writing a summary",
+      "kind": "say"
+    },
+    {
+      "t_s": 31.18,
+      "event": "agent",
+      "text": "The safety agent wrote its summary for the floor team",
+      "kind": "say"
+    }
+  ],
+  "steps": [
+    {
+      "t_s": 2.98,
+      "step": 1,
+      "message": "[1/6] Scanning video frames..."
+    },
+    {
+      "t_s": 4.9,
+      "step": 2,
+      "message": "[2/6] Measuring motion..."
+    },
+    {
+      "t_s": 5.33,
+      "step": 3,
+      "message": "[3/6] Finding movement and obstruction zones..."
+    },
+    {
+      "t_s": 5.53,
+      "step": 4,
+      "message": "[4/6] Exporting annotated video and evidence..."
+    },
+    {
+      "t_s": 25.72,
+      "step": 5,
+      "message": "[5/6] Running Qwen 3.6 hazard review..."
+    },
+    {
+      "t_s": 25.75,
+      "step": 6,
+      "message": "[6/6] Writing and validating reports..."
+    }
+  ]
+}

@@ -1,0 +1,376 @@
+{
+  "request_sha256": "172dc13be7c64086629ee67047c76433e08eb86f520dfabd6ff13f8269704194",
+  "model_metadata": {
+    "name": "nvidia/Qwen3.6-35B-A3B-NVFP4",
+    "base_url": "http://127.0.0.1:8000/v1",
+    "profile": "gb10",
+    "api": "openai_compatible /chat/completions",
+    "served_root": "/models/nvidia__Qwen3.6-35B-A3B-NVFP4",
+    "max_model_len": 262144,
+    "fingerprint": "4cf7b96fd10ac6fea848c33621c06808771d3ee1a956ea389a6dc19b5031d469",
+    "thinking": false,
+    "structured_output": "json_schema (strict)",
+    "inference_source": "fresh",
+    "elapsed_seconds": 36.4,
+    "calls": 1,
+    "prompt_tokens": 27590,
+    "completion_tokens": 3772,
+    "finish_reason": "stop"
+  },
+  "created_at": "2026-10-03T19:12:19.639682+00:00",
+  "report": {
+    "scene_summary": "The video shows a warehouse environment with multiple pedestrians walking through aisles and open areas. The scene contains various obstructions including stacked pallets, large wooden crates, and cardboard boxes. Yellow painted lines mark pedestrian walkways and storage zones. There are no vehicles (forklifts, pallet jacks) visible in the sampled frames, but the layout is typical for mixed pedestrian and vehicle traffic.",
+    "findings": [
+      {
+        "title": "Blind corner at aisle end near yellow barriers",
+        "status": "visible_concern",
+        "severity": "high",
+        "confidence": "high",
+        "zone_ids": [
+          "Z06"
+        ],
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E022",
+          "E023"
+        ],
+        "location": "Center-left area where the main aisle meets the cross-aisle blocked by yellow barriers and orange water-filled barriers",
+        "observation": "A blind corner exists where the main travel path intersects with a cross-aisle. The intersection is partially blocked by yellow expandable barriers and orange water-filled barriers (visible in E022, E023). Pedestrians are observed walking through this area (E002, E003, E004, E005, E006, E007, E008, E009, E010, E011). A forklift or vehicle entering from the blocked cross-aisle would be completely hidden from view by the barriers and the stacked pallets to the left. Conversely, pedestrians walking through the intersection would not see an approaching vehicle until it was very close.",
+        "risk_interpretation": "A vehicle entering the main aisle from the blocked cross-aisle could collide with pedestrians who have no warning. This is a high-risk scenario as pedestrians are observed using this path.",
+        "standards": [
+          "1910.178(n)(4)",
+          "1910.176(a)"
+        ],
+        "applicability_reason": "The obstruction (barriers and pallets) blocks the driver's vision of the path of travel and pedestrians at the intersection.",
+        "unknowns": [
+          "Vehicle traffic frequency and speed in this area",
+          "Site rules regarding horn use at intersections"
+        ],
+        "recommended_actions": [
+          "Install a convex mirror at the corner to provide visibility of the blocked cross-aisle",
+          "Mark a stop line before the intersection and require a horn signal before proceeding",
+          "Consider removing or repositioning the barriers to improve visibility",
+          "Implement a designated pedestrian crossing with clear markings"
+        ]
+      },
+      {
+        "title": "Pedestrian path blocked by stacked pallets and crates",
+        "status": "visible_concern",
+        "severity": "medium",
+        "confidence": "high",
+        "zone_ids": [
+          "Z02",
+          "Z06"
+        ],
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E014",
+          "E015",
+          "E022",
+          "E023",
+          "E028",
+          "E030"
+        ],
+        "location": "Left side of the warehouse where stacked pallets and a large wooden crate narrow the pedestrian path",
+        "observation": "A large stack of wooden pallets and a large wooden crate (visible in E014, E015, E028, E030) create a narrow passage for pedestrians. The yellow painted line on the floor indicates a designated path, but the physical obstructions force pedestrians to walk close to the edge of the marked area. If a vehicle were to operate in this area, pedestrians would have limited space to move out of the way and would be hidden from view by the stacked materials.",
+        "risk_interpretation": "Pedestrians are at risk of being struck by vehicles due to the narrow passage and limited visibility. The stacked materials create a blind spot for both pedestrians and vehicle operators.",
+        "standards": [
+          "1910.176(a)",
+          "1910.22(a)(3)"
+        ],
+        "applicability_reason": "The stacked pallets and crate create a hazard on the walking-working surface and obstruct the path of travel.",
+        "unknowns": [
+          "Vehicle traffic in this specific area",
+          "Whether the stacked materials are temporary or permanent"
+        ],
+        "recommended_actions": [
+          "Reposition the stacked pallets and crate to widen the pedestrian path",
+          "Install physical barriers to separate pedestrian and vehicle traffic",
+          "Mark the pedestrian path with additional signage",
+          "Implement a slow zone with a spotter if vehicles must operate in this area"
+        ]
+      },
+      {
+        "title": "Blind spot at right-side aisle end near stacked boxes",
+        "status": "visible_concern",
+        "severity": "medium",
+        "confidence": "high",
+        "zone_ids": [
+          "Z04",
+          "Z05",
+          "Z07"
+        ],
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E018",
+          "E019",
+          "E020",
+          "E021",
+          "E024",
+          "E025",
+          "E031"
+        ],
+        "location": "Right side of the warehouse where stacked cardboard boxes and wooden crates create a blind corner",
+        "observation": "A large stack of cardboard boxes and wooden crates (visible in E018, E019, E020, E021, E024, E025, E031) creates a blind corner on the right side of the warehouse. A pedestrian is seen walking behind these stacks in E019, disappearing from view. A vehicle entering from the right would not see the pedestrian until it was too late, and the pedestrian would not see the vehicle until it was very close.",
+        "risk_interpretation": "A vehicle entering from the right could collide with a pedestrian who is hidden by the stacked materials. This is a medium-risk scenario as pedestrians are observed using this path.",
+        "standards": [
+          "1910.178(n)(4)",
+          "1910.178(n)(6)"
+        ],
+        "applicability_reason": "The stacked boxes and crates obstruct the driver's vision of the path of travel and pedestrians.",
+        "unknowns": [
+          "Vehicle traffic frequency and speed in this area",
+          "Site rules regarding horn use at intersections"
+        ],
+        "recommended_actions": [
+          "Install a convex mirror at the corner to provide visibility of the blind area",
+          "Mark a stop line before the corner and require a horn signal before proceeding",
+          "Reposition the stacked materials to improve visibility",
+          "Implement a designated pedestrian crossing with clear markings"
+        ]
+      }
+    ],
+    "zone_reviews": [
+      {
+        "zone_id": "Z01",
+        "interpretation": "Main aisle and open area on the right side of the warehouse. Pedestrians are observed walking through this area. The zone is relatively clear but has stacked boxes on the right that create a blind corner.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E012",
+          "E013"
+        ]
+      },
+      {
+        "zone_id": "Z02",
+        "interpretation": "Left side of the warehouse with stacked pallets and a large wooden crate. Pedestrians are observed walking through this area. The stacked materials create a narrow passage and blind spots.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E014",
+          "E015",
+          "E028",
+          "E030"
+        ]
+      },
+      {
+        "zone_id": "Z03",
+        "interpretation": "Far left area with work tables and equipment. Pedestrians are observed in this area. The zone is relatively clear but has equipment that could create blind spots.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E016",
+          "E017",
+          "E028"
+        ]
+      },
+      {
+        "zone_id": "Z04",
+        "interpretation": "Right side of the warehouse with stacked boxes and wooden crates. A pedestrian is seen walking behind these stacks, disappearing from view. This creates a blind corner.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E018",
+          "E019",
+          "E031"
+        ]
+      },
+      {
+        "zone_id": "Z05",
+        "interpretation": "Close-up of stacked boxes and wooden crates on the right side. The stacked materials create a blind spot for pedestrians and vehicles.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E020",
+          "E021",
+          "E031"
+        ]
+      },
+      {
+        "zone_id": "Z06",
+        "interpretation": "Center-left area with yellow barriers and orange water-filled barriers. A blind corner exists where the main aisle meets the cross-aisle. Pedestrians are observed walking through this area.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E022",
+          "E023",
+          "E028"
+        ]
+      },
+      {
+        "zone_id": "Z07",
+        "interpretation": "Close-up of stacked boxes on the right side. The stacked materials create a blind spot for pedestrians and vehicles.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E024",
+          "E025",
+          "E031"
+        ]
+      },
+      {
+        "zone_id": "Z08",
+        "interpretation": "Close-up of stacked boxes on the left side. The stacked materials create a blind spot for pedestrians and vehicles.",
+        "disposition": "hazard_candidate",
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011",
+          "E026",
+          "E027",
+          "E030"
+        ]
+      }
+    ],
+    "dismissed": [
+      {
+        "concern": "Vehicle speed and horn use",
+        "reason": "No vehicles are visible in the sampled frames. Speed and horn use cannot be determined from still images.",
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011"
+        ]
+      },
+      {
+        "concern": "Mirror presence",
+        "reason": "No mirrors are visible in the sampled frames. Their presence or absence cannot be determined from still images.",
+        "evidence_ids": [
+          "E001",
+          "E002",
+          "E003",
+          "E004",
+          "E005",
+          "E006",
+          "E007",
+          "E008",
+          "E009",
+          "E010",
+          "E011"
+        ]
+      }
+    ],
+    "limitations": [
+      "No vehicles (forklifts, pallet jacks) are visible in the sampled frames, so vehicle-related risks are inferred from the warehouse layout and pedestrian activity.",
+      "Speed, horn use, and traffic rules are unknown and cannot be determined from still images.",
+      "The video is a simulation, so the findings are based on the simulated environment and may not reflect real-world conditions.",
+      "No reliable floor-like mask was found, so static-zone ranking uses general scene candidates."
+    ]
+  }
+}
