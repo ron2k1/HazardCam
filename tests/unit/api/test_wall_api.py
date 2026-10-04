@@ -185,3 +185,17 @@ async def test_route(root: Path, tmp_path: Path) -> None:
     body = response.json()
     validate(body)
     assert len(body["hazard_tiles"]) == 4 and len(body["blindspot_tiles"]) == 4
+
+
+def test_tile_fps_comes_from_the_clip(tmp_path: Path) -> None:
+    """Tiles pass the clip's frame rate through (the wall shows frame numbers); a missing or
+    nonsense rate is null, never a guess."""
+    data = tmp_path / "hazards"
+    write_clip(data, "hz_00", fps=24.99)
+    write_clip(data, "hz_01")
+    write_clip(data, "hz_02", fps="fast")
+    write_clip(data, "bs_01", kind="blindspot", fps=30)
+    doc = wl.wall(HazardService(data, profile="fixture"))
+    validate(doc)
+    assert [t["fps"] for t in doc["hazard_tiles"]] == [24.99, None, None]
+    assert [t["fps"] for t in doc["blindspot_tiles"]] == [30.0]

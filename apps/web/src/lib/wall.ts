@@ -21,6 +21,8 @@ export interface WallTile {
   title: string;
   /** API path of the raw source video (no AI markings). */
   source_url: string;
+  /** The clip's frame rate (clip.json), for frame numbers on the tile; null when unknown. */
+  fps?: number | null;
   /** Optional, from config/wall.yaml: the overlay watch label and when this tile's check starts. */
   watch?: string | null;
   check_after_s?: number | null;

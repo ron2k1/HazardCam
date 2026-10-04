@@ -1404,6 +1404,12 @@
         "duration_s": {
           "$ref": "#/$defs/Seconds"
         },
+        "fps": {
+          "description": "The clip's frame rate from clip.json (the wall shows frame numbers); null when unknown.",
+          "type": ["number", "null"],
+          "exclusiveMinimum": 0,
+          "maximum": 240
+        },
         "source_url": {
           "description": "Raw footage only (no AI markings).",
           "type": "string",

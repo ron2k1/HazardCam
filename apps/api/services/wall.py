@@ -85,6 +85,13 @@ def _pick(
     return chosen[:TILES_PER_ROW]
 
 
+def _fps(value: Any) -> float | None:
+    """The clip's frame rate from clip.json, or None when it is missing or not a rate."""
+    if isinstance(value, bool) or not isinstance(value, int | float):
+        return None
+    return float(value) if 0 < value <= 240 else None
+
+
 def _tiles(
     chosen: Sequence[Mapping[str, Any]],
     *,
@@ -106,6 +113,7 @@ def _tiles(
                 "clip_id": clip["clip_id"],
                 "title": clip["title"],
                 "duration_s": clip.get("duration_s", 0.0),
+                "fps": _fps(clip.get("fps")),
                 "source_url": f"{media_base(clip['clip_id'])}/source.mp4",
                 "check_after_s": delay,
             }
