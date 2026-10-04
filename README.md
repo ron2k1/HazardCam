@@ -1,4 +1,4 @@
-# HazardCam
+# NVIDIA x Dell Hackathon
 
 HazardCam watches the cameras a factory or warehouse already has and flags safety hazards while there is still time to fix them. It runs on a single NVIDIA GB10 computer on site, so the video never leaves the building.
 
