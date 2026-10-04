@@ -157,6 +157,14 @@
     background-size: 12px 12px;
   }
 
+  /* plotting grid behind the camera wall */
+  .grid-field {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
   /* withheld judge tile: diagonal hatch */
   .hatch {
     background-image: repeating-linear-gradient(

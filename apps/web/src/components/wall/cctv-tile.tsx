@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
+import { HazardText } from "@/components/alerts/hazard-terms";
 import { StatusDot } from "@/components/hud/barcode";
 import { useMounted } from "@/hooks/use-animate";
 import { apiUrl } from "@/lib/config";
 import {
   configured,
-  dateStamp,
   elapsedClock,
   kindWord,
   timeOfDay,
@@ -20,33 +20,11 @@ import {
 import { cn } from "@/lib/utils";
 
 import { BlindSpotTriangle, DetectionSign, isBlindspotSign, WarningTriangle } from "./blind-spot-sign";
+import { Brackets, FeedTelemetry, Reticle, Stamp } from "./tile-hud";
 import type { TileRun } from "./use-wall-orchestrator";
 import { useNow } from "./use-now";
 
 type Signal = "connecting" | "live" | "nosignal";
-
-/** Thin CCTV corner brackets, inset from the picture edge. */
-function Brackets({ className }: { className?: string }) {
-  const base = "absolute size-3.5 border-fg/70";
-  return (
-    <span aria-hidden className={cn("pointer-events-none absolute inset-2", className)}>
-      <span className={cn(base, "top-0 left-0 border-t border-l")} />
-      <span className={cn(base, "top-0 right-0 border-t border-r")} />
-      <span className={cn(base, "bottom-0 left-0 border-b border-l")} />
-      <span className={cn(base, "right-0 bottom-0 border-r border-b")} />
-    </span>
-  );
-}
-
-/** The running CCTV date/time stamp. */
-function Stamp() {
-  const now = useNow(1000);
-  return (
-    <span className="tabular-nums" data-testid="tile-clock">
-      {now ? `${dateStamp(now)} ${timeOfDay(now)}` : "––––-––-–– ––:––:––"}
-    </span>
-  );
-}
 
 function Elapsed({ since }: { since: number }) {
   const now = useNow(1000);
@@ -100,9 +78,27 @@ function ZoneOutlines({ zones, blindspot }: { zones: ZoneMark[]; blindspot: bool
   );
 }
 
-function Feed({ src, zones, blindspot }: { src: string; zones: ZoneMark[]; blindspot: boolean }) {
+function Feed({
+  src,
+  zones,
+  blindspot,
+  onVideo,
+}: {
+  src: string;
+  zones: ZoneMark[];
+  blindspot: boolean;
+  /** Hands the tile the playing element, for the HUD telemetry. */
+  onVideo: (el: HTMLVideoElement | null) => void;
+}) {
   const wrap = useRef<HTMLDivElement>(null);
-  const video = useRef<HTMLVideoElement>(null);
+  const video = useRef<HTMLVideoElement | null>(null);
+  const attach = useCallback(
+    (el: HTMLVideoElement | null) => {
+      video.current = el;
+      onVideo(el);
+    },
+    [onVideo],
+  );
   const [signal, setSignal] = useState<Signal>("connecting");
   const [box, setBox] = useState<{ w: number; h: number } | null>(null);
   const [dims, setDims] = useState<{ w: number; h: number } | null>(null);
@@ -129,9 +125,9 @@ function Feed({ src, zones, blindspot }: { src: string; zones: ZoneMark[]; blind
   const rect = pictureRect(box, dims);
 
   return (
-    <div ref={wrap} className="absolute inset-0 overflow-hidden bg-[#020202]">
+    <div ref={wrap} className="dot-field absolute inset-0 overflow-hidden bg-[#020202]">
       <video
-        ref={video}
+        ref={attach}
         src={src}
         autoPlay
         muted
@@ -141,7 +137,7 @@ function Feed({ src, zones, blindspot }: { src: string; zones: ZoneMark[]; blind
         aria-hidden
         tabIndex={-1}
         data-testid="tile-video"
-        className="absolute inset-0 size-full object-contain"
+        className="absolute inset-0 size-full object-contain grayscale-[35%] contrast-[1.05]"
         onLoadedMetadata={(e) => setDims({ w: e.currentTarget.videoWidth, h: e.currentTarget.videoHeight })}
         onPlaying={() => setSignal("live")}
         onError={() => setSignal("nosignal")}
@@ -245,7 +241,7 @@ function Readout({ cam, run, onRetry }: { cam: WallCamera; run: TileRun; onRetry
           {run.stepWord ? `${run.stepWord}…` : "Starting the check…"}
           {run.step > 0 ? <span className="text-muted"> · step {run.step} of {run.total}</span> : null}
         </p>
-        {/* Agent narration lives in the reasoning tab (/hazards/process), not on the tile. */}
+        {/* Agent narration lives in the agent log panel and the reasoning tab, not on the tile. */}
       </div>
     );
   }
@@ -301,7 +297,7 @@ function Readout({ cam, run, onRetry }: { cam: WallCamera; run: TileRun; onRetry
         {detections.slice(0, ROWS_SHOWN).map((d) => {
           const line = `${d.zoneNames.length ? `${d.zoneNames.join(", ")} · ` : ""}${d.shortTitle}`;
           return (
-            <li key={d.key} className="flex min-w-0 items-center gap-1.5 text-[11px] leading-[15px]" data-testid="tile-detection">
+            <li key={d.key} className="flex min-w-0 items-center gap-1.5 text-[12px] leading-[16px]" data-testid="tile-detection">
               {cam.kind === "blindspot" || isBlindspotSign(cam.kind, d.sign) ? (
                 <BlindSpotTriangle className="size-3.5" />
               ) : (
@@ -309,7 +305,9 @@ function Readout({ cam, run, onRetry }: { cam: WallCamera; run: TileRun; onRetry
               )}
               <span className="min-w-0 flex-1 truncate" title={line}>
                 {d.zoneNames.length ? <span className="font-bold text-fg">{d.zoneNames[0]} · </span> : null}
-                <span className="text-fg/80">{d.shortTitle}</span>
+                <span className="text-fg/85">
+                  <HazardText text={d.shortTitle} />
+                </span>
               </span>
               <PriorityTag priority={d.priority} />
             </li>
@@ -329,19 +327,30 @@ export interface CctvTileProps {
   cam: WallCamera;
   run: TileRun;
   onRetry: () => void;
-  /** Part of the joined blind-spot strip: no own outer border. */
+  /** Part of a joined strip: no own outer border. */
   joined?: boolean;
 }
 
-/** A CCTV tile: the raw feed (no AI markings) with camera chrome, then its check readout. */
+const PHASE: Record<TileRun["phase"], { label: string; tone: "fg" | "muted" | "dim" | "danger"; pulse: boolean }> = {
+  watching: { label: "STANDBY", tone: "dim", pulse: false },
+  checking: { label: "ANALYZING", tone: "fg", pulse: true },
+  done: { label: "CLEAR", tone: "muted", pulse: false },
+  failed: { label: "FAULT", tone: "danger", pulse: false },
+};
+const ALERT = { label: "ALERT", tone: "danger", pulse: true } as const;
+
+/** A CCTV tile: the raw feed (no AI markings) with HUD telemetry, then its check readout. */
 export function CctvTile({ cam, run, onRetry, joined = false }: CctvTileProps) {
   const mounted = useMounted();
+  const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null);
   const words = kindWord(cam.kind);
   const src = cam.source_url.startsWith("/api/") ? apiUrl(cam.source_url) : cam.source_url;
   const detections = run.phase === "done" ? (run.result?.detections ?? []) : [];
   const zones = run.phase === "done" ? (run.result?.zones ?? []) : [];
   const found = detections.length > 0;
   const blindspot = cam.kind === "blindspot";
+  const phase = found ? ALERT : PHASE[run.phase];
+  const fps = typeof cam.fps === "number" && cam.fps > 0 ? cam.fps : null;
 
   return (
     <article
@@ -350,37 +359,49 @@ export function CctvTile({ cam, run, onRetry, joined = false }: CctvTileProps) {
       data-cam={cam.cam}
       data-kind={cam.kind}
       data-phase={run.phase}
-      className={cn("@container relative flex min-h-0 min-w-0 flex-col bg-panel/80", !joined && "border border-line")}
+      className={cn("@container relative flex min-h-0 min-w-0 flex-col bg-panel/80 xl:h-full", !joined && "border border-line")}
     >
-      {/* 16:9 when the page scrolls; on the desktop wall the monitor grows up to 4:3 to fill the row (the picture is never cropped) */}
-      <div className="relative aspect-video w-full shrink-0 overflow-hidden xl:aspect-auto xl:max-h-[75cqw] xl:min-h-[56.25cqw] xl:flex-[3_1_0%]">
-        {mounted ? <Feed src={src} zones={zones} blindspot={blindspot} /> : <div className="absolute inset-0 bg-[#020202]" />}
-        {run.phase === "checking" ? <span className="scanline" aria-hidden /> : null}
+      {/* 16:9 when the page scrolls; on the desktop wall the monitor fills its grid cell (the picture is never cropped) */}
+      <div className="relative aspect-video w-full shrink-0 overflow-hidden xl:aspect-auto xl:min-h-0 xl:flex-1">
+        {mounted ? <Feed src={src} zones={zones} blindspot={blindspot} onVideo={setVideoEl} /> : <div className="absolute inset-0 bg-[#020202]" />}
+        {run.phase === "checking" ? (
+          <>
+            <span className="scanline" aria-hidden />
+            <Reticle />
+          </>
+        ) : null}
         {/* legibility gradients for the overlay text */}
-        <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-12 bg-linear-to-b from-black/70 to-transparent" />
-        <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-linear-to-t from-black/60 to-transparent" />
+        <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-14 bg-linear-to-b from-black/75 to-transparent" />
+        <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-14 bg-linear-to-t from-black/70 to-transparent" />
         <Brackets />
         <div className="pointer-events-none absolute top-3 left-4 flex flex-col items-start gap-1 leading-none">
-          <span className="bg-black/75 px-1 py-0.5 text-[13px] font-extrabold tracking-[0.1em] text-fg">CAM {cam.cam}</span>
-          <span className="micro bg-black/75 px-1 text-fg/85">{configured(cam.watch, words.watch)}</span>
+          <span className="flex items-baseline gap-2 bg-black/75 px-1 py-0.5">
+            <span className="text-[13px] font-extrabold tracking-[0.1em] text-fg">CAM {cam.cam}</span>
+            <span className="micro text-fg/55">IN/{String(cam.cam).padStart(2, "0")}</span>
+          </span>
+          <span className="micro max-w-[60cqw] truncate bg-black/75 px-1 text-fg/85">
+            {configured(cam.watch, words.watch)} · {cam.title}
+          </span>
         </div>
         <div className="pointer-events-none absolute top-3 right-4 flex flex-col items-end gap-1 leading-none">
           <span className="micro flex items-center gap-1.5 bg-black/75 px-1 text-fg/90">
             <StatusDot tone="danger" pulse />
             REC
+            <span className="text-fg/70">
+              <Stamp />
+            </span>
           </span>
-          <span className="micro bg-black/75 px-1 text-fg/85">
-            <Stamp />
+          <span
+            className={cn("micro flex items-center gap-1.5 bg-black/75 px-1", found ? "text-danger" : "text-fg/90")}
+            data-testid="tile-phase"
+          >
+            <StatusDot tone={phase.tone} pulse={phase.pulse} />
+            {phase.label}
           </span>
         </div>
-        <div className="pointer-events-none absolute right-4 bottom-2.5 left-4 flex items-end justify-between gap-2">
-          <span className="micro min-w-0 truncate bg-black/75 px-1 text-fg/85">{cam.title}</span>
-          {run.phase === "checking" ? (
-            <span className="micro shrink-0 border border-fg/40 bg-bg/70 px-1.5 text-fg">Checking…</span>
-          ) : null}
-        </div>
+        {mounted ? <FeedTelemetry video={videoEl} fps={fps} /> : null}
         {found ? (
-          <div className="pointer-events-none absolute bottom-8 left-4 flex max-w-[calc(100%-2rem)] flex-wrap gap-1 duration-500 animate-in fade-in">
+          <div className="pointer-events-none absolute bottom-12 left-4 flex max-w-[calc(100%-2rem)] flex-wrap gap-1 duration-500 animate-in fade-in">
             {distinctSigns(detections).map((d) => (
               <span key={d.key} className="bg-bg/85">
                 <DetectionSign kind={cam.kind} sign={d.sign} />
@@ -389,7 +410,7 @@ export function CctvTile({ cam, run, onRetry, joined = false }: CctvTileProps) {
           </div>
         ) : null}
       </div>
-      <div className="thin-scroll min-h-[92px] flex-1 overflow-y-auto border-t border-line px-3 py-2 xl:min-h-[112px] xl:flex-[1_1_0%]">
+      <div className="thin-scroll min-h-[76px] shrink-0 overflow-y-auto border-t border-line px-3 py-2 xl:h-[78px]">
         <Readout cam={cam} run={run} onRetry={onRetry} />
       </div>
       {found ? (

@@ -105,7 +105,9 @@ const VIEW_RETRIES = 3;
 const SAVE_KEY = "cv-wall-checks-v2";
 const KEEP_MS = 10 * 60_000;
 
-type SavedWall = { at: number; runs: Record<string, TileRun>; notifications: WallNotification[] };
+// `origin`: when the wall first loaded in this tab. Restored runs keep their real start/finish
+// times, so the timeline and log measure them from that load, not from this one.
+type SavedWall = { at: number; origin?: number; runs: Record<string, TileRun>; notifications: WallNotification[] };
 
 function readSaved(): SavedWall | null {
   try {
@@ -150,6 +152,8 @@ export function useWallOrchestrator(cameras: WallCamera[], loadedAt: number | nu
   const alertOrder = useRef<SiteAlert[] | null>(null);
   const finished = useRef(new Map<string, { cam: WallCamera; jobId: string; result: CheckResult }>());
   const announced = useRef(new Set<string>());
+  const [restoredOrigin, setRestoredOrigin] = useState<number | null>(null);
+  const origin = restoredOrigin ?? loadedAt;
 
   const patch = useCallback((clipId: string, p: Partial<TileRun>) => {
     if (!alive.current) return;
@@ -279,6 +283,7 @@ export function useWallOrchestrator(cameras: WallCamera[], loadedAt: number | nu
     for (const [clipId] of done) started.current.add(clipId);
     queueMicrotask(() => {
       if (!alive.current) return;
+      if (typeof saved.origin === "number") setRestoredOrigin(saved.origin);
       setRuns((prev) => ({ ...Object.fromEntries(done), ...prev }));
       setNotifications((prev) => (prev.length ? prev : (saved.notifications ?? [])));
     });
@@ -287,9 +292,9 @@ export function useWallOrchestrator(cameras: WallCamera[], loadedAt: number | nu
   // Save once checks finish (only finished ones are restored).
   useEffect(() => {
     if (Object.values(runs).some((r) => r.phase === "done")) {
-      writeSaved({ at: Date.now(), runs, notifications });
+      writeSaved({ at: Date.now(), origin: origin ?? undefined, runs, notifications });
     }
-  }, [runs, notifications]);
+  }, [runs, notifications, origin]);
 
   // One site run for the whole wall: the lead agent starts the six checkers at once; each tile
   // follows its checker's own hazard job. Any failure falls back to the direct staggered checks.
@@ -420,5 +425,5 @@ export function useWallOrchestrator(cameras: WallCamera[], loadedAt: number | nu
 
   const retry = useCallback((cam: WallCamera) => void run(cam), [run]);
 
-  return { runs, notifications, toasts, dismissToast, retry, idle: IDLE, site };
+  return { runs, notifications, toasts, dismissToast, retry, idle: IDLE, site, origin };
 }
