@@ -224,6 +224,23 @@
   animation: blink 1.2s steps(1) infinite;
 }
 
+/* AnimatedText (components/ui/animated-text.tsx): each letter's weight breathes between the
+   element's --breath-min and --breath-max on the variable JetBrains Mono axis (100-800);
+   --breath-s is one sweep, --breath-delay the letter's place in the wave */
+@keyframes breath {
+  from {
+    font-variation-settings: "wght" var(--breath-min, 100);
+  }
+  to {
+    font-variation-settings: "wght" var(--breath-max, 800);
+  }
+}
+
+.breath-letter {
+  font-variation-settings: "wght" var(--breath-min, 100);
+  animation: breath var(--breath-s, 1.5s) cubic-bezier(0.37, 0, 0.63, 1) var(--breath-delay, 0s) infinite alternate both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -235,5 +252,10 @@
   }
   .scanline {
     display: none;
+  }
+  /* no wave at all (the rule above shortens animations but leaves their delays) */
+  .breath-letter {
+    animation: none;
+    font-variation-settings: "wght" var(--breath-max, 800);
   }
 }
