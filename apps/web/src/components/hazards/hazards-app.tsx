@@ -21,16 +21,14 @@ import {
   sourceVideoPath,
   type ClipSummary,
   type HazardImage,
-  type HazardInstructions,
   type HazardView,
   type WorkerHazard,
 } from "@/lib/hazards-v1";
 import { cn } from "@/lib/utils";
-import { MOCK_CLIPS, MOCK_INSTRUCTIONS, MOCK_VIEWS } from "@/mocks/hazards";
+import { MOCK_CLIPS, MOCK_VIEWS } from "@/mocks/hazards";
 
 import { ClipRail, ClipSelect } from "./clip-rail";
 import { EvidencePlayer, type SeekRequest } from "./evidence-player";
-import { InstructionsPanel } from "./instructions-panel";
 import { PictureGrid } from "./picture-grid";
 import { RunControl, type JobState } from "./run-control";
 import { liveSource, mockSource, type HazardsSource } from "./sources";
@@ -74,7 +72,6 @@ export function HazardsApp({ mock, initialView, initialClipId }: HazardsAppProps
   const [viewNonce, setViewNonce] = useState(0);
   const [job, setJob] = useState<JobState | null>(null);
   const [refresh, setRefresh] = useState(false);
-  const [instructions, setInstructions] = useState<HazardInstructions | null>(mock ? MOCK_INSTRUCTIONS : null);
   const closeJob = useRef<(() => void) | null>(null);
   const viewsRef = useRef(views);
   // Event day: a finished check pops its hazards out once (the same pop-out as the wall had).
@@ -127,7 +124,6 @@ export function HazardsApp({ mock, initialView, initialClipId }: HazardsAppProps
     source.clips(ctl.signal).then(applyClips, (err) => {
       if (!ctl.signal.aborted) clipsFailed(err);
     });
-    source.instructions(ctl.signal).then(setInstructions, () => undefined);
     return () => ctl.abort();
   }, [source, applyClips, clipsFailed]);
 
@@ -332,7 +328,6 @@ export function HazardsApp({ mock, initialView, initialClipId }: HazardsAppProps
                 onRetryView={() => retryView(clip.clip_id)}
                 technical={technical}
                 live={source.kind === "live"}
-                instructions={instructions}
                 job={jobHere}
                 busyElsewhere={busyElsewhere}
                 offline={offline}
@@ -373,7 +368,6 @@ interface ClipPanelProps {
   onRetryView: () => void;
   technical: boolean;
   live: boolean;
-  instructions: HazardInstructions | null;
   job: JobState | null;
   busyElsewhere: boolean;
   offline: boolean;
@@ -400,7 +394,6 @@ function ClipPanel(props: ClipPanelProps) {
   const processedUrl = mediaUrl(vision?.processed_video_url);
   const sourceUrl = mediaUrl(vision?.source_video_url ?? (props.live ? sourceVideoPath(clip.clip_id) : null));
   const images = vision?.shown_images ?? [];
-  const plainInstructions = vision?.instructions ?? props.instructions;
 
   const showAt = (t: number, hazardId: string | null) => {
     setSeek((s) => ({ t, nonce: (s?.nonce ?? 0) + 1 }));
@@ -494,7 +487,6 @@ function ClipPanel(props: ClipPanelProps) {
           </section>
         ) : null}
 
-        {plainInstructions ? <InstructionsPanel instructions={plainInstructions} className="mt-8" /> : null}
       </>
     );
   } else if (technical && tech) {
@@ -546,7 +538,6 @@ function ClipPanel(props: ClipPanelProps) {
             {player(false)}
           </section>
         </div>
-        {plainInstructions ? <InstructionsPanel instructions={plainInstructions} future className="mt-8" /> : null}
       </>
     );
   }
