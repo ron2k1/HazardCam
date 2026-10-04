@@ -2,7 +2,9 @@
 site runs: one lead agent plus six concurrent camera checkers (``services/site_runs.py``).
 
 * ``POST /api/wall/run`` ``{"mode": "live"|"replay"}``: start a site run; 202 with
-  ``site_run_id``. Omitted mode: replay when the hazard service replays by default.
+  ``site_run_id``, ``mode``, the ``cams`` it follows on this wall and ``run_cams``, how many
+  checkers the run had (a replay on a smaller wall keeps the recorded count). Omitted
+  mode: replay when the hazard service replays by default.
   503 when live mode has no lead agent, 404 when replay has no stored run (the wall
   then falls back to its six direct per-camera checks).
 * ``GET /api/wall/runs/{id}``: snapshot (checkers, timings, lead trace, alerts).
@@ -96,6 +98,7 @@ def start_site_run(request: Request, body: SiteRunRequest | None = None) -> JSON
         {
             "site_run_id": run.site_run_id,
             "mode": run.mode,
+            "run_cams": run.run_cams,
             "events_url": f"/api/wall/runs/{run.site_run_id}/events",
             "cams": [{"cam": c, "clip_id": k["clip_id"]} for c, k in sorted(run.checkers.items())],
         },

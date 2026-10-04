@@ -138,9 +138,14 @@ def validate_alerts(alerts: Any, checkers: Mapping[int, Mapping[str, Any]]) -> s
 class SiteRun:
     """One lead plus six checkers. Thread-safe; events are replayable for SSE."""
 
-    def __init__(self, site_run_id: str, cams: list[dict[str, Any]], mode: str) -> None:
+    def __init__(
+        self, site_run_id: str, cams: list[dict[str, Any]], mode: str, run_cams: int | None = None
+    ) -> None:
         self.site_run_id = site_run_id
         self.mode = mode
+        # How many checkers the run had: a replay keeps only the cameras still on the wall,
+        # while its lead trace still speaks of the recorded run's full count.
+        self.run_cams = len(cams) if run_cams is None else run_cams
         self.created_at = _now()
         self._t0 = time.monotonic()
         self._cond = threading.Condition()
@@ -306,7 +311,9 @@ class SiteService:
                 raise LookupError("no completed site run to replay")
             on_wall = {t["clip_id"] for t in self.tiles()}
             cams = [c for c in stored["cams"] if c.get("clip_id") in on_wall]
-            run = SiteRun(f"site-{uuid.uuid4().hex[:10]}", cams, "replay")
+            run = SiteRun(
+                f"site-{uuid.uuid4().hex[:10]}", cams, "replay", run_cams=len(stored["cams"])
+            )
             target: Callable[[], None] = lambda: self._replay(run, stored)
         else:
             if self.lead_runner is None:

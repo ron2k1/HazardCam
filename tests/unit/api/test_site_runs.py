@@ -297,6 +297,29 @@ def test_post_run_then_poll_the_snapshot(tmp_path):
     assert client.get("/api/wall/runs/nope").status_code == 404
 
 
+def test_replay_on_a_smaller_wall_says_how_many_checkers_the_recorded_run_had(tmp_path):
+    tiles = list(CAMS)
+    app = FastAPI()
+    app.include_router(wall_routes.router)
+    app.state.site_runs = SiteService(
+        FakeHazards(0.1),
+        lambda: list(tiles),
+        tmp_path / "site_runs",
+        lead_runner=good_lead,
+        replay_seconds=1.0,
+        poll_s=0.05,
+    )
+    client = TestClient(app)
+    live = client.post("/api/wall/run", json={"mode": "live"}).json()
+    assert live["run_cams"] == 6
+    wait_done(app.state.site_runs.run(live["site_run_id"]))
+    tiles[:] = [c for c in CAMS if c["cam"] in (1, 2, 4, 5)]
+    replay = client.post("/api/wall/run", json={"mode": "replay"}).json()
+    assert replay["mode"] == "replay"
+    assert [c["cam"] for c in replay["cams"]] == [1, 2, 4, 5]
+    assert replay["run_cams"] == 6
+
+
 def test_post_run_without_a_lead_is_503_and_replay_without_a_run_is_404(tmp_path):
     client = api(tmp_path, lead=None)
     assert client.post("/api/wall/run", json={"mode": "live"}).status_code == 503
