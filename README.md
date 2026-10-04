@@ -27,40 +27,6 @@ Each camera goes through the same steps on the GB10 and nothing is sent to an ou
 
 The agents are built on OpenClaw and run inside NVIDIA's NemoClaw sandbox, where OpenShell controls what they can reach. One lead agent runs the site. It starts a checker for each camera and keeps checking on them until they finish, then sends the alerts. On the GB10 a single camera's check took between 62 and 116 seconds, and the lead agent's run across six cameras took 120 seconds. A new camera gets its own checker, and the rest of the system stays as it was.
 
-## Built at the event
-
-We built HazardCam for an NVIDIA hackathon. The app, the vision pipeline and the tests were ready beforehand, and the rules required the agents themselves to be written on the day. All agent code was written on 2026-10-03 in the commits marked `event-day`, and `artifacts/event_day/DELTA_REPORT.txt` compares that day's work against the last prebuild commit. The hazard review began as a teammate's script, which we ported into this pipeline with its prompts kept word for word.
-
-## Run it
-
-Replay mode is the quickest way to see it. Every check replays a stored GB10 run at demo speed, so it needs no GPU, model or network access.
-
-```bash
-uv sync --frozen
-pnpm --dir apps/web install
-scripts/run.sh start
-```
-
-Then open http://127.0.0.1:3000/ for the camera wall. The camera videos are not checked in, so place each one at `data/hazards/clips/<clip_id>/source.mp4` before you start. The stored reports and depth maps are already in `data/hazards`.
-
-Live checks on a GB10 also need the vLLM server, the local detector and the agent sandbox. `docs/EVENT_DAY_RUNTIME.md` walks through that setup and `config/models/gb10.yaml` holds the exact model settings.
-
-## Repository map
-
-- **`apps/web`** holds the camera wall, the hazard reports and the `/ops` console (Next.js).
-- **`apps/api`** runs the checks and streams their progress to the page (FastAPI).
-- **`hazards`** is the vision pipeline from candidate areas to the final report, along with the local detector.
-- **`agent/event_day`** holds the OpenClaw agents written at the event.
-- **`config`** sets the wall layout, the model profiles and the review modes.
-- **`data/hazards`** keeps clip metadata with the stored GB10 reports and the depth maps.
-- **`scripts`** has setup and data preparation tools.
-- **`tests`** holds the unit, integration and browser tests.
-- **`docs`** has the design notes and runbooks.
-
-## Also in this repository
-
-HazardCam grew out of Ambient Urban Mirror, the multi-camera console at `/ops` that we built first. It works out an event that none of its cameras can see from the effects that the cameras do see. It runs on public MEVA recordings and keeps one camera withheld so that only the judges can check the answer.
-
 ## Limits
 
 - **Visual screening only.** Findings are visual checks against OSHA references. They do not establish legal compliance and cannot see hidden controls or whether a worker was trained.
