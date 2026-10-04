@@ -7,6 +7,7 @@ import { HazardText } from "@/components/alerts/hazard-terms";
 import { StatusDot } from "@/components/hud/barcode";
 import { useMounted } from "@/hooks/use-animate";
 import { apiUrl } from "@/lib/config";
+import type { CvZone } from "@/lib/cv-map";
 import {
   configured,
   elapsedClock,
@@ -78,14 +79,46 @@ function ZoneOutlines({ zones, blindspot }: { zones: ZoneMark[]; blindspot: bool
   );
 }
 
+/**
+ * The CV layer: every area the vision pass marked that is not already drawn as a finding, with its
+ * pipeline id and a YOLO tag where a YOLO box seeded it. All neutral: amber and red on a tile stay
+ * reserved for findings (the 03 plan, with its legend, shows which areas Qwen flagged first).
+ */
+function CvOutlines({ zones }: { zones: CvZone[] }) {
+  return (
+    <>
+      {zones.map((z) => {
+        const [x0, y0, x1, y1] = z.box;
+        return (
+          <div
+            key={z.id}
+            data-testid="tile-cv-zone"
+            data-stage={z.stage}
+            className="absolute border border-dashed border-fg/45 duration-700 animate-in fade-in"
+            style={{ left: `${x0 * 100}%`, top: `${y0 * 100}%`, width: `${(x1 - x0) * 100}%`, height: `${(y1 - y0) * 100}%` }}
+          >
+            <span className="absolute top-0 left-0 bg-bg/75 px-[3px] text-[8px] leading-[11px] font-bold tracking-[0.08em] whitespace-nowrap text-fg/75">
+              {z.id}
+              {z.sourceKind === "yolo" ? <span className="ml-1 font-normal opacity-75">YOLO</span> : null}
+            </span>
+          </div>
+        );
+      })}
+    </>
+  );
+}
+
 function Feed({
   src,
   zones,
+  cvZones,
   blindspot,
   onVideo,
 }: {
   src: string;
   zones: ZoneMark[];
+  /** Marked areas that are not findings (findings are drawn by ZoneOutlines). */
+  cvZones: CvZone[];
   blindspot: boolean;
   /** Hands the tile the playing element, for the HUD telemetry. */
   onVideo: (el: HTMLVideoElement | null) => void;
@@ -142,12 +175,13 @@ function Feed({
         onPlaying={() => setSignal("live")}
         onError={() => setSignal("nosignal")}
       />
-      {zones.length ? (
+      {zones.length || cvZones.length ? (
         <div
           className="pointer-events-none absolute"
           style={rect ?? { left: 0, top: 0, width: "100%", height: "100%" }}
           data-testid="tile-zones"
         >
+          <CvOutlines zones={cvZones} />
           <ZoneOutlines zones={zones} blindspot={blindspot} />
         </div>
       ) : null}
@@ -347,6 +381,8 @@ export function CctvTile({ cam, run, onRetry, joined = false }: CctvTileProps) {
   const src = cam.source_url.startsWith("/api/") ? apiUrl(cam.source_url) : cam.source_url;
   const detections = run.phase === "done" ? (run.result?.detections ?? []) : [];
   const zones = run.phase === "done" ? (run.result?.zones ?? []) : [];
+  const findingNumbers = new Set(zones.map((z) => z.number));
+  const cvZones = run.phase === "done" ? (run.result?.cv?.zones ?? []).filter((z) => !findingNumbers.has(z.number)) : [];
   const found = detections.length > 0;
   const blindspot = cam.kind === "blindspot";
   const phase = found ? ALERT : PHASE[run.phase];
@@ -357,13 +393,14 @@ export function CctvTile({ cam, run, onRetry, joined = false }: CctvTileProps) {
       aria-label={`CAM ${cam.cam} · ${cam.title}`}
       data-testid="cctv-tile"
       data-cam={cam.cam}
+      data-clip={cam.clip_id}
       data-kind={cam.kind}
       data-phase={run.phase}
       className={cn("@container relative flex min-h-0 min-w-0 flex-col bg-panel/80 xl:h-full", !joined && "border border-line")}
     >
       {/* 16:9 when the page scrolls; on the desktop wall the monitor fills its grid cell (the picture is never cropped) */}
       <div className="relative aspect-video w-full shrink-0 overflow-hidden xl:aspect-auto xl:min-h-0 xl:flex-1">
-        {mounted ? <Feed src={src} zones={zones} blindspot={blindspot} onVideo={setVideoEl} /> : <div className="absolute inset-0 bg-[#020202]" />}
+        {mounted ? <Feed src={src} zones={zones} cvZones={cvZones} blindspot={blindspot} onVideo={setVideoEl} /> : <div className="absolute inset-0 bg-[#020202]" />}
         {run.phase === "checking" ? (
           <>
             <span className="scanline" aria-hidden />

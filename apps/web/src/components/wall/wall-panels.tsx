@@ -28,7 +28,7 @@ const TAG_TONE: Record<LogTag, string> = {
   FAULT: "text-danger",
 };
 
-/** 03: every check event the wall has seen, oldest first, pinned to the newest row. */
+/** 04: every check event the wall has seen, oldest first, pinned to the newest row. */
 export function AgentLogPanel({
   rows,
   origin,
@@ -50,7 +50,7 @@ export function AgentLogPanel({
 
   return (
     <Panel
-      index="03"
+      index="04"
       title="Agent log"
       className={className}
       bodyClassName="flex flex-col"
@@ -90,7 +90,7 @@ const MIN_SPAN_S = 30;
 /** Tick spacing: the smallest step that keeps the axis to about six labels (a live run is ~100 s). */
 const TICK_STEPS_S = [5, 10, 15, 30, 60, 120, 300, 600];
 
-/** 04: one lane per camera, a bar from each check's start to its result, against wall time. */
+/** 05: one lane per camera, a bar from each check's start to its result, against wall time. */
 export function CheckTimelinePanel({
   cameras,
   runs,
@@ -115,7 +115,7 @@ export function CheckTimelinePanel({
 
   return (
     <Panel
-      index="04"
+      index="05"
       title="Check timeline"
       className={className}
       meta={

@@ -14,6 +14,7 @@ import { NotificationTray, Toasts } from "./notification-tray";
 import { useAgentLog } from "./use-agent-log";
 import type { WallNotification } from "./use-wall-orchestrator";
 import { useWallOrchestrator } from "./use-wall-orchestrator";
+import { BlindZonePlanPanel } from "./blind-zone-plan";
 import { AgentLogPanel, CheckTimelinePanel } from "./wall-panels";
 import { WallHeader } from "./wall-header";
 
@@ -38,8 +39,9 @@ const sameConfig = (a: WallConfig | null, b: WallConfig) => !!a && JSON.stringif
  * starts each camera's check by itself; a result appears on a tile only after its check completes,
  * and every word of it comes from that clip's stored run through the API.
  *
- * Layout (desktop): 01 live feeds in one grid; a right rail with 02 detections, 03 the agent log
- * of every check event, 04 a timeline of the checks against wall time.
+ * Layout (desktop): 01 live feeds in one grid; a right rail with 02 detections, 03 the blind-zone
+ * plan of one camera (the latest alert, or the tile last clicked), 04 the agent log of every check
+ * event, 05 a timeline of the checks against wall time.
  */
 export function SiteWall() {
   const [config, setConfig] = useState<WallConfig | null>(null);
@@ -97,6 +99,15 @@ export function SiteWall() {
     setUnacked((prev) => ({ ...prev, ...Object.fromEntries(fresh.map((n) => [n.clipId, n])) }));
   }, [notifications]);
   const ack = (clipId: string) => setUnacked((prev) => { const next = { ...prev }; delete next[clipId]; return next; });
+
+  // 03 follows a clicked tile; until then the newest alert, else the camera that finished last.
+  const [picked, setPicked] = useState<string | null>(null);
+  const newestAlert = notifications.reduce<WallNotification | null>((a, n) => (!a || n.at > a.at ? n : a), null);
+  const lastDone = cameras
+    .filter((c) => runs[c.clip_id]?.phase === "done")
+    .sort((a, b) => (runs[b.clip_id]?.finishedAt ?? 0) - (runs[a.clip_id]?.finishedAt ?? 0))[0];
+  const planClip = picked ?? newestAlert?.clipId ?? lastDone?.clip_id ?? null;
+  const planCam = cameras.find((c) => c.clip_id === planClip) ?? null;
   const framed = (cam: (typeof cameras)[number], tile: ReactNode) => {
     const n = unacked[cam.clip_id];
     const d = n?.detections[0];
@@ -109,7 +120,15 @@ export function SiteWall() {
         tone={cam.kind === "blindspot" ? "blindspot" : "hazard"}
         className="grid min-h-0 min-w-0"
       >
-        <div className="grid min-h-0 min-w-0" onPointerDown={() => ack(cam.clip_id)}>{tile}</div>
+        <div
+          className={cn("relative grid min-h-0 min-w-0", planCam?.clip_id === cam.clip_id && "outline outline-1 -outline-offset-1 outline-fg/40")}
+          onPointerDown={() => {
+            ack(cam.clip_id);
+            setPicked(cam.clip_id);
+          }}
+        >
+          {tile}
+        </div>
       </AlertFrame>
     );
   };
@@ -164,7 +183,8 @@ export function SiteWall() {
         </Panel>
 
         <div className="flex min-h-0 shrink-0 flex-col gap-3 xl:w-[400px] 2xl:w-[440px]">
-          <NotificationTray items={notifications} watching={watching} className="min-h-[180px] xl:flex-[1.15_1_0%]" />
+          <NotificationTray items={notifications} watching={watching} className="min-h-[150px] xl:flex-[1_1_0%]" />
+          <BlindZonePlanPanel cam={planCam} run={planCam ? (runs[planCam.clip_id] ?? null) : null} className="shrink-0" />
           <AgentLogPanel
             rows={log}
             origin={origin}
