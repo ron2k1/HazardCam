@@ -2,7 +2,7 @@
 
 The app's ``.venv`` has no torch, so ``hazards/scan.py`` asks this service for object boxes on
 the clip's temporal BACKGROUND image (``hazards/detector/client.py``). It replaces the
-teammate's FastSAM masks; ``scan.py`` turns every box into a rectangular mask and unions them
+original FastSAM masks; ``scan.py`` turns every box into a rectangular mask and unions them
 with the original edge-contour masks.
 
 Stdlib ``http.server`` only (ultralytics/torch/cv2 come from the ``cameravision/detector:local``

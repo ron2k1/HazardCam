@@ -34,7 +34,7 @@
       "eval_count": 1670
     },
     "audit_sha256": "743f6aae6b27011dd089b38db60d90c11037c8b4bc62ae4d247810a398167887",
-    "inference_source": "teammate run (Ollama, macOS)"
+    "inference_source": "original run (Ollama, macOS)"
   },
   "request_sha256": "1c52395194440a85a49878e400f384251fe6ef2c58d44e444d3d7a6d4b0d60e4",
   "model_error": null,
@@ -1163,7 +1163,7 @@
     "ported_from_sha256": "ae92565bdd6daff3332f2fe4d3c6669533b7eee16d32ce6fef23e42986eba132",
     "run_id": "ed487eb3f1181f38",
     "imported": true,
-    "imported_from": "teammate example_output: Ollama qwen3.6:35b-a3b on macOS, FastSAM-s, astra-1.1",
+    "imported_from": "original example_output: Ollama qwen3.6:35b-a3b on macOS, FastSAM-s, astra-1.1",
     "original_report_sha256": "f3dac3afb72313442f57bf9781454aa9dfae30703f729ba28e8104a91ad8eb33",
     "quality_warnings": [],
     "processed_video": {

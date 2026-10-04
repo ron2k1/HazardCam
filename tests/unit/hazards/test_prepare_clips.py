@@ -229,7 +229,7 @@ def test_labels_narrow_the_selection_by_name_or_index(dataset: Path):
 def test_labels_and_prune_restage_a_smaller_set(staged: Path, dataset: Path, tmp_path: Path):
     data = tmp_path / "data"
     shutil.copytree(staged, data)
-    (data / "clips" / "hz_00").mkdir()  # the teammate example slot is never pruned
+    (data / "clips" / "hz_00").mkdir()  # the original example slot is never pruned
     (data / "reports" / "hz_00").mkdir(parents=True)
     argv = ["--dataset", str(dataset), "--out", str(data), "--seed", "7", "--labels", "0,10"]
     with pytest.raises(SystemExit, match="already holds a different video"):
@@ -250,12 +250,12 @@ def test_missing_split_is_reported(tmp_path: Path):
         prepare_clips.select_dataset_clips(tmp_path, "test", 1)
 
 
-# --- teammate example import ----------------------------------------------------------------
+# --- original example import ----------------------------------------------------------------
 
 
 @pytest.fixture(scope="module")
 def fake_example(tmp_path_factory: pytest.TempPathFactory) -> Path:
-    """An example_output/ shaped like the teammate's, built from a stub-model run."""
+    """An example_output/ shaped like the original one, built from a stub-model run."""
     root = tmp_path_factory.mktemp("example")
     video = make_synthetic_video(root / "safety_hazard" / prepare_clips.EXAMPLE_VIDEO)
     stub = StubVLLM()
@@ -293,7 +293,7 @@ def test_import_example_as_hz_00(fake_example: Path, tmp_path: Path):
 
     rep = json.loads((run_dir / "hazard_report.json").read_text())
     assert rep["video"]["source_name"] == "hz_00"
-    assert rep["model"]["inference_source"] == "teammate run (Ollama, macOS)"
+    assert rep["model"]["inference_source"] == "original run (Ollama, macOS)"
     assert rep["artifacts"]["processed_video"] == "processed.mp4"
     assert rep["instructions"]["system_prompt"] == review.SYSTEM_PROMPT
     assert rep["pipeline"]["version"] == "astra-1.1" and rep["pipeline"]["imported"] is True

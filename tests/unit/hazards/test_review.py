@@ -39,7 +39,7 @@ def _validate(report: dict[str, Any]) -> review.ModelReport:
 # --- validate_model_report (upstream rules) --------------------------------------------------
 
 
-def test_the_teammate_model_report_validates():
+def test_the_original_model_report_validates():
     result = _validate(MODEL_REPORT)
     assert len(result.findings) == 2 and len(result.zone_reviews) == 10
     assert [f.title for f in result.findings] == [f["title"] for f in EXAMPLE["findings"]]

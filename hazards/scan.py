@@ -1,6 +1,6 @@
 """Computer-vision stages of the hazard review, ported from ``astra_video_hazard.py``.
 
-Every video assumption of the teammate script (astra-1.1) is kept: fixed camera, every
+Every video assumption of the original script (astra-1.1) is kept: fixed camera, every
 frame decoded and resized to 768 px wide with INTER_AREA, timing = frame_index / fps, a
 21-sample per-pixel median background, the same motion masks, quality warnings, movement
 zones, floor/paint rules, static-candidate score, selection, evidence sampling and labels.

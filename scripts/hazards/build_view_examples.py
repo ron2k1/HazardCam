@@ -1,6 +1,6 @@
-"""Rebuild the /hazards contract examples from the real teammate run.
+"""Rebuild the /hazards contract examples from the real original run.
 
-Input: ``contracts/examples/hazards/source/`` holds verbatim copies of the teammate's
+Input: ``contracts/examples/hazards/source/`` holds verbatim copies of the original
 ``hazard_report.json`` and ``run_manifest.json`` (Ollama qwen3.6:35b-a3b on macOS,
 FastSAM-s, astra-1.1; imported as clip ``hz_00`` "Press line camera"). The prompts come
 from the byte-identical script copy under ``third_party/astra_safety_hazard/``.
@@ -13,7 +13,7 @@ through the review runner seam (clip ``hz_02``, 2026-10-03): its ``hazard_report
 Output (``contracts/examples/hazards/``): ``hazard_view.json`` (reviewed),
 ``hazard_view_not_reviewed.json``, ``hazard_view_agent.json`` (agent run, demo replay on),
 ``clips.json``, ``instructions.json``, ``review_accepted.json``, ``job_latest.json``,
-``job_events.json`` (demo replay of the teammate run), ``job_events_agent.json`` (demo
+``job_events.json`` (demo replay of the original run), ``job_events_agent.json`` (demo
 replay of the agent run, narration included), ``job_events_failed.json`` and ``wall.json``.
 ``runtime_status.json`` is a captured ``GET /api/runtime/status`` from the GB10 and is not
 rebuilt here. Wording comes from ``config/hazards.yaml``, the wall from ``config/wall.yaml``.
@@ -60,7 +60,7 @@ AGENT_SOURCE = SOURCE / "agent_run"
 # Not rebuilt: a captured GET /api/runtime/status (validated against the schema only).
 STATIC_EXAMPLES = ("runtime_status.json",)
 EXAMPLE_JOB_ID = "hzjob_0123456789ab"
-# Judge-only label of the teammate clip (4_tr1.mp4 from the train split).
+# Judge-only label of the original clip (4_tr1.mp4 from the train split).
 EXAMPLE_LABEL = {"dataset_label": "4_safe_walkway"}
 # A not-yet-reviewed clip as scripts/hazards/prepare_clips.py describes it (neutral id and
 # title; duration of the first test-split clip, 372 frames at 24.83 fps).
@@ -124,7 +124,7 @@ def replay_events(
     return [*out, {"event": "done", "data": done}]
 
 
-def teammate_run_id(report: dict[str, Any]) -> str:
+def original_run_id(report: dict[str, Any]) -> str:
     """The script's RUN_ID: sha256 of {source, config, weights}, first 16 hex."""
     key = {
         "source": report["video"]["source_sha256"],
@@ -157,7 +157,7 @@ def build() -> dict[str, Any]:
         manifest=manifest,
         label=EXAMPLE_LABEL,
         prompts=prompts,
-        run_id=teammate_run_id(report),
+        run_id=original_run_id(report),
     )
     agent_report = _load("hazard_report.json", AGENT_SOURCE)
     agent_manifest = _load("run_manifest.json", AGENT_SOURCE)
@@ -192,7 +192,7 @@ def build() -> dict[str, Any]:
         manifest,
         wording,
         clip_id=clip["clip_id"],
-        run_id=teammate_run_id(report),
+        run_id=original_run_id(report),
         runner=DIRECT_RUNNER,
     )
     agent_events = replay_events(

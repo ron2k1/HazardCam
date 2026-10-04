@@ -1,4 +1,4 @@
-"""Safety hazard review: a GB10 port of the teammate's astra-1.1 single-camera pipeline.
+"""Safety hazard review: a GB10 port of the original astra-1.1 single-camera pipeline.
 
 Stages (``hazards.pipeline.review_clip``):
 

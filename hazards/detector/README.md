@@ -1,7 +1,7 @@
 # Local YOLO detector (Safety hazard scan)
 
 `hazards/scan.py` needs object boxes on each clip's temporal **background** image, in place of
-the teammate's FastSAM masks. The app's `.venv` has no torch, so YOLO runs here: a stdlib
+the original script's FastSAM masks. The app's `.venv` has no torch, so YOLO runs here: a stdlib
 `http.server` in the container `detector`, published on **127.0.0.1:8003 only**.
 
 | File | Runs where | What |

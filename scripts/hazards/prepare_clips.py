@@ -12,17 +12,17 @@ The label, split and original name therefore go ONLY to the judge-only
 are neutral and assigned in a seeded shuffled order, so the id order does not follow the
 label order either. The review pipeline and the model only ever see the clip id.
 
-``--import-example`` imports the teammate's real run as ``hz_00`` "Press line camera":
+``--import-example`` imports the original real run as ``hz_00`` "Press line camera":
 source video, evidence images and report JSON go to ``data/hazards/reports/hz_00/<run_id>/``
 (processed video transcoded to browser H.264), with the verbatim prompts added as
-``instructions`` and ``model.inference_source`` = "teammate run (Ollama, macOS)".
+``instructions`` and ``model.inference_source`` = "original run (Ollama, macOS)".
 
 Nothing reads ``/media`` at runtime: everything needed is copied into ``data/hazards``.
 
 Usage::
 
     .venv/bin/python scripts/hazards/prepare_clips.py                  # 8 dataset clips
-    .venv/bin/python scripts/hazards/prepare_clips.py --import-example # + teammate run
+    .venv/bin/python scripts/hazards/prepare_clips.py --import-example # + original run
     .venv/bin/python scripts/hazards/prepare_clips.py --skip-dataset --import-example
     # only some labels (dir name or its index), dropping other staged dataset clips:
     .venv/bin/python scripts/hazards/prepare_clips.py --labels 0,1,3 --prune --force
@@ -82,7 +82,7 @@ EXAMPLE_LABEL = {
     "dataset_split": "train",
     "original_name": "4_tr1.mp4",
 }
-EXAMPLE_INFERENCE_SOURCE = "teammate run (Ollama, macOS)"
+EXAMPLE_INFERENCE_SOURCE = "original run (Ollama, macOS)"
 SCRIPT_STEPS = (
     "[1/6] Scanning video frames...",
     "[2/6] Measuring motion...",
@@ -283,7 +283,7 @@ def write_clip(
 def prune_dataset_slots(data_dir: Path, keep: set[str]) -> list[str]:
     """Remove staged dataset clip ids not in ``keep`` (clip, label and reports).
 
-    The teammate example (hz_00) is never touched. Returns the removed ids.
+    The original example (hz_00) is never touched. Returns the removed ids.
     """
     clips_dir = data_dir / "clips"
     if not clips_dir.is_dir():
@@ -333,7 +333,7 @@ def prepare_dataset(args: argparse.Namespace, data_dir: Path) -> list[dict[str, 
 
 
 def upstream_run_id(manifest: dict[str, Any]) -> str:
-    """The teammate script's RUN_ID: sha256({source, config, weights})[:16]."""
+    """The original script's RUN_ID: sha256({source, config, weights})[:16]."""
     key = {
         "source": manifest["source_sha256"],
         "config": manifest["config"],
@@ -360,7 +360,7 @@ def transcode_h264(src: Path, dest: Path, expected_frames: int) -> dict[str, Any
 
 
 def import_example(example_dir: Path, data_dir: Path, *, force: bool) -> Path:
-    """The teammate's real run as hz_00 (neutral source_name, verbatim model output)."""
+    """The original script's real run as hz_00 (neutral source_name, verbatim model output)."""
     video = example_dir / EXAMPLE_VIDEO
     out_dir = example_dir / "example_output"
     report_path = out_dir / "hazard_report.json"
@@ -421,7 +421,7 @@ def import_example(example_dir: Path, data_dir: Path, *, force: bool) -> Path:
         "run_id": run_id,
         "imported": True,
         "imported_from": (
-            "teammate example_output: Ollama qwen3.6:35b-a3b on macOS, FastSAM-s, astra-1.1"
+            "original example_output: Ollama qwen3.6:35b-a3b on macOS, FastSAM-s, astra-1.1"
         ),
         "original_report_sha256": original_sha,
         "quality_warnings": manifest.get("quality_warnings") or [],
@@ -431,7 +431,7 @@ def import_example(example_dir: Path, data_dir: Path, *, force: bool) -> Path:
 
     manifest["source"]["source_name"] = EXAMPLE_CLIP_ID
     manifest["imported"] = {
-        "from": "teammate example_output (verbatim model output)",
+        "from": "original example_output (verbatim model output)",
         "original_report_sha256": original_sha,
         "processed_video": "re-encoded to browser H.264 (yuv420p, faststart)",
     }
@@ -469,7 +469,7 @@ def find_example_dir(explicit: Path | None) -> Path:
     for candidate in EXAMPLE_DIRS:
         if (candidate / EXAMPLE_VIDEO).is_file():
             return candidate
-    raise SystemExit(f"no teammate example found in {[str(p) for p in EXAMPLE_DIRS]}")
+    raise SystemExit(f"no original example found in {[str(p) for p in EXAMPLE_DIRS]}")
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -499,7 +499,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         const="auto",
         default=None,
         metavar="DIR",
-        help="import the teammate run (folder holding 4_tr1.mp4 and example_output/)",
+        help="import the original run (folder holding 4_tr1.mp4 and example_output/)",
     )
     parser.add_argument("--force", action="store_true", help="replace a clip id's video")
     return parser.parse_args(argv)
@@ -514,7 +514,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.import_example is not None:
         explicit = None if args.import_example == "auto" else Path(args.import_example)
         example = find_example_dir(explicit)
-        print(f"importing teammate run from {example}")
+        print(f"importing original run from {example}")
         import_example(example, data_dir, force=args.force)
     print(f"done: {data_dir}")
     return 0

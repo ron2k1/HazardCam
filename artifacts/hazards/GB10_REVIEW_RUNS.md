@@ -22,7 +22,7 @@ The dataset-label column is for judges only. Labels live in `data/hazards/labels
 | hz_02 | Floor camera 02 | `0_safe_walkway_violation` (test, `0_te1.mp4`) | 2 | High | Obstruction of marked aisle by stored materials (M); Worker proximity to machinery (H, needs a check) | 22.08 | 12.28 | 45.77 | 25831 / 1673 | 27498 / 1317 | 29 | model_review_complete |
 | hz_03 | Floor camera 03 | `1_unauthorized_intervention` (test, `1_te1.mp4`) | 2 | High | Mechanical power press point-of-operation guarding (H, needs a check); Obstruction of marked aisle by stored material (L) | 59.11 | 29.62 | 105.53 | 29239 / 2121 | 31272 / 1689 | 35 | model_review_complete |
 | hz_00 (our port, 2nd run dir) | Press line camera | `4_safe_walkway` (train, `4_tr1.mp4`) | 2 | High | Worker exposure at machine point of operation (H, needs a check); Obstruction of marked aisle (M) | 59.98 | 33.41 | 106.39 | 28938 / 2184 | 31013 / 1732 | 35 | model_review_complete |
-| hz_00 (teammate run, **default shown**) | Press line camera | `4_safe_walkway` (train, `4_tr1.mp4`) | 2 | Medium | Obstruction in marked aisle (M); Worker proximity to machine point of operation (M, needs a check) | 68.95 | 27.79 | n/a | 27500 / 1790 | 29234 / 1670 | 35 | model_review_complete (Ollama `qwen3.6:35b-a3b`, macOS, FastSAM-s) |
+| hz_00 (original run, **default shown**) | Press line camera | `4_safe_walkway` (train, `4_tr1.mp4`) | 2 | Medium | Obstruction in marked aisle (M); Worker proximity to machine point of operation (M, needs a check) | 68.95 | 27.79 | n/a | 27500 / 1790 | 29234 / 1670 | 35 | model_review_complete (Ollama `qwen3.6:35b-a3b`, macOS, FastSAM-s) |
 
 How to read the timing columns:
 - Review s and Audit s are the model calls' `elapsed_seconds`. Every review took one call; no repair turn was needed.
@@ -35,7 +35,7 @@ How to read the timing columns:
 - hz_02 `ed02d540b08f6395`
 - hz_03 `03085f3782c5f322`
 - hz_00 port `f12f98a9f3b78349`
-- hz_00 teammate `ed487eb3f1181f38`. `reports/hz_00/latest_run.json` points here, so this run stays the default view.
+- hz_00 original `ed487eb3f1181f38`. `reports/hz_00/latest_run.json` points here, so this run stays the default view.
 
 **Segmentation.** All four GB10 runs read `local YOLO11s boxes on the temporal background + edge contours`. The only quality warning on any of them is the upstream "No reliable floor-like mask found…".
 
@@ -63,21 +63,21 @@ The model was never asked to classify the clip. It does a general hazard screen,
   - Whether the intervention is authorised can't be seen, and the model correctly leaves that open.
   - The second finding (Low) is containers stored on the green walkway.
 - **hz_00, `4_safe_walkway` (a "safe" label): different hazards.**
-  - Both the teammate run and our port flag the round metal object on the aisle and the seated worker at the press point of operation.
+  - Both the original run and our port flag the round metal object on the aisle and the seated worker at the press point of operation.
   - The label only describes walkway behaviour, so these findings are additional scene hazards, not a contradiction.
 
-## Comparison on the same video: hz_00, teammate run vs our port
+## Comparison on the same video: hz_00, original run vs our port
 
-Our port on the GB10 is set against the teammate's run on macOS (Ollama `qwen3.6:35b-a3b`, FastSAM-s). Both runs used the same source file (sha256 `d80a7143…53d5eb`).
+Our port on the GB10 is set against the original run on macOS (Ollama `qwen3.6:35b-a3b`, FastSAM-s). Both runs used the same source file (sha256 `d80a7143…53d5eb`).
 
 **Video handling: the same assumptions.**
 - Both decoded 315 frames at 24.99 fps (12.61 s) and analysed at 768x432.
 - Both produced 35 evidence images: 11 full-scene, 20 zone crops and 4 scene tiles, in the same order with the same ids.
 - 32 of 35 items have the same (id, kind, zone id, frame). The other 3 differ only by motion-peak frame: E002 frame 7 vs 3, E014 frame 7 vs 1 (Z02 peak), and E016 frame 16 vs 15 (Z03 peak). This is the known decoder/platform difference documented in `third_party/astra_safety_hazard/PROVENANCE.md`. On the same machine, the port and the upstream code are byte-identical (`tests/unit/hazards/test_upstream_video_parity.py`).
 
-**Movement zones: 5 of 5 match.** Each pair is teammate vs port.
+**Movement zones: 5 of 5 match.** Each pair is original vs port.
 
-| Zone | Teammate box | Port box | IoU | Peak frame (teammate / port) |
+| Zone | Original box | Port box | IoU | Peak frame (original / port) |
 |---|---|---|---|---|
 | Z01 | `[553,0,658,155]` | `[553,0,658,155]` | 1.00 | 311 / 311 |
 | Z02 | `[246,26,293,80]` | `[246,26,293,80]` | 1.00 | 7 / 1 |
@@ -88,25 +88,25 @@ Our port on the GB10 is set against the teammate's run on macOS (Ollama `qwen3.6
 Active windows are the same, apart from Z03 ending at 4.32 s vs 4.36 s.
 
 **Static zones: 1 of 5 match.** This is the one intended change: FastSAM masks are replaced by local YOLO boxes plus edge contours.
-- The match: teammate Z09, the purple scrap bin, is port Z07 (the yolo11s "traffic light" box), IoU 0.94.
+- The match: original Z09, the purple scrap bin, is port Z07 (the yolo11s "traffic light" box), IoU 0.94.
 - Not selected by the port:
-  - teammate Z06, the floor section;
-  - **teammate Z07, the round metal object in the aisle**. yolo11s does see it ("suitcase" 0.251), but it ranks below the top-5 static candidates;
-  - teammate Z08, the document stand;
-  - teammate Z10, the pallet.
+  - original Z06, the floor section;
+  - **original Z07, the round metal object in the aisle**. yolo11s does see it ("suitcase" 0.251), but it ranks below the top-5 static candidates;
+  - original Z08, the document stand;
+  - original Z10, the pallet.
 - Selected by the port instead (all edge contours): Z06 the right-hand green walkway, Z08 the machine guard cage, Z09 the press side panel, Z10 the coil/stand area.
 
 **Findings: the same two concerns, with different detail.**
 
-| | Teammate (macOS, FastSAM) | Our port (GB10, YOLO + edge) |
+| | Original (macOS, FastSAM) | Our port (GB10, YOLO + edge) |
 |---|---|---|
 | Worker at the press | H02 *Worker Proximity to Machine Point of Operation*; Medium, needs_verification, conf medium; zone Z03; evidence E016, E017, E034; standard 1910.217(c)(1)(i) | H01 *Worker Exposure at Machine Point of Operation*; **High**, needs_verification, conf high; zones Z03, Z05; evidence includes E016, E017, E034; standards 1910.212(a)(3)(ii) and 1910.147(a)(2) |
 | Round metal object in the aisle | H01 *Obstruction in Marked Aisle*; Medium, visible_concern, conf high; zone **Z07** (the object's own zone); evidence E024, E025, E035; standard 1910.176(a) | H02 *Obstruction of Marked Aisle*; Medium, visible_concern, conf high; zone **Z06**; evidence E001–E011, E022, E023, E035; standards 1910.22(a)(3) and 1910.176(a) |
 
 Both runs reported exactly these two concerns, the aisle one as visible_concern and the worker one as needs_verification. Where they differ:
-- **Severity.** The port rates the worker exposure High; the teammate run rated it Medium.
+- **Severity.** The port rates the worker exposure High; the original run rated it Medium.
 - **Zone attribution.** The port has no zone on the round object, so the model attached the obstruction to Z06, the green walkway on the right of the frame. The Z06 crops (E022, E023) show only the walkway; the object is visible in the full-scene frames and in scene tile E035.
-- **Wording.** The port's text says the object sits "on top of the green painted aisle marking". In the frames it is on the grey aisle by the yellow line, which is what the teammate run says.
+- **Wording.** The port's text says the object sits "on top of the green painted aisle marking". In the frames it is on the grey aisle by the yellow line, which is what the original run says.
 
 **Run-to-run agreement on the identical request.** Three GB10 calls sent the byte-identical request (sha256 `f2dee4678dc44c2b…`).
 
@@ -118,7 +118,7 @@ Both runs reported exactly these two concerns, the aisle one as visible_concern 
 
 - The worker-at-press finding came out every time, and High every time.
 - The second finding changes between calls even at temperature 0 and seed 42, because vLLM batching does not give bit-exact results across batch compositions.
-- The teammate's aisle-obstruction finding was reproduced in 1 of the 3 calls.
+- The original run's aisle-obstruction finding was reproduced in 1 of the 3 calls.
 - The weak link is the missing static zone on the round object. With FastSAM the object had its own zone and close-up crops.
 
 ## Fix made during these runs
@@ -163,7 +163,7 @@ At 18:12 UTC another client, likely the concurrent UI work, started a review of 
 
 What I did:
 - Replaced `f12f98a9f3b78349` with a clean copy of the port run recorded above. The copy matches the scratchpad file for file by sha256.
-- Restored `latest_run.json` to the teammate run `ed487eb3f1181f38`.
+- Restored `latest_run.json` to the original run `ed487eb3f1181f38`.
 - Kept that job's audit output in the scratchpad, outside the repo. It is the third sample in the agreement table.
 
 Any later "Check this clip" on hz_00 will again make a port run the default for hz_00.

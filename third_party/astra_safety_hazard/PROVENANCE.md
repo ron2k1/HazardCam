@@ -4,7 +4,7 @@
 |---|---|
 | File | `astra_video_hazard.py` (byte-identical copy, never edited) |
 | sha256 | `ae92565bdd6daff3332f2fe4d3c6669533b7eee16d32ce6fef23e42986eba132` |
-| Author | teammate (Safety hazard track, event day 2026-10-03) |
+| Author | Ronil Basu (Safety hazard track, event day 2026-10-03) |
 | Origin | operator's USB drive `GB10_BUNDLE/safety_hazard/astra_video_hazard.py`; same bytes as the local copy `/home/dell/factory-safety-agent/safety_hazard/astra_video_hazard.py` |
 | Pipeline version | `astra-1.1` (`CFG["pipeline_version"]`) |
 | Example run | `example_output/` next to the script: Ollama `qwen3.6:35b-a3b` (digest `a7eb95c5…`) on macOS 26.6.2 x86_64, Python 3.10.16, OpenCV 4.12, FastSAM-s weights (`c9f78716…`); input `4_tr1.mp4` (sha256 `d80a7143…`, 315 frames at 24.99 fps, 1920x1080); status `model_review_complete`, 10 zones, 35 evidence images, 2 findings (aisle obstruction; worker near the press point of operation) |
@@ -26,7 +26,7 @@ step messages against this file through `ast` (`tests/unit/hazards/test_upstream
 | `segmentation_weights_sha256` = FastSAM sha256 | `{model: sha256}` of the YOLO weights the detector used (from its `/health`), also `run_manifest.json` `weights_sha256` and part of the run id | Provenance of the proposal model |
 | pandas CSVs, matplotlib figures | `csv` module; `zones_overview.jpg` (annotated first frame) and `motion_heatmap.png` (`cv2.applyColorMap` magma over the background). No `source_overview.png`, `motion_summary.png` or contact sheet | No pandas/matplotlib in the `.venv`, and no new dependencies |
 | `cv2.VideoWriter` `avc1`/`mp4v` -> `<stem>_processed.mp4` | cv2 writes a lossless FFV1 intermediate, then ffmpeg makes `processed.mp4`: libx264, yuv420p, `+faststart`, same fps. The frame count is checked with cv2 and with `ffprobe -count_frames` | This OpenCV build cannot encode avc1, and mp4v does not play in Chrome |
-| `source_name` = the input file name | `source_name` = a neutral clip id (`hz_00`, `hz_01`, ...) | The teammate run sent `4_tr1.mp4` to the model. Dataset file names start with the label index (`4_` = `4_safe_walkway`), which leaks the label. Labels live only in judge-only `data/hazards/labels/` |
+| `source_name` = the input file name | `source_name` = a neutral clip id (`hz_00`, `hz_01`, ...) | The original run sent `4_tr1.mp4` to the model. Dataset file names start with the label index (`4_` = `4_safe_walkway`), which leaks the label. Labels live only in judge-only `data/hazards/labels/` |
 | `RUN_ID` = sha256(source, CFG, FastSAM sha)[:16] | sha256(source, CFG, detector sha256s, `astra-1.1-gb10`)[:16] | Separates port runs from upstream runs and detector-up from detector-down runs |
 | `assert` | Explicit raises (survive `python -O`) | Same checks |
 | Audit-pass errors caught: `RequestException`, `ValueError`, `KeyError` | Also catches `ModelCallError` (the ChatClient's HTTP failure) | The equivalent of `requests` HTTP errors |
@@ -75,7 +75,7 @@ print) and the port on five generated clips:
 Metadata, motion arrays, quality warnings, proposals, zones, the floor mask, annotated
 frames and every evidence JPEG are identical, byte for byte where both write a file.
 
-Known platform difference against the teammate's macOS run of `4_tr1.mp4` (edge-contour
+Known platform difference against the original macOS run of `4_tr1.mp4` (edge-contour
 fallback on the GB10):
 - Movement zones match within ±3 px, with `proposal_score` within 0.5%.
 - Two movement zones' peak frames differ: Z02 frame 1 vs 7, Z03 frame 15 vs 16. Their
@@ -85,6 +85,6 @@ fallback on the GB10):
 - The cause is H.264 decode, colour conversion and the `np.argsort` tie order, which
   differ slightly between OpenCV/numpy builds (macOS OpenCV 4.12 / numpy 1.26 vs GB10
   OpenCV 5.0 / numpy 2.5).
-- The teammate's FastSAM static zone on the aisle object (their Z07) is not among the
+- The original run's FastSAM static zone on the aisle object (its Z07) is not among the
   edge-contour fallback's zones. That fallback is the recall limit the upstream warning
   describes.
