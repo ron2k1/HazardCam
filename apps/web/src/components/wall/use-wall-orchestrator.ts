@@ -64,12 +64,26 @@ export interface SiteAlert {
   line: string;
   job_id: string | null;
 }
+/** One line of the lead agent's own trace, verbatim from the API (`lead` SSE event). */
+export interface LeadLine {
+  t: number;
+  /** plan | tool | alerts | turn | say: "tool" and "alerts" lines are the lead's tool calls. */
+  kind: string;
+  text: string;
+}
 export interface SiteState {
   id: string;
+  /** "replay" re-plays the latest recorded lead run (compressed); "live" is a new one. */
+  mode: string;
+  /** How many checkers the run had; a replay on this wall may follow fewer of them. */
+  runCams: number | null;
   state: "running" | "done";
   checkers: Record<number, CheckerState>;
   alerts: SiteAlert[] | null;
+  lead: LeadLine[];
 }
+
+const LEAD_LINES_KEPT = 200;
 
 const IDLE: TileRun = {
   phase: "watching",
@@ -336,12 +350,26 @@ export function useWallOrchestrator(cameras: WallCamera[], loadedAt: number | nu
           body: "{}",
         });
         if (!res.ok) throw new Error(String(res.status));
-        const body = (await res.json()) as { site_run_id: string; events_url: string };
+        const body = (await res.json()) as { site_run_id: string; mode?: string; run_cams?: number; events_url: string };
         if (!alive.current) return;
         siteMode.current = "site";
-        setSite({ id: body.site_run_id, state: "running", checkers: {}, alerts: null });
+        setSite({
+          id: body.site_run_id,
+          mode: typeof body.mode === "string" ? body.mode : "live",
+          runCams: typeof body.run_cams === "number" ? body.run_cams : null,
+          state: "running",
+          checkers: {},
+          alerts: null,
+          lead: [],
+        });
         const es = new EventSource(apiUrl(body.events_url));
         source = es;
+        es.addEventListener("lead", (e) => {
+          const d = parseData(e);
+          if (!d || typeof d.text !== "string" || !alive.current) return;
+          const line: LeadLine = { t: Number(d.t_s) || 0, kind: String(d.kind ?? "say"), text: d.text };
+          setSite((prev) => (prev ? { ...prev, lead: [...prev.lead, line].slice(-LEAD_LINES_KEPT) } : prev));
+        });
         es.addEventListener("checker", (e) => {
           const d = parseData(e);
           if (!d || !alive.current) return;
@@ -425,5 +453,5 @@ export function useWallOrchestrator(cameras: WallCamera[], loadedAt: number | nu
 
   const retry = useCallback((cam: WallCamera) => void run(cam), [run]);
 
-  return { runs, notifications, toasts, dismissToast, retry, idle: IDLE, site, origin };
+  return { runs, notifications, toasts, dismissToast, retry, idle: IDLE, site, direct, origin };
 }

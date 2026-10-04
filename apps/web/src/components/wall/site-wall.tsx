@@ -9,6 +9,7 @@ import { LIVE } from "@/lib/config";
 import { configured, fetchWall, viewHref, WALL, wallCameras, type WallConfig } from "@/lib/wall";
 import { cn } from "@/lib/utils";
 
+import { AgentStrip } from "./agent-strip";
 import { CctvTile } from "./cctv-tile";
 import { NotificationTray, Toasts } from "./notification-tray";
 import { useAgentLog } from "./use-agent-log";
@@ -39,9 +40,10 @@ const sameConfig = (a: WallConfig | null, b: WallConfig) => !!a && JSON.stringif
  * starts each camera's check by itself; a result appears on a tile only after its check completes,
  * and every word of it comes from that clip's stored run through the API.
  *
- * Layout (desktop): 01 live feeds in one grid; a right rail with 02 detections, 03 the blind-zone
- * plan of one camera (the latest alert, or the tile last clicked), 04 the agent log of every check
- * event, 05 a timeline of the checks against wall time.
+ * Layout (desktop): 00 the agent team (the lead and one checker per camera) over 01 the live
+ * feeds in one grid; a right rail with 02 detections, 03 the blind-zone plan of one camera (the
+ * latest alert, or the tile or checker last clicked), 04 the agent log of every check event, 05 a
+ * timeline of the checks against wall time.
  */
 export function SiteWall() {
   const [config, setConfig] = useState<WallConfig | null>(null);
@@ -82,7 +84,7 @@ export function SiteWall() {
   }, [loadedAt]);
 
   const cameras = useMemo(() => (config ? wallCameras(config) : []), [config]);
-  const { runs, notifications, toasts, dismissToast, retry, idle, site, origin } = useWallOrchestrator(cameras, loadedAt);
+  const { runs, notifications, toasts, dismissToast, retry, idle, site, direct, origin } = useWallOrchestrator(cameras, loadedAt);
   const log = useAgentLog(cameras, runs, site);
 
   // Pop-outs: every new notification fires one, once (remembered in this tab, so coming back to
@@ -148,10 +150,19 @@ export function SiteWall() {
         agentActive={watching && cameras.length > 0}
         checked={checked}
         total={cameras.length}
-        site={site}
       />
 
       <main className="flex min-h-0 flex-1 flex-col gap-3 px-4 py-3 lg:px-5 xl:flex-row">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-3">
+          <AgentStrip
+            cameras={cameras}
+            runs={runs}
+            idle={idle}
+            site={site}
+            direct={direct}
+            focusClip={planCam?.clip_id ?? null}
+            onPick={setPicked}
+          />
         <Panel
           index="01"
           title="Live feeds"
@@ -181,10 +192,17 @@ export function SiteWall() {
             )}
           </div>
         </Panel>
+        </div>
 
         <div className="flex min-h-0 shrink-0 flex-col gap-3 xl:w-[400px] 2xl:w-[440px]">
           <NotificationTray items={notifications} watching={watching} className="min-h-[150px] xl:flex-[1_1_0%]" />
-          <BlindZonePlanPanel cam={planCam} run={planCam ? (runs[planCam.clip_id] ?? null) : null} className="shrink-0" />
+          <BlindZonePlanPanel
+            cameras={cameras}
+            cam={planCam}
+            run={planCam ? (runs[planCam.clip_id] ?? null) : null}
+            onPick={setPicked}
+            className="shrink-0"
+          />
           <AgentLogPanel
             rows={log}
             origin={origin}

@@ -19,14 +19,15 @@ export interface LogRow {
 const MAX_ROWS = 120;
 
 /**
- * The wall's agent log: one row per change the orchestrator already saw (a lead-agent checker
- * state, a check starting, each pipeline step word, the agent's own narration line, the result).
+ * The wall's agent log: one row per change the orchestrator already saw (a lead-agent trace line
+ * or checker state, a check starting, each pipeline step word, the agent's own narration line, the result).
  * Nothing is written here that did not arrive from the API's job and site-run events.
  */
 export function useAgentLog(cameras: WallCamera[], runs: Record<string, TileRun>, site: SiteState | null): LogRow[] {
   const [rows, setRows] = useState<LogRow[]>([]);
   const prevRuns = useRef<Record<string, TileRun>>({});
   const prevCheckers = useRef<Record<number, string>>({});
+  const leadSeen = useRef<{ id: string; n: number }>({ id: "", n: 0 });
   const seq = useRef(0);
 
   useEffect(() => {
@@ -39,6 +40,13 @@ export function useAgentLog(cameras: WallCamera[], runs: Record<string, TileRun>
       if (prevCheckers.current[cam] !== state) push(cam, "LEAD", `checker ${state}`);
     }
     prevCheckers.current = { ...(site?.checkers ?? {}) };
+
+    // the lead's own trace lines, verbatim, as site rows
+    if (site) {
+      const from = leadSeen.current.id === site.id ? leadSeen.current.n : 0;
+      for (const line of site.lead.slice(from)) push(null, "LEAD", line.text);
+      leadSeen.current = { id: site.id, n: site.lead.length };
+    }
 
     for (const cam of cameras) {
       const r = runs[cam.clip_id];

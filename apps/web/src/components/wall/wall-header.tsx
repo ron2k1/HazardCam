@@ -31,8 +31,6 @@ export interface WallHeaderProps {
   agentActive: boolean;
   checked: number;
   total: number;
-  /** The site run's checkers, one per camera (lead agent row); null when the wall checks directly. */
-  site?: { id: string; state: string; checkers: Record<number, string> } | null;
 }
 
 // Recording build: the stack line is fixed "on". The replayed checks are stored runs from the
@@ -43,7 +41,7 @@ const STACK_PARTS = ["Safety agent on this computer", "secure sandbox on", "no i
  * CameraVision header, the same layout as the /hazards screens: brand, page name, the two product
  * links, the one-line stack status and a clock; under it the safety agent's own status line.
  */
-export function WallHeader({ title, agentLine, agentActive, checked, total, site }: WallHeaderProps) {
+export function WallHeader({ title, agentLine, agentActive, checked, total }: WallHeaderProps) {
   return (
     <header className="shrink-0 border-b border-line" data-testid="wall-header">
       <div className="flex min-h-12 flex-wrap items-center justify-between gap-x-5 gap-y-2 px-4 py-2 lg:px-6">
@@ -84,29 +82,7 @@ export function WallHeader({ title, agentLine, agentActive, checked, total, site
         <p className="flex items-center gap-2 text-[12px] text-fg/85" data-testid="wall-agent-line">
           <StatusDot tone={agentActive ? "fg" : "muted"} pulse={agentActive} />
           {agentLine}
-          {site ? <span className="micro ml-2 text-fg/45">RUN {site.id.slice(-8).toUpperCase()}</span> : null}
         </p>
-        {site ? (
-          <span className="tele flex items-center gap-2" data-testid="wall-lead-row">
-            <span>LEAD AGENT · {total || 4} CHECKERS</span>
-            {Array.from({ length: total || 4 }, (_, i) => i + 1).map((n) => {
-              const st = site.checkers[n] ?? "queued";
-              return (
-                <span
-                  key={n}
-                  title={`CAM ${n}: ${st}`}
-                  aria-label={`CAM ${n} ${st}`}
-                  className={cn(
-                    "inline-block size-2 border border-fg/60",
-                    st === "done" && "bg-fg",
-                    st === "running" && "bg-fg/40 motion-safe:animate-pulse",
-                    st === "failed" && "border-danger bg-danger",
-                  )}
-                />
-              );
-            })}
-          </span>
-        ) : null}
         {total ? (
           <span className="tele tabular-nums" data-testid="wall-checked">
             Checked {checked} of {total}
