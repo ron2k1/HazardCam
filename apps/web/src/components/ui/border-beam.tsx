@@ -51,7 +51,9 @@ export const BorderBeam = ({
   return (
     <div
       aria-hidden
-      className="pointer-events-none absolute inset-0 border-(length:--border-beam-width) border-transparent mask-[linear-gradient(transparent,transparent),linear-gradient(#000,#000)] mask-intersect [mask-clip:padding-box,border-box]"
+      // overflow-clip (edge pushed out to the border box) keeps the travelling square's layout box
+      // from adding page scroll when the frame sits at the viewport edge; the mask still draws it
+      className="pointer-events-none absolute inset-0 overflow-clip border-(length:--border-beam-width) border-transparent [overflow-clip-margin:var(--border-beam-width)] mask-[linear-gradient(transparent,transparent),linear-gradient(#000,#000)] mask-intersect [mask-clip:padding-box,border-box]"
       style={{ "--border-beam-width": `${borderWidth}px` } as React.CSSProperties}
     >
       <motion.div

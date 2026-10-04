@@ -157,6 +157,14 @@
     background-size: 12px 12px;
   }
 
+  /* plotting grid behind the camera wall */
+  .grid-field {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
   /* withheld judge tile: diagonal hatch */
   .hatch {
     background-image: repeating-linear-gradient(
@@ -224,6 +232,78 @@
   animation: blink 1.2s steps(1) infinite;
 }
 
+/* Agent strip (components/wall/agent-strip.tsx): one packet runs down the lead's bus per real
+   tool call, and each checker's tap lights as it passes. Both rest invisible, so under reduced
+   motion (durations near zero, below) nothing is left on screen. */
+@keyframes bus-run {
+  from {
+    left: -56px;
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  to {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+.bus-packet {
+  position: absolute;
+  top: -1px;
+  left: -56px;
+  width: 56px;
+  height: 3px;
+  opacity: 0;
+  background: linear-gradient(90deg, transparent, var(--fg));
+  animation: bus-run 0.9s cubic-bezier(0.3, 0, 0.2, 1) both;
+}
+
+.bus-packet[data-kind="alerts"] {
+  background: linear-gradient(90deg, transparent, var(--warning));
+}
+
+/* dim at both ends: with fill "both" a tap waits its delay unlit, then flashes as the packet passes */
+@keyframes bus-tap {
+  from,
+  to {
+    background: var(--line-strong);
+    box-shadow: none;
+  }
+  15% {
+    background: var(--fg);
+    box-shadow: 0 0 6px var(--fg);
+  }
+}
+
+.bus-tap {
+  animation: bus-tap 0.8s ease-out both;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bus-tap {
+    animation-delay: var(--tap-delay, 0s);
+  }
+}
+
+/* AnimatedText (components/ui/animated-text.tsx): each letter's weight breathes between the
+   element's --breath-min and --breath-max on the variable JetBrains Mono axis (100-800);
+   --breath-s is one sweep, --breath-delay the letter's place in the wave */
+@keyframes breath {
+  from {
+    font-variation-settings: "wght" var(--breath-min, 100);
+  }
+  to {
+    font-variation-settings: "wght" var(--breath-max, 800);
+  }
+}
+
+.breath-letter {
+  font-variation-settings: "wght" var(--breath-min, 100);
+  animation: breath var(--breath-s, 1.5s) cubic-bezier(0.37, 0, 0.63, 1) var(--breath-delay, 0s) infinite alternate both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -235,5 +315,10 @@
   }
   .scanline {
     display: none;
+  }
+  /* no wave at all (the rule above shortens animations but leaves their delays) */
+  .breath-letter {
+    animation: none;
+    font-variation-settings: "wght" var(--breath-max, 800);
   }
 }

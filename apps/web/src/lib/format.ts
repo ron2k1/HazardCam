@@ -5,12 +5,12 @@ const pad = (n: number, w = 2) => String(Math.floor(Math.abs(n))).padStart(w, "0
 /** Seconds -> "MM:SS.ss" timecode. */
 export function timecode(seconds: number | null | undefined, decimals = 2): string {
   if (seconds == null || !Number.isFinite(seconds)) return "--:--.--";
-  const s = Math.max(0, seconds);
-  const m = Math.floor(s / 60);
-  const rest = s - m * 60;
-  const whole = Math.floor(rest);
-  const frac = decimals > 0 ? `.${pad(Math.round((rest - whole) * 10 ** decimals), decimals)}` : "";
-  return `${pad(m)}:${pad(whole)}${frac}`;
+  // Round once to whole units of the last digit, then split, so 5.996 s is 00:06.00, not 00:05.100.
+  const scale = 10 ** Math.max(0, decimals);
+  const units = decimals > 0 ? Math.round(Math.max(0, seconds) * scale) : Math.floor(Math.max(0, seconds));
+  const totalWhole = Math.floor(units / scale);
+  const frac = decimals > 0 ? `.${pad(units % scale, decimals)}` : "";
+  return `${pad(Math.floor(totalWhole / 60))}:${pad(totalWhole % 60)}${frac}`;
 }
 
 /** ISO timestamp -> "HH:MM:SS.mmm" (UTC, wall clock). */

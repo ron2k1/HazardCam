@@ -138,9 +138,14 @@ def validate_alerts(alerts: Any, checkers: Mapping[int, Mapping[str, Any]]) -> s
 class SiteRun:
     """One lead plus six checkers. Thread-safe; events are replayable for SSE."""
 
-    def __init__(self, site_run_id: str, cams: list[dict[str, Any]], mode: str) -> None:
+    def __init__(
+        self, site_run_id: str, cams: list[dict[str, Any]], mode: str, run_cams: int | None = None
+    ) -> None:
         self.site_run_id = site_run_id
         self.mode = mode
+        # How many checkers the run had: a replay keeps only the cameras still on the wall,
+        # while its lead trace still speaks of the recorded run's full count.
+        self.run_cams = len(cams) if run_cams is None else run_cams
         self.created_at = _now()
         self._t0 = time.monotonic()
         self._cond = threading.Condition()
@@ -240,6 +245,7 @@ class SiteRun:
             return {
                 "site_run_id": self.site_run_id,
                 "mode": self.mode,
+                "run_cams": self.run_cams,
                 "state": self.state,
                 "created_at": self.created_at,
                 "elapsed_s": self.ended_s if self.ended_s is not None else self.t(),
@@ -306,7 +312,9 @@ class SiteService:
                 raise LookupError("no completed site run to replay")
             on_wall = {t["clip_id"] for t in self.tiles()}
             cams = [c for c in stored["cams"] if c.get("clip_id") in on_wall]
-            run = SiteRun(f"site-{uuid.uuid4().hex[:10]}", cams, "replay")
+            run = SiteRun(
+                f"site-{uuid.uuid4().hex[:10]}", cams, "replay", run_cams=len(stored["cams"])
+            )
             target: Callable[[], None] = lambda: self._replay(run, stored)
         else:
             if self.lead_runner is None:
@@ -329,7 +337,8 @@ class SiteService:
             self.lead_runner(run, self)
         except Exception as exc:  # the lead failed; the checkers' reports still stand
             logger.warning("site lead failed", exc_info=True)
-            run.say(f"lead turn failed: {type(exc).__name__}", "tool")
+            # not a tool call: the wall counts kind "tool" lines as the lead's calls
+            run.say(f"lead turn failed: {type(exc).__name__}", "error")
         if not run.checks_started:
             self.start_checks(run)
         while not run.all_finished():
@@ -337,7 +346,9 @@ class SiteService:
         if run.alerts is None:
             run.alerts = self.fallback_alerts(run)
             run.alerts_source = "checkers"
-            run.say("Lead agent did not submit alerts; showing the checkers' own findings", "tool")
+            run.say(
+                "Lead agent did not submit alerts; showing the checkers' own findings", "fallback"
+            )
         run.finish("done")
         self.save(run)
 

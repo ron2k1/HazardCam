@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 // What this tab remembers about the wall: the checks' results (use-wall-orchestrator.ts SAVE_KEY)
 // and which pop-outs already showed (site-wall.tsx POPPED_KEY).
-const WALL_KEYS = ["cv-wall-checks-v2", "cv-wall-popped-v1"];
+const WALL_KEYS = ["cv-wall-checks-v3", "cv-wall-popped-v1"];
 
 /** Forget this tab's wall results and pop-outs, then load the wall fresh so every check runs again. */
 export function resetDemo() {

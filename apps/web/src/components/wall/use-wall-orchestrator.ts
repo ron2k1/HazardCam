@@ -64,12 +64,33 @@ export interface SiteAlert {
   line: string;
   job_id: string | null;
 }
+/** One line of the lead agent's own trace, verbatim from the API (`lead` SSE event). */
+export interface LeadLine {
+  t: number;
+  /** plan | tool | alerts | turn | say | error | fallback: "tool" and "alerts" lines are the lead's tool calls. */
+  kind: string;
+  text: string;
+}
+const isToolCall = (line: LeadLine) => line.kind === "tool" || line.kind === "alerts";
 export interface SiteState {
   id: string;
+  /** "replay" re-plays the latest recorded lead run (compressed); "live" is a new one. */
+  mode: string;
+  /** How many checkers the run had; a replay on this wall may follow fewer of them. */
+  runCams: number | null;
+  /** Clip ids of the wall cameras this run follows (null: the API did not say). */
+  followed: string[] | null;
   state: "running" | "done";
   checkers: Record<number, CheckerState>;
   alerts: SiteAlert[] | null;
+  /** The latest lead lines (at most LEAD_LINES_KEPT); the counts below cover every line. */
+  lead: LeadLine[];
+  leadTotal: number;
+  toolCalls: number;
+  lastCallKind: string | null;
 }
+
+const LEAD_LINES_KEPT = 200;
 
 const IDLE: TileRun = {
   phase: "watching",
@@ -102,10 +123,12 @@ const VIEW_RETRIES = 3;
  */
 // Finished checks survive going to a hazard and back (same tab, for KEEP_MS), so returning to
 // the wall shows the results at once instead of checking every camera again.
-const SAVE_KEY = "cv-wall-checks-v2";
+const SAVE_KEY = "cv-wall-checks-v3";
 const KEEP_MS = 10 * 60_000;
 
-type SavedWall = { at: number; runs: Record<string, TileRun>; notifications: WallNotification[] };
+// `origin`: when the wall first loaded in this tab. Restored runs keep their real start/finish
+// times, so the timeline and log measure them from that load, not from this one.
+type SavedWall = { at: number; origin?: number; runs: Record<string, TileRun>; notifications: WallNotification[] };
 
 function readSaved(): SavedWall | null {
   try {
@@ -150,6 +173,8 @@ export function useWallOrchestrator(cameras: WallCamera[], loadedAt: number | nu
   const alertOrder = useRef<SiteAlert[] | null>(null);
   const finished = useRef(new Map<string, { cam: WallCamera; jobId: string; result: CheckResult }>());
   const announced = useRef(new Set<string>());
+  const [restoredOrigin, setRestoredOrigin] = useState<number | null>(null);
+  const origin = restoredOrigin ?? loadedAt;
 
   const patch = useCallback((clipId: string, p: Partial<TileRun>) => {
     if (!alive.current) return;
@@ -279,6 +304,7 @@ export function useWallOrchestrator(cameras: WallCamera[], loadedAt: number | nu
     for (const [clipId] of done) started.current.add(clipId);
     queueMicrotask(() => {
       if (!alive.current) return;
+      if (typeof saved.origin === "number") setRestoredOrigin(saved.origin);
       setRuns((prev) => ({ ...Object.fromEntries(done), ...prev }));
       setNotifications((prev) => (prev.length ? prev : (saved.notifications ?? [])));
     });
@@ -287,9 +313,9 @@ export function useWallOrchestrator(cameras: WallCamera[], loadedAt: number | nu
   // Save once checks finish (only finished ones are restored).
   useEffect(() => {
     if (Object.values(runs).some((r) => r.phase === "done")) {
-      writeSaved({ at: Date.now(), runs, notifications });
+      writeSaved({ at: Date.now(), origin: origin ?? undefined, runs, notifications });
     }
-  }, [runs, notifications]);
+  }, [runs, notifications, origin]);
 
   // One site run for the whole wall: the lead agent starts the six checkers at once; each tile
   // follows its checker's own hazard job. Any failure falls back to the direct staggered checks.
@@ -331,20 +357,57 @@ export function useWallOrchestrator(cameras: WallCamera[], loadedAt: number | nu
           body: "{}",
         });
         if (!res.ok) throw new Error(String(res.status));
-        const body = (await res.json()) as { site_run_id: string; events_url: string };
+        const body = (await res.json()) as {
+          site_run_id: string;
+          mode?: string;
+          run_cams?: number;
+          cams?: { cam: number; clip_id: string }[];
+          events_url: string;
+        };
         if (!alive.current) return;
         siteMode.current = "site";
-        setSite({ id: body.site_run_id, state: "running", checkers: {}, alerts: null });
+        setSite({
+          id: body.site_run_id,
+          mode: typeof body.mode === "string" ? body.mode : "live",
+          runCams: typeof body.run_cams === "number" ? body.run_cams : null,
+          followed: Array.isArray(body.cams) ? body.cams.map((c) => String(c.clip_id)) : null,
+          state: "running",
+          checkers: {},
+          alerts: null,
+          lead: [],
+          leadTotal: 0,
+          toolCalls: 0,
+          lastCallKind: null,
+        });
         const es = new EventSource(apiUrl(body.events_url));
         source = es;
+        es.addEventListener("lead", (e) => {
+          const d = parseData(e);
+          if (!d || typeof d.text !== "string" || !alive.current) return;
+          const line: LeadLine = { t: Number(d.t_s) || 0, kind: String(d.kind ?? "say"), text: d.text };
+          const call = isToolCall(line);
+          setSite((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  lead: [...prev.lead, line].slice(-LEAD_LINES_KEPT),
+                  leadTotal: prev.leadTotal + 1,
+                  toolCalls: prev.toolCalls + (call ? 1 : 0),
+                  lastCallKind: call ? line.kind : prev.lastCallKind,
+                }
+              : prev,
+          );
+        });
         es.addEventListener("checker", (e) => {
           const d = parseData(e);
           if (!d || !alive.current) return;
-          const camNo = Number(d.cam);
           const state = String(d.state) as CheckerState;
-          setSite((prev) => (prev ? { ...prev, checkers: { ...prev.checkers, [camNo]: state } } : prev));
+          // Keyed by the wall's own CAM number: a replayed run keeps the numbers it was recorded
+          // with, which differ once the wall lineup changes. The clip id is the stable join.
           const cam = cameras.find((c) => c.clip_id === d.clip_id);
-          if (cam && typeof d.job_id === "string" && d.job_id && !started.current.has(cam.clip_id)) {
+          if (!cam) return;
+          setSite((prev) => (prev ? { ...prev, checkers: { ...prev.checkers, [cam.cam]: state } } : prev));
+          if (typeof d.job_id === "string" && d.job_id && !started.current.has(cam.clip_id)) {
             void run(cam, d.job_id);
           }
         });
@@ -418,5 +481,5 @@ export function useWallOrchestrator(cameras: WallCamera[], loadedAt: number | nu
 
   const retry = useCallback((cam: WallCamera) => void run(cam), [run]);
 
-  return { runs, notifications, toasts, dismissToast, retry, idle: IDLE, site };
+  return { runs, notifications, toasts, dismissToast, retry, idle: IDLE, site, direct, origin };
 }

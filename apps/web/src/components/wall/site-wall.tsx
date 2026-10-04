@@ -4,45 +4,23 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { AlertFrame } from "@/components/alerts/alert-frame";
 import { DetectionPopoutStack, type DetectionPopoutItem } from "@/components/alerts/detection-popout";
 
-import { CornerTicks } from "@/components/hud/panel";
+import { CornerTicks, Panel } from "@/components/hud/panel";
 import { LIVE } from "@/lib/config";
-import {
-  fetchRuntime,
-  fetchWall,
-  configured,
-  stackLine,
-  viewHref,
-  WALL,
-  wallCameras,
-  type RuntimeStatus,
-  type WallCamera,
-  type WallConfig,
-} from "@/lib/wall";
+import { configured, fetchWall, viewHref, WALL, wallCameras, type WallConfig } from "@/lib/wall";
 import { cn } from "@/lib/utils";
 
+import { AgentStrip } from "./agent-strip";
 import { CctvTile } from "./cctv-tile";
-import type { WallNotification } from "./use-wall-orchestrator";
 import { NotificationTray, Toasts } from "./notification-tray";
+import { useAgentLog } from "./use-agent-log";
+import type { WallNotification } from "./use-wall-orchestrator";
 import { useWallOrchestrator } from "./use-wall-orchestrator";
+import { BlindZonePlanPanel } from "./blind-zone-plan";
+import { AgentLogPanel, CheckTimelinePanel } from "./wall-panels";
 import { WallHeader } from "./wall-header";
 
-// Defaults until GET /api/wall answers; config/wall.yaml holds the same words.
+// Default until GET /api/wall answers; config/wall.yaml holds the same words.
 const WALL_TITLE = "Site cameras · Factory floor";
-const HAZARD_TITLE = "Hazard watch";
-const BLINDSPOT_TITLE = "Blind spot watch · Warehouse";
-
-function RowTitle({ title, cams, className }: { title: string; cams: WallCamera[]; className?: string }) {
-  const range = cams.length ? `CAM ${cams[0].cam}${cams.length > 1 ? `–${cams[cams.length - 1].cam}` : ""}` : "";
-  return (
-    <header className={cn("flex h-7 shrink-0 items-center justify-between gap-3 px-2.5", className)}>
-      <h2 className="flex min-w-0 items-center gap-2 text-[10px] tracking-[0.18em] text-fg uppercase">
-        <span className="h-px w-3 shrink-0 bg-line-strong" aria-hidden />
-        <span className="truncate">{title}</span>
-      </h2>
-      <span className="micro shrink-0">{range}</span>
-    </header>
-  );
-}
 
 function RowMessage({ text }: { text: string }) {
   return (
@@ -58,16 +36,20 @@ function RowMessage({ text }: { text: string }) {
 const sameConfig = (a: WallConfig | null, b: WallConfig) => !!a && JSON.stringify(a) === JSON.stringify(b);
 
 /**
- * "/" — the site camera wall. Six CCTV feeds play the stored clips' raw footage. The safety agent
+ * "/" — the site camera wall. The CCTV feeds play the stored clips' raw footage. The safety agent
  * starts each camera's check by itself; a result appears on a tile only after its check completes,
  * and every word of it comes from that clip's stored run through the API.
+ *
+ * Layout (desktop): 00 the agent team (the lead and one checker per camera) over 01 the live
+ * feeds in one grid; a right rail with 02 detections, 03 the blind-zone plan of one camera (the
+ * latest alert, or the tile or checker last clicked), 04 the agent log of every check event, 05 a
+ * timeline of the checks against wall time.
  */
 export function SiteWall() {
   const [config, setConfig] = useState<WallConfig | null>(null);
   const [offline, setOffline] = useState(false);
   const [loadedAt, setLoadedAt] = useState<number | null>(null);
   const [watching, setWatching] = useState(false);
-  const [runtime, setRuntime] = useState<RuntimeStatus | null>(null);
 
   // Wall config: GET /api/wall (or the clip list until that route exists). Re-read while the
   // blind-spot row is still empty, so its cameras join as soon as they are prepared.
@@ -95,26 +77,6 @@ export function SiteWall() {
     };
   }, []);
 
-  // GET /api/runtime/status every 15 s for the one-line stack status.
-  useEffect(() => {
-    const ctrl = new AbortController();
-    let timer: ReturnType<typeof setTimeout> | null = null;
-    const poll = async () => {
-      try {
-        const rt = await fetchRuntime(ctrl.signal);
-        if (!ctrl.signal.aborted) setRuntime(rt);
-      } catch {
-        if (!ctrl.signal.aborted) setRuntime(null);
-      }
-      if (!ctrl.signal.aborted) timer = setTimeout(poll, WALL.runtimePollMs);
-    };
-    timer = setTimeout(poll, 0);
-    return () => {
-      ctrl.abort();
-      if (timer !== null) clearTimeout(timer);
-    };
-  }, []);
-
   useEffect(() => {
     if (loadedAt === null) return;
     const t = setTimeout(() => setWatching(true), Math.max(0, loadedAt + WALL.watchingAfterS * 1000 - Date.now()));
@@ -122,9 +84,8 @@ export function SiteWall() {
   }, [loadedAt]);
 
   const cameras = useMemo(() => (config ? wallCameras(config) : []), [config]);
-  const hazardCams = cameras.filter((c) => c.kind === "hazard");
-  const blindCams = cameras.filter((c) => c.kind === "blindspot");
-  const { runs, notifications, toasts, dismissToast, retry, idle, site } = useWallOrchestrator(cameras, loadedAt);
+  const { runs, notifications, toasts, dismissToast, retry, idle, site, direct, origin } = useWallOrchestrator(cameras, loadedAt);
+  const log = useAgentLog(cameras, runs, site);
 
   // Pop-outs: every new notification fires one, once (remembered in this tab, so coming back to
   // the wall does not fire them again); its tile keeps an amber frame until acknowledged.
@@ -140,6 +101,15 @@ export function SiteWall() {
     setUnacked((prev) => ({ ...prev, ...Object.fromEntries(fresh.map((n) => [n.clipId, n])) }));
   }, [notifications]);
   const ack = (clipId: string) => setUnacked((prev) => { const next = { ...prev }; delete next[clipId]; return next; });
+
+  // 03 follows a clicked tile; until then the newest alert, else the camera that finished last.
+  const [picked, setPicked] = useState<string | null>(null);
+  const newestAlert = notifications.reduce<WallNotification | null>((a, n) => (!a || n.at > a.at ? n : a), null);
+  const lastDone = cameras
+    .filter((c) => runs[c.clip_id]?.phase === "done")
+    .sort((a, b) => (runs[b.clip_id]?.finishedAt ?? 0) - (runs[a.clip_id]?.finishedAt ?? 0))[0];
+  const planClip = picked ?? newestAlert?.clipId ?? lastDone?.clip_id ?? null;
+  const planCam = cameras.find((c) => c.clip_id === planClip) ?? null;
   const framed = (cam: (typeof cameras)[number], tile: ReactNode) => {
     const n = unacked[cam.clip_id];
     const d = n?.detections[0];
@@ -152,7 +122,15 @@ export function SiteWall() {
         tone={cam.kind === "blindspot" ? "blindspot" : "hazard"}
         className="grid min-h-0 min-w-0"
       >
-        <div className="grid min-h-0 min-w-0" onPointerDown={() => ack(cam.clip_id)}>{tile}</div>
+        <div
+          className={cn("relative grid min-h-0 min-w-0", planCam?.clip_id === cam.clip_id && "outline outline-1 -outline-offset-1 outline-fg/40")}
+          onPointerDown={() => {
+            ack(cam.clip_id);
+            setPicked(cam.clip_id);
+          }}
+        >
+          {tile}
+        </div>
       </AlertFrame>
     );
   };
@@ -162,71 +140,78 @@ export function SiteWall() {
     ? `Safety agent watching ${cameras.length} camera${cameras.length === 1 ? "" : "s"}`
     : "Safety agent starting…";
   const wallTitle = configured(config?.title, WALL_TITLE);
-  const hazardTitle = configured(config?.hazard_title, HAZARD_TITLE);
-  const blindTitle = configured(config?.blindspot_title, BLINDSPOT_TITLE);
+  const alerts = notifications.length;
 
   return (
-    <div className="flex min-h-dvh flex-col bg-bg xl:h-dvh xl:min-h-[700px]">
+    <div className="grid-field flex min-h-dvh flex-col bg-bg xl:h-dvh xl:min-h-[700px]">
       <WallHeader
         title={wallTitle}
         agentLine={agentLine}
         agentActive={watching && cameras.length > 0}
-        stack={stackLine(runtime)}
         checked={checked}
         total={cameras.length}
-        site={site}
       />
 
-      <div className="flex min-h-0 flex-1 flex-col gap-3 px-4 py-3 lg:px-6 xl:flex-row">
-        <div className="shrink-0 xl:order-last xl:w-[300px] 2xl:w-[340px]">
-          <NotificationTray items={notifications} watching={watching} />
+      <main className="flex min-h-0 flex-1 flex-col gap-3 px-4 py-3 lg:px-5 xl:flex-row">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-3">
+          <AgentStrip
+            cameras={cameras}
+            runs={runs}
+            idle={idle}
+            site={site}
+            direct={direct}
+            focusClip={planCam?.clip_id ?? null}
+            onPick={setPicked}
+          />
+        <Panel
+          index="01"
+          title="Live feeds"
+          className="min-h-0 flex-1 bg-panel/60"
+          bodyClassName="flex flex-col"
+          meta={
+            <>
+              <span className="tabular-nums">{cameras.length} FEEDS</span>
+              <span className="tabular-nums">
+                {checked}/{cameras.length} CHECKED
+              </span>
+              <span className={cn("tabular-nums", alerts ? "text-danger" : "")}>{alerts} ALERT</span>
+            </>
+          }
+        >
+          <div className="flex min-h-0 flex-1 flex-col p-2" data-testid="camera-wall">
+            {config === null ? (
+              <RowMessage text={offline ? "Can't reach the camera system. Trying again…" : "Connecting to the cameras…"} />
+            ) : cameras.length ? (
+              <div className="grid min-h-0 flex-1 grid-cols-1 gap-2 md:grid-cols-2 xl:grid-rows-2" data-testid="hazard-row">
+                {cameras.map((cam) =>
+                  framed(cam, <CctvTile cam={cam} run={runs[cam.clip_id] ?? idle} onRetry={() => retry(cam)} />),
+                )}
+              </div>
+            ) : (
+              <RowMessage text="No camera clips are ready yet" />
+            )}
+          </div>
+        </Panel>
         </div>
 
-        <main className={cn("flex min-h-0 min-w-0 flex-1 flex-col gap-3", blindCams.length || hazardCams.length === 4 ? "" : "justify-center")} data-testid="camera-wall">
-          {config === null ? (
-            <RowMessage text={offline ? "Can't reach the camera system. Trying again…" : "Connecting to the cameras…"} />
-          ) : (
-            <>
-              <section aria-label={hazardTitle} className={cn("flex min-h-0 flex-col", blindCams.length || hazardCams.length === 4 ? "flex-1" : "")} data-testid="hazard-row">
-                <RowTitle title={hazardTitle} cams={hazardCams} className="px-0.5" />
-                {hazardCams.length ? (
-                  <div className={cn("grid min-h-0 flex-1 grid-cols-1 gap-2", hazardCams.length === 4 ? "md:grid-cols-2" : "md:grid-cols-3")}>
-                    {hazardCams.map((cam) =>
-                      framed(cam, <CctvTile cam={cam} run={runs[cam.clip_id] ?? idle} onRetry={() => retry(cam)} />),
-                    )}
-                  </div>
-                ) : (
-                  <RowMessage text="No camera clips are ready yet" />
-                )}
-              </section>
-
-              {blindCams.length ? (
-              <section
-                aria-label={blindTitle}
-                className="relative flex min-h-0 flex-1 flex-col border border-line bg-panel/40"
-                data-testid="blindspot-strip"
-              >
-                <CornerTicks />
-                <RowTitle title={blindTitle} cams={blindCams} className="border-b border-line" />
-                {blindCams.length ? (
-                  <div className="grid min-h-0 flex-1 grid-cols-1 divide-y divide-line md:grid-cols-3 md:divide-x md:divide-y-0">
-                    {blindCams.map((cam) =>
-                      framed(cam, <CctvTile cam={cam} run={runs[cam.clip_id] ?? idle} onRetry={() => retry(cam)} joined />),
-                    )}
-                  </div>
-                ) : (
-                  <div className="dot-field flex min-h-[160px] flex-1 items-center justify-center">
-                    <p className="tele text-fg/70" data-testid="row-message">
-                      Blind spot watch starting…
-                    </p>
-                  </div>
-                )}
-              </section>
-              ) : null}
-            </>
-          )}
-        </main>
-      </div>
+        <div className="flex min-h-0 shrink-0 flex-col gap-3 xl:w-[400px] 2xl:w-[440px]">
+          <NotificationTray items={notifications} watching={watching} className="min-h-[150px] xl:flex-[1_1_0%]" />
+          <BlindZonePlanPanel
+            cameras={cameras}
+            cam={planCam}
+            run={planCam ? (runs[planCam.clip_id] ?? null) : null}
+            onPick={setPicked}
+            className="shrink-0"
+          />
+          <AgentLogPanel
+            rows={log}
+            origin={origin}
+            emptyText={checked ? "Checks ran before this visit" : "Awaiting first check"}
+            className="min-h-[200px] xl:flex-[1_1_0%]"
+          />
+          <CheckTimelinePanel cameras={cameras} runs={runs} origin={origin} className="shrink-0" />
+        </div>
+      </main>
 
       {/* Detections already pop out once; toasts only carry the rest (errors, retries). */}
       <Toasts items={toasts.filter((t) => !t.detection)} onDismiss={dismissToast} />

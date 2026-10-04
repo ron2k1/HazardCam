@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 
+import { HazardText } from "@/components/alerts/hazard-terms";
+import { Panel } from "@/components/hud/panel";
 import { kindWord, timeOfDay, viewHref, type Detection } from "@/lib/wall";
 import { cn } from "@/lib/utils";
 
@@ -49,7 +51,11 @@ function NotificationCard({ n }: { n: WallNotification }) {
                 {d.zoneNames.length ? ` · ${d.zoneNames[0]}` : ""}
               </span>
             </span>
-            {d.shortTitle ? <span className="text-[11px] leading-[15px] text-fg/75">{d.shortTitle}</span> : null}
+            {d.shortTitle ? (
+              <span className="text-[12px] leading-[16px] text-fg/80">
+                <HazardText text={d.shortTitle} />
+              </span>
+            ) : null}
           </li>
         ))}
       </ul>
@@ -62,32 +68,35 @@ function NotificationCard({ n }: { n: WallNotification }) {
   );
 }
 
-/** Right edge on desktop, top of the page on a phone. Newest first. */
-export function NotificationTray({ items, watching }: { items: WallNotification[]; watching: boolean }) {
+/** 02: the detections the safety agent posted, newest first (right column on desktop). */
+export function NotificationTray({ items, watching, className }: { items: WallNotification[]; watching: boolean; className?: string }) {
   return (
-    <aside
-      aria-label="Notifications"
-      data-testid="notification-tray"
-      className="flex min-h-0 flex-col border border-line bg-panel/60 xl:h-full"
+    <Panel
+      index="02"
+      title="Detections"
+      className={className}
+      bodyClassName="flex flex-col"
+      meta={<span className={cn("tabular-nums", items.length && "text-danger")}>{items.length ? `${items.length} NEW` : "NONE"}</span>}
     >
-      <header className="flex h-7 shrink-0 items-center justify-between gap-2 border-b border-line px-2.5">
-        <h2 className="text-[10px] tracking-[0.18em] text-fg uppercase">Notifications</h2>
-        <span className="micro tabular-nums">{items.length ? `${items.length} new` : ""}</span>
-      </header>
-      {items.length ? (
-        <ol aria-live="polite" className="thin-scroll flex max-h-[38vh] min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-2 xl:max-h-none">
-          {items.map((n) => (
-            <NotificationCard key={n.id} n={n} />
-          ))}
-        </ol>
-      ) : (
-        <p className="dot-field flex-1 px-3 py-3 text-[11px] leading-[16px] text-fg/60 xl:py-4">
-          {watching
-            ? "Nothing to report yet. The safety agent posts here when a camera check finds something."
-            : "The safety agent is starting."}
-        </p>
-      )}
-    </aside>
+      <div aria-label="Notifications" data-testid="notification-tray" className="flex min-h-0 flex-1 flex-col">
+        {items.length ? (
+          <ol aria-live="polite" className="thin-scroll flex max-h-[38vh] min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-2 xl:max-h-none">
+            {items.map((n) => (
+              <NotificationCard key={n.id} n={n} />
+            ))}
+          </ol>
+        ) : (
+          <div className="hatch flex flex-1 flex-col items-center justify-center gap-1.5 px-4 py-6 text-center">
+            <span className="text-[11px] tracking-[0.3em] text-fg/70">{watching ? "NO DETECTIONS" : "STANDBY"}</span>
+            <span className="micro max-w-[22rem] normal-case tracking-[0.04em]">
+              {watching
+                ? "The safety agent posts here when a camera check finds something."
+                : "The safety agent is starting."}
+            </span>
+          </div>
+        )}
+      </div>
+    </Panel>
   );
 }
 

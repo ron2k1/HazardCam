@@ -21,7 +21,7 @@ const LABEL = "text-[14px] leading-[22px] font-semibold text-fg";
 
 /**
  * One hazard as a short structured message: priority, title, what we saw, why it matters, a
- * numbered "what to do" checklist, where/when/how sure, the safety rule, the pictures the AI used.
+ * numbered "what to do" checklist and the pictures the AI used.
  */
 export function HazardCard({ hazard: h, index, active, onShow, onPicture }: HazardCardProps) {
   const tone = PRIORITY_TONE[priorityKey(h.priority)];
@@ -78,52 +78,15 @@ export function HazardCard({ hazard: h, index, active, onShow, onPicture }: Haza
                   <span aria-hidden className="mt-[3px] inline-flex size-[18px] items-center justify-center border border-fg/60 text-[11px] leading-none text-fg tabular-nums">
                     {i + 1}
                   </span>
-                  <span className="font-semibold text-fg">{step}</span>
+                  <span className="font-semibold text-fg">
+                    <HazardText text={step} />
+                  </span>
                 </li>
               ))}
             </ol>
           </div>
         ) : null}
       </div>
-
-      <p className="mt-3 border-t border-line pt-2.5 pr-4 text-[14px] leading-[22px]" data-testid="hazard-meta">
-        <span className="text-fg/60">Where — </span>
-        <span className="text-fg">{h.where}</span>
-        <span aria-hidden className="text-fg/35">{"\u00a0· "}</span>
-        <span className="whitespace-nowrap">
-          <span className="text-fg/60">When — </span>
-          <span className="text-fg tabular-nums">{h.when}</span>
-        </span>
-        <span aria-hidden className="text-fg/35">{"\u00a0· "}</span>
-        <span className="whitespace-nowrap">
-          <span className="text-fg/60">How sure — </span>
-          <span className="text-fg">{h.how_sure}</span>
-        </span>
-      </p>
-      <p className="pr-4 text-[13px] leading-[20px] text-fg/55">
-        Seen in {pictures.length} still picture{pictures.length === 1 ? "" : "s"}; the AI does not watch between them.
-      </p>
-
-      {h.safety_rule ? (
-        <p className="pt-2 pr-4 text-[14px] leading-[22px]">
-          <span className="text-fg/60">Safety rule — </span>
-          <span className="text-fg">{h.safety_rule}</span>
-        </p>
-      ) : null}
-
-      {h.not_sure_about.length ? (
-        <div className="pt-2 pr-4 text-[14px] leading-[22px]">
-          <p className="text-fg/60">Not sure about —</p>
-          <ul className="mt-0.5 flex flex-col gap-0.5">
-            {h.not_sure_about.map((u, i) => (
-              <li key={i} className="flex gap-2 text-fg/90">
-                <span aria-hidden className="text-fg/40">–</span>
-                <span className="min-w-0">{u}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
 
       {pictures.length ? (
         <div className="mt-3 border-t border-line pt-3 pr-4">

@@ -26,7 +26,6 @@ import { cn } from "@/lib/utils";
 
 import { zoneName } from "./derive";
 import { HazardsHeader } from "./hazards-header";
-import { InstructionsPanel } from "./instructions-panel";
 import { CleanImage } from "./picture-grid";
 import { RuntimeRows, useRuntimeStatus } from "./runtime-strip";
 import { FindingRaw, KV, modelRows, Mono, scalar, ZonesTable } from "./technical-report";
@@ -243,9 +242,6 @@ export function ProcessApp({ clipId, jobId: initialJob }: ProcessAppProps) {
           <div className="flex min-w-0 flex-col gap-3">
             <Panel index="06" title="What the AI was asked to check">
               <div className="flex flex-col gap-3 p-3">
-                {instructions || view?.vision?.instructions ? (
-                  <InstructionsPanel instructions={view?.vision?.instructions ?? (instructions as HazardInstructions)} />
-                ) : null}
                 <Block title="System prompt (verbatim)" testId="system-prompt">
                   {t?.system_prompt || instructions?.system_prompt || "—"}
                 </Block>

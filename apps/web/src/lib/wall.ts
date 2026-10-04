@@ -9,6 +9,8 @@
  */
 import { ApiError } from "./api";
 import { apiUrl, LIVE } from "./config";
+import { cvMapping, parseMotionCsv, type CvMapping, type CvViewInput, type MotionSeries } from "./cv-map";
+import { parseDepthRelief, type DepthRelief } from "./depth-relief";
 
 /* -------------------------------------------------------------- wall config */
 
@@ -21,6 +23,8 @@ export interface WallTile {
   title: string;
   /** API path of the raw source video (no AI markings). */
   source_url: string;
+  /** The clip's frame rate (clip.json), for frame numbers on the tile; null when unknown. */
+  fps?: number | null;
   /** Optional, from config/wall.yaml: the overlay watch label and when this tile's check starts. */
   watch?: string | null;
   check_after_s?: number | null;
@@ -44,7 +48,7 @@ export interface WallCamera extends WallTile {
 export const WALL = {
   /** The header switches from "starting" to "watching N cameras" at this point. */
   watchingAfterS: 3,
-  /** Checks start 1.5 s apart (CAM 1, 4, 2, 5, 3, 6) so all six land within about 25 s. */
+  /** Fallback check starts when the wall config gives none (config/wall.yaml normally does). */
   hazardStartS: [2, 5, 8],
   blindspotStartS: [3.5, 6.5, 9.5],
   /** A camera that joins the wall late starts this long after it appears, then every gapS. */
@@ -88,11 +92,6 @@ export interface ViewZone {
   has_pictures?: boolean;
 }
 
-interface RawZone {
-  zone_id?: string;
-  bbox_normalized?: number[];
-}
-
 interface RawFinding {
   finding_id?: string;
   zone_ids?: string[];
@@ -107,10 +106,8 @@ export interface WallHazardView {
     hazards: ViewHazard[];
     zones?: ViewZone[] | null;
   } | null;
-  technical?: {
-    zones?: RawZone[];
-    findings_raw?: RawFinding[];
-  } | null;
+  technical?: (NonNullable<CvViewInput["technical"]> & { findings_raw?: RawFinding[] }) | null;
+  vision?: CvViewInput["vision"];
 }
 
 interface ClipRow {
@@ -170,7 +167,7 @@ const byId = (a: ClipRow, b: ClipRow) => a.clip_id.localeCompare(b.clip_id, unde
 
 /**
  * Until GET /api/wall exists (404), the wall follows the same defaults config/wall.yaml documents:
- * the first three hazard clips by id, then every blind-spot clip in id order.
+ * the first four hazard clips by id, then every blind-spot clip in id order, numbered on from them.
  */
 function wallFromClips(clips: ClipRow[]): WallConfig {
   const hazard = clips.filter((c) => !isBlindspotClip(c)).sort(byId).slice(0, WALL.tilesPerRow);
@@ -178,7 +175,7 @@ function wallFromClips(clips: ClipRow[]): WallConfig {
   return {
     hazard_tiles: hazard.map((c, i) => ({ cam: i + 1, clip_id: c.clip_id, title: c.title, source_url: sourcePath(c.clip_id) })),
     blindspot_tiles: blind.map((c, i) => ({
-      cam: WALL.tilesPerRow + i + 1,
+      cam: hazard.length + i + 1,
       clip_id: c.clip_id,
       title: c.title,
       source_url: sourcePath(c.clip_id),
@@ -210,6 +207,18 @@ export function configured(value: unknown, fallback: string): string {
 
 export function fetchView(clipId: string, signal?: AbortSignal): Promise<WallHazardView> {
   return getJson<WallHazardView>(`/api/hazards/clips/${enc(clipId)}`, signal);
+}
+
+/** The run's per-frame motion (motion_timeline.csv); null when the run has none. */
+export async function fetchMotion(clipId: string, signal?: AbortSignal): Promise<MotionSeries | null> {
+  const res = await fetch(apiUrl(`/api/hazards/clips/${enc(clipId)}/media/motion_timeline.csv`), { cache: "no-store", signal });
+  return res.ok ? parseMotionCsv(await res.text()) : null;
+}
+
+/** The clip's locally computed relative depth grid, or null when it has none (the plan stays 2D). */
+export async function fetchDepth(clipId: string, signal?: AbortSignal): Promise<DepthRelief | null> {
+  const res = await fetch(apiUrl(`/api/hazards/clips/${enc(clipId)}/media/depth.json`), { cache: "no-store", signal });
+  return res.ok ? parseDepthRelief(await res.json()) : null;
 }
 
 /**
@@ -401,6 +410,8 @@ export interface CheckResult {
   detections: Detection[];
   /** Only the zones a detection is in (the wall never draws the others). */
   zones: ZoneMark[];
+  /** The technical layer: every area the CV pass marked, with its source and stage. */
+  cv: CvMapping | null;
 }
 
 /**
@@ -488,7 +499,8 @@ export function checkResult(view: WallHazardView): CheckResult {
       .map((z) => ({ number: z.n, name: zoneName(z.n), box: z.box, sign: signFor(z.n) }));
   }
   zones.sort((a, b) => a.number - b.number);
-  return { reviewedAt: view.reviewed_at, detections, zones };
+  const cv = cvMapping(view, new Set(zones.map((z) => z.number)));
+  return { reviewedAt: view.reviewed_at, detections, zones, cv };
 }
 
 /* ----------------------------------------------------------------- wording */

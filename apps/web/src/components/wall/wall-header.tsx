@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 
-import { StatusDot } from "@/components/hud/barcode";
-import type { StackLine } from "@/lib/wall";
+import { Barcode, StatusDot } from "@/components/hud/barcode";
+import { AnimatedText } from "@/components/ui/animated-text";
 import { cn } from "@/lib/utils";
 
 import { ResetDemoButton } from "./reset-demo-button";
@@ -26,30 +26,32 @@ function Clock() {
 export interface WallHeaderProps {
   /** "Site cameras · Factory floor" (config/wall.yaml `title`). */
   title: string;
-  /** "Safety agent watching 6 cameras", or the starting line. */
+  /** "Safety agent watching 4 cameras", or the starting line. */
   agentLine: string;
   agentActive: boolean;
-  stack: StackLine | null;
   checked: number;
   total: number;
-  /** The site run's six checkers, CAM 1-6 (lead agent row); null when the wall checks directly. */
-  site?: { id: string; state: string; checkers: Record<number, string> } | null;
 }
+
+// Recording build: the stack line is fixed "on". The replayed checks are stored runs from the
+// GB10, where the safety agent and its sandbox were up; this screen does not poll for them.
+const STACK_PARTS = ["Safety agent on this computer", "secure sandbox on", "no internet needed"] as const;
 
 /**
  * CameraVision header, the same layout as the /hazards screens: brand, page name, the two product
  * links, the one-line stack status and a clock; under it the safety agent's own status line.
  */
-export function WallHeader({ title, agentLine, agentActive, stack, checked, total, site }: WallHeaderProps) {
+export function WallHeader({ title, agentLine, agentActive, checked, total }: WallHeaderProps) {
   return (
     <header className="shrink-0 border-b border-line" data-testid="wall-header">
       <div className="flex min-h-12 flex-wrap items-center justify-between gap-x-5 gap-y-2 px-4 py-2 lg:px-6">
         <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
-          <Link href="/" prefetch={false} className="shrink-0 text-[17px] font-extrabold tracking-[0.06em] text-fg italic hover:text-fg/80">
-            CameraVision
+          <Link href="/" prefetch={false} className="shrink-0 tracking-[0.04em] text-fg italic hover:text-fg/80">
+            <AnimatedText text="CameraVision" fontSize={19} minWeight={250} maxWeight={800} animationDuration={1.6} delayMultiplier={0.12} />
           </Link>
           <span className="hidden h-4 w-px bg-line-strong sm:block" aria-hidden />
-          <h1 className="text-[14px] text-fg/80">{title}</h1>
+          <h1 className="text-[11px] tracking-[0.2em] text-fg/85 uppercase">{title}</h1>
+          <Barcode seed={title} className="hidden lg:inline-flex" />
         </div>
         <div className="flex min-w-0 flex-wrap items-center gap-x-5 gap-y-2">
           <nav aria-label="Main" className="flex items-center border border-line-strong">
@@ -69,15 +71,9 @@ export function WallHeader({ title, agentLine, agentActive, stack, checked, tota
             ))}
           </nav>
           <ResetDemoButton />
-          <p className="flex min-w-0 items-center gap-2 text-[12px] text-fg/75" data-testid="wall-stack-line">
-            {stack ? (
-              <>
-                <StatusDot tone={stack.tone === "ok" ? "fg" : stack.tone === "warn" ? "danger" : "muted"} />
-                <span>{stack.parts.join(" · ")}</span>
-              </>
-            ) : (
-              <span className="text-muted">Checking the safety system…</span>
-            )}
+          <p className="flex min-w-0 items-center gap-2 text-[12px] text-fg/80" data-testid="wall-stack-line">
+            <StatusDot tone="fg" />
+            <span>{STACK_PARTS.join(" · ")}</span>
           </p>
           <Clock />
         </div>
@@ -87,27 +83,6 @@ export function WallHeader({ title, agentLine, agentActive, stack, checked, tota
           <StatusDot tone={agentActive ? "fg" : "muted"} pulse={agentActive} />
           {agentLine}
         </p>
-        {site ? (
-          <span className="tele flex items-center gap-2" data-testid="wall-lead-row">
-            <span>LEAD AGENT · {total || 6} CHECKERS</span>
-            {Array.from({ length: total || 6 }, (_, i) => i + 1).map((n) => {
-              const st = site.checkers[n] ?? "queued";
-              return (
-                <span
-                  key={n}
-                  title={`CAM ${n}: ${st}`}
-                  aria-label={`CAM ${n} ${st}`}
-                  className={cn(
-                    "inline-block size-2 border border-fg/60",
-                    st === "done" && "bg-fg",
-                    st === "running" && "bg-fg/40 motion-safe:animate-pulse",
-                    st === "failed" && "border-danger bg-danger",
-                  )}
-                />
-              );
-            })}
-          </span>
-        ) : null}
         {total ? (
           <span className="tele tabular-nums" data-testid="wall-checked">
             Checked {checked} of {total}

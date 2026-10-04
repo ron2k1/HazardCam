@@ -1,0 +1,57 @@
+On 2026-10-04 the commit messages from the event day onward were edited to drop
+AI co-author and session trailers. Only messages changed: every commit's file tree
+is identical, so each commit got a new SHA with the same content. The event-day
+records in this folder keep the SHAs they were captured with. This map gives the
+current SHA for each one (old -> new, oldest first).
+
+The prebuild commit 6806046 and the tag data-prepared-v1 were not rewritten.
+
+7b49d38ee3fc -> d4099b0ca86b  chore(event-day): GB10 preflight and boundary check
+661d07915933 -> 22d9db9b9d9a  chore(event-day): record event-day start baseline
+98453c9ce13e -> 618fc08533d1  docs(event-day): add the Telegram alert requirement to D00 and D02
+844e068919b8 -> 7c0990885f54  docs(event-day): add Telegram pings and the GB10 port note to D02
+07cdf5e162fb -> cb7b2907bd15  event-day: D00 OpenClaw agent definition, playbook and policy
+bc0b164b8c5a -> 12199fdbf0db  docs(event-day): defer the Telegram alert in D02
+d4e494351b92 -> ec4f730aab74  event-day: fix the five D00 policy review findings
+8648480523f5 -> 6191444327d1  docs(event-day): carry the Telegram deferral into D01
+286284b38fc6 -> a3a0e051ca29  docs(event-day): add the operator's time budget to D02
+7ed24d4638df -> 5eeedb156352  docs(event-day): let D02 overlap the end of D01
+2235b9450e29 -> acb4fb1637fd  docs(event-day): add operator addenda to D03 and D04 for the 4pm plan
+a331c7302ebb -> 1b31da1732a5  docs(event-day): D04 delivers a staged recording, nothing hardcoded
+abb10a0a6a8f -> d9d6a26c804e  docs(event-day): D03 uses Qwen in the reasoning slot, mimicking the notebook
+0710265eb943 -> 470f45f64071  event-day: D01 register the seven contract tools into OpenClaw
+fc49486bfc95 -> 4f0fdf8bd307  event-day: D02 wire NemoClaw/OpenShell and local model routes; Qwen fills the reasoning slot
+43729e0369dc -> 566b811cdaf3  docs(event-day): D03 shares the running agent API and leaves agent/** alone
+ab068a4e03cd -> 908df64f99a0  feat(ops): plain-language worker view with local alert messages; technical panels behind a toggle
+15f211c2d2c2 -> c33dbff83056  feat(web): open on Safety hazards; link to it from both /ops headers
+86cb7e0343e3 -> 6d0b2adcbcac  event-day: D03 GB10 calibration and judged-path e2e through the OpenClaw agent
+0db0851a1b15 -> fd0fd4623e5f  docs(event-day): D04 waits for the hazard rebuild before judging the recording
+d4dd22cd0141 -> a14bda436c25  event-day: safety hazards wall, lead + 6 checker agents, Telegram ping, OSHA screen filter
+fa1d7113d630 -> 8ae70af35252  event-day: D04 final verification, demo-check x3, delta report and worker report
+6505e45e2d45 -> e9dc3fff20f0  fix(wall): quieter alerts: pop-outs once with a short paragraph, no blocked-aisle noise
+a6a7881719f1 -> e1f8d697ef1b  feat(wall): hazard-only demo wall and 2-4 sentence explanations
+605f8ef7a10e -> abe99e1c0503  revert(web): home is the pre-wall Safety hazards page again, with pop-outs
+d99b4f0002a9 -> 257ce5a3e831  feat(wall): 4-camera wall of the drive's safety_hazard videos
+415625a90eda -> 42757982c4d3  fix(hazards): View page drops the video description, keeps the hazards
+2739ed547690 -> c75cd0f5c8b3  feat(wall): "Reset demo" button; drop the dead "Open reasoning" link
+8d8ccb113e0c -> f69ca11d6156  feat(hazards): hazard type and key words in red
+6f823edbd55a -> 39a16028479b  feat(wall): CAM 4 is a warehouse angle, camera numbers never skip
+10dcb68009c6 -> a24def77d4f5  feat(wall): tiles carry the clip's real frame rate
+f9762c107c71 -> d2a06f30b990  fix(wall): key site-run checkers by clip id, not recorded CAM number
+835fc26c5447 -> 88b75d864671  feat(wall): four distinct angles, warehouse row is CAM 3-4
+693dff100c96 -> d5246b764e5c  refactor(hazards): remove the "What the AI was asked to check" panel
+c4a1190ff31e -> a27edbf7ae2c  feat(hazards): hazard card ends at what to do, then the pictures
+6984d4e1457c -> 9c5e9083bb5e  feat(hazards): bold key nouns alongside the red danger terms
+1d45398ae893 -> aaa69fe3be83  feat(ui): AnimatedText, a variable-weight breathing wordmark
+a137310477da -> 512bc1b63b00  fix(format): timecode never prints a three-digit fraction
+c1e1165b934e -> 3882ea4e8265  feat(wall): ops-style HUD for the camera wall
+7e797873a82d -> b56fbaab1b5f  fix(ui): border beam no longer adds page scroll at the viewport edge
+f871a3462cc2 -> 6c46d2e9c2eb  feat(api): serve a run's motion timeline as clip media
+ffbbfb8c8cfd -> c9c6ba64d20f  feat(wall): carry the run's CV mapping in each check result
+2c29312be2bf -> 583be8915460  feat(wall): blind-zone plan panel and CV layer on the tiles
+5ab17a5d1ed9 -> c272563cebab  feat(depth): precompute relative depth for the wall clips
+e491566c9be1 -> 7a9220478bd7  feat(api): serve a clip's depth relief as clip media
+6bb2aa1cb29e -> 7646303fc0c7  feat(wall): 3D depth relief in the blind-zone plan, switchable per cam
+4304cf7c0740 -> 10d2c2d75993  feat(api): site run reports how many checkers the recorded run had
+3d8d5c13f57e -> 2d85637b1a2e  feat(wall): agent strip with the lead agent and checkers over the feeds
+c24cd7790da9 -> 0c7fafe50e3b  docs: README for the repository

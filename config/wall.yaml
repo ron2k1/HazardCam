@@ -1,23 +1,25 @@
-# Home camera wall ("/", "Site cameras"): which clips fill the six CCTV tiles.
+# Home camera wall ("/", "Site cameras"): which clips fill the CCTV tiles.
 # Read by apps/api/services/wall.py (GET /api/wall); editable without code.
 #
 # Clips come from the /hazards clip store (data/hazards/clips/<clip_id>/clip.json). The
 # tiles play the raw source.mp4 (no AI markings); results appear only after a check.
 
 title: Site cameras · Factory floor
-hazard_title: Hazard watch                   # CAM 1-3: factory clips (kind "hazard")
-blindspot_title: Blind spot watch · Warehouse  # CAM 4-6: warehouse clips (kind "blindspot")
+hazard_title: Hazard watch                   # factory clips (kind "hazard"), from CAM 1
+blindspot_title: Blind spot watch · Warehouse  # warehouse clips (kind "blindspot"), numbered on
 hazard_watch_label: HAZARD WATCH
 blindspot_watch_label: BLIND SPOT
 
-# Clip ids, in tile order. Empty: the first three hazard clips by id / every blind-spot
-# clip in id order (at most three). Ids that are not staged are skipped.
-hazard_clips: [hz_00, hz_04, hz_05, hz_06]   # the four videos in the drive's safety_hazard folder
-blindspot_clips: []
+# Clip ids, in tile order. Empty: the first four hazard clips by id / every blind-spot
+# clip in id order (at most four). Ids that are not staged are skipped.
+# Four distinct camera angles, each with a stored GB10 Qwen run (replayable): factory on top
+# (CAM 1-2), warehouse below (CAM 3-4). hz_02/hz_03 repeat hz_00's press-line angle, so they sit out.
+hazard_clips: [hz_00, hz_01]
+blindspot_clips: [bs_01, bs_02]
 # false hides the blind-spot row (hazard-only demo); the clips stay on /hazards.
-show_blindspot: false
+show_blindspot: true
 
 # When each tile's automatic check starts, in seconds after the wall loads.
-# 1.5 s apart (CAM 1, 4, 2, 5, 3, 6) so all six detections land within about 25 s.
+# Staggered so factory and warehouse checks interleave and all land within about 25 s.
 hazard_check_after_s: [2, 4, 6, 8]
 blindspot_check_after_s: [3.5, 6.5, 9.5]
