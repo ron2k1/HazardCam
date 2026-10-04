@@ -140,7 +140,7 @@ const DepthReliefView = dynamic(() => import("./depth-relief-view").then((m) => 
 
 type View = "3d" | "2d";
 
-/** If the 3D view throws (no WebGL, a lost context), this camera falls back to the flat plan. */
+/** If the 3D view throws (no WebGL, a renderer that fails to start), this camera falls back to the flat plan. A context lost later does not throw: the canvas just goes blank. */
 class ReliefBoundary extends Component<{ fallback: ReactNode; children: ReactNode }, { failed: boolean }> {
   state = { failed: false };
   static getDerivedStateFromError() {

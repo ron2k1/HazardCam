@@ -41,11 +41,12 @@ export function useAgentLog(cameras: WallCamera[], runs: Record<string, TileRun>
     }
     prevCheckers.current = { ...(site?.checkers ?? {}) };
 
-    // the lead's own trace lines, verbatim, as site rows
+    // the lead's own trace lines, verbatim, as site rows (counted by leadTotal: the kept list is capped)
     if (site) {
-      const from = leadSeen.current.id === site.id ? leadSeen.current.n : 0;
-      for (const line of site.lead.slice(from)) push(null, "LEAD", line.text);
-      leadSeen.current = { id: site.id, n: site.lead.length };
+      const seen = leadSeen.current.id === site.id ? leadSeen.current.n : 0;
+      const fresh = Math.min(site.leadTotal - seen, site.lead.length);
+      if (fresh > 0) for (const line of site.lead.slice(-fresh)) push(null, "LEAD", line.text);
+      leadSeen.current = { id: site.id, n: site.leadTotal };
     }
 
     for (const cam of cameras) {
