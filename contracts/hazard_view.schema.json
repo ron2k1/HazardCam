@@ -1381,7 +1381,7 @@
         "cam": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 6
+          "maximum": 8
         },
         "label": {
           "type": "string",
@@ -1416,7 +1416,7 @@
       }
     },
     "Wall": {
-      "description": "GET /api/wall (config/wall.yaml): CAM 1-3 factory hazard clips, CAM 4-6 warehouse blind-spot clips.",
+      "description": "GET /api/wall (config/wall.yaml): up to four factory hazard clips, then up to four warehouse blind-spot clips, numbered CAM 1.. in that order.",
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -1441,14 +1441,14 @@
         },
         "hazard_tiles": {
           "type": "array",
-          "maxItems": 3,
+          "maxItems": 4,
           "items": {
             "$ref": "#/$defs/WallTile"
           }
         },
         "blindspot_tiles": {
           "type": "array",
-          "maxItems": 3,
+          "maxItems": 4,
           "items": {
             "$ref": "#/$defs/WallTile"
           }

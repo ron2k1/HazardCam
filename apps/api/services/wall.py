@@ -1,11 +1,11 @@
-"""The home camera wall (``GET /api/wall``): which clips fill the six CCTV tiles.
+"""The home camera wall (``GET /api/wall``): which clips fill the CCTV tiles.
 
 ``config/wall.yaml`` (editable without code) names them:
 
-- ``hazard_clips``: CAM 1-3, factory clips (clip kind ``hazard``). Empty or missing: the
-  first three hazard clips by id.
-- ``blindspot_clips``: CAM 4-6, warehouse clips (clip kind ``blindspot``). Empty or
-  missing: every blind-spot clip, in id order (at most three).
+- ``hazard_clips``: factory clips (clip kind ``hazard``), numbered from CAM 1. Empty or
+  missing: the first four hazard clips by id.
+- ``blindspot_clips``: warehouse clips (clip kind ``blindspot``), numbered on from the
+  last factory tile. Empty or missing: every blind-spot clip, in id order (at most four).
 - titles and the staggered check start times (seconds after the wall loads).
 
 Clips come from the same clip store as ``/hazards`` (``$HAZARDS_DIR/clips``); a configured
@@ -37,7 +37,7 @@ DEFAULT_WALL: dict[str, Any] = {
     "blindspot_watch_label": "BLIND SPOT",
     "hazard_clips": [],
     "blindspot_clips": [],
-    "hazard_check_after_s": [2.0, 5.0, 8.0],
+    "hazard_check_after_s": [2.0, 4.0, 6.0, 8.0],
     "blindspot_check_after_s": [3.5, 6.5, 9.5],
     # false: no blind-spot row (the hazard-only demo); the clips stay on /hazards.
     "show_blindspot": True,
@@ -134,7 +134,8 @@ def compose_wall(clips: Sequence[Mapping[str, Any]], config: Mapping[str, Any]) 
         ),
         "blindspot_tiles": _tiles(
             blindspot,
-            first_cam=1 + TILES_PER_ROW,
+            # numbers continue after the factory row: 3 + 1 tiles read CAM 1-4, not 1-3 then 5
+            first_cam=1 + len(hazard),
             kind="blindspot",
             watch=config["blindspot_watch_label"],
             after=config["blindspot_check_after_s"],

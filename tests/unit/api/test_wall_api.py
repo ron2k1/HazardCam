@@ -1,5 +1,5 @@
-"""GET /api/wall: the home camera wall (CAM 1-3 factory hazard clips, CAM 4-6 warehouse
-blind-spot clips), configured by config/wall.yaml. Factory only: no /ops scenario."""
+"""GET /api/wall: the home camera wall (factory hazard clips from CAM 1, then warehouse
+blind-spot clips numbered on), configured by config/wall.yaml. Factory only: no /ops scenario."""
 
 from __future__ import annotations
 
@@ -49,12 +49,11 @@ def root(tmp_path: Path) -> Path:
 
 @pytest.fixture(autouse=True)
 def _wall_with_blind_spots(request: pytest.FixtureRequest, monkeypatch, tmp_path: Path):
-    """The repo config hides the blind-spot row for the hazard-only demo; the tests below
-    pin the full six-tile wall (the repo-config test reads the real file)."""
+    """The repo config picks the demo clips; the tests below pin the default wall (every
+    staged clip, four per row) instead (the repo-config test reads the real file)."""
     if request.node.name == "test_repo_config_matches_the_defaults":
         return
-    raw = yaml.safe_load((REPO_ROOT / "config" / "wall.yaml").read_text("utf-8"))
-    raw["show_blindspot"] = True
+    raw = {**wl.DEFAULT_WALL, "show_blindspot": True}
     path = tmp_path / "wall.yaml"
     path.write_text(yaml.safe_dump(raw), encoding="utf-8")
     monkeypatch.setattr(wl, "DEFAULT_WALL_CONFIG", path)
@@ -63,29 +62,34 @@ def _wall_with_blind_spots(request: pytest.FixtureRequest, monkeypatch, tmp_path
 def test_repo_config_matches_the_defaults() -> None:
     raw = yaml.safe_load((REPO_ROOT / "config" / "wall.yaml").read_text("utf-8"))
     assert set(raw) == set(wl.DEFAULT_WALL)
-    # the demo hides the blind-spot row; everything else is the default
-    assert raw["show_blindspot"] is False
-    assert {**wl.load_wall_config(), "show_blindspot": True} == wl.DEFAULT_WALL
+    # the demo wall: three factory clips and one warehouse clip, each with a stored run;
+    # everything else is the default
+    assert raw["hazard_clips"] == ["hz_00", "hz_01", "hz_02"]
+    assert raw["blindspot_clips"] == ["bs_01"]
+    assert raw["show_blindspot"] is True
+    demo = {"hazard_clips": [], "blindspot_clips": []}  # the defaults pick by id
+    assert {**wl.load_wall_config(), **demo} == wl.DEFAULT_WALL
     text = (REPO_ROOT / "config" / "wall.yaml").read_text("utf-8").lower()
     for word in OPS_WORDS:
         assert word not in text
 
 
-def test_default_wall_fills_three_tiles_per_row(root: Path) -> None:
+def test_default_wall_fills_four_tiles_per_row(root: Path) -> None:
     doc = wl.wall(HazardService(root, profile="fixture"))
     validate(doc)
     assert doc["title"] == "Site cameras · Factory floor"
     assert doc["hazard_title"] == "Hazard watch"
     assert doc["blindspot_title"] == "Blind spot watch · Warehouse"
-    assert [t["clip_id"] for t in doc["hazard_tiles"]] == ["hz_00", "hz_01", "hz_02"]
-    assert [t["clip_id"] for t in doc["blindspot_tiles"]] == ["bs_01", "bs_02", "bs_03"]
+    assert [t["clip_id"] for t in doc["hazard_tiles"]] == ["hz_00", "hz_01", "hz_02", "hz_03"]
+    assert [t["clip_id"] for t in doc["blindspot_tiles"]] == ["bs_01", "bs_02", "bs_03", "bs_04"]
     assert [t["label"] for t in doc["hazard_tiles"] + doc["blindspot_tiles"]] == [
-        f"CAM {i}" for i in range(1, 7)
+        f"CAM {i}" for i in range(1, 9)
     ]
     assert {t["watch"] for t in doc["hazard_tiles"]} == {"HAZARD WATCH"}
     assert {t["watch"] for t in doc["blindspot_tiles"]} == {"BLIND SPOT"}
-    assert [t["check_after_s"] for t in doc["hazard_tiles"]] == [2.0, 5.0, 8.0]
-    assert [t["check_after_s"] for t in doc["blindspot_tiles"]] == [3.5, 6.5, 9.5]
+    assert [t["check_after_s"] for t in doc["hazard_tiles"]] == [2.0, 4.0, 6.0, 8.0]
+    # a fourth tile past the configured times continues 5 s after the last one
+    assert [t["check_after_s"] for t in doc["blindspot_tiles"]] == [3.5, 6.5, 9.5, 14.5]
     tile = doc["hazard_tiles"][0]
     assert tile["source_url"] == "/api/hazards/clips/hz_00/media/source.mp4"
     text = json.dumps(doc).lower()
@@ -113,8 +117,40 @@ def test_configured_ids_order_and_skip_unknown_or_wrong_kind(root: Path, tmp_pat
     assert [t["clip_id"] for t in doc["hazard_tiles"]] == ["hz_03", "hz_01"]
     # Bad numbers are dropped; missing tiles continue 5 s apart.
     assert [t["check_after_s"] for t in doc["hazard_tiles"]] == [1.0, 6.0]
-    assert [(t["cam"], t["clip_id"]) for t in doc["blindspot_tiles"]] == [(4, "bs_04")]
+    # two factory tiles, so the warehouse tile is CAM 3 (numbers never skip)
+    assert [(t["cam"], t["clip_id"]) for t in doc["blindspot_tiles"]] == [(3, "bs_04")]
     assert doc["blindspot_tiles"][0]["check_after_s"] == 3.5
+
+
+def test_cam_numbers_continue_across_rows(root: Path, tmp_path: Path) -> None:
+    """Three factory tiles plus one warehouse tile read CAM 1-4, not CAM 1-3 then CAM 5."""
+    config = tmp_path / "wall.yaml"
+    config.write_text(
+        yaml.safe_dump({"hazard_clips": ["hz_00", "hz_01", "hz_02"], "blindspot_clips": ["bs_01"]}),
+        encoding="utf-8",
+    )
+    doc = wl.wall(HazardService(root, profile="fixture"), config)
+    validate(doc)
+    tiles = doc["hazard_tiles"] + doc["blindspot_tiles"]
+    assert [(t["cam"], t["label"], t["clip_id"]) for t in tiles] == [
+        (1, "CAM 1", "hz_00"),
+        (2, "CAM 2", "hz_01"),
+        (3, "CAM 3", "hz_02"),
+        (4, "CAM 4", "bs_01"),
+    ]
+
+
+def test_four_tiles_per_row_validate(root: Path, tmp_path: Path) -> None:
+    config = tmp_path / "wall.yaml"
+    config.write_text(
+        yaml.safe_dump(
+            {"hazard_clips": ["hz_00", "hz_01", "hz_02", "hz_03"], "blindspot_clips": ["bs_01"]}
+        ),
+        encoding="utf-8",
+    )
+    doc = wl.wall(HazardService(root, profile="fixture"), config)
+    validate(doc)
+    assert [t["cam"] for t in doc["hazard_tiles"] + doc["blindspot_tiles"]] == [1, 2, 3, 4, 5]
 
 
 def test_broken_or_missing_config_uses_defaults(tmp_path: Path) -> None:
@@ -148,4 +184,4 @@ async def test_route(root: Path, tmp_path: Path) -> None:
     assert response.status_code == 200
     body = response.json()
     validate(body)
-    assert len(body["hazard_tiles"]) == 3 and len(body["blindspot_tiles"]) == 3
+    assert len(body["hazard_tiles"]) == 4 and len(body["blindspot_tiles"]) == 4
