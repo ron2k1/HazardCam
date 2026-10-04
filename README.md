@@ -27,10 +27,6 @@ Each camera goes through the same steps on the GB10 and nothing is sent to an ou
 
 The agents are built on OpenClaw and run inside NVIDIA's NemoClaw sandbox, where OpenShell controls what they can reach. One lead agent runs the site. It starts a checker for each camera and keeps checking on them until they finish, then sends the alerts. On the GB10 a single camera's check took between 62 and 116 seconds, and the lead agent's run across six cameras took 120 seconds. A new camera gets its own checker, and the rest of the system stays as it was.
 
-## Built at the event
-
-We built HazardCam for an NVIDIA hackathon. The app, the vision pipeline and the tests were ready beforehand, and the rules required the agents themselves to be written on the day. All agent code was written on 2026-10-03 in the commits marked `event-day`, and `artifacts/event_day/DELTA_REPORT.txt` compares that day's work against the last prebuild commit. The hazard review began as a teammate's script, which we ported into this pipeline with its prompts kept word for word.
-
 ## Run it
 
 Replay mode is the quickest way to see it. Every check replays a stored GB10 run at demo speed, so it needs no GPU, model or network access.
@@ -50,7 +46,7 @@ Live checks on a GB10 also need the vLLM server, the local detector and the agen
 - **`apps/web`** holds the camera wall, the hazard reports and the `/ops` console (Next.js).
 - **`apps/api`** runs the checks and streams their progress to the page (FastAPI).
 - **`hazards`** is the vision pipeline from candidate areas to the final report, along with the local detector.
-- **`agent/event_day`** holds the OpenClaw agents written at the event.
+- **`agent/event_day`** holds the OpenClaw lead and checker agents.
 - **`config`** sets the wall layout, the model profiles and the review modes.
 - **`data/hazards`** keeps clip metadata with the stored GB10 reports and the depth maps.
 - **`scripts`** has setup and data preparation tools.
