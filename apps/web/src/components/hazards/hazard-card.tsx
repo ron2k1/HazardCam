@@ -78,7 +78,9 @@ export function HazardCard({ hazard: h, index, active, onShow, onPicture }: Haza
                   <span aria-hidden className="mt-[3px] inline-flex size-[18px] items-center justify-center border border-fg/60 text-[11px] leading-none text-fg tabular-nums">
                     {i + 1}
                   </span>
-                  <span className="font-semibold text-fg">{step}</span>
+                  <span className="font-semibold text-fg">
+                    <HazardText text={step} />
+                  </span>
                 </li>
               ))}
             </ol>
