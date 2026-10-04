@@ -46,7 +46,7 @@ export interface WallCamera extends WallTile {
 export const WALL = {
   /** The header switches from "starting" to "watching N cameras" at this point. */
   watchingAfterS: 3,
-  /** Checks start 1.5 s apart (CAM 1, 4, 2, 5, 3, 6) so all six land within about 25 s. */
+  /** Fallback check starts when the wall config gives none (config/wall.yaml normally does). */
   hazardStartS: [2, 5, 8],
   blindspotStartS: [3.5, 6.5, 9.5],
   /** A camera that joins the wall late starts this long after it appears, then every gapS. */
@@ -172,7 +172,7 @@ const byId = (a: ClipRow, b: ClipRow) => a.clip_id.localeCompare(b.clip_id, unde
 
 /**
  * Until GET /api/wall exists (404), the wall follows the same defaults config/wall.yaml documents:
- * the first three hazard clips by id, then every blind-spot clip in id order.
+ * the first four hazard clips by id, then every blind-spot clip in id order, numbered on from them.
  */
 function wallFromClips(clips: ClipRow[]): WallConfig {
   const hazard = clips.filter((c) => !isBlindspotClip(c)).sort(byId).slice(0, WALL.tilesPerRow);
@@ -180,7 +180,7 @@ function wallFromClips(clips: ClipRow[]): WallConfig {
   return {
     hazard_tiles: hazard.map((c, i) => ({ cam: i + 1, clip_id: c.clip_id, title: c.title, source_url: sourcePath(c.clip_id) })),
     blindspot_tiles: blind.map((c, i) => ({
-      cam: WALL.tilesPerRow + i + 1,
+      cam: hazard.length + i + 1,
       clip_id: c.clip_id,
       title: c.title,
       source_url: sourcePath(c.clip_id),

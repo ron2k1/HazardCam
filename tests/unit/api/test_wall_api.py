@@ -62,10 +62,10 @@ def _wall_with_blind_spots(request: pytest.FixtureRequest, monkeypatch, tmp_path
 def test_repo_config_matches_the_defaults() -> None:
     raw = yaml.safe_load((REPO_ROOT / "config" / "wall.yaml").read_text("utf-8"))
     assert set(raw) == set(wl.DEFAULT_WALL)
-    # the demo wall: three factory clips and one warehouse clip, each with a stored run;
+    # the demo wall: two factory and two warehouse angles, each with a stored run;
     # everything else is the default
-    assert raw["hazard_clips"] == ["hz_00", "hz_01", "hz_02"]
-    assert raw["blindspot_clips"] == ["bs_01"]
+    assert raw["hazard_clips"] == ["hz_00", "hz_01"]
+    assert raw["blindspot_clips"] == ["bs_01", "bs_02"]
     assert raw["show_blindspot"] is True
     demo = {"hazard_clips": [], "blindspot_clips": []}  # the defaults pick by id
     assert {**wl.load_wall_config(), **demo} == wl.DEFAULT_WALL

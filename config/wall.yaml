@@ -12,8 +12,10 @@ blindspot_watch_label: BLIND SPOT
 
 # Clip ids, in tile order. Empty: the first four hazard clips by id / every blind-spot
 # clip in id order (at most four). Ids that are not staged are skipped.
-hazard_clips: [hz_00, hz_01, hz_02]   # factory clips with stored GB10 Qwen runs (replayable)
-blindspot_clips: [bs_01]              # one warehouse clip; numbered after the factory row (CAM 4)
+# Four distinct camera angles, each with a stored GB10 Qwen run (replayable): factory on top
+# (CAM 1-2), warehouse below (CAM 3-4). hz_02/hz_03 repeat hz_00's press-line angle, so they sit out.
+hazard_clips: [hz_00, hz_01]
+blindspot_clips: [bs_01, bs_02]
 # false hides the blind-spot row (hazard-only demo); the clips stay on /hazards.
 show_blindspot: true
 
