@@ -104,6 +104,7 @@ ZONE_ID_RE = re.compile(r"^Z(\d{1,3})$")
 EVIDENCE_NAME_RE = re.compile(r"^evidence/(E\d{3})\.jpg$")
 CLEAN_EVIDENCE_NAME_RE = re.compile(r"^evidence_clean/(E\d{3})\.jpg$")
 MEDIA_VIDEOS = ("source.mp4", "processed.mp4")
+MOTION_TIMELINE_NAME = "motion_timeline.csv"
 # Evidence pictures carry a burned-in label strip on top ("E### | t=...s | kind | Z##",
 # hazards.scan.EVIDENCE_HEADER_PX) and dark padding (value 22) right of narrow crops. The
 # worker view shows clean copies without either (evidence_clean/); judges see the raw ones.
@@ -1756,6 +1757,14 @@ class HazardStore:
                 return path
         return None
 
+    def motion_timeline_path(self, run_dir: Path | None) -> Path | None:
+        """The run's per-frame motion measurements (time_s, motion_fraction,
+        adjacent_change_fraction), as the CV pass wrote them; the wall's plan panel draws it."""
+        if run_dir is None:
+            return None
+        path = self._inside(run_dir / MOTION_TIMELINE_NAME)
+        return path if path is not None and path.is_file() else None
+
     def evidence_path(
         self, run_dir: Path | None, report: Mapping[str, Any] | None, evidence_id: str
     ) -> Path | None:
@@ -2181,6 +2190,9 @@ class HazardService:
         if name == "processed.mp4":
             path = self.store.processed_path(run_dir, self.store.report(run_dir))
             return (path, "video/mp4") if path else None
+        if name == MOTION_TIMELINE_NAME:
+            path = self.store.motion_timeline_path(run_dir)
+            return (path, "text/csv") if path else None
         match = EVIDENCE_NAME_RE.match(name)
         if match:
             report = self.store.report(run_dir)
