@@ -340,11 +340,13 @@ export function useWallOrchestrator(cameras: WallCamera[], loadedAt: number | nu
         es.addEventListener("checker", (e) => {
           const d = parseData(e);
           if (!d || !alive.current) return;
-          const camNo = Number(d.cam);
           const state = String(d.state) as CheckerState;
-          setSite((prev) => (prev ? { ...prev, checkers: { ...prev.checkers, [camNo]: state } } : prev));
+          // Keyed by the wall's own CAM number: a replayed run keeps the numbers it was recorded
+          // with, which differ once the wall lineup changes. The clip id is the stable join.
           const cam = cameras.find((c) => c.clip_id === d.clip_id);
-          if (cam && typeof d.job_id === "string" && d.job_id && !started.current.has(cam.clip_id)) {
+          if (!cam) return;
+          setSite((prev) => (prev ? { ...prev, checkers: { ...prev.checkers, [cam.cam]: state } } : prev));
+          if (typeof d.job_id === "string" && d.job_id && !started.current.has(cam.clip_id)) {
             void run(cam, d.job_id);
           }
         });
