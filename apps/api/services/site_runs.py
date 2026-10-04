@@ -245,6 +245,7 @@ class SiteRun:
             return {
                 "site_run_id": self.site_run_id,
                 "mode": self.mode,
+                "run_cams": self.run_cams,
                 "state": self.state,
                 "created_at": self.created_at,
                 "elapsed_s": self.ended_s if self.ended_s is not None else self.t(),
@@ -336,7 +337,8 @@ class SiteService:
             self.lead_runner(run, self)
         except Exception as exc:  # the lead failed; the checkers' reports still stand
             logger.warning("site lead failed", exc_info=True)
-            run.say(f"lead turn failed: {type(exc).__name__}", "tool")
+            # not a tool call: the wall counts kind "tool" lines as the lead's calls
+            run.say(f"lead turn failed: {type(exc).__name__}", "error")
         if not run.checks_started:
             self.start_checks(run)
         while not run.all_finished():
@@ -344,7 +346,9 @@ class SiteService:
         if run.alerts is None:
             run.alerts = self.fallback_alerts(run)
             run.alerts_source = "checkers"
-            run.say("Lead agent did not submit alerts; showing the checkers' own findings", "tool")
+            run.say(
+                "Lead agent did not submit alerts; showing the checkers' own findings", "fallback"
+            )
         run.finish("done")
         self.save(run)
 

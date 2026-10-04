@@ -246,6 +246,13 @@ def test_a_failed_lead_still_finishes_with_the_checkers_own_findings(tmp_path):
     assert snap["alerts_source"] == "checkers"
     assert {a["cam"] for a in snap["alerts"]} == {1, 2, 4}
     assert snap["alerts"][0]["severity"] == "high"
+    # the service's own notes are not tool calls (the wall counts kind "tool" as the lead's calls)
+    kinds = {line["text"].split(":")[0]: line["kind"] for line in snap["lead_trace"]}
+    assert kinds["lead turn failed"] == "error"
+    assert (
+        kinds["Lead agent did not submit alerts; showing the checkers' own findings"] == "fallback"
+    )
+    assert not [line for line in snap["lead_trace"] if line["kind"] == "tool"]
 
 
 def test_replay_compresses_the_latest_live_run_with_fresh_replay_jobs(tmp_path):
@@ -317,6 +324,29 @@ def test_replay_on_a_smaller_wall_says_how_many_checkers_the_recorded_run_had(tm
     replay = client.post("/api/wall/run", json={"mode": "replay"}).json()
     assert replay["mode"] == "replay"
     assert [c["cam"] for c in replay["cams"]] == [1, 2, 4, 5]
+    assert replay["run_cams"] == 6
+    assert client.get(f"/api/wall/runs/{replay['site_run_id']}").json()["run_cams"] == 6
+
+
+def test_replay_skips_a_wall_camera_the_recorded_run_never_had(tmp_path):
+    tiles = list(CAMS)
+    app = FastAPI()
+    app.include_router(wall_routes.router)
+    app.state.site_runs = SiteService(
+        FakeHazards(0.1),
+        lambda: list(tiles),
+        tmp_path / "site_runs",
+        lead_runner=good_lead,
+        replay_seconds=1.0,
+        poll_s=0.05,
+    )
+    client = TestClient(app)
+    live = client.post("/api/wall/run", json={"mode": "live"}).json()
+    wait_done(app.state.site_runs.run(live["site_run_id"]))
+    tiles.append({"cam": 7, "clip_id": "hz_09", "kind": "hazard", "label": "NEW"})
+    replay = client.post("/api/wall/run", json={"mode": "replay"}).json()
+    # the replay follows only the recorded clips; the new tile is not part of it
+    assert [c["clip_id"] for c in replay["cams"]] == [c["clip_id"] for c in CAMS]
     assert replay["run_cams"] == 6
 
 
