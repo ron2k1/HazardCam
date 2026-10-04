@@ -583,7 +583,7 @@ export const STEP_WORDS: readonly string[] = [
   "Writing the report",
 ];
 
-/** The teammate script's own step messages (technical view; the fixture replay uses them too). */
+/** The original script's own step messages (technical view; the fixture replay uses them too). */
 export const STEP_MESSAGES: readonly string[] = [
   "[1/6] Scanning video frames...",
   "[2/6] Measuring motion...",

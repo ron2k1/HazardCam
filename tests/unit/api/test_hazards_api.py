@@ -1,6 +1,6 @@
 """Safety hazard API (/api/hazards): clips, plain worker view, review jobs, media.
 
-The report under test is the REAL teammate run (contracts/examples/hazards/source/,
+The report under test is the REAL original run (contracts/examples/hazards/source/,
 verbatim). Video and image bytes are placeholders: only HTTP serving is exercised here.
 """
 
@@ -97,7 +97,7 @@ def report_doc() -> dict[str, Any]:
 
 @pytest.fixture
 def hazard_root(tmp_path: Path, report_doc: dict[str, Any]) -> Path:
-    """hz_00: the real teammate run, reviewed. hz_01: a prepared clip, never reviewed."""
+    """hz_00: the real original run, reviewed. hz_01: a prepared clip, never reviewed."""
     root = tmp_path / "hazards"
     write_clip(root, "hz_00", "Press line camera", 12.605)
     write_clip(root, "hz_01", "Floor camera 01", 14.982)

@@ -1,6 +1,6 @@
 """Same assumptions on the videos: run the UPSTREAM steps 1-4 and the port on one clip.
 
-The teammate's ``run_pipeline`` is one long function, so the test executes its statements
+The original ``run_pipeline`` is one long function, so the test executes its statements
 from the top through the evidence export (step 4), skipping only imports and the
 matplotlib/pandas/print lines (no new dependencies), with FastSAM weights absent: exactly
 the upstream "edge-contour fallback" path the port keeps when the detector is down.

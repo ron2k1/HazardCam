@@ -1434,7 +1434,7 @@
         "eval_count": 1670
       },
       "audit_sha256": "743f6aae6b27011dd089b38db60d90c11037c8b4bc62ae4d247810a398167887",
-      "inference_source": "teammate run (Ollama, macOS)"
+      "inference_source": "original run (Ollama, macOS)"
     },
     "request_sha256": "1c52395194440a85a49878e400f384251fe6ef2c58d44e444d3d7a6d4b0d60e4",
     "config": {

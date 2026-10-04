@@ -1,8 +1,8 @@
 /**
- * /hazards?mock=1 data. hz_00.json is the real teammate run (Ollama qwen3.6:35b-a3b on macOS,
+ * /hazards?mock=1 data. hz_00.json is the real original run (Ollama qwen3.6:35b-a3b on macOS,
  * FastSAM-s, 35 evidence images) rewritten into the HazardView shape: the worker text is plain
  * (ids, model names and schema words stripped), the technical block keeps the report verbatim
- * and the prompts are the teammate script's own. Media live in public/mock-hazards/ (browser
+ * and the prompts are the original script's own. Media live in public/mock-hazards/ (browser
  * H.264 copies of the processed and source video, and display-size copies of the 35 pictures).
  * hz_01 / hz_02 are listed un-reviewed, so the "not checked" state is honest: no results exist.
  */

@@ -16,7 +16,7 @@ function parseMock(v: string | undefined): HazardsMock | null {
 
 /**
  * /hazards is the single-camera safety hazard review. /hazards?mock[=1|empty] renders the real
- * teammate example from src/mocks/hazards without the API; ?clip=<id> preselects a clip. The plain
+ * original example from src/mocks/hazards without the API; ?clip=<id> preselects a clip. The plain
  * worker view is the default; ?view=technical shows the raw report, prompts and model metadata.
  */
 export default async function HazardsPage({ searchParams }: PageProps<"/hazards">) {

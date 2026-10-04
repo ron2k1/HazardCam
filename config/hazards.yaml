@@ -9,7 +9,7 @@ product: CameraVision
 page_title: Safety hazards
 
 # "What the AI was asked to check": a plain version of the review SYSTEM_PROMPT
-# (hazards/review.py, verbatim from the teammate's astra_video_hazard.py).
+# (hazards/review.py, verbatim from the original astra_video_hazard.py).
 checks:
   - Look at the whole scene, every marked area and every close-up
   - Look for objects blocking marked walkways and aisles, even if they belong there

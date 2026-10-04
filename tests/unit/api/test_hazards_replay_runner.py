@@ -1,7 +1,7 @@
 """Safety hazard API, second part: demo replay, the review runner seam, job lookups,
 zones/pictures/signs and the clean evidence copies.
 
-Reports under test are REAL runs, verbatim: the teammate run (contracts/examples/hazards/
+Reports under test are REAL runs, verbatim: the original run (contracts/examples/hazards/
 source/) and an OpenClaw agent run on the GB10 (source/agent_run/). Video bytes are
 placeholders; evidence pictures are synthetic JPEGs where pixels matter.
 """
@@ -37,7 +37,7 @@ AGENT_SOURCE = SOURCE / "agent_run"
 SCHEMA = json.loads((REPO_ROOT / "contracts" / "hazard_view.schema.json").read_text("utf-8"))
 REGISTRY = Registry().with_resource(SCHEMA["$id"], Resource.from_contents(SCHEMA))
 WORDING = hz.load_wording()
-TEAMMATE_RUN = "ed487eb3f1181f38"
+ORIGINAL_RUN = "ed487eb3f1181f38"
 AGENT_RUN = "ed02d540b08f6395"
 AGENT_FILES = ("agent_trace.json", "agent_summary.json", "job_timeline.json")
 SOURCE_BYTES = bytes(range(256)) * 16
@@ -111,13 +111,13 @@ def write_agent_run(root: Path, clip_id: str = "hz_02", **kwargs: Any) -> Path:
 
 @pytest.fixture
 def root(tmp_path: Path) -> Path:
-    """hz_00: the teammate run (not a GB10 run). hz_01: never reviewed. hz_02: the agent
+    """hz_00: the original run (not a GB10 run). hz_01: never reviewed. hz_02: the agent
     run, with its trace, summary and job timeline."""
     data = tmp_path / "hazards"
     write_clip(data, "hz_00")
     write_clip(data, "hz_01")
     write_clip(data, "hz_02")
-    write_run(data, "hz_00", TEAMMATE_RUN, load(SOURCE, "hazard_report.json"))
+    write_run(data, "hz_00", ORIGINAL_RUN, load(SOURCE, "hazard_report.json"))
     write_agent_run(data)
     write_json(data / "labels" / "hz_02.json", {"dataset_label": "0_safe_walkway_violation"})
     return data
@@ -255,10 +255,10 @@ def test_demo_replay_paces_the_agent_run_between_25_and_40_s(root: Path) -> None
 
 def test_each_clip_replays_its_own_run(root: Path) -> None:
     service = HazardService(root, profile="fixture", replay_pace_s=0.0, review_fn=no_model)
-    teammate = wait_finished(service.start_review("hz_00"))[-1][1]
+    original = wait_finished(service.start_review("hz_00"))[-1][1]
     agent = wait_finished(service.start_review("hz_02"))[-1][1]
-    assert (teammate["run_id"], teammate["runner"]) == (TEAMMATE_RUN, "direct")
-    assert teammate["note"] == "Replay of the stored run from 2026-10-03 16:55 UTC"
+    assert (original["run_id"], original["runner"]) == (ORIGINAL_RUN, "direct")
+    assert original["note"] == "Replay of the stored run from 2026-10-03 16:55 UTC"
     assert (agent["run_id"], agent["runner"]) == (AGENT_RUN, "openclaw-agent")
 
 
@@ -591,8 +591,8 @@ def _gb10(report: dict[str, Any], generated: str, status: str = "model_review_co
 def test_current_run_prefers_the_latest_completed_gb10_run(root: Path) -> None:
     store = hz.HazardStore(root)
     reports = root / "reports" / "hz_00"
-    # Only the imported teammate run (not GB10): latest_run.json decides.
-    assert store.current_run_dir("hz_00") == (reports / TEAMMATE_RUN).resolve()
+    # Only the imported original run (not GB10): latest_run.json decides.
+    assert store.current_run_dir("hz_00") == (reports / ORIGINAL_RUN).resolve()
     base = agent_report()
     write_run(root, "hz_00", "gb10_direct", _gb10(base, "2026-10-03T19:00:00+00:00"), point=False)
     assert store.current_run_dir("hz_00") == (reports / "gb10_direct").resolve()
@@ -735,7 +735,7 @@ async def test_clean_evidence_drops_the_label_strip_and_padding(
     item = next(e for e in report["evidence"] if e["evidence_id"] == "E024")
     width = hz.clean_width(item, report["config"], EVIDENCE_MIN_CANVAS_W)
     assert width == 285  # a 285 px zone crop padded to the 520 px canvas
-    raw = root / "reports" / "hz_00" / TEAMMATE_RUN / "evidence" / "E024.jpg"
+    raw = root / "reports" / "hz_00" / ORIGINAL_RUN / "evidence" / "E024.jpg"
     assert cv2.imwrite(str(raw), _evidence_canvas(width, 200))
     service = HazardService(root, profile="fixture")
     async with await client_for(make_app(settings, service)) as client:

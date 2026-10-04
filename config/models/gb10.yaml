@@ -9,7 +9,7 @@ notes: >-
   reasoning slot is served by the same local Qwen3.6 35B-A3B as perception, not
   Mistral/Ministral. The offline bundle has no Mistral weights and venue Wi-Fi made the
   download impractical (user-approved). An earlier choice, Cosmos-Reason2-8B on :8001, was
-  dropped later on 2026-10-03 to mimic the teammate's safety notebook, which uses Qwen 3.6
+  dropped later on 2026-10-03 to mimic the original safety notebook, which uses Qwen 3.6
   for both the review and the reasoning/audit pass. The adapter interface is unchanged;
   QWEN_MODEL / MISTRAL_MODEL still override the ids. No cloud route anywhere.
 perception:

@@ -1,6 +1,6 @@
 """/hazards contract: contracts/hazard_view.schema.json and its examples.
 
-The examples are built from the REAL teammate run (contracts/examples/hazards/source/,
+The examples are built from the REAL original run (contracts/examples/hazards/source/,
 verbatim) and a REAL OpenClaw agent run (source/agent_run/, verbatim) by
 scripts/hazards/build_view_examples.py; this test fails when they drift from the composer,
 the wording in config/hazards.yaml or the wall in config/wall.yaml. runtime_status.json is
@@ -27,7 +27,7 @@ SCHEMA_PATH = REPO_ROOT / "contracts" / "hazard_view.schema.json"
 EXAMPLES = REPO_ROOT / "contracts" / "examples" / "hazards"
 SCHEMA = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
 REGISTRY = Registry().with_resource(SCHEMA["$id"], Resource.from_contents(SCHEMA))
-# sha256 of the teammate's hazard_report.json / run_manifest.json (GB10_BUNDLE example_output).
+# sha256 of the original hazard_report.json / run_manifest.json (GB10_BUNDLE example_output).
 SOURCE_SHA256 = {
     "hazard_report.json": "f3dac3afb72313442f57bf9781454aa9dfae30703f729ba28e8104a91ad8eb33",
     "run_manifest.json": "fc2e1a4cf81ff1fd5f0b4e894389eedf8789ee173743d2bae566b76122b52926",
@@ -95,7 +95,7 @@ def test_top_level_document_is_a_hazard_view() -> None:
 
 
 @pytest.mark.parametrize("name", sorted(SOURCE_SHA256))
-def test_source_is_the_verbatim_teammate_run(name: str) -> None:
+def test_source_is_the_verbatim_original_run(name: str) -> None:
     digest = hashlib.sha256((EXAMPLES / "source" / name).read_bytes()).hexdigest()
     assert digest == SOURCE_SHA256[name]
 
@@ -131,7 +131,7 @@ def test_reviewed_example_content() -> None:
     ]
     assert view["vision"]["images_sent"] == len(report["evidence"]) == 35
     assert view["technical"]["dataset_label"] == "4_safe_walkway"
-    assert view["technical"]["run_id"] == builder.teammate_run_id(report)
+    assert view["technical"]["run_id"] == builder.original_run_id(report)
     prompts = hz.prompts_from_script()
     assert view["technical"]["system_prompt"] == prompts["system_prompt"]
     assert view["technical"]["audit_prompt"] == prompts["audit_prompt"]

@@ -1,6 +1,6 @@
 """One test per testable upstream video assumption, at its exact threshold.
 
-``test_upstream_video_parity.py`` runs the teammate's code and the port on the same clips;
+``test_upstream_video_parity.py`` runs the original code and the port on the same clips;
 these tests pin each rule's boundary on tiny synthetic arrays so a drift is named.
 """
 

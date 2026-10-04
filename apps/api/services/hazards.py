@@ -2,7 +2,7 @@
 
 A single-camera factory hazard review (``/hazards``), separate from the multi-camera
 ``/ops`` pipeline. The review itself lives in the top-level ``hazards`` package (a port of
-the teammate's ``astra_video_hazard.py``, pipeline astra-1.1); this module only reads its
+the original ``astra_video_hazard.py``, pipeline astra-1.1); this module only reads its
 outputs and runs it in a background thread.
 
 Data layout under ``$HAZARDS_DIR`` (default ``<repo>/data/hazards``)::
@@ -34,7 +34,7 @@ the clip's CURRENT stored run (its own latest completed GB10 run) at a believabl
 with no model call. ``{"mode": "live"}`` on the POST forces a real run.
 
 A clip's current report is its latest completed GB10 run (agent runs preferred over direct
-runs at the same freshness); the imported teammate run only when no GB10 run exists.
+runs at the same freshness); the imported original run only when no GB10 run exists.
 """
 
 from __future__ import annotations
@@ -76,7 +76,7 @@ REVIEW_COMPLETE = "model_review_complete"
 REVIEW_FAILED = "model_review_failed"
 SEVERITY_RANK = {"high": 0, "medium": 1, "low": 2}
 TOTAL_STEPS = 6
-# The teammate script's six progress messages, verbatim (run_pipeline ``progress(...)``).
+# The original script's six progress messages, verbatim (run_pipeline ``progress(...)``).
 SCRIPT_STEPS = (
     "[1/6] Scanning video frames...",
     "[2/6] Measuring motion...",
@@ -413,7 +413,7 @@ def prompts_from_script(path: Path = THIRD_PARTY_SCRIPT) -> dict[str, str]:
 
 def load_prompts() -> dict[str, str]:
     """The review prompts: ``hazards.review`` (what the port sends) when importable, else
-    the byte-identical teammate script under ``third_party/``."""
+    the byte-identical original script under ``third_party/``."""
     try:
         review = importlib.import_module("hazards.review")
         system, audit = (
@@ -788,7 +788,7 @@ def derive_status(
     return "not_reviewed"
 
 
-# Screen filter (operator, 2026-10-03): the worker screens show the OSHA set the teammate's
+# Screen filter (operator, 2026-10-03): the worker screens show the OSHA set the original
 # script reviews (walking-working surfaces, aisles, storage, exits, PPE) and leave out the
 # guard/lockout concerns and bare blind corners, which were noise on the wall. Hidden rules
 # are removed from a finding's citations. A finding whose main (first) rule is hidden is
@@ -1675,7 +1675,7 @@ class HazardStore:
     def current_run_dir(self, clip_id: str) -> Path | None:
         """The clip's current report: its latest COMPLETED GB10 run (an agent run wins over
         a direct run finished up to :data:`AGENT_PREFERENCE_WINDOW_S` later). Without any
-        GB10 run: the run ``latest_run.json`` names (e.g. the imported teammate run), else
+        GB10 run: the run ``latest_run.json`` names (e.g. the imported original run), else
         the newest run with a report."""
         candidates = []
         for run_dir in self.run_dirs(clip_id):

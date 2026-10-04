@@ -74,7 +74,7 @@
   "quality_warnings": [],
   "validation": "Decoded all available frames; checked output video count, evidence hashes, IDs, bounds, schema and report files.",
   "imported": {
-    "from": "teammate example_output (verbatim model output)",
+    "from": "original example_output (verbatim model output)",
     "original_report_sha256": "f3dac3afb72313442f57bf9781454aa9dfae30703f729ba28e8104a91ad8eb33",
     "processed_video": "re-encoded to browser H.264 (yuv420p, faststart)"
   }

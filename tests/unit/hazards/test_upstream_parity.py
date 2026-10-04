@@ -1,4 +1,4 @@
-"""The port keeps the teammate script's constants, prompts, schema and wording verbatim.
+"""The port keeps the original script's constants, prompts, schema and wording verbatim.
 
 The upstream file is parsed with ``ast`` (never imported: it needs pandas/matplotlib/
 requests, which the app does not have).
