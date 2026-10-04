@@ -102,7 +102,7 @@ const VIEW_RETRIES = 3;
  */
 // Finished checks survive going to a hazard and back (same tab, for KEEP_MS), so returning to
 // the wall shows the results at once instead of checking every camera again.
-const SAVE_KEY = "cv-wall-checks-v2";
+const SAVE_KEY = "cv-wall-checks-v3";
 const KEEP_MS = 10 * 60_000;
 
 // `origin`: when the wall first loaded in this tab. Restored runs keep their real start/finish

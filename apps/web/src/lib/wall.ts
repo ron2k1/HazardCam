@@ -9,6 +9,7 @@
  */
 import { ApiError } from "./api";
 import { apiUrl, LIVE } from "./config";
+import { cvMapping, parseMotionCsv, type CvMapping, type CvViewInput, type MotionSeries } from "./cv-map";
 
 /* -------------------------------------------------------------- wall config */
 
@@ -90,11 +91,6 @@ export interface ViewZone {
   has_pictures?: boolean;
 }
 
-interface RawZone {
-  zone_id?: string;
-  bbox_normalized?: number[];
-}
-
 interface RawFinding {
   finding_id?: string;
   zone_ids?: string[];
@@ -109,10 +105,8 @@ export interface WallHazardView {
     hazards: ViewHazard[];
     zones?: ViewZone[] | null;
   } | null;
-  technical?: {
-    zones?: RawZone[];
-    findings_raw?: RawFinding[];
-  } | null;
+  technical?: (NonNullable<CvViewInput["technical"]> & { findings_raw?: RawFinding[] }) | null;
+  vision?: CvViewInput["vision"];
 }
 
 interface ClipRow {
@@ -212,6 +206,12 @@ export function configured(value: unknown, fallback: string): string {
 
 export function fetchView(clipId: string, signal?: AbortSignal): Promise<WallHazardView> {
   return getJson<WallHazardView>(`/api/hazards/clips/${enc(clipId)}`, signal);
+}
+
+/** The run's per-frame motion (motion_timeline.csv); null when the run has none. */
+export async function fetchMotion(clipId: string, signal?: AbortSignal): Promise<MotionSeries | null> {
+  const res = await fetch(apiUrl(`/api/hazards/clips/${enc(clipId)}/media/motion_timeline.csv`), { cache: "no-store", signal });
+  return res.ok ? parseMotionCsv(await res.text()) : null;
 }
 
 /**
@@ -403,6 +403,8 @@ export interface CheckResult {
   detections: Detection[];
   /** Only the zones a detection is in (the wall never draws the others). */
   zones: ZoneMark[];
+  /** The technical layer: every area the CV pass marked, with its source and stage. */
+  cv: CvMapping | null;
 }
 
 /**
@@ -490,7 +492,8 @@ export function checkResult(view: WallHazardView): CheckResult {
       .map((z) => ({ number: z.n, name: zoneName(z.n), box: z.box, sign: signFor(z.n) }));
   }
   zones.sort((a, b) => a.number - b.number);
-  return { reviewedAt: view.reviewed_at, detections, zones };
+  const cv = cvMapping(view, new Set(zones.map((z) => z.number)));
+  return { reviewedAt: view.reviewed_at, detections, zones, cv };
 }
 
 /* ----------------------------------------------------------------- wording */
