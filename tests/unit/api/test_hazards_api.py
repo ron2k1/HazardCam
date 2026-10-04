@@ -444,7 +444,23 @@ async def test_motion_timeline_is_served_from_the_current_run(
     assert response.status_code == 200
     assert response.headers["content-type"].startswith("text/csv")
     assert response.text == rows
-    assert (await client.get("/api/hazards/clips/hz_01/media/motion_timeline.csv")).status_code == 404
+    assert (
+        await client.get("/api/hazards/clips/hz_01/media/motion_timeline.csv")
+    ).status_code == 404
+
+
+async def test_depth_relief_is_served_from_the_clip_folder(
+    hazard_root: Path, client: httpx.AsyncClient
+) -> None:
+    url = "/api/hazards/clips/hz_00/media/depth.json"
+    assert (await client.get(url)).status_code == 404  # not computed yet
+    doc = b'{"clip_id": "hz_00", "kind": "relative_inverse_depth", "grid": {"width": 2}}'
+    (hazard_root / "clips" / "hz_00" / "depth.json").write_bytes(doc)
+    response = await client.get(url)
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("application/json")
+    assert response.content == doc
+    assert (await client.get("/api/hazards/clips/hz_01/media/depth.json")).status_code == 404
 
 
 @pytest.mark.parametrize(

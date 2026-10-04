@@ -105,6 +105,7 @@ EVIDENCE_NAME_RE = re.compile(r"^evidence/(E\d{3})\.jpg$")
 CLEAN_EVIDENCE_NAME_RE = re.compile(r"^evidence_clean/(E\d{3})\.jpg$")
 MEDIA_VIDEOS = ("source.mp4", "processed.mp4")
 MOTION_TIMELINE_NAME = "motion_timeline.csv"
+DEPTH_RELIEF_NAME = "depth.json"
 # Evidence pictures carry a burned-in label strip on top ("E### | t=...s | kind | Z##",
 # hazards.scan.EVIDENCE_HEADER_PX) and dark padding (value 22) right of narrow crops. The
 # worker view shows clean copies without either (evidence_clean/); judges see the raw ones.
@@ -1639,6 +1640,12 @@ class HazardStore:
         path = self._inside(self.clips_dir / clip_id / "source.mp4")
         return path if path is not None and path.is_file() else None
 
+    def depth_relief_path(self, clip_id: str) -> Path | None:
+        """The clip's relative depth grid (``scripts/hazards/depth_relief.py``): computed
+        locally from one frame of ``source.mp4``, not part of any review run."""
+        path = self._inside(self.clips_dir / clip_id / DEPTH_RELIEF_NAME)
+        return path if path is not None and path.is_file() else None
+
     def run_dirs(self, clip_id: str) -> list[Path]:
         """Every run directory of the clip that holds a ``hazard_report.json``."""
         if not is_safe_segment(clip_id):
@@ -2186,6 +2193,9 @@ class HazardService:
         if name == "source.mp4":
             path = self.store.source_path(clip_id)
             return (path, "video/mp4") if path else None
+        if name == DEPTH_RELIEF_NAME:
+            path = self.store.depth_relief_path(clip_id)
+            return (path, "application/json") if path else None
         run_dir = self.store.current_run_dir(clip_id)
         if name == "processed.mp4":
             path = self.store.processed_path(run_dir, self.store.report(run_dir))
