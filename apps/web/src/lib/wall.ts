@@ -10,6 +10,7 @@
 import { ApiError } from "./api";
 import { apiUrl, LIVE } from "./config";
 import { cvMapping, parseMotionCsv, type CvMapping, type CvViewInput, type MotionSeries } from "./cv-map";
+import { parseDepthRelief, type DepthRelief } from "./depth-relief";
 
 /* -------------------------------------------------------------- wall config */
 
@@ -212,6 +213,12 @@ export function fetchView(clipId: string, signal?: AbortSignal): Promise<WallHaz
 export async function fetchMotion(clipId: string, signal?: AbortSignal): Promise<MotionSeries | null> {
   const res = await fetch(apiUrl(`/api/hazards/clips/${enc(clipId)}/media/motion_timeline.csv`), { cache: "no-store", signal });
   return res.ok ? parseMotionCsv(await res.text()) : null;
+}
+
+/** The clip's locally computed relative depth grid, or null when it has none (the plan stays 2D). */
+export async function fetchDepth(clipId: string, signal?: AbortSignal): Promise<DepthRelief | null> {
+  const res = await fetch(apiUrl(`/api/hazards/clips/${enc(clipId)}/media/depth.json`), { cache: "no-store", signal });
+  return res.ok ? parseDepthRelief(await res.json()) : null;
 }
 
 /**

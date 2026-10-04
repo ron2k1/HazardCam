@@ -1,10 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
+import { Component, useEffect, useRef, useState, type ReactNode } from "react";
 
 import { Panel } from "@/components/hud/panel";
+import { apiUrl } from "@/lib/config";
 import { motionPath, type CvMapping, type CvZone, type MotionSeries } from "@/lib/cv-map";
-import { fetchMotion, type WallCamera } from "@/lib/wall";
+import type { DepthRelief } from "@/lib/depth-relief";
+import { fetchDepth, fetchMotion, sourcePath, type WallCamera } from "@/lib/wall";
 import { cn } from "@/lib/utils";
 
 import type { TileRun } from "./use-wall-orchestrator";
@@ -14,6 +17,8 @@ import type { TileRun } from "./use-wall-orchestrator";
 const FRAME: [number, number] = [1920, 1080];
 const STRIP_W = 1000;
 const STRIP_H = 100;
+/** A camera with no depth grid yet (API restarting, file not there) is asked again this often while shown in 3D. */
+const DEPTH_RETRY_MS = 6000;
 
 const STAGE: Record<CvZone["stage"], { stroke: string; fill: string; dash?: string; width: number; tag: string }> = {
   marked: { stroke: "rgba(241,241,239,0.5)", fill: "rgba(241,241,239,0.03)", dash: "6 5", width: 1, tag: "text-fg/70" },
@@ -119,6 +124,67 @@ function FramePlan({ cv }: { cv: CvMapping }) {
 
 const rank = (s: CvZone["stage"]) => (s === "marked" ? 0 : s === "flagged" ? 1 : 2);
 
+function PlanNote({ text }: { text: string }) {
+  return (
+    <div className="dot-field flex aspect-video w-full items-center justify-center border border-line">
+      <span className="tele text-fg/60">{text}</span>
+    </div>
+  );
+}
+
+// three.js only runs in the browser, and only loads once the 3D view is shown
+const DepthReliefView = dynamic(() => import("./depth-relief-view").then((m) => m.DepthReliefView), {
+  ssr: false,
+  loading: () => <PlanNote text="Loading 3D view" />,
+});
+
+type View = "3d" | "2d";
+
+/** If the 3D view throws (no WebGL, a lost context), this camera falls back to the flat plan. */
+class ReliefBoundary extends Component<{ fallback: ReactNode; children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  render() {
+    return this.state.failed ? this.props.fallback : this.props.children;
+  }
+}
+
+/** Square header toggle; aria-pressed carries its state for keyboards and screen readers. */
+function HeaderButton({
+  on,
+  label,
+  onClick,
+  children,
+  testId,
+  value,
+}: {
+  on: boolean;
+  label: string;
+  onClick: () => void;
+  children: ReactNode;
+  testId: string;
+  value: string;
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={on}
+      aria-label={label}
+      onClick={onClick}
+      data-testid={testId}
+      data-value={value}
+      className={cn(
+        "h-[17px] min-w-[17px] border px-1 leading-none tabular-nums transition-colors focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-fg",
+        on ? "border-fg bg-fg text-bg" : "border-line-strong text-fg/60 hover:border-fg/60 hover:text-fg",
+      )}
+    >
+      {children}
+    </button>
+  );
+}
+
 /** Real per-frame motion with a tick per evidence frame and a playhead locked to the tile's video. */
 function MotionStrip({ clipId, cv, motion }: { clipId: string; cv: CvMapping; motion: MotionSeries | null | undefined }) {
   const head = useRef<HTMLSpanElement>(null);
@@ -193,23 +259,31 @@ function Legend() {
 }
 
 /**
- * 03: one camera's blind-zone plan, in image space. Every area the CV pass marked is drawn where it
- * marked it, styled by how far it got (marked, flagged by Qwen, confirmed after the audit), with
- * the pipeline's own counts, detector and per-frame motion. The wall clips carry no camera
- * calibration, so there is no floor plan or field-of-view wedge here.
+ * 03: one camera's blind-zone plan. Every area the CV pass marked is drawn where it marked it,
+ * styled by how far it got (marked, flagged by Qwen, confirmed after the audit), with the
+ * pipeline's own counts, detector and per-frame motion. 3D drapes the clip over a relative depth
+ * map precomputed from one real frame (display only: no review reads it); 2D is the flat
+ * image-space plan. The wall clips carry no camera calibration, so neither view claims metres, a
+ * floor plan or a field of view.
  */
 export function BlindZonePlanPanel({
+  cameras,
   cam,
   run,
+  onPick,
   className,
 }: {
+  cameras: WallCamera[];
   cam: WallCamera | null;
   run: TileRun | null;
+  onPick: (clipId: string) => void;
   className?: string;
 }) {
   const cv = run?.phase === "done" ? (run.result?.cv ?? null) : null;
   const clipId = cam?.clip_id ?? null;
+  const [view, setView] = useState<View>("3d");
   const [motion, setMotion] = useState<{ clip: string; series: MotionSeries | null } | null>(null);
+  const [reliefs, setReliefs] = useState<Record<string, DepthRelief | null>>({});
 
   useEffect(() => {
     if (!clipId || !cv) return;
@@ -222,9 +296,51 @@ export function BlindZonePlanPanel({
     return () => ctrl.abort();
   }, [clipId, cv]);
 
+  // A grid once loaded is kept. A miss is not final: while that camera is shown in 3D it is asked
+  // again every DEPTH_RETRY_MS (each answer stores a new object, which re-runs this effect).
+  useEffect(() => {
+    if (!clipId || view !== "3d" || reliefs[clipId]) return;
+    const ctrl = new AbortController();
+    const timer = setTimeout(
+      () => {
+        fetchDepth(clipId, ctrl.signal)
+          .then((relief) => setReliefs((prev) => ({ ...prev, [clipId]: relief })))
+          .catch(() => {
+            if (!ctrl.signal.aborted) setReliefs((prev) => ({ ...prev, [clipId]: null }));
+          });
+      },
+      clipId in reliefs ? DEPTH_RETRY_MS : 0,
+    );
+    return () => {
+      clearTimeout(timer);
+      ctrl.abort();
+    };
+  }, [clipId, view, reliefs]);
+
   // undefined while this clip's file loads, so a focus change never flashes "no record"
   const series = motion && motion.clip === clipId ? motion.series : undefined;
+  const relief = clipId ? reliefs[clipId] : undefined;
   const f = cv?.funnel;
+
+  let frame: ReactNode = null;
+  if (cam && cv) {
+    if (view === "2d" || relief === null) frame = <FramePlan cv={cv} />;
+    else if (relief)
+      frame = (
+        <ReliefBoundary
+          key={cam.clip_id}
+          fallback={
+            <>
+              <FramePlan cv={cv} />
+              <span className="micro -mt-1 text-fg/45">3D VIEW UNAVAILABLE HERE · IMAGE SPACE</span>
+            </>
+          }
+        >
+          <DepthReliefView clipId={cam.clip_id} videoSrc={apiUrl(sourcePath(cam.clip_id))} relief={relief} zones={cv.zones} />
+        </ReliefBoundary>
+      );
+    else frame = <PlanNote text="Loading depth" />;
+  }
 
   return (
     <Panel
@@ -232,18 +348,51 @@ export function BlindZonePlanPanel({
       title="Blind-zone plan"
       className={className}
       meta={
-        cam ? (
-          <>
-            <span className="text-fg/85">CAM {cam.cam}</span>
-            <span>IMAGE SPACE</span>
-          </>
-        ) : null
+        <>
+          <span className="flex items-center gap-[3px]" role="group" aria-label="Camera">
+            <span className="mr-0.5 text-fg/50">CAM</span>
+            {cameras.map((c) => (
+              <HeaderButton
+                key={c.clip_id}
+                on={c.clip_id === clipId}
+                label={`Show camera ${c.cam}`}
+                onClick={() => onPick(c.clip_id)}
+                testId="plan-cam"
+                value={String(c.cam)}
+              >
+                {c.cam}
+              </HeaderButton>
+            ))}
+          </span>
+          <span className="flex items-center" role="group" aria-label="View">
+            {(["3d", "2d"] as const).map((v) => (
+              <HeaderButton
+                key={v}
+                on={view === v}
+                label={v === "3d" ? "3D depth view" : "2D image-space view"}
+                onClick={() => setView(v)}
+                testId="plan-view"
+                value={v}
+              >
+                {v.toUpperCase()}
+              </HeaderButton>
+            ))}
+          </span>
+        </>
       }
     >
-      <div className="flex flex-col gap-1.5 px-2.5 pt-2 pb-2" data-testid="blind-zone-plan" data-clip={clipId ?? ""}>
+      <div
+        className="flex flex-col gap-1.5 px-2.5 pt-2 pb-2"
+        data-testid="blind-zone-plan"
+        data-clip={clipId ?? ""}
+        data-view={view}
+      >
         {cam && cv ? (
           <>
-            <FramePlan cv={cv} />
+            {frame}
+            {view === "3d" && relief === null ? (
+              <span className="micro -mt-1 text-fg/45">NO DEPTH MAP FOR THIS CAMERA · IMAGE SPACE</span>
+            ) : null}
             <Legend />
             <div className="flex items-baseline gap-1.5 text-[10px] tracking-[0.1em] text-fg/80 tabular-nums" data-testid="plan-funnel">
               <span>
@@ -275,9 +424,7 @@ export function BlindZonePlanPanel({
             <MotionStrip clipId={cam.clip_id} cv={cv} motion={series} />
           </>
         ) : (
-          <div className="dot-field flex aspect-video w-full items-center justify-center border border-line">
-            <span className="tele text-fg/60">{cam ? "Plan draws when this camera's check finishes" : "Awaiting first check"}</span>
-          </div>
+          <PlanNote text={cam ? "Plan draws when this camera's check finishes" : "Awaiting first check"} />
         )}
       </div>
     </Panel>
